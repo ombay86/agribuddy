@@ -421,7 +421,7 @@
       "water_source": "Irigasi Teknis Bendungan",
       "location": "Desa Sukamaju, Jawa Timur",
       "weather_condition": {
-        "temp_celsius": 29.5,
+        "temp_celsius": 26.0,
         "rain_probability": 65,
         "season": "Musim Hujan (Rendeng)",
         "note": "Curah hujan tinggi terdeteksi (probabilitas 65%). Dosis Urea diturunkan 15% untuk mencegah serangan Hawar Daun (Kresek) dan rebah batang, dengan penguatan Kalium NPK."
@@ -689,7 +689,7 @@
       ],
       "id": "far_892ac03e",
       "created_at": "2026-09-21T08:53:04.123669",
-      "updated_at": "2026-09-21T15:02:20.607464",
+      "updated_at": "2026-09-21T18:10:29.968546",
       "latitude": -7.2504,
       "longitude": 112.7512,
       "coordinates_label": "-7.2504, 112.7512 (Desa Sukamaju)"
