@@ -413,7 +413,7 @@
 
                     <!-- When It's Another User's Service: Diskusi (Icon Only) & Pesan (Full Width) -->
                     <template v-else>
-                      <!-- Diskusi (Icon Only) -->
+                      <!-- Diskusi (Icon Only) - h-9 w-9 -->
                       <button
                         @click.stop="openProductDiscussion(service)"
                         class="w-9 h-9 rounded-xl border border-slate-200 bg-slate-50 hover:bg-amber-50 hover:border-amber-300 text-slate-600 hover:text-amber-700 flex items-center justify-center shrink-0 active:scale-95 transition-all shadow-2xs"
@@ -422,10 +422,10 @@
                         <MessageCircle :size="16" class="text-amber-600" />
                       </button>
 
-                      <!-- Pesan (Checkout) - Full Width Sempurna, Tidak Terpotong -->
+                      <!-- Pesan (Checkout) - h-9 Sama Persis dengan Tombol Chat -->
                       <button
                         @click.stop="openCheckoutModal(service)"
-                        class="flex-1 btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-2 px-3.5 rounded-xl shadow-sm active:scale-95 transition-all flex items-center justify-center gap-1.5 whitespace-nowrap"
+                        class="h-9 flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black px-3.5 rounded-xl shadow-xs active:scale-95 transition-all flex items-center justify-center gap-1.5 whitespace-nowrap"
                       >
                         <ShoppingCart :size="14" />
                         <span>Pesan</span>
