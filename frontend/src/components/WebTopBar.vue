@@ -140,6 +140,7 @@ const currentSectionName = computed(() => {
   const p = route.path;
   if (p === '/' || p === '/jejaring') return 'Jejaring Komunitas';
   if (p.startsWith('/monitoring')) return 'Monitoring Usahatani';
+  if (p === '/pesanan' || p === '/transaksi') return 'Monitoring Pesanan';
   if (p === '/katalog') return 'Katalog Marketplace';
   if (p === '/profil') return 'Profil Saya';
   if (p === '/dokter') return 'Dokter Tani AI';
@@ -155,6 +156,7 @@ const currentPageTitle = computed(() => {
     if (route.query.tab === 'transaksi') return 'Pelacakan Pesanan & Transaksi';
     return 'Monitoring Sawah, AI & Bagi Hasil';
   }
+  if (p === '/pesanan' || p === '/transaksi') return 'Pelacakan & Monitoring Pesanan Ekosistem';
   if (p === '/katalog') return 'Katalog Layanan & Produk Ekosistem';
   if (p === '/profil') return 'Identitas Pengguna & Layanan Saya';
   if (p === '/dokter') return 'Dokter Tani AI — Deteksi Penyakit Daun';
@@ -212,7 +214,7 @@ const handleNotificationClick = async (notif: InAppNotification) => {
   if (notif.type === 'ORDER_RECEIVED') {
     router.push('/katalog');
   } else if (notif.type === 'ORDER_STATUS' || notif.type === 'ORDER_DISCUSSION') {
-    router.push('/monitoring?tab=transaksi');
+    router.push('/pesanan');
   } else if (notif.type === 'PRODUCT_DISCUSSION') {
     router.push('/katalog');
   } else if (notif.type === 'NEW_COMMENT' || notif.type === 'NEW_FOLLOWER') {

@@ -26,19 +26,20 @@
         <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-3">
           <button
             @click="openCreateModal"
-            class="w-full btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-3 rounded-2xl shadow-md active:scale-95 transition-all flex items-center justify-center gap-2"
+            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-2.5 px-3 rounded-2xl shadow-sm active:scale-95 transition-all flex items-center justify-center gap-2"
           >
-            <PlusCircle :size="16" /> Pasang Layanan Baru
+            <PlusCircle :size="16" />
+            <span>Pasang Layanan Baru</span>
           </button>
 
           <div class="space-y-2 pt-1">
             <button
               @click="toggleSellerOrdersView"
-              class="w-full p-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-between active:scale-95 text-left"
+              class="w-full py-2.5 px-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-between active:scale-95 text-left"
               :class="showSellerOrdersView ? 'bg-amber-500 text-slate-900 border-amber-400 shadow-sm font-black' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'"
             >
               <span class="flex items-center gap-2">
-                <ClipboardList :size="16" class="text-amber-700" /> Pesanan Masuk Layanan
+                <ClipboardList :size="15" class="text-amber-700" /> Pesanan Masuk Layanan
               </span>
               <span v-if="pendingSellerOrdersCount > 0" class="bg-rose-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full animate-pulse">
                 {{ pendingSellerOrdersCount }}
@@ -47,11 +48,11 @@
 
             <button
               @click="toggleMyServicesOnly"
-              class="w-full p-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-between active:scale-95 text-left"
+              class="w-full py-2.5 px-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-between active:scale-95 text-left"
               :class="showMyServicesOnly ? 'bg-emerald-700 text-white border-emerald-800 shadow-sm font-black' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'"
             >
               <span class="flex items-center gap-2">
-                <Briefcase :size="16" :class="showMyServicesOnly ? 'text-white' : 'text-emerald-700'" /> {{ showMyServicesOnly ? 'Semua Katalog' : 'Layanan Saya Saja' }}
+                <Briefcase :size="15" :class="showMyServicesOnly ? 'text-white' : 'text-emerald-700'" /> {{ showMyServicesOnly ? 'Semua Katalog' : 'Layanan Saya Saja' }}
               </span>
             </button>
           </div>

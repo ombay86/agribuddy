@@ -81,7 +81,7 @@
           to="/monitoring"
           class="rounded-xl font-bold transition-all group flex items-center"
           :class="[
-            $route.path.startsWith('/monitoring') && !isTransaksiTab ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white',
+            $route.path === '/monitoring' ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white',
             isCollapsed ? 'justify-center p-2.5 relative' : 'gap-3 px-3 py-2'
           ]"
           title="Monitoring Sawah & AI"
@@ -106,10 +106,10 @@
 
         <!-- 4. Transaksi & Pesanan -->
         <router-link
-          to="/monitoring?tab=transaksi"
+          to="/pesanan"
           class="rounded-xl font-bold transition-all group flex items-center"
           :class="[
-            isTransaksiTab ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white',
+            $route.path === '/pesanan' || $route.path === '/transaksi' ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white',
             isCollapsed ? 'justify-center p-2.5 relative' : 'justify-between px-3 py-2'
           ]"
           title="Pesanan & Transaksi"

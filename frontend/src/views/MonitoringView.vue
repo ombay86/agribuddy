@@ -359,6 +359,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { api, WeatherData, SaprotanOrder, MarketListing, ServiceOrder } from '@/services/api';
 import { useUserState } from '@/services/userState';
 import OrderChatModal from '@/components/OrderChatModal.vue';
@@ -468,8 +469,27 @@ const detectGPSWeather = () => {
   );
 };
 
+const route = useRoute();
+
+const syncTabFromQuery = () => {
+  if (route.query.tab === 'transaksi') {
+    activeSection.value = 'transaksi';
+  } else if (route.query.tab === 'stok') {
+    activeSection.value = 'stok';
+  } else if (route.query.tab === 'lumbung') {
+    activeSection.value = 'lumbung';
+  } else if (route.query.tab === 'sawah') {
+    activeSection.value = 'sawah';
+  }
+};
+
 onMounted(() => {
+  syncTabFromQuery();
   fetchMonitoringData();
+});
+
+watch(() => route.query.tab, () => {
+  syncTabFromQuery();
 });
 
 watch(currentUserId, () => {

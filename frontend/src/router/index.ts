@@ -8,6 +8,7 @@ import DokterTaniView from '@/views/DokterTaniView.vue'
 import RencanaTaniView from '@/views/RencanaTaniView.vue'
 import BukuTaniView from '@/views/BukuTaniView.vue'
 import LumbungView from '@/views/LumbungView.vue'
+import PesananView from '@/views/PesananView.vue'
 
 const routes = [
   { path: '/login', name: 'Login', component: LoginView },
@@ -15,13 +16,17 @@ const routes = [
   { path: '/', name: 'Jejaring', component: JejaringView },
   { path: '/jejaring', redirect: '/' },
 
-  // 2. Menu Kedua: Monitoring (Pantau Sawah, Stok, & Transaksi)
+  // 2. Menu Kedua: Monitoring (Pantau Sawah & AI)
   { path: '/monitoring', name: 'Monitoring', component: MonitoringView },
 
   // 3. Menu Ketiga: Katalog (Marketplace Layanan & Produk)
   { path: '/katalog', name: 'Katalog', component: KatalogView },
 
-  // 4. Menu Keempat: Profil (Saya & Kelola Layanan)
+  // 4. Menu Keempat: Pesanan & Transaksi (Monitoring Pesanan Khusus)
+  { path: '/pesanan', name: 'Pesanan', component: PesananView },
+  { path: '/transaksi', redirect: '/pesanan' },
+
+  // 5. Menu Kelima: Profil (Saya & Kelola Layanan)
   { path: '/profil', name: 'Profil', component: ProfilView },
 
   // Direct shortcuts & compatibility
