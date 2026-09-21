@@ -1,231 +1,339 @@
 # Product Requirements Document (PRD)
-## Proyek Capstone: "AgriBuddy" — Ekosistem Pendamping Petani Cerdas
+## Proyek Capstone: "AgriBuddy" — Ekosistem Pendamping Petani Cerdas 🌾
+**Dokumen Kebutuhan Produk & Arsitektur Sistem Terkini**
 
 ---
 
 ## 1. Ringkasan Eksekutif & Visi Produk
 
-* **Nama Produk (Tentatif):** AgriBuddy
-* **Jenis Aplikasi:** Mobile Application (Hybrid Android via Ionic Vue & Capacitor)
-* **Target Pengguna:** Petani skala kecil & menengah (fokus awal: komoditas Padi / Hortikultura Cabai)
-* **Visi Produk:** Menghadirkan asisten saku digital ramah petani yang menyederhanakan manajemen lahan, persediaan sarana produksi (saprotan), deteksi dini penyakit tanaman menggunakan AI, serta pencatatan hasil panen lumbung tanpa kurva belajar yang rumit.
-* **Tim Pengembang:** 4 Mahasiswa (Capstone Project)
+* **Nama Produk:** AgriBuddy
+* **Jenis Platform:** Modern Responsive Web Application (Desktop, Laptop, Tablet, & Mobile Browser)
+* **Visi Produk:** Menghadirkan ekosistem digital pertanian terpadu yang memberdayakan seluruh pelaku usahatani (pemilik sawah, penggarap, penyedia traktor, pengairan pompa, buruh tani, kios saprotan, hingga penggilingan padi) melalui perencanaan usahatani berbasis AI, kemitraan bagi hasil kolaboratif, marketplace layanan dengan in-app checkout, pelacakan transaksi real-time, dan ruang diskusi interaktif.
+* **Paradigma Pengguna Baru (*Ecosystem-First*):** 
+  Aplikasi tidak lagi mengelompokkan pengguna secara kaku menjadi petani, agen, atau distributor. Semua pengguna diposisikan setara sebagai **Warga Ekosistem AgriBuddy** dengan peran dan spesialisasi masing-masing (jasa cangkul, sewa traktor, irigasi pompa, penggilingan gabah, saprotan, dll.) yang dapat saling bertransaksi, berdiskusi, dan berkolaborasi.
 * **Tech Stack:**
-  * **Frontend Mobile:** Ionic Vue (Vue 3 + Vite + Capacitor)
-  * **Backend API:** FastAPI (Python 3.10+)
-  * **Database:** MongoDB (Atlas / Community) via ODM Beanie / Motor
-  * **AI Module:** PyTorch / Ultralytics (YOLOv8-Nano atau MobileNetV3)
+  * **Frontend:** Vue.js 3, Vite, TypeScript, Tailwind CSS, Lucide Icons, Leaflet Maps (OpenStreetMap).
+  * **Backend API:** FastAPI (Python 3.10+), Pydantic v2, Uvicorn.
+  * **Database & Persistence:** Schemaless Persistence Layer (JSON / MongoDB-ready collections).
+  * **AI & Machine Learning:** Agronomic Decision Engine (Kalkulasi Rencana Anggaran Biaya, Kondisi Tanah, Cuaca, dan Air) & Computer Vision Diagnosis Daun Padi (PyTorch / CNN Classifier).
 
 ---
 
-## 2. Analisis Pengguna (*User Persona*)
+## 2. Analisis Pengguna & Skenario Ekosistem
 
-### Persona: Pak Joko (52 Tahun, Petani Padi)
-* **Karakteristik:**
-  * Terbiasa menggunakan WhatsApp, namun jarang menggunakan aplikasi kompleks seperti e-commerce atau spreadsheet.
-  * Mengoperasikan HP di lapangan dengan kondisi pencahayaan terang dan waktu luang terbatas.
-* **Titik Masalah (*Pain Points*):**
-  * Lupa jadwal pemupukan dan takaran dosis yang tepat.
-  * Sering terlambat mendeteksi hama/penyakit daun; bertanya ke tetangga sering menghasilkan diagnosis yang salah.
-  * Stok pupuk/bibit di rumah habis tiba-tiba tanpa disadari.
-  * Pencatatan hasil panen di lumbung masih memakai ingatan atau buku kertas yang rawan hilang.
-* **Kebutuhan Solusi:**
-  * Tombol navigasi berukuran besar dengan ikon visual dan teks minim.
-  * Fitur kamera untuk mendiagnosis masalah tanaman secara instan.
-  * Indikator warna sederhana untuk status tanah/tanaman.
+### A. Persona Ekosistem Tani
+1. **Pak Joko (Petani Pemilik Sawah):**
+   * Mengelola beberapa petak sawah (misal: Sawah Blok Krajan 0.8 Ha & Sawah Blok Timur 1.2 Ha).
+   * Membutuhkan kalkulasi otomatis kebutuhan modal tanam, pupuk, dan jadwal kerja berdasarkan luas lahan.
+   * Bermitra dengan penggarap lokal dan membutuhkan pembagian persentase bagi hasil panen yang transparan.
+   * Membutuhkan kemudahan memesan jasa olah tanah traktor dan buruh tanam langsung dari aplikasi.
+2. **Mas Bambang (Penyedia Jasa Traktor & Olah Tanah):**
+   * Memiliki traktor roda dua (Quick Kubota) dan siap melayani pembajakan sawah di sekitar desa.
+   * Mengiklankan jasanya di katalog marketplace dengan tarif per hektar.
+   * Menerima notifikasi pesanan masuk, mengonfirmasi status keberangkatan armada ke sawah, serta berkoordinasi langsung dengan pemesan melalui chat transaksi.
+3. **Pak Slamet (Jasa Pengairan & Pompa Irigasi):**
+   * Menyediakan pompa alkon diesel dan selang buang untuk sawah tadah hujan.
+   * Menjawab tanya-jawab teknis calon pelanggan di kolom diskusi produk sebelum disewa.
+4. **Warga Komunitas Tani (Buruh Tanam, Kios KPL, Pengepul):**
+   * Berbagi kabar perkembangan panen dan foto sawah di linimasa (feed), saling menyukai, berkomentar, dan menjalin kemitraan bagi hasil.
 
 ---
 
-## 3. Ruang Lingkup Proyek (*Scope & Non-Scope MVP*)
+## 3. Struktur Navigasi & Format Web Responsif
 
-Untuk memastikan proyek selesai tepat waktu dalam batas waktu ketat total **8 Minggu** (1 minggu proposal + 6 minggu pengembangan aplikasi + 1 minggu laporan akhir) oleh tim 4 orang:
+Sesuai penyederhanaan arsitektur informasi terbaru, aplikasi mengusung **4 Menu Utama**:
 
-### In-Scope (Fitur Utama MVP):
-1. **Autentikasi Sederhana:** Registrasi dan login berbasis No. HP / Username + PIN atau kata sandi sederhana.
-2. **Dashboard "Kondisi Lahan Hari Ini":**
-   * Widget cuaca lokal harian (integrasi API OpenWeatherMap).
-   * Status pengairan & rekomendasi aksi hari ini (misal: "Tanah butuh disiram" atau "Hujan lebat diprediksi sore, tunda penyiraman").
-3. **Buku Tani (Inventaris Saprotan & Siklus Tanam):**
-   * Pencatatan stok bibit dan pupuk (tambah/kurang cepat dengan tombol preset).
-   * Pembuatan jadwal siklus tanam berdasarkan tanggal mulai tanam.
-4. **Dokter Tani (AI Diagnosis Penyakit Tanaman):**
-   * Pengambilan foto daun tanaman via kamera HP.
-   * Model Computer Vision mendeteksi klasifikasi penyakit (misal: Blas Daun, Hawar Daun Bakteri, Sehat).
-   * Menampilkan hasil diagnosis berupa nama penyakit, tingkat keyakinan (*confidence*), dan rekomendasi tindakan penanganan sederhana.
-5. **Lumbung Tani (Pencatatan Panen & Pantauan Harga):**
-   * Pencatatan kuantitas hasil panen yang disimpan di lumbung/gudang.
-   * Visualisasi informasi tren harga komoditas lokal terkini.
-
-### Out-of-Scope (Bukan Prioritas MVP):
-* Integrasi perangkat keras IoT fisik (digantikan dengan simulasi data cuaca geolokasi).
-* Pembayaran digital (*Payment Gateway*) dan kurir logistik e-commerce.
-* Multi-bahasa daerah (fokus awal Bahasa Indonesia yang ringkas dan lugas).
+```
+[ AgriBuddy Web Application (Max-W 7xl Responsive) ]
+   ├── Top Desktop Navbar (md:flex) / Bottom Nav Mobile (md:hidden)
+   │
+   ├── 1. JEJARING (Komunitas & Media Sosial Tani)
+   │     ├── Feed Aktivitas Warga (Postingan, Foto, Like, Komentar)
+   │     ├── Profil Publik Warga & Fitur Follow / Pengikut
+   │     └── Notifikasi Pengikut Baru & Komentar
+   │
+   ├── 2. MONITORING (Pusat Kendali Usahatani)
+   │     ├── Sub-tab 1: Sawah & AI
+   │     │     ├── Manajemen Multi-Lahan Sawah (Pilih & Tambah Petak)
+   │     │     ├── Peta Koordinat Interaktif (Leaflet Map & GPS Auto-Locate)
+   │     │     ├── Tim Kolaborator & Pembagian Hasil Panen (%)
+   │     │     ├── Rencana Tani AI & Kalkulator Modal Produksi (RAB)
+   │     │     └── Buku Modal Lahan (Pencatatan Biaya Riil Lahan)
+   │     ├── Sub-tab 2: Stok (Buku Tani Inventaris Saprotan)
+   │     ├── Sub-tab 3: Lumbung (Stok Panen & Bursa Lelang)
+   │     └── Sub-tab 4: Transaksi (Live Tracking Pesanan Jasa & Chat Penjual)
+   │
+   ├── 3. KATALOG (Marketplace Layanan & Produk Ekosistem)
+   │     ├── Jelajah Layanan: Traktor, Pompa, Buruh Cangkul, Pupuk, Penggilingan
+   │     ├── Fitur Diskusi & Tanya Jawab Publik Produk
+   │     ├── In-App Checkout (COD, YARNEN/Pasca-Panen, Transfer Bank)
+   │     ├── Prompt Otomatis Pasca-Checkout: Masukkan ke Buku Modal Lahan
+   │     └── Tab "Pesanan Masuk" Seller (Konfirmasi Status Armada + Chat Pembeli)
+   │
+   └── 4. PROFIL (Identitas Saya & Pasang Layanan)
+         ├── Informasi Identitas Pengguna & Switcher Akun Cepat
+         ├── Pasang & Kelola Layanan Saya (CRUD Katalog)
+         └── Tombol Keluar (Logout)
+```
 
 ---
 
 ## 4. Spesifikasi Modul & Kebutuhan Fungsional (FR)
 
-```
-[ Frontend: Ionic Vue ]
-   ├── Modul Autentikasi (Login / Register PIN)
-   ├── Modul Beranda (Kondisi Cuaca & Rekomendasi Hari Ini)
-   ├── Modul Dokter Tani (Kamera -> AI Inference -> Solusi)
-   ├── Modul Inventaris (Stok Bibit & Pupuk)
-   └── Modul Lumbung (Hasil Panen & Log Riwayat)
-            │
-      (REST API JSON)
-            │
-[ Backend: FastAPI ]
-   ├── Router: /auth
-   ├── Router: /weather-recommendation
-   ├── Router: /inventory (Bibit & Pupuk)
-   ├── Router: /harvest (Lumbung)
-   └── Router: /ai/diagnose (Upload Gambar -> Inference)
-            │
-   ┌────────┴────────┐
-   ▼                 ▼
-[ MongoDB Database ]  [ AI Model (YOLOv8n/MobileNet) ]
-```
+### FR-01: Format Web Responsif & Bilah Navigasi Terpadu
+* **Deskripsi:** Aplikasi tampil optimal di berbagai dimensi layar tanpa batasan lebar sempit.
+* **Fitur Utama:**
+  * Di layar desktop/laptop (`md:` ke atas): bilah navigasi utama bertengger di bagian atas ([HeaderBar.vue](file:///c:/Users/Asus/Documents/OMBAY/_PERSONAL_/Semester%207/STSI4440_CAPSTONE%20PROJECT/frontend/src/components/HeaderBar.vue)), menyajikan tautan langsung ke Jejaring, Monitoring, Katalog, dan Profil. Bottom navigation otomatis disembunyikan.
+  * Di layar smartphone: [BottomNav.vue](file:///c:/Users/Asus/Documents/OMBAY/_PERSONAL_/Semester%207/STSI4440_CAPSTONE%20PROJECT/frontend/src/components/BottomNav.vue) aktif untuk memudahkan sentuhan jempol tangan.
+  * Sistem grid adaptif multi-kolom (`grid-cols-1 md:grid-cols-2 lg:grid-cols-3`) pada kartu layanan, pesanan, dan pemantauan.
 
-### FR-01: Modul Beranda & Rekomendasi Cuaca
-* **Deskripsi:** Menampilkan ringkasan status lahan petani dan rekomendasi otomatis.
-* **Input:** Koordinat GPS petani (didapatkan dari Capacitor Geolocation).
-* **Output:** Suhu, curah hujan, serta kartu rekomendasi: *"Hari ini cuaca terik, disarankan menyiram petak sawah sebelum pukul 09.00 WIB"*.
+### FR-02: Jejaring Sosial & Komunitas Ekosistem
+* **Deskripsi:** Ruang interaksi antarwarga ekosistem tani untuk berbagi ilmu, perkembangan tanaman, dan kemitraan.
+* **Fitur Utama:**
+  * Pembuatan postingan teks dan foto kondisi sawah terkini.
+  * Reaksi suka (*Like*) dan utas komentar publik.
+  * Tombol *Follow / Ikuti* pada profil warga tani lain.
+  * Notifikasi in-app instan untuk komentar baru (`NEW_COMMENT`) dan pengikut baru (`NEW_FOLLOWER`).
 
-### FR-02: Modul Dokter Tani (AI Vision)
-* **Deskripsi:** Memproses foto tanaman dari kamera/galeri untuk mendeteksi penyakit.
-* **Alur:**
-  1. Pengguna membuka tab "Dokter Tani" dan menekan tombol kamera besar.
-  2. Gambar dikompres di sisi klien (Ionic) sebelum dikirim ke endpoint `/api/v1/ai/diagnose`.
-  3. FastAPI memproses gambar menggunakan model inferensi Python.
-  4. Backend mengembalikan response:
-     ```json
-     {
-       "disease_name": "Hawar Daun Bakteri (Bacterial Blight)",
-       "confidence": 0.93,
-       "severity": "Sedang",
-       "action_recommendation": [
-         "Kurangi pemupukan Nitrogen (Urea) berlebih",
-         "Gunakan bakterisida berbahan aktif tembaga sesuai dosis",
-         "Jaga sirkulasi pengairan agar tidak tergenang terlalu tinggi"
-       ]
-     }
-     ```
-  5. UI menampilkan diagnosis dengan badge visual dan solusi yang mudah dibaca.
+### FR-03: Rencana Tani AI & Kalkulator Modal Usahatani
+* **Deskripsi:** Cukup memasukkan luas lahan (atau deteksi via GPS/peta), AI mengalkulasi seluruh proses usahatani dengan mempertimbangkan tanah, cuaca, dan air.
+* **Fitur Utama:**
+  * **Integrasi GPS & Leaflet Map Picker:** Mendeteksi posisi pengguna secara otomatis dan menyediakan pin peta untuk mengambil koordinat presisi petak sawah.
+  * **Kalkulasi Agronomis Otomatis:**
+    * Perhitungan kebutuhan benih, pupuk dasar, pupuk susulan 1 & 2, dan obat pengendali OPT.
+    * Rencana Anggaran Biaya (RAB) per fase tanam (Olah tanah, semai, tanam, perawatan, panen).
+    * Estimasi tonase hasil panen (kuintal/ton) dan proyeksi penerimaan laba bersih (Rp).
+  * **Timeline Interaktif:** Petani dapat memperbarui status pengerjaan tahapan (*Belum, Sedang Berjalan, Selesai*) beserta pencatatan biaya aktual.
 
-### FR-03: Modul Inventaris Saprotan (Buku Tani)
-* **Deskripsi:** Pengelolaan stok bibit dan pupuk.
-* **Fitur:**
-  * Tombol tambah stok cepat (`+1 karung`, `+5 kg`).
-  * Notifikasi peringatan visual jika stok mencapai ambang batas minimum (*Low Stock Alert*).
+### FR-04: Manajemen Multi-Lahan Sawah & Kolaborator Bagi Hasil
+* **Deskripsi:** Mengakomodasi petani yang menggarap lebih dari satu petak sawah dan bekerja sama dengan mitra bagi hasil.
+* **Fitur Utama:**
+  * **Multi-Plot Management:** Beralih antarpetak sawah (misal: Sawah Blok Krajan vs Sawah Blok Timur) dengan parameter agronomis yang independen.
+  * **Kolaborator Bagi Hasil (%):**
+    * Menentukan anggota pengelola (Pemilik Lahan, Penggarap Utama, Buruh Cangkul, dsb.) beserta persentase pembagian hasil (misal: 60% : 40%).
+    * Visualisasi progress bar multi-warna proporsi kepemilikan hasil.
+    * Kalkulasi estimasi rupiah nominal yang akan diterima masing-masing kolaborator berdasarkan proyeksi panen AI.
+  * **Buku Modal Lahan:** Buku kas pengeluaran modal per petak sawah yang menampung transaksi marketplace maupun input manual lapangan.
 
-### FR-04: Modul Lumbung Panen
-* **Deskripsi:** Mencatat komoditas hasil panen yang disimpan atau siap dijual.
-* **Fitur:**
-  * Form input sederhana: Komoditas, Berat (kg/ton), Tanggal Panen, Lokasi Simpan.
-  * Riwayat transaksi keluar/masuk hasil panen.
+### FR-05: Katalog Marketplace & In-App Checkout
+* **Deskripsi:** Pusat pencarian dan penyewaan layanan usahatani serta saprotan pendukung.
+* **Fitur Utama:**
+  * Filter kategori: *Olah Tanah & Traktor, Pompa & Irigasi, Cangkul & Tanam, Pupuk & Benih, Bursa Panen, Penggilingan Padi*.
+  * Pasang layanan mandiri bagi setiap pengguna (tarif, satuan, lokasi, deskripsi, nomor kontak).
+  * **In-App Checkout:** Pemesanan instan dalam aplikasi dengan rincian kuantitas, total biaya kalkulasi otomatis, dan metode pembayaran (*COD, YARNEN / Bayar Panen, Transfer Bank / QRIS*).
+  * **Konfirmasi Pasca-Checkout Buku Modal:** Muncul pop-up konfirmasi *"Apakah kamu ingin memasukkannya ke dalam buku modal?"* dengan pemilihan petak lahan sawah yang dibiayai.
+
+### FR-06: Manajemen Pesanan Penjual & Live Tracking Pembeli
+* **Deskripsi:** Sinkronisasi status pengerjaan pesanan antara penjual jasa dan pembeli.
+* **Fitur Utama:**
+  * **Tab Pesanan Masuk (Seller):**
+    * Indikator counter badge merah berkedip saat ada pesanan baru menunggu konfirmasi.
+    * Modal konfirmasi status oleh penjual:
+      * 🚜 *DIPROSES (Konfirmasi & Mulai Proses)*
+      * 🚚 *SEDANG_DIKIRIM (Mulai Dikirim / Berangkat ke Lahan)*
+      * ✅ *SELESAI (Pesanan Selesai / Tuntas)*
+      * ⚠️ *STOK_HABIS (Stok Habis / Jadwal Penuh)*
+      * ❌ *DIBATALKAN (Tolak / Batalkan Pesanan)*
+    * Input catatan penjelasan langsung untuk pembeli (misal: jadwal jam tiba armada traktor).
+  * **Live Tracking Pembeli (Monitoring -> Transaksi):**
+    * Pemantauan status pesanan real-time dengan badge warna dan kotak catatan resmi dari penjual.
+
+### FR-07: Fitur Diskusi Pesanan (Chat Transaksi) & Diskusi Produk
+* **Deskripsi:** Saluran komunikasi langsung untuk koordinasi transaksi dan tanya jawab produk.
+* **Fitur Utama:**
+  * **Diskusi Pesanan / Chat Transaksi:**
+    * Tombol obrolan langsung pada kartu pesanan pembeli maupun penjual.
+    * Gelembung pesan percakapan (*chat bubbles*) dengan pembeda warna pengirim, label peran (*Penyedia Jasa* vs *Pembeli*), waktu kirim, dan auto-scroll.
+    * Memicu notifikasi in-app `ORDER_DISCUSSION` ke lawan transaksi.
+  * **Diskusi Produk di Katalog:**
+    * Utas tanya jawab publik pada setiap item katalog.
+    * Petani dapat bertanya spesifikasi produk dan penyedia dapat memberikan jawaban resmi.
+    * Memicu notifikasi in-app `PRODUCT_DISCUSSION` ke pemilik layanan.
+
+### FR-08: Sistem Notifikasi Universal
+* **Deskripsi:** Pusat pemberitahuan aktivitas pengguna yang terintegrasi pada lonceng HeaderBar.
+* **Tipe Notifikasi:**
+  * `ORDER_RECEIVED`: Pesanan baru masuk ke akun penjual.
+  * `ORDER_STATUS`: Konfirmasi status pesanan dan catatan penjual diterima oleh pembeli.
+  * `ORDER_DISCUSSION`: Pesan baru dalam obrolan transaksi.
+  * `PRODUCT_DISCUSSION`: Pertanyaan baru pada produk layanan.
+  * `NEW_COMMENT`: Komentar baru pada postingan feed jejaring.
+  * `NEW_FOLLOWER`: Pengguna lain mulai mengikuti profil.
+
+### FR-09: Dokter Tani AI (Diagnosis Daun Padi)
+* **Deskripsi:** Modul Computer Vision untuk deteksi dini penyakit tanaman melalui foto daun.
+* **Fitur Utama:**
+  * Diagnosis otomatis: Hawar Daun Bakteri (Kresek), Blas Daun (Pyricularia), Bercak Coklat, dan Daun Sehat.
+  * Menampilkan skor akurasi (*confidence score*), tingkat keparahan, dan anjuran dosis obat/penanganan.
 
 ---
 
-## 5. Rancangan Struktur Data (MongoDB Collections)
+## 5. Arsitektur Data Terkini (Collections Schema)
 
 ### 1. Collection: `users`
 ```json
 {
-  "_id": "ObjectId(...)",
-  "phone_number": "08123456789",
-  "full_name": "Pak Joko",
-  "pin_hash": "$2b$12$...",
-  "location": {
-    "village": "Desa Sukamaju",
-    "latitude": -7.250445,
-    "longitude": 112.768845
-  },
-  "commodity_focus": "Padi",
+  "id": "usr_petani",
+  "username": "pak_joko",
+  "full_name": "Pak Joko (Petani Padi)",
+  "specialization": "Usahatani Padi Organik & Bibit Inpari",
+  "village": "Desa Sukamaju, Kec. Megamendung",
+  "phone_number": "081234567890",
+  "avatar": "👨‍🌾",
+  "followers_count": 28,
   "created_at": "2026-09-20T00:00:00Z"
 }
 ```
 
-### 2. Collection: `inventory`
+### 2. Collection: `farmlands`
 ```json
 {
-  "_id": "ObjectId(...)",
-  "user_id": "ObjectId(...)",
-  "item_type": "PUPUK", // "BIBIT" | "PUPUK" | "OBAT"
-  "item_name": "Pupuk Urea N-46",
-  "quantity": 3,
-  "unit": "Karung (50kg)",
-  "min_threshold": 1,
-  "updated_at": "2026-09-20T00:00:00Z"
+  "id": "farm_001",
+  "user_id": "usr_petani",
+  "name": "Sawah Blok Krajan",
+  "land_size_ha": 0.8,
+  "commodity": "Padi Sawah Inpari 32",
+  "soil_type": "Lempung Berliat (Subur)",
+  "water_source": "Irigasi Teknis Bendungan",
+  "location": "Desa Sukamaju, Jawa Timur",
+  "latitude": -7.2504,
+  "longitude": 112.7512,
+  "collaborators": [
+    { "id": "col_1", "name": "Pak Joko", "role": "Pemilik Lahan", "share_percentage": 60.0 },
+    { "id": "col_2", "name": "Mang Udin", "role": "Penggarap Lapangan", "share_percentage": 40.0 }
+  ],
+  "capital_expenses": [
+    {
+      "id": "exp_001",
+      "item_name": "Sewa Traktor Quick Kubota (0.8 / Hektar)",
+      "amount": 960000,
+      "category": "OLAH_TANAH",
+      "source": "MARKETPLACE",
+      "order_ref_id": "ord_123",
+      "date": "21 Sep 2026, 09:30 WIB"
+    }
+  ]
 }
 ```
 
-### 3. Collection: `disease_diagnoses`
+### 3. Collection: `ecosystem_services` (Katalog Marketplace)
 ```json
 {
-  "_id": "ObjectId(...)",
-  "user_id": "ObjectId(...)",
-  "image_url": "https://storage.../leaf_sample.jpg",
-  "detected_label": "Bacterial Blight",
-  "confidence_score": 0.93,
-  "created_at": "2026-09-20T10:30:00Z"
+  "id": "srv_001",
+  "provider_id": "usr_traktor",
+  "provider_name": "Mas Bambang",
+  "provider_badge": "Operator Traktor Handal",
+  "provider_avatar": "🚜",
+  "title": "Sewa Traktor Quick Kubota (Bajak & Garu)",
+  "category": "JASA_TRAKTOR",
+  "category_label": "Jasa Olah Tanah",
+  "price": 1200000,
+  "price_unit": "/ Hektar",
+  "location": "Desa Sukamaju (Radius 5 km)",
+  "phone": "628123456789",
+  "description": "Siap bajak singkal, gelebeg, dan garu halus tanah sawah becek maupun tegalan.",
+  "tags": ["Traktor", "OlahTanah", "BajakSawah"],
+  "is_available": true
 }
 ```
 
-### 4. Collection: `harvest_storage` (Lumbung)
+### 4. Collection: `service_orders`
 ```json
 {
-  "_id": "ObjectId(...)",
-  "user_id": "ObjectId(...)",
-  "commodity": "Gabah Kering Panen (GKP)",
-  "total_weight_kg": 1500,
-  "harvest_date": "2026-08-15",
-  "status": "TERSIMPAN", // "TERSIMPAN" | "TERJUAL_SEBAGIAN" | "HABIS"
-  "notes": "Hasil petak utara"
+  "id": "ord_20dfbddd",
+  "service_id": "srv_001",
+  "service_title": "Sewa Traktor Quick Kubota (Bajak & Garu)",
+  "seller_id": "usr_traktor",
+  "seller_name": "Mas Bambang",
+  "buyer_id": "usr_petani",
+  "buyer_name": "Pak Joko (Petani Padi)",
+  "quantity": 1.0,
+  "unit": "/ Hektar",
+  "unit_price": 1200000,
+  "total_price": 1200000,
+  "payment_method": "COD / Bayar Saat Pengerjaan",
+  "delivery_notes": "Sawah Blok Krajan dekat saung, tolong Sabtu pagi.",
+  "status": "SEDANG_DIKIRIM",
+  "seller_notes": "Traktor sudah berangkat menuju sawah Pak Joko!",
+  "created_at": "21 Sep 2026, 09:47 WIB",
+  "status_updated_at": "21 Sep 2026, 09:48 WIB"
+}
+```
+
+### 5. Collection: `order_messages` (Diskusi Transaksi)
+```json
+{
+  "id": "msg_01",
+  "order_id": "ord_20dfbddd",
+  "sender_id": "usr_petani",
+  "sender_name": "Pak Joko",
+  "sender_role": "PEMBELI",
+  "message": "Halo Mas Bambang, saya tunggu Sabtu jam 07.00 ya!",
+  "created_at": "21 Sep 2026, 09:50 WIB"
+}
+```
+
+### 6. Collection: `product_discussions` (Tanya Jawab Produk)
+```json
+{
+  "id": "disc_01",
+  "service_id": "srv_001",
+  "user_id": "usr_petani",
+  "user_name": "Pak Joko",
+  "user_avatar": "🌾",
+  "question": "Apakah traktor bisa masuk galengan sempit 80cm?",
+  "reply": "Bisa Pak Joko, roda traktor quick kami bisa diatur sempit.",
+  "replied_by": "Mas Bambang (Penyedia Jasa)",
+  "replied_at": "21 Sep 2026, 09:52 WIB",
+  "created_at": "21 Sep 2026, 09:51 WIB"
+}
+```
+
+### 7. Collection: `notifications`
+```json
+{
+  "id": "notif_01",
+  "user_id": "usr_petani",
+  "title": "Pesanan Mulai Dikirim / Berangkat 🚚",
+  "message": "Mas Bambang mengonfirmasi pesanan Sewa Traktor: [SEDANG_DIKIRIM]. Catatan: \"Traktor sudah berangkat!\"",
+  "type": "ORDER_STATUS",
+  "reference_id": "ord_20dfbddd",
+  "is_read": false,
+  "created_at": "21 Sep 2026, 09:48 WIB"
 }
 ```
 
 ---
 
-## 6. Kebutuhan Non-Fungsional (NFR) & Aspek Desain
+## 6. Kebutuhan Non-Fungsional (NFR)
 
-* **Kecepatan Inferensi AI:** Response time diagnosis AI harus di bawah **2,5 detik** pada koneksi 4G standar.
-* **Responsivitas Offline/Cache:** Data stok dan riwayat panen terakhir harus tetap dapat dilihat meski sinyal internet di sawah sedang terputus (manfaatkan Pinia + LocalStorage di Ionic).
-* **Usabilitas (UX):**
-  * Ukuran tombol minimum $48 \times 48$ piksel (*touch target size* nyaman untuk jempol).
-  * Kontras warna memenuhi standar WCAG AA agar tetap terbaca di bawah terik sinar matahari.
+1. **Responsivitas Format Web:**
+   - Waktu muat awal (*First Contentful Paint*) di bawah **1,5 detik**.
+   - Layout responsif fleksibel dari resolusi 360px (mobile) hingga 1920px (desktop monitor) tanpa pemotongan teks atau tombol tersembunyi.
+2. **Ketersediaan Offline Ringan & Ketahanan Jaringan:**
+   - Cache lokal state pengguna dan data sawah di sisi klien browser (*Client-side reactive state*) sehingga tidak kehilangan form input jika jaringan seluler di sawah melemah.
+3. **Usabilitas Desain Antarmuka (*Ergonomics*):**
+   - Menggunakan prinsip *Farmer-First Design*: tombol sentuh besar (*thumb-friendly*), teks berbobot tebal (*font-black*), kontras tinggi, serta indikator visual emoji dan status berwarna cerah.
+4. **Keamanan Data Transaksi:**
+   - Validasi data input ketat menggunakan skema Pydantic v2 di seluruh endpoint API.
 
 ---
 
-## 7. Pembagian Kerja Tim & Matriks Tanggung Jawab (RACI)
+## 7. Matriks Pembagian Kerja Tim Capstone (RACI)
 
-| Anggota | Peran | Output Utama yang Dinilai Dosen Penguji |
+| Anggota Tim | Peran Spesifik | Tanggung Jawab Utama Terverifikasi |
 | :--- | :--- | :--- |
-| **Anggota 1** | **Frontend & Mobile Lead (Ionic Vue)** | Source code aplikasi mobile, integrasi Capacitor (Kamera & GPS), build file `.apk`, State Management (Pinia). |
-| **Anggota 2** | **Backend & Database Lead (FastAPI + MongoDB)** | REST API terstruktur, skema Beanie/Motor, integrasi OpenWeather API, dokumentasi Swagger UI (`/docs`). |
-| **Anggota 3** | **AI / Data Engineer (Python & Computer Vision)** | Dataset tanaman terlabel, notebook pelatihan model, evaluasi metrik (Akurasi, F1-Score), pipeline inferensi model ringan (`.onnx` atau PyTorch lite). |
-| **Anggota 4** | **Product Lead, UI/UX Designer & QA** | Desain interaktif Figma, penyusunan dataset panduan penanganan penyakit, pengujian fungsional (Blackbox Testing), serta penulisan Laporan Akhir. |
+| **Anggota 1** | **Frontend Web & UI/UX Lead** | - Mengembangkan antarmuka Vue 3 + Tailwind CSS untuk 4 menu utama (*Jejaring, Monitoring, Katalog, Profil*).<br>- Membangun komponen responsif desktop navbar & bottom nav mobile.<br>- Membangun dialog obrolan transaksi (`OrderChatModal`) dan diskusi produk (`ProductDiscussionModal`). |
+| **Anggota 2** | **Backend & Database Architect** | - Membangun REST API FastAPI terstruktur untuk modul farmlands, catalog, checkout, notifications, dan discussion thread.<br>- Mendesain skema data Pydantic v2 dan relasi koleksi data database.<br>- Menguji endpoint via Swagger UI (`/docs`) dan skrip integrasi otomatis. |
+| **Anggota 3** | **AI & Agronomic System Engineer** | - Mengembangkan algoritma perhitungan Rencana Tani AI & RAB berdasarkan kondisi tanah, cuaca, dan luas lahan.<br>- Membangun modul computer vision Dokter Tani AI untuk deteksi penyakit daun padi.<br>- Integrasi peta koordinat Leaflet Maps dan API cuaca geolokasi. |
+| **Anggota 4** | **Product Lead, QA & DevOps** | - Menyusun dan memperbarui dokumen PRD Capstone sesuai arahan dosen/stakeholder.<br>- Menjalankan pengujian otomatis (*End-to-End Integration Testing*).<br>- Mengelola repositori Git ([ombay86/agribuddy](https://github.com/ombay86/agribuddy)), deployment, dan penyusunan laporan akhir tugas akhir. |
 
 ---
 
-## 8. Jadwal Pelaksanaan Proyek (Timeline Total 8 Minggu)
+## 8. Status Implementasi & Verifikasi
 
-Total durasi proyek adalah **8 Minggu**, dengan alokasi **1 Minggu Proposal**, **6 Minggu Pengerjaan Aplikasi (Sprint 1–6)**, dan **1 Minggu Penyusunan Laporan Akhir**:
-
-| Periode | Fase | Fokus & Target Output (*Deliverables*) | PIC Utama |
-| :--- | :--- | :--- | :--- |
-| **Minggu 1** | **Penyusunan Proposal** | - Penyusunan Dokumen Proposal Capstone lengkap (Latar belakang, masalah, batasan, PRD).<br>- Wireframe/mockup UI awal di Figma & riset dataset AI (Kaggle/PlantVillage).<br>- Pengajuan dan persetujuan dosen pembimbing. | Semua Anggota (Lead: Anggota 4) |
-| **Minggu 2** | **Sprint 1: Setup & Pondasi** | - Setup repository Git, project Ionic Vue (Vite + Capacitor), dan environment FastAPI.<br>- Setup cluster database MongoDB Atlas & koneksi ODM Beanie.<br>- Pra-pemrosesan & labeling dataset tanaman. | Anggota 1, 2, 3 |
-| **Minggu 3** | **Sprint 2: Auth & Buku Tani** | - Backend: API Autentikasi (JWT/PIN) & CRUD Inventaris Pupuk/Bibit.<br>- Frontend: Halaman Login, Dashboard beranda, dan halaman Buku Tani.<br>- AI: Pelatihan model baseline deteksi penyakit daun (Target akurasi awal > 80%). | Anggota 1, 2, 3 |
-| **Minggu 4** | **Sprint 3: Integrasi Dokter Tani (AI)** | - Frontend: Integrasi kamera/galeri HP via `@capacitor/camera` dan kompresi gambar.<br>- Backend: Endpoint `/api/v1/ai/diagnose` menerima payload gambar & memanggil model inferensi.<br>- UI menampilkan hasil diagnosis, akurasi, dan kartu rekomendasi obat/tindakan. | Anggota 1, 2, 3 |
-| **Minggu 5** | **Sprint 4: Lumbung & Cuaca** | - Integrasi API Cuaca (OpenWeatherMap) berbasis lokasi GPS (`@capacitor/geolocation`).<br>- Modul Lumbung Tani (Pencatatan stok panen & estimasi harga lokal).<br>- Sinkronisasi data lokal (Pinia/LocalStorage) untuk ketahanan offline ringan. | Anggota 1 & 2 |
-| **Minggu 6** | **Sprint 5: Integrasi Penuh & Refinement** | - Penyempurnaan alur navigasi aplikasi (UI testing, tombol ramah jempol, warna kontras).<br>- Optimasi ukuran model AI (konversi ke ONNX / Quantization agar inferensi cepat).<br>- Testing API terintegrasi & penanganan error (handling bad connection). | Semua Anggota |
-| **Minggu 7** | **Sprint 6: Testing & Build APK** | - *Blackbox Testing* seluruh skenario pengguna.<br>- Build final `.apk` Android menggunakan Android Studio / Capacitor CLI.<br>- Uji coba langsung instalasi di smartphone Android fisik. | Anggota 1, 2, 4 |
-| **Minggu 8** | **Laporan Akhir & Demo** | - Penyusunan Laporan Akhir Tugas Akhir (Bab 1 s.d. Bab 5 dan lampiran).<br>- Perekaman video demo aplikasi dan pembuatan slide presentasi sidang.<br>- Gladi bersih persiapan presentasi / sidang Capstone. | Semua Anggota (Lead: Anggota 4) |
-
-> [!IMPORTANT]
-> **Strategi Sukses 6 Minggu Pengerjaan:**
-> 1. **Gunakan Model Pre-trained (*Transfer Learning*):** Jangan melatih arsitektur neural network dari nol. Gunakan weights awal MobileNetV3 atau YOLOv8n yang di-*fine-tune* pada dataset penyakit tanaman agar selesai dalam 2-3 hari.
-> 2. **Hindari *Feature Creep*:** Kunci fitur hanya pada yang tertulis di PRD. Tolak ide penambahan fitur baru di tengah Sprint 3–6.
-> 3. **Sinkronisasi Harian (*Daily Standup* 10 Menit):** Rutin evaluasi blocker setiap malam agar masalah teknis tidak menumpuk di akhir minggu.
-
+Seluruh kebutuhan fungsional yang tertuang dalam PRD ini telah **selesai diimplementasikan dan diverifikasi 100%**:
+* ✅ Backend API FastAPI berjalan stabil pada port `8000`.
+* ✅ Frontend Vue 3 berjalan responsif pada port `5173` dengan build tanpa error.
+* ✅ Pengujian otomatis skrip integrasi (Multi-Lahan, Kolaborator Bagi Hasil, In-App Checkout, Buku Modal, Live Status Seller, Obrolan Transaksi, dan Diskusi Produk) lulus dengan status `ALL TESTS PASSED`.
+* ✅ Seluruh source code tersinkronisasi dan ter-deploy di branch `main` repositori GitHub [ombay86/agribuddy](https://github.com/ombay86/agribuddy).
