@@ -1,0 +1,1509 @@
+{
+  "users": [
+    {
+      "id": "usr_001",
+      "phone_number": "08123456789",
+      "full_name": "Pak Joko",
+      "village": "Desa Sukamaju, Jawa Timur",
+      "commodity": "Padi",
+      "created_at": "2026-09-20T22:55:36.860226"
+    },
+    {
+      "id": "usr_petani",
+      "phone_number": "08123456789",
+      "full_name": "Pak Joko",
+      "role": "PETANI",
+      "village": "Desa Sukamaju, Jawa Timur",
+      "commodity": "Padi Inpari 32",
+      "land_size_ha": 1.2,
+      "whatsapp_number": "08123456789",
+      "bio": "Petani Padi Binaan Kelompok Tani Makmur. Mengelola 1.2 Ha sawah irigasi teknis.",
+      "created_at": "2026-09-20T23:43:51.015494"
+    },
+    {
+      "id": "usr_distributor",
+      "phone_number": "085712345678",
+      "full_name": "Ibu Ratna",
+      "role": "DISTRIBUTOR",
+      "village": "Pasar Tradisional Sukamaju Kios B-04",
+      "commodity": "Saprotan Pupuk & Benih",
+      "land_size_ha": 0.0,
+      "whatsapp_number": "085712345678",
+      "bio": "Pengelola KPL resmi penyalur pupuk subsidi dan benih bersertifikat di Sukamaju.",
+      "created_at": "2026-09-20T23:43:51.015517"
+    },
+    {
+      "id": "usr_agen",
+      "phone_number": "081356789012",
+      "full_name": "Bpk. Hendra Jaya",
+      "role": "AGEN_PEMBELI",
+      "village": "Kawasan Sentra Penggilingan Padi Km 3",
+      "commodity": "Gabah Kering Panen (GKP)",
+      "land_size_ha": 0.0,
+      "whatsapp_number": "081356789012",
+      "bio": "Mitra penyerapan gabah dan penggilingan beras petani lokal dengan timbangan digital.",
+      "created_at": "2026-09-20T23:43:51.015519"
+    },
+    {
+      "id": "usr_traktor",
+      "phone_number": "081298765432",
+      "full_name": "Mas Bambang",
+      "role": "JASA_TRAKTOR",
+      "role_label": "Jasa Olah Tanah & Traktor",
+      "category_badge": "Sewa Traktor",
+      "village": "Desa Sukamaju Krajan",
+      "commodity": "Jasa Traktor Quick Kubota 8.5 HP",
+      "land_size_ha": 0.0,
+      "whatsapp_number": "081298765432",
+      "bio": "Menyediakan jasa bajak singkal & rotavator lengkap operator untuk olah tanah sawah siap tanam.",
+      "created_at": "2026-09-21T08:53:01.457976"
+    },
+    {
+      "id": "usr_pengairan",
+      "phone_number": "085799988811",
+      "full_name": "Pak Slamet",
+      "role": "JASA_PENGAIRAN",
+      "role_label": "Jasa Pompa Air & Irigasi",
+      "category_badge": "Jasa Pengairan",
+      "village": "Desa Sukamaju Blok Saluran",
+      "commodity": "Pompa Alkon 3 Inci & Sumur Pantek",
+      "land_size_ha": 0.0,
+      "whatsapp_number": "085799988811",
+      "bio": "Layanan sedot air sungai / embung dan persewaan pompa alkon ke petak sawah.",
+      "created_at": "2026-09-21T08:53:01.457977"
+    },
+    {
+      "id": "usr_cangkul",
+      "phone_number": "087811223344",
+      "full_name": "Mang Udin",
+      "role": "JASA_CANGKUL",
+      "role_label": "Jasa Cangkul & Tanam",
+      "category_badge": "Jasa Cangkul",
+      "village": "Desa Sukamaju Girang",
+      "commodity": "Regu Tanam & Cangkul Galengan",
+      "land_size_ha": 0.0,
+      "whatsapp_number": "087811223344",
+      "bio": "Koordinator regu tenaga kerja cangkul pematang sawah dan penanaman padi jajar legowo.",
+      "created_at": "2026-09-21T08:53:01.457978"
+    }
+  ],
+  "inventory": [
+    {
+      "id": "inv_001",
+      "user_id": "usr_001",
+      "name": "Pupuk Urea N-46",
+      "type": "PUPUK",
+      "quantity": 4.0,
+      "unit": "Karung (50kg)",
+      "min_threshold": 2,
+      "notes": "Untuk pemupukan susulan I & II",
+      "updated_at": "2026-09-21T09:01:52.316028"
+    },
+    {
+      "id": "inv_002",
+      "user_id": "usr_001",
+      "name": "Pupuk NPK Phonska",
+      "type": "PUPUK",
+      "quantity": 1,
+      "unit": "Karung (50kg)",
+      "min_threshold": 2,
+      "notes": "Stok menipis, segera beli",
+      "updated_at": "2026-09-20T22:55:36.860253"
+    },
+    {
+      "id": "inv_003",
+      "user_id": "usr_001",
+      "name": "Benih Padi Inpari 32",
+      "type": "BIBIT",
+      "quantity": 5,
+      "unit": "Kantong (5kg)",
+      "min_threshold": 2,
+      "notes": "Tahan wereng coklat",
+      "updated_at": "2026-09-20T22:55:36.860254"
+    }
+  ],
+  "harvests": [
+    {
+      "id": "hrv_001",
+      "user_id": "usr_001",
+      "commodity": "Gabah Kering Panen (GKP)",
+      "total_weight_kg": 2400,
+      "harvest_date": "2026-08-20",
+      "status": "TERSIMPAN",
+      "notes": "Hasil panen petak timur, disimpan di lumbung utama"
+    },
+    {
+      "id": "hrv_002",
+      "user_id": "usr_001",
+      "commodity": "Gabah Kering Giling (GKG)",
+      "total_weight_kg": 1100,
+      "harvest_date": "2026-07-10",
+      "status": "TERJUAL_SEBAGIAN",
+      "notes": "Sudah terjual 500kg ke KUD lokal"
+    }
+  ],
+  "diagnoses": [
+    {
+      "disease_name": "Hawar Daun Bakteri (Kresek)",
+      "confidence": 0.96,
+      "severity": "Tinggi",
+      "detected_at": "20 Sep 2026, 22:57 WIB",
+      "id": "dia_e04f36fa",
+      "created_at": "2026-09-20T22:57:38.207990"
+    },
+    {
+      "disease_name": "Blas Daun (Pyricularia oryzae)",
+      "confidence": 0.95,
+      "severity": "Tinggi",
+      "detected_at": "21 Sep 2026, 09:03 WIB",
+      "id": "dia_b621d405",
+      "created_at": "2026-09-21T09:03:25.045144"
+    }
+  ],
+  "partners": [
+    {
+      "id": "prt_001",
+      "name": "KUD Sumber Rejeki Sukamaju",
+      "category": "KOPERASI",
+      "category_label": "Koperasi Unit Desa",
+      "pic_name": "Bpk. H. Bambang (Ketua KUD)",
+      "phone_whatsapp": "6281298765432",
+      "location": "Jl. Raya Sukamaju No. 12, Jawa Timur",
+      "description": "Menyerap gabah hasil panen anggota kelompok tani, penyalur pupuk subsidi resmi, dan simpan pinjam tani.",
+      "is_verified": true,
+      "accepted_commodities": [
+        "Gabah Kering Panen",
+        "Gabah Kering Giling",
+        "Jagung"
+      ],
+      "buying_price_hint": "Beli GKP: Rp 6.800 - 7.000/kg",
+      "is_connected": true
+    },
+    {
+      "id": "prt_002",
+      "name": "Kios Tani Subur Makmur (KPL Resmi)",
+      "category": "DISTRIBUTOR_PUPUK",
+      "category_label": "Distributor Pupuk & Bibit",
+      "pic_name": "Ibu Ratna (Pengelola Kios)",
+      "phone_whatsapp": "6285712345678",
+      "location": "Pasar Tradisional Sukamaju Kios B-04",
+      "description": "Penyalur resmi pupuk subsidi (Urea & NPK Phonska) menggunakan Kartu Tani serta benih bersertifikat.",
+      "is_verified": true,
+      "accepted_commodities": [
+        "Saprotan Pupuk Subsidi & Non-Subsidi"
+      ],
+      "buying_price_hint": "Stok Urea & NPK Baru Tiba Kemarin",
+      "is_connected": false
+    },
+    {
+      "id": "prt_003",
+      "name": "Penggilingan Padi Sri Jaya",
+      "category": "PENGGILINGAN_PASAR",
+      "category_label": "Penggilingan & Pengepul",
+      "pic_name": "Bpk. Hendra Jaya",
+      "phone_whatsapp": "6281356789012",
+      "location": "Kawasan Sentra Penggilingan Padi Km 3",
+      "description": "Menerima gabah kering panen partai besar (truk/pick-up) dengan timbangan digital terkalibrasi dan pembayaran tunai/transfer langsung.",
+      "is_verified": true,
+      "accepted_commodities": [
+        "Gabah Kering Panen (GKP)",
+        "Beras Pecah Kulit"
+      ],
+      "buying_price_hint": "Siap Jemput Muatan ke Lokasi Lumbung",
+      "is_connected": false
+    },
+    {
+      "id": "prt_004",
+      "name": "Asosiasi Pedagang Pasar Induk Agrobisnis",
+      "category": "PENGGILINGAN_PASAR",
+      "category_label": "Pasar Induk Daerah",
+      "pic_name": "Bpk. Suryanto",
+      "phone_whatsapp": "6282145678901",
+      "location": "Pasar Induk Komoditas Pertanian Blok A",
+      "description": "Jaringan pedagang beras grosir antar kota, siap menampung pasokan beras medium & premium hasil panen kelompok tani.",
+      "is_verified": true,
+      "accepted_commodities": [
+        "Beras Medium",
+        "Beras Premium Inpari",
+        "Beras Merah"
+      ],
+      "buying_price_hint": "Kontrak Pasokan Rutin Mingguan",
+      "is_connected": false
+    }
+  ],
+  "offers": [
+    {
+      "id": "off_001",
+      "partner_id": "prt_001",
+      "partner_name": "KUD Sumber Rejeki Sukamaju",
+      "commodity": "Gabah Kering Panen (GKP)",
+      "weight_kg": 1500,
+      "offered_price_per_kg": 6900,
+      "status": "MENUNGGU_KONFIRMASI",
+      "created_at": "20 Sep 2026, 14:00 WIB",
+      "notes": "Gabah kering siap angkut dari lumbung barat"
+    }
+  ],
+  "shop_products": [
+    {
+      "id": "prod_001",
+      "seller_name": "Kios Tani Subur Makmur",
+      "seller_role": "DISTRIBUTOR",
+      "name": "Pupuk Urea N-46 (Subsidi)",
+      "category": "PUPUK",
+      "price": 112500,
+      "unit": "Karung (50kg)",
+      "stock_available": 45,
+      "is_subsidi": true,
+      "description": "Pupuk nitrogen murni untuk memacu pertumbuhan vegetatif daun dan anakan padi.",
+      "image_emoji": "🌱"
+    },
+    {
+      "id": "prod_002",
+      "seller_name": "Kios Tani Subur Makmur",
+      "seller_role": "DISTRIBUTOR",
+      "name": "Pupuk NPK Phonska Plus 15-15-15",
+      "category": "PUPUK",
+      "price": 185000,
+      "unit": "Karung (50kg)",
+      "stock_available": 30,
+      "is_subsidi": false,
+      "description": "NPK majemuk diperkaya Seng (Zn) dan Sulfur untuk malai padi berisi penuh dan bobot berat.",
+      "image_emoji": "🌾"
+    },
+    {
+      "id": "prod_003",
+      "seller_name": "KUD Sumber Rejeki Sukamaju",
+      "seller_role": "DISTRIBUTOR",
+      "name": "Benih Padi Inpari 32 Bersertifikat",
+      "category": "BIBIT",
+      "price": 75000,
+      "unit": "Kantong (5kg)",
+      "stock_available": 20,
+      "is_subsidi": false,
+      "description": "Benih label ungu resmi Balitbangtan, potensi hasil 10,5 ton/ha, tahan rebah & wereng coklat.",
+      "image_emoji": "🌾"
+    },
+    {
+      "id": "prod_004",
+      "seller_name": "Kios Tani Subur Makmur",
+      "seller_role": "DISTRIBUTOR",
+      "name": "Bakterisida Hayati Kuproxat 345 SC",
+      "category": "OBAT",
+      "price": 65000,
+      "unit": "Botol (250ml)",
+      "stock_available": 15,
+      "is_subsidi": false,
+      "description": "Solusi ampuh mengendalikan Hawar Daun Bakteri (Kresek) rekomendasi Dokter Tani AI.",
+      "image_emoji": "🧪"
+    }
+  ],
+  "saprotan_orders": [
+    {
+      "id": "ord_001",
+      "product_id": "prod_001",
+      "product_name": "Pupuk Urea N-46 (Subsidi)",
+      "product_type": "PUPUK",
+      "quantity": 2,
+      "unit": "Karung (50kg)",
+      "total_price": 225000,
+      "buyer_name": "Pak Joko (Petani)",
+      "seller_name": "Kios Tani Subur Makmur",
+      "payment_method": "COD / Bayar Saat Ambil",
+      "status": "SELESAI",
+      "created_at": "19 Sep 2026, 10:15 WIB",
+      "delivery_note": "Diambil sore saat pulang sawah"
+    }
+  ],
+  "market_listings": [
+    {
+      "id": "list_001",
+      "seller_name": "Pak Joko (Petani)",
+      "commodity": "Gabah Kering Panen (GKP)",
+      "total_weight_kg": 1500,
+      "starting_price_per_kg": 6800,
+      "min_order_kg": 500,
+      "location": "Lumbung Desa Sukamaju (Petak Timur)",
+      "status": "DIBUKA",
+      "notes": "Kadar air sekitar 14%, bulir bersih siap giling.",
+      "created_at": "20 Sep 2026, 09:30 WIB",
+      "bids": [
+        {
+          "id": "bid_001",
+          "bidder_name": "Penggilingan Padi Sri Jaya",
+          "bidder_role": "PENGGILINGAN",
+          "bid_price_per_kg": 6950,
+          "bid_weight_kg": 1500,
+          "notes": "Siap jemput dengan pick-up hari Kamis, timbangan di tempat tunai.",
+          "status": "MENUNGGU",
+          "created_at": "20 Sep 2026, 11:20 WIB"
+        },
+        {
+          "id": "bid_002",
+          "bidder_name": "KUD Sumber Rejeki Sukamaju",
+          "bidder_role": "KOPERASI",
+          "bid_price_per_kg": 6850,
+          "bid_weight_kg": 1500,
+          "notes": "Penyerapan gabah program ketahanan pangan desa.",
+          "status": "MENUNGGU",
+          "created_at": "20 Sep 2026, 12:45 WIB"
+        }
+      ]
+    }
+  ],
+  "community_posts": [
+    {
+      "id": "post_001",
+      "author_name": "Bpk. H. Bambang",
+      "author_role": "KETUA_POKTAN",
+      "author_role_label": "Ketua Kelompok Tani Makmur",
+      "title": "Pengumuman: Jadwal Aliran Air Irigasi Tersier Petak Utara",
+      "content": "Bapak-bapak anggota Poktan Makmur, pintu air Dam Timur akan dibuka mulai besok pagi jam 06.00 s.d 15.00 WIB untuk pengairan fase bunting. Mohon bersihkan saluran pematang masing-masing agar debit air lancar.",
+      "category": "INFO_POKTAN",
+      "category_label": "Info Poktan",
+      "created_at": "20 Sep 2026, 08:00 WIB",
+      "likes_count": 12,
+      "comments": [
+        {
+          "id": "comm_001",
+          "author_name": "Pak Joko",
+          "author_role": "Petani",
+          "comment": "Siap Pak Ketua, saluran petak saya sudah dibersihkan dari jerami tadi pagi.",
+          "created_at": "20 Sep 2026, 08:35 WIB"
+        },
+        {
+          "id": "comm_8e555f",
+          "author_name": "Mas Bambang",
+          "author_role": "Jasa Traktor",
+          "comment": "Siap bantu olah tanah Pak, kabari saja jadwalnya.",
+          "created_at": "21 Sep 2026, 09:38 WIB"
+        }
+      ],
+      "updated_at": "2026-09-21T09:38:35.988232"
+    },
+    {
+      "id": "post_002",
+      "author_name": "Pak Joko",
+      "author_role": "PETANI",
+      "author_role_label": "Petani Padi (Sukamaju)",
+      "title": "Waspada Gejala Daun Padi Menguning Kering di Tepi",
+      "content": "Pagi ini daun padi saya di petak timur terdeteksi Hawar Daun Bakteri (Kresek) lewat Dokter Tani AI. Tetangga sawah harap cek petak masing-masing dan kurangi urea jika musim hujan.",
+      "category": "TANYA_HAMA",
+      "category_label": "Hama & Penyakit",
+      "created_at": "20 Sep 2026, 14:15 WIB",
+      "likes_count": 8,
+      "comments": [
+        {
+          "id": "comm_002",
+          "author_name": "Kios Tani Subur Makmur",
+          "author_role": "Distributor",
+          "comment": "Pak Joko, stok bakterisida tembaga di kios sudah ready, silakan langsung pesan di tab Kios jika butuh.",
+          "created_at": "20 Sep 2026, 15:00 WIB"
+        }
+      ]
+    }
+  ],
+  "farm_plans": [
+    {
+      "plan_id": "pln_80_2000",
+      "user_id": "usr_001",
+      "land_size_ha": 0.8,
+      "commodity": "Padi Sawah Inpari 32",
+      "soil_type": "Lempung Berliat (Subur)",
+      "water_source": "Irigasi Teknis Bendungan",
+      "location": "Desa Sukamaju Krajan",
+      "weather_condition": {
+        "temp_celsius": 26.0,
+        "rain_probability": 20,
+        "season": "Musim Kemarau (Gadu)",
+        "note": "Kondisi cuaca cerah/normal (suhu 26.0°C). Dosis pemupukan NPK dan Urea standar berimbang dianjurkan."
+      },
+      "financial_summary": {
+        "total_budget": 6612000,
+        "hpp_per_kg": 1230,
+        "projected_yield_kg": 5376,
+        "projected_selling_price_per_kg": 6850,
+        "projected_revenue": 36825600,
+        "projected_net_profit": 30213600,
+        "roi_percentage": 457.0
+      },
+      "budget_items": [
+        {
+          "id": "bgt_1",
+          "phase": "Olah Tanah & Lahan",
+          "name": "Sewa Traktor & Operator (Bajak & Garu)",
+          "category": "JASA_TRAKTOR",
+          "recommended_provider": "Mas Bambang (Jasa Traktor Quick Sukamaju)",
+          "quantity": 0.8,
+          "unit": "Hektar",
+          "unit_price": 1200000,
+          "total_price": 960000,
+          "notes": "Olah tanah sempurna gembur dan perataan gulma"
+        },
+        {
+          "id": "bgt_2",
+          "phase": "Olah Tanah & Lahan",
+          "name": "Jasa Cangkul & Perbaikan Galengan/Pematang",
+          "category": "JASA_CANGKUL",
+          "recommended_provider": "Mang Udin & Kelompok Buruh Cangkul",
+          "quantity": 2,
+          "unit": "Orang-Hari",
+          "unit_price": 166666,
+          "total_price": 400000,
+          "notes": "Pembersihan kebocoran pematang sawah penahan air"
+        },
+        {
+          "id": "bgt_3",
+          "phase": "Persemaian & Benih",
+          "name": "Benih Padi Sawah Inpari 32 Bersertifikat",
+          "category": "SAPROTAN",
+          "recommended_provider": "Kios Tani Subur Makmur (Ibu Ratna)",
+          "quantity": 20.0,
+          "unit": "kg",
+          "unit_price": 15000,
+          "total_price": 300000,
+          "notes": "Daya tumbuh > 85%, tahan rebah"
+        },
+        {
+          "id": "bgt_4",
+          "phase": "Tanam",
+          "name": "Upah Buruh Tanam (Sistem Jajar Legowo 2:1)",
+          "category": "JASA_BURUH",
+          "recommended_provider": "Kelompok Tani Makmur (Regu Tanam Melati)",
+          "quantity": 8,
+          "unit": "Orang-Hari",
+          "unit_price": 140000,
+          "total_price": 1120000,
+          "notes": "Populasi rumpun optimal dan sirkulasi udara baik"
+        },
+        {
+          "id": "bgt_5",
+          "phase": "Nutrisi & Pemupukan",
+          "name": "Pupuk Urea N-46 (Subsidi)",
+          "category": "PUPUK",
+          "recommended_provider": "Kios Pupuk KPL Resmi",
+          "quantity": 160.0,
+          "unit": "kg",
+          "unit_price": 2250,
+          "total_price": 360000,
+          "notes": "Pemupukan dasar (1/3 dosis) dan susulan I & II"
+        },
+        {
+          "id": "bgt_6",
+          "phase": "Nutrisi & Pemupukan",
+          "name": "Pupuk Majemuk NPK Phonska 15-15-15",
+          "category": "PUPUK",
+          "recommended_provider": "Kios Pupuk KPL Resmi",
+          "quantity": 240.0,
+          "unit": "kg",
+          "unit_price": 3300,
+          "total_price": 792000,
+          "notes": "Keseimbangan fosfat & kalium untuk bobot bulir"
+        },
+        {
+          "id": "bgt_7",
+          "phase": "Nutrisi & Pemupukan",
+          "name": "Pupuk Hayati Organik / Pembenah Tanah",
+          "category": "PUPUK",
+          "recommended_provider": "Koperasi Unit Desa (KUD Sukamaju)",
+          "quantity": 400.0,
+          "unit": "kg",
+          "unit_price": 800,
+          "total_price": 320000,
+          "notes": "Menjaga mikroba tanah jenis Lempung Berliat (Subur)"
+        },
+        {
+          "id": "bgt_8",
+          "phase": "Pengairan",
+          "name": "Operasional Pengairan (Irigasi Teknis Bendungan)",
+          "category": "JASA_PENGAIRAN",
+          "recommended_provider": "Pak Slamet (Jasa Pompa Air Alkon Sukamaju)",
+          "quantity": 0.8,
+          "unit": "Paket Lahan",
+          "unit_price": 150000,
+          "total_price": 120000,
+          "notes": "Memanfaatkan saluran irigasi teknis P3A poktan (hemat biaya operasional)."
+        },
+        {
+          "id": "bgt_9",
+          "phase": "Perawatan & Hama",
+          "name": "Paket Fungisida & Bakterisida Hayati (Anti-Kresek)",
+          "category": "SAPROTAN",
+          "recommended_provider": "Kios Tani Subur Makmur",
+          "quantity": 2,
+          "unit": "Paket Obat",
+          "unit_price": 325000,
+          "total_price": 520000,
+          "notes": "Pencegahan dini hawar daun bakteri dan jamur bulir"
+        },
+        {
+          "id": "bgt_10",
+          "phase": "Panen & Pengangkutan",
+          "name": "Upah Panen / Sewa Mesin Combine Harvester",
+          "category": "JASA_PANEN",
+          "recommended_provider": "Bpk. Hendra Jaya (Mitra Penggilingan Sri Jaya)",
+          "quantity": 0.8,
+          "unit": "Hektar",
+          "unit_price": 1800000,
+          "total_price": 1440000,
+          "notes": "Termasuk perontokan dan penimbangan langsung"
+        },
+        {
+          "id": "bgt_11",
+          "phase": "Panen & Pengangkutan",
+          "name": "Karung & Ongkos Angkut ke Lumbung/Pengepul",
+          "category": "JASA_LOGISTIK",
+          "recommended_provider": "Armada Pick-Up Desa Sukamaju",
+          "quantity": 0.8,
+          "unit": "Paket Muatan",
+          "unit_price": 350000,
+          "total_price": 280000,
+          "notes": "Karung isi 50-60kg dan pengiriman ke lumbung tani"
+        }
+      ],
+      "timeline_phases": [
+        {
+          "step_no": 1,
+          "name": "Persemaian Benih & Pengolahan Tanah Pertama",
+          "day_range": "H-15 s/d H-5",
+          "duration_days": 10,
+          "status": "SELESAI",
+          "allocated_budget": 1660000,
+          "actual_cost": 1660000,
+          "tasks": [
+            "Rendam benih 24 jam dan tiriskan 48 jam hingga berkecambah",
+            "Bajak tanah pertama (singkal) sedalam 20-25 cm",
+            "Garu dan ratakan permukaan sawah agar lumpur matang sempurna"
+          ],
+          "ai_tips": "Pastikan bedengan persemaian tidak tergenang air lebih dari 2 cm agar kecambah tidak busuk."
+        },
+        {
+          "step_no": 2,
+          "name": "Penanaman Bibit & Pemupukan Dasar",
+          "day_range": "H+1 s/d H+7",
+          "duration_days": 7,
+          "status": "SEDANG_BERJALAN",
+          "allocated_budget": 1548000,
+          "actual_cost": 0,
+          "tasks": [
+            "Tanam bibit umur muda (15-18 hari setelah semai), 1-2 bibit per rumpun",
+            "Gunakan jarak tanam Jajar Legowo 2:1 (20 x 10 x 40 cm)",
+            "Aplikasi pupuk organik kandang dan 1/3 dosis Urea sebagai pupuk dasar"
+          ],
+          "ai_tips": "Tanam dangkal (1-2 cm) memicu pembentukan anakan produktif lebih cepat dan kuat."
+        },
+        {
+          "step_no": 3,
+          "name": "Pemupukan Susulan I & Penyiangan Gulma",
+          "day_range": "H+18 s/d H+24",
+          "duration_days": 6,
+          "status": "BELUM",
+          "allocated_budget": 522000,
+          "actual_cost": 0,
+          "tasks": [
+            "Penyiangan rumput liar/gulma dengan alat gosrok/landak",
+            "Taburkan pupuk susulan I (campuran NPK Phonska dan Urea)",
+            "Kondisikan air macak-macak (nyemek) saat menabur pupuk"
+          ],
+          "ai_tips": "Kondisi cuaca cerah/normal (suhu 26.0°C). Dosis pemupukan NPK dan Urea standar berimbang dianjurkan. Jangan tabur pupuk saat mendung pekat menjelang hujan deras agar tidak hanyut."
+        },
+        {
+          "step_no": 4,
+          "name": "Pemupukan Susulan II & Fase Primordia (Bunting)",
+          "day_range": "H+40 s/d H+50",
+          "duration_days": 10,
+          "status": "BELUM",
+          "allocated_budget": 642000,
+          "actual_cost": 0,
+          "tasks": [
+            "Pengamatan malai bunting dan serangan hama sundep/penggerek batang",
+            "Aplikasi pupuk susulan terakhir penambah Kalium untuk pengisian bulir",
+            "Pengaturan debit pintu air irigasi masuk setinggi 3-5 cm"
+          ],
+          "ai_tips": "Kebutuhan air pada fase bunting sangat krusial, hubungi pengelola pompa jika saluran kering."
+        },
+        {
+          "step_no": 5,
+          "name": "Pengisian Bulir, Pemasakan & Pencegahan Hama",
+          "day_range": "H+65 s/d H+85",
+          "duration_days": 20,
+          "status": "BELUM",
+          "allocated_budget": 520000,
+          "actual_cost": 0,
+          "tasks": [
+            "Semprot fungisida/bakterisida hayati bila tampak tanda daun menguning bercak",
+            "Pemasangan tali kresek/orang-orangan sawah pengusir burung pipit",
+            "Mulai kurangi ketinggian air sawah 10 hari sebelum panen raya"
+          ],
+          "ai_tips": "Keringkan sawah saat gabah sudah mulai menguning 85% untuk mempercepat kematangan serentak."
+        },
+        {
+          "step_no": 6,
+          "name": "Panen Raya & Distribusi ke Lumbung/Pengepul",
+          "day_range": "H+100 s/d H+115",
+          "duration_days": 15,
+          "status": "BELUM",
+          "allocated_budget": 1720000,
+          "actual_cost": 0,
+          "tasks": [
+            "Cek kadar air gabah kering panen (target 14-18%)",
+            "Pemanenan dengan Combine Harvester atau sabit gerigi",
+            "Pencatatan timbangan gabah dan penawaran langsung di Bursa Panen AgriBuddy"
+          ],
+          "ai_tips": "Langsung buat listing panen di AgriBuddy untuk mendapatkan penawaran harga tertinggi dari pengepul."
+        }
+      ],
+      "ecosystem_recommendations": [
+        {
+          "role_category": "Jasa Olah Tanah",
+          "partner_name": "Mas Bambang (Traktor Quick)",
+          "action_text": "Hubungi untuk jadwal bajak lahan",
+          "phone": "6281298765432"
+        },
+        {
+          "role_category": "Jasa Pengairan",
+          "partner_name": "Pak Slamet (Pompa Alkon 3 Inci)",
+          "action_text": "Booking jadwal sedot saluran",
+          "phone": "6285799988811"
+        },
+        {
+          "role_category": "Penyedia Saprotan",
+          "partner_name": "Kios Tani Subur Makmur (Ibu Ratna)",
+          "action_text": "Pesan pupuk & benih bersertifikat",
+          "phone": "6285712345678"
+        },
+        {
+          "role_category": "Penggilingan Padi",
+          "partner_name": "Bpk. Hendra Jaya (Sri Jaya)",
+          "action_text": "Cek harga serapan gabah panen",
+          "phone": "6281356789012"
+        }
+      ],
+      "id": "far_892ac03e",
+      "created_at": "2026-09-21T08:53:04.123669",
+      "updated_at": "2026-09-21T09:46:58.978654",
+      "latitude": -7.2504,
+      "longitude": 112.7512,
+      "coordinates_label": "-7.2504, 112.7512 (Desa Sukamaju Krajan)"
+    }
+  ],
+  "ecosystem_services": [
+    {
+      "id": "srv_001",
+      "provider_id": "usr_traktor",
+      "provider_name": "Mas Bambang",
+      "provider_badge": "Sewa Traktor",
+      "provider_avatar": "🚜",
+      "title": "Sewa Traktor Quick Kubota (Bajak & Garu)",
+      "category": "JASA_TRAKTOR",
+      "category_label": "Jasa Olah Tanah",
+      "price": 1200000,
+      "price_unit": "/ Hektar",
+      "location": "Desa Sukamaju Krajan",
+      "phone": "6281298765432",
+      "description": "Paket olah tanah sawah sampai gembur siap tanam. Termasuk traktor Quick Kubota 8.5 HP, operator berpengalaman, dan BBM solar.",
+      "tags": [
+        "Traktor Roda 2",
+        "Singkal & Garu",
+        "Lahan Basah & Kering"
+      ],
+      "is_available": true,
+      "created_at": "2026-09-20T08:00:00"
+    },
+    {
+      "id": "srv_002",
+      "provider_id": "usr_traktor",
+      "provider_name": "Mas Bambang",
+      "provider_badge": "Sewa Traktor",
+      "provider_avatar": "🚜",
+      "title": "Olah Tanah Rotavator Cepat",
+      "category": "JASA_TRAKTOR",
+      "category_label": "Jasa Olah Tanah",
+      "price": 1100000,
+      "price_unit": "/ Hektar",
+      "location": "Desa Sukamaju Krajan",
+      "phone": "6281298765432",
+      "description": "Penghancuran tanah dan gulma dalam sekali jalan dengan pisau rotavator tajam, tanah langsung gembur merata.",
+      "tags": [
+        "Rotavator",
+        "Gulma Hancur",
+        "Cepat Selesai"
+      ],
+      "is_available": true,
+      "created_at": "2026-09-20T08:30:00"
+    },
+    {
+      "id": "srv_003",
+      "provider_id": "usr_pengairan",
+      "provider_name": "Pak Slamet",
+      "provider_badge": "Jasa Pengairan",
+      "provider_avatar": "💧",
+      "title": "Sewa Mesin Pompa Alkon 3 Inci + Selang Spiral 50m",
+      "category": "JASA_PENGAIRAN",
+      "category_label": "Jasa Pengairan",
+      "price": 150000,
+      "price_unit": "/ Hari",
+      "location": "Desa Sukamaju Blok Saluran",
+      "phone": "6285799988811",
+      "description": "Mesin pompa diesel alkon 3 inci hisap debit tinggi, lengkap selang buang 50 meter dan saringan hisap.",
+      "tags": [
+        "Pompa Alkon 3 Inci",
+        "Selang 50m",
+        "Debit Tinggi"
+      ],
+      "is_available": true,
+      "created_at": "2026-09-20T09:00:00"
+    },
+    {
+      "id": "srv_004",
+      "provider_id": "usr_pengairan",
+      "provider_name": "Pak Slamet",
+      "provider_badge": "Jasa Pengairan",
+      "provider_avatar": "💧",
+      "title": "Jasa Sedot Air Sungai / Embung ke Petak Sawah",
+      "category": "JASA_PENGAIRAN",
+      "category_label": "Jasa Pengairan",
+      "price": 350000,
+      "price_unit": "/ Paket (1 Ha)",
+      "location": "Desa Sukamaju",
+      "phone": "6285799988811",
+      "description": "Paket borongan pengairan sawah sampai air tergenang macak-macak siap tabur pupuk susulan.",
+      "tags": [
+        "Borongan Sedot",
+        "Musim Kemarau",
+        "Antar Mesin"
+      ],
+      "is_available": true,
+      "created_at": "2026-09-20T09:15:00"
+    },
+    {
+      "id": "srv_005",
+      "provider_id": "usr_cangkul",
+      "provider_name": "Mang Udin",
+      "provider_badge": "Jasa Cangkul",
+      "provider_avatar": "🌾",
+      "title": "Regu Tanam Padi Borongan (Sistem Jajar Legowo 2:1)",
+      "category": "JASA_TENAGA_KERJA",
+      "category_label": "Tenaga Kerja Tani",
+      "price": 1400000,
+      "price_unit": "/ Hektar",
+      "location": "Desa Sukamaju Girang",
+      "phone": "6287811223344",
+      "description": "Regu tanam wanita dan pria terampil 10-12 orang, pola tanam jajar legowo lurus rapi, jarak tanam teratur.",
+      "tags": [
+        "Jajar Legowo 2:1",
+        "Rapi & Cepat",
+        "1 Hari Selesai"
+      ],
+      "is_available": true,
+      "created_at": "2026-09-20T09:30:00"
+    },
+    {
+      "id": "srv_006",
+      "provider_id": "usr_cangkul",
+      "provider_name": "Mang Udin",
+      "provider_badge": "Jasa Cangkul",
+      "provider_avatar": "🌾",
+      "title": "Jasa Cangkul & Perbaikan Galengan Pematang Sawah",
+      "category": "JASA_TENAGA_KERJA",
+      "category_label": "Tenaga Kerja Tani",
+      "price": 120000,
+      "price_unit": "/ Orang / Hari",
+      "location": "Desa Sukamaju",
+      "phone": "6287811223344",
+      "description": "Pembersihan rumput galengan, penutupan lubang kepiting penahan kebocoran air, dan pematang kokoh.",
+      "tags": [
+        "Cangkul Galengan",
+        "Tahan Bocor",
+        "Tenaga Kuat"
+      ],
+      "is_available": true,
+      "created_at": "2026-09-20T10:00:00"
+    },
+    {
+      "id": "srv_007",
+      "provider_id": "usr_distributor",
+      "provider_name": "Ibu Ratna",
+      "provider_badge": "Kios Saprotan",
+      "provider_avatar": "🏪",
+      "title": "Pupuk Urea N-46 Petrokimia (Subsidi)",
+      "category": "SAPROTAN",
+      "category_label": "Pupuk & Benih",
+      "price": 112500,
+      "price_unit": "/ Karung (50kg)",
+      "location": "Pasar Sukamaju Kios B-04",
+      "phone": "6285712345678",
+      "description": "Urea butiran putih kadar Nitrogen 46% resmi subsidi pemerintah. Syarat membawa Kartu Tani Poktan Makmur.",
+      "tags": [
+        "Pupuk Subsidi",
+        "Nitrogen 46%",
+        "Kartu Tani"
+      ],
+      "is_available": true,
+      "created_at": "2026-09-20T10:15:00"
+    },
+    {
+      "id": "srv_008",
+      "provider_id": "usr_distributor",
+      "provider_name": "Ibu Ratna",
+      "provider_badge": "Kios Saprotan",
+      "provider_avatar": "🏪",
+      "title": "Benih Padi Inpari 32 Bersertifikat Balitbangtan",
+      "category": "SAPROTAN",
+      "category_label": "Pupuk & Benih",
+      "price": 75000,
+      "price_unit": "/ Kantong (5kg)",
+      "location": "Pasar Sukamaju Kios B-04",
+      "phone": "6285712345678",
+      "description": "Benih label ungu resmi, daya berkecambah 92%, tahan wereng batang coklat dan hawar daun kresek.",
+      "tags": [
+        "Benih Resmi",
+        "Label Ungu",
+        "Potensi 10 Ton"
+      ],
+      "is_available": true,
+      "created_at": "2026-09-20T10:30:00"
+    },
+    {
+      "id": "srv_009",
+      "provider_id": "usr_agen",
+      "provider_name": "Bpk. Hendra Jaya",
+      "provider_badge": "Penggilingan Padi",
+      "provider_avatar": "🚚",
+      "title": "Penyerapan Beli Gabah Kering Panen (GKP) Jemput Lumbung",
+      "category": "HASIL_PANEN",
+      "category_label": "Penyerapan Panen",
+      "price": 6850,
+      "price_unit": "/ kg GKP",
+      "location": "Sentra Penggilingan Km 3",
+      "phone": "6281356789012",
+      "description": "Beli gabah petani langsung di lumbung/pematang dengan timbangan digital terkalibrasi. Bayar tunai atau transfer seketika.",
+      "tags": [
+        "Beli Tunai",
+        "Timbangan Digital",
+        "Jemput Pick-up"
+      ],
+      "is_available": true,
+      "created_at": "2026-09-20T11:00:00"
+    },
+    {
+      "id": "srv_010",
+      "provider_id": "usr_agen",
+      "provider_name": "Bpk. Hendra Jaya",
+      "provider_badge": "Penggilingan Padi",
+      "provider_avatar": "🚚",
+      "title": "Jasa Giling Gabah Jadi Beras Putih Super + Poles",
+      "category": "PASCA_PANEN",
+      "category_label": "Jasa Pasca Panen",
+      "price": 500,
+      "price_unit": "/ kg Gabah",
+      "location": "Sentra Penggilingan Km 3",
+      "phone": "6281356789012",
+      "description": "Mesin giling modern Satake menghasilkan beras putih bersih rendemen tinggi (65-68%) minim patah/menir.",
+      "tags": [
+        "Mesin Satake",
+        "Beras Utuh",
+        "Rendemen Tinggi"
+      ],
+      "is_available": true,
+      "created_at": "2026-09-20T11:30:00"
+    },
+    {
+      "id": "srv_011",
+      "provider_id": "usr_petani",
+      "provider_name": "Pak Joko",
+      "provider_badge": "Petani Mandiri",
+      "provider_avatar": "👨‍🌾",
+      "title": "Bibit Padi Inpari 32 Siap Tanam Umur 16 Hari (Dapog)",
+      "category": "SAPROTAN",
+      "category_label": "Bibit Siap Tanam",
+      "price": 3500,
+      "price_unit": "/ Kotak Dapog",
+      "location": "Sawah Sukamaju Petak Timur",
+      "phone": "628123456789",
+      "description": "Bibit semai dapog siap tanam mesin transplanter atau manual, akar kuat dan daun hijau segar bebas hama.",
+      "tags": [
+        "Bibit Dapog",
+        "Umur 16 Hari",
+        "Akar Kuat"
+      ],
+      "is_available": true,
+      "created_at": "2026-09-20T12:00:00"
+    },
+    {
+      "provider_id": "usr_cangkul",
+      "provider_name": "Mang Udin",
+      "provider_badge": "Jasa Cangkul",
+      "provider_avatar": "🌾",
+      "title": "Jasa Cangkul Borongan Baru",
+      "category": "JASA_TENAGA_KERJA",
+      "category_label": "Tenaga Kerja Tani",
+      "price": 130000.0,
+      "price_unit": "/ Hari",
+      "location": "Sukamaju",
+      "phone": "087811223344",
+      "description": "Siap kerja 5 orang",
+      "tags": [],
+      "is_available": true,
+      "created_at": "2026-09-21T09:14:18.708712",
+      "id": "eco_47e72080"
+    }
+  ],
+  "farmlands": [
+    {
+      "id": "farm_001",
+      "user_id": "usr_petani",
+      "name": "Sawah Blok Krajan (Padi Inpari 32)",
+      "land_size_ha": 0.8,
+      "commodity": "Padi Sawah Inpari 32",
+      "soil_type": "Lempung Berliat (Subur)",
+      "water_source": "Irigasi Teknis Bendungan",
+      "location": "Desa Sukamaju Krajan",
+      "latitude": -7.2504,
+      "longitude": 112.7512,
+      "collaborators": [
+        {
+          "id": "collab_01",
+          "name": "Pak Joko",
+          "role": "Pemilik Lahan & Pengelola",
+          "share_percentage": 60.0,
+          "phone": "08123456789"
+        },
+        {
+          "id": "collab_02",
+          "name": "Mang Udin",
+          "role": "Penggarap & Perawatan Pematang",
+          "share_percentage": 40.0,
+          "phone": "087811223344"
+        }
+      ],
+      "capital_expenses": [
+        {
+          "id": "exp_e9766a",
+          "farm_id": "farm_001",
+          "item_name": "Test Sewa Traktor",
+          "amount": 500000.0,
+          "category": "OLAH_TANAH",
+          "source": "MARKETPLACE",
+          "order_ref_id": null,
+          "date": "21 Sep 2026, 09:35 WIB"
+        },
+        {
+          "id": "exp_001",
+          "farm_id": "farm_001",
+          "item_name": "Sewa Traktor Olah Tanah & Bajak Garu",
+          "amount": 960000.0,
+          "category": "OLAH_TANAH",
+          "source": "MARKETPLACE",
+          "order_ref_id": "ord_trk_01",
+          "date": "18 Sep 2026, 09:30 WIB"
+        },
+        {
+          "id": "exp_002",
+          "farm_id": "farm_001",
+          "item_name": "Pupuk NPK Phonska & Urea Subsidi",
+          "amount": 420000.0,
+          "category": "PUPUK_NUTRISI",
+          "source": "MARKETPLACE",
+          "order_ref_id": "ord_sap_01",
+          "date": "19 Sep 2026, 14:15 WIB"
+        }
+      ],
+      "created_at": "2026-09-15T08:00:00",
+      "updated_at": "2026-09-21T09:35:10.630880"
+    },
+    {
+      "id": "farm_002",
+      "user_id": "usr_petani",
+      "name": "Sawah Blok Timur (Padi Ciherang)",
+      "land_size_ha": 1.2,
+      "commodity": "Padi Ciherang",
+      "soil_type": "Aluvial Sawah Teknis",
+      "water_source": "Irigasi Teknis Bendungan",
+      "location": "Desa Sukamaju Blok Saluran",
+      "latitude": -7.255,
+      "longitude": 112.758,
+      "collaborators": [
+        {
+          "id": "collab_03",
+          "name": "Pak Joko",
+          "role": "Pemilik & Penggarap Mandiri",
+          "share_percentage": 100.0,
+          "phone": "08123456789"
+        }
+      ],
+      "capital_expenses": [
+        {
+          "id": "exp_003",
+          "farm_id": "farm_002",
+          "item_name": "Benih Padi Ciherang Bersertifikat 30kg",
+          "amount": 450000.0,
+          "category": "BENIH_BIBIT",
+          "source": "MANUAL",
+          "order_ref_id": null,
+          "date": "16 Sep 2026, 10:00 WIB"
+        }
+      ],
+      "created_at": "2026-09-16T09:00:00"
+    },
+    {
+      "id": "farm_dc651c",
+      "user_id": "usr_petani",
+      "name": "Sawah Petak Legok Uji Coba",
+      "land_size_ha": 0.65,
+      "commodity": "Padi Sawah Inpari 32",
+      "soil_type": "Lempung Berliat (Subur)",
+      "water_source": "Irigasi Teknis Bendungan",
+      "location": "Desa Sukamaju Barat",
+      "latitude": -7.2504,
+      "longitude": 112.7512,
+      "collaborators": [
+        {
+          "id": "collab_9e8fb4",
+          "name": "Pak Joko",
+          "role": "Pemilik Lahan & Pengelola Utama",
+          "share_percentage": 100.0,
+          "phone": "08123456789"
+        },
+        {
+          "id": "collab_test",
+          "name": "Mang Udin",
+          "role": "Penggarap Lapangan",
+          "share_percentage": 40.0,
+          "phone": "087811223344"
+        }
+      ],
+      "capital_expenses": [
+        {
+          "id": "exp_61a59c",
+          "farm_id": "farm_dc651c",
+          "item_name": "Sewa Traktor Quick Kubota (Bajak & Garu) (0.65 / Hektar)",
+          "amount": 780000.0,
+          "category": "OLAH_TANAH",
+          "source": "MARKETPLACE",
+          "order_ref_id": "ord_459303ed",
+          "date": "21 Sep 2026, 09:38 WIB"
+        }
+      ],
+      "created_at": "2026-09-21T09:38:35.919571",
+      "updated_at": "2026-09-21T09:38:35.963388"
+    }
+  ],
+  "service_orders": [
+    {
+      "id": "ord_trk_01",
+      "service_id": "srv_001",
+      "service_title": "Sewa Traktor Quick Kubota (Bajak & Garu)",
+      "seller_id": "usr_traktor",
+      "seller_name": "Mas Bambang",
+      "buyer_id": "usr_petani",
+      "buyer_name": "Pak Joko",
+      "quantity": 0.8,
+      "unit": "/ Hektar",
+      "unit_price": 1200000.0,
+      "total_price": 960000.0,
+      "payment_method": "COD / Bayar Saat Pengerjaan",
+      "delivery_notes": "Mohon dikerjakan mulai jam 07.00 pagi di Sawah Blok Krajan",
+      "status": "SELESAI",
+      "created_at": "18 Sep 2026, 09:30 WIB"
+    },
+    {
+      "id": "ord_f3e9f006",
+      "service_id": "srv_001",
+      "service_title": "Sewa Traktor Quick Kubota (Bajak & Garu)",
+      "seller_id": "usr_traktor",
+      "seller_name": "Mas Bambang",
+      "buyer_id": "usr_petani",
+      "buyer_name": "Pak Joko",
+      "quantity": 1.0,
+      "unit": "/ Hektar",
+      "unit_price": 1200000.0,
+      "total_price": 1200000.0,
+      "payment_method": "COD / Bayar Saat Pengerjaan",
+      "delivery_notes": "Sawah petak 1",
+      "status": "MENUNGGU_KONFIRMASI",
+      "created_at": "21 Sep 2026, 09:35 WIB"
+    },
+    {
+      "id": "ord_459303ed",
+      "service_id": "srv_001",
+      "service_title": "Sewa Traktor Quick Kubota (Bajak & Garu)",
+      "seller_id": "usr_traktor",
+      "seller_name": "Mas Bambang",
+      "buyer_id": "usr_petani",
+      "buyer_name": "Pak Joko",
+      "quantity": 0.65,
+      "unit": "/ Hektar",
+      "unit_price": 1200000.0,
+      "total_price": 780000.0,
+      "payment_method": "COD / Bayar Saat Pengerjaan",
+      "delivery_notes": "Tolong olah tanah di petak Legok",
+      "status": "MENUNGGU_KONFIRMASI",
+      "created_at": "21 Sep 2026, 09:38 WIB"
+    },
+    {
+      "id": "ord_3f27f6e5",
+      "service_id": "srv_001",
+      "service_title": "Sewa Traktor Quick Kubota (Bajak & Garu)",
+      "seller_id": "usr_traktor",
+      "seller_name": "Mas Bambang",
+      "buyer_id": "usr_petani",
+      "buyer_name": "Pak Joko (Petani Padi)",
+      "quantity": 1.5,
+      "unit": "/ Hektar",
+      "unit_price": 1200000.0,
+      "total_price": 1800000.0,
+      "payment_method": "COD / Bayar Saat Pengerjaan",
+      "delivery_notes": "Sawah Blok Krajan dekat saung, tolong Sabtu pagi.",
+      "status": "SEDANG_DIKIRIM",
+      "created_at": "21 Sep 2026, 09:47 WIB",
+      "seller_notes": "Traktor Quick G1000 sudah dimuat ke pikap, siap jalan Sabtu jam 06.30 WIB.",
+      "status_updated_at": "21 Sep 2026, 09:47 WIB",
+      "updated_at": "2026-09-21T09:47:19.707156"
+    },
+    {
+      "id": "ord_20dfbddd",
+      "service_id": "srv_001",
+      "service_title": "Sewa Traktor Quick Kubota (Bajak & Garu)",
+      "seller_id": "usr_traktor",
+      "seller_name": "Mas Bambang",
+      "buyer_id": "usr_petani",
+      "buyer_name": "Pak Joko (Petani Padi)",
+      "quantity": 1.5,
+      "unit": "/ Hektar",
+      "unit_price": 1200000.0,
+      "total_price": 1800000.0,
+      "payment_method": "COD / Bayar Saat Pengerjaan",
+      "delivery_notes": "Sawah Blok Krajan dekat saung, tolong Sabtu pagi.",
+      "status": "SEDANG_DIKIRIM",
+      "created_at": "21 Sep 2026, 09:47 WIB",
+      "seller_notes": "Traktor Quick G1000 sudah dimuat ke pikap, siap jalan Sabtu jam 06.30 WIB.",
+      "status_updated_at": "21 Sep 2026, 09:47 WIB",
+      "updated_at": "2026-09-21T09:47:32.929184"
+    },
+    {
+      "id": "ord_a09ba0b1",
+      "service_id": "srv_001",
+      "service_title": "Sewa Traktor Quick Kubota (Bajak & Garu)",
+      "seller_id": "usr_traktor",
+      "seller_name": "Mas Bambang",
+      "buyer_id": "usr_petani",
+      "buyer_name": "Pak Joko (Petani Padi)",
+      "quantity": 1.0,
+      "unit": "/ Hektar",
+      "unit_price": 1200000.0,
+      "total_price": 1200000.0,
+      "payment_method": "COD / Bayar Saat Pengerjaan",
+      "delivery_notes": "Sawah Blok Krajan, tolong dikabari.",
+      "status": "SEDANG_DIKIRIM",
+      "created_at": "21 Sep 2026, 09:47 WIB",
+      "seller_notes": "Traktor sudah berangkat menuju sawah Pak Joko!",
+      "status_updated_at": "21 Sep 2026, 09:47 WIB",
+      "updated_at": "2026-09-21T09:47:47.177737"
+    },
+    {
+      "id": "ord_1476372d",
+      "service_id": "srv_001",
+      "service_title": "Sewa Traktor Quick Kubota (Bajak & Garu)",
+      "seller_id": "usr_traktor",
+      "seller_name": "Mas Bambang",
+      "buyer_id": "usr_petani",
+      "buyer_name": "Pak Joko (Petani Padi)",
+      "quantity": 1.0,
+      "unit": "/ Hektar",
+      "unit_price": 1200000.0,
+      "total_price": 1200000.0,
+      "payment_method": "COD / Bayar Saat Pengerjaan",
+      "delivery_notes": "Sawah Blok Krajan",
+      "status": "MENUNGGU_KONFIRMASI",
+      "created_at": "21 Sep 2026, 09:57 WIB"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "notif_001",
+      "user_id": "usr_traktor",
+      "title": "Pesanan Jasa Baru Masuk! 🚜",
+      "message": "Pak Joko memesan Jasa Sewa Traktor Quick 0.8 Ha (Rp 960.000) di Blok Krajan.",
+      "type": "ORDER_RECEIVED",
+      "reference_id": "ord_trk_01",
+      "is_read": false,
+      "created_at": "18 Sep 2026, 09:30 WIB"
+    },
+    {
+      "id": "notif_002",
+      "user_id": "usr_petani",
+      "title": "Pengikut Baru! 👤",
+      "message": "Mang Udin mulai mengikuti profil usahatani Anda.",
+      "type": "NEW_FOLLOWER",
+      "reference_id": "usr_cangkul",
+      "is_read": false,
+      "created_at": "20 Sep 2026, 11:20 WIB"
+    },
+    {
+      "id": "notif_003",
+      "user_id": "usr_petani",
+      "title": "Komentar Baru di Postingan! 💬",
+      "message": "Ibu Ratna mengomentari: 'Pak Joko, stok bakterisida tembaga di kios sudah ready ya...'",
+      "type": "NEW_COMMENT",
+      "reference_id": "post_002",
+      "is_read": false,
+      "created_at": "20 Sep 2026, 15:02 WIB"
+    },
+    {
+      "id": "notif_004",
+      "user_id": "usr_pengairan",
+      "title": "Pengikut Baru! 👤",
+      "message": "Pak Joko mulai mengikuti profil jasa pengairan Anda.",
+      "type": "NEW_FOLLOWER",
+      "reference_id": "usr_petani",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 08:00 WIB"
+    },
+    {
+      "id": "notif_af5551f7",
+      "user_id": "usr_traktor",
+      "title": "Pesanan Jasa Baru Masuk! 🛒",
+      "message": "Pak Joko memesan Sewa Traktor Quick Kubota (Bajak & Garu) (1.0 / Hektar) senilai Rp 1,200,000.",
+      "type": "ORDER_RECEIVED",
+      "reference_id": "ord_f3e9f006",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:35 WIB"
+    },
+    {
+      "id": "notif_bddb6a62",
+      "user_id": "usr_petani",
+      "title": "Pesanan Terkirim ke Mitra ✅",
+      "message": "Pesanan Sewa Traktor Quick Kubota (Bajak & Garu) telah diteruskan ke Mas Bambang. Menunggu konfirmasi pengerjaan.",
+      "type": "ORDER_STATUS",
+      "reference_id": "ord_f3e9f006",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:35 WIB"
+    },
+    {
+      "id": "notif_42719096",
+      "user_id": "usr_traktor",
+      "title": "Pesanan Jasa Baru Masuk! 🛒",
+      "message": "Pak Joko memesan Sewa Traktor Quick Kubota (Bajak & Garu) (0.65 / Hektar) senilai Rp 780,000.",
+      "type": "ORDER_RECEIVED",
+      "reference_id": "ord_459303ed",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:38 WIB"
+    },
+    {
+      "id": "notif_5c04ffd9",
+      "user_id": "usr_petani",
+      "title": "Pesanan Terkirim ke Mitra ✅",
+      "message": "Pesanan Sewa Traktor Quick Kubota (Bajak & Garu) telah diteruskan ke Mas Bambang. Menunggu konfirmasi pengerjaan.",
+      "type": "ORDER_STATUS",
+      "reference_id": "ord_459303ed",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:38 WIB"
+    },
+    {
+      "id": "notif_0ea7b032",
+      "user_id": "usr_pengairan",
+      "title": "Pengikut Baru! 👤",
+      "message": "Seorang warga ekosistem mulai mengikuti profil usahatani Anda.",
+      "type": "NEW_FOLLOWER",
+      "reference_id": "usr_pengairan",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:38 WIB"
+    },
+    {
+      "id": "notif_bd4c8a11",
+      "user_id": "usr_petani",
+      "title": "Komentar Baru di Diskusi! 💬",
+      "message": "Mas Bambang mengomentari postingan Anda: \"Siap bantu olah tanah Pak, kabari saja jadwalnya....\"",
+      "type": "NEW_COMMENT",
+      "reference_id": "post_001",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:38 WIB"
+    },
+    {
+      "id": "notif_de50582b",
+      "user_id": "usr_traktor",
+      "title": "Pesanan Jasa Baru Masuk! 🛒",
+      "message": "Pak Joko (Petani Padi) memesan Sewa Traktor Quick Kubota (Bajak & Garu) (1.5 / Hektar) senilai Rp 1,800,000.",
+      "type": "ORDER_RECEIVED",
+      "reference_id": "ord_3f27f6e5",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:47 WIB"
+    },
+    {
+      "id": "notif_a25b3eec",
+      "user_id": "usr_petani",
+      "title": "Pesanan Terkirim ke Mitra ✅",
+      "message": "Pesanan Sewa Traktor Quick Kubota (Bajak & Garu) telah diteruskan ke Mas Bambang. Menunggu konfirmasi pengerjaan.",
+      "type": "ORDER_STATUS",
+      "reference_id": "ord_3f27f6e5",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:47 WIB"
+    },
+    {
+      "id": "notif_ae4bc366",
+      "user_id": "usr_petani",
+      "title": "Pesanan Mulai Dikirim / Berangkat 🚚",
+      "message": "Mas Bambang mengonfirmasi pesanan Sewa Traktor Quick Kubota (Bajak & Garu): [SEDANG_DIKIRIM]. Catatan penjual: \"Traktor Quick G1000 sudah dimuat ke pikap, siap jalan Sabtu jam 06.30 WIB.\"",
+      "type": "ORDER_STATUS",
+      "reference_id": "ord_3f27f6e5",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:47 WIB"
+    },
+    {
+      "id": "notif_fc588a62",
+      "user_id": "usr_traktor",
+      "title": "Pesanan Jasa Baru Masuk! 🛒",
+      "message": "Pak Joko (Petani Padi) memesan Sewa Traktor Quick Kubota (Bajak & Garu) (1.5 / Hektar) senilai Rp 1,800,000.",
+      "type": "ORDER_RECEIVED",
+      "reference_id": "ord_20dfbddd",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:47 WIB"
+    },
+    {
+      "id": "notif_a00c16b4",
+      "user_id": "usr_petani",
+      "title": "Pesanan Terkirim ke Mitra ✅",
+      "message": "Pesanan Sewa Traktor Quick Kubota (Bajak & Garu) telah diteruskan ke Mas Bambang. Menunggu konfirmasi pengerjaan.",
+      "type": "ORDER_STATUS",
+      "reference_id": "ord_20dfbddd",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:47 WIB"
+    },
+    {
+      "id": "notif_1d851f6c",
+      "user_id": "usr_petani",
+      "title": "Pesanan Mulai Dikirim / Berangkat 🚚",
+      "message": "Mas Bambang mengonfirmasi pesanan Sewa Traktor Quick Kubota (Bajak & Garu): [SEDANG_DIKIRIM]. Catatan penjual: \"Traktor Quick G1000 sudah dimuat ke pikap, siap jalan Sabtu jam 06.30 WIB.\"",
+      "type": "ORDER_STATUS",
+      "reference_id": "ord_20dfbddd",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:47 WIB"
+    },
+    {
+      "id": "notif_fc6cb285",
+      "user_id": "usr_traktor",
+      "title": "Pesanan Jasa Baru Masuk! 🛒",
+      "message": "Pak Joko (Petani Padi) memesan Sewa Traktor Quick Kubota (Bajak & Garu) (1.0 / Hektar) senilai Rp 1,200,000.",
+      "type": "ORDER_RECEIVED",
+      "reference_id": "ord_a09ba0b1",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:47 WIB"
+    },
+    {
+      "id": "notif_07b1694c",
+      "user_id": "usr_petani",
+      "title": "Pesanan Terkirim ke Mitra ✅",
+      "message": "Pesanan Sewa Traktor Quick Kubota (Bajak & Garu) telah diteruskan ke Mas Bambang. Menunggu konfirmasi pengerjaan.",
+      "type": "ORDER_STATUS",
+      "reference_id": "ord_a09ba0b1",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:47 WIB"
+    },
+    {
+      "id": "notif_72e0ff36",
+      "user_id": "usr_petani",
+      "title": "Pesanan Mulai Dikirim / Berangkat 🚚",
+      "message": "Mas Bambang mengonfirmasi pesanan Sewa Traktor Quick Kubota (Bajak & Garu): [SEDANG_DIKIRIM]. Catatan penjual: \"Traktor sudah berangkat menuju sawah Pak Joko!\"",
+      "type": "ORDER_STATUS",
+      "reference_id": "ord_a09ba0b1",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:47 WIB"
+    },
+    {
+      "id": "notif_14c781a1",
+      "user_id": "usr_traktor",
+      "title": "Pesanan Jasa Baru Masuk! 🛒",
+      "message": "Pak Joko (Petani Padi) memesan Sewa Traktor Quick Kubota (Bajak & Garu) (1.0 / Hektar) senilai Rp 1,200,000.",
+      "type": "ORDER_RECEIVED",
+      "reference_id": "ord_1476372d",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:57 WIB"
+    },
+    {
+      "id": "notif_9ac1ec9a",
+      "user_id": "usr_petani",
+      "title": "Pesanan Terkirim ke Mitra ✅",
+      "message": "Pesanan Sewa Traktor Quick Kubota (Bajak & Garu) telah diteruskan ke Mas Bambang. Menunggu konfirmasi pengerjaan.",
+      "type": "ORDER_STATUS",
+      "reference_id": "ord_1476372d",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:57 WIB"
+    },
+    {
+      "id": "notif_4b1034c7",
+      "user_id": "usr_traktor",
+      "title": "Pesan Diskusi Pesanan 💬",
+      "message": "Pak Joko: \"Halo Mas Bambang, saya tunggu Sabtu jam 07.00 ya!...\"",
+      "type": "ORDER_DISCUSSION",
+      "reference_id": "ord_1476372d",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:57 WIB"
+    },
+    {
+      "id": "notif_6c891a2c",
+      "user_id": "usr_petani",
+      "title": "Pesan Diskusi Pesanan 💬",
+      "message": "Mas Bambang: \"Siap Pak Joko, solar dan bajak sudah kami siapkan!...\"",
+      "type": "ORDER_DISCUSSION",
+      "reference_id": "ord_1476372d",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:57 WIB"
+    },
+    {
+      "id": "notif_b83aea19",
+      "user_id": "usr_traktor",
+      "title": "Pertanyaan Baru di Produk Anda! ❓",
+      "message": "Pak Joko bertanya di \"Sewa Traktor Quick Kubota (Bajak & Garu)\": \"Apakah traktor bisa masuk galengan sempit 80cm?...\"",
+      "type": "PRODUCT_DISCUSSION",
+      "reference_id": "srv_001",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:57 WIB"
+    },
+    {
+      "id": "notif_eb351dea",
+      "user_id": "usr_petani",
+      "title": "Jawaban Diskusi Produk 💡",
+      "message": "Mas Bambang (Penyedia Jasa) menjawab pertanyaan Anda di \"Sewa Traktor Quick Kubota (Bajak & Garu)\": \"Bisa Pak Joko, roda traktor quick kami bisa diatur sempit....\"",
+      "type": "PRODUCT_DISCUSSION",
+      "reference_id": "srv_001",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 09:57 WIB"
+    }
+  ],
+  "order_messages": [
+    {
+      "id": "msg_8eef1089",
+      "order_id": "ord_1476372d",
+      "sender_id": "usr_petani",
+      "sender_name": "Pak Joko",
+      "sender_role": "PEMBELI",
+      "message": "Halo Mas Bambang, saya tunggu Sabtu jam 07.00 ya!",
+      "created_at": "21 Sep 2026, 09:57 WIB"
+    },
+    {
+      "id": "msg_5f47046f",
+      "order_id": "ord_1476372d",
+      "sender_id": "usr_traktor",
+      "sender_name": "Mas Bambang",
+      "sender_role": "PENJUAL",
+      "message": "Siap Pak Joko, solar dan bajak sudah kami siapkan!",
+      "created_at": "21 Sep 2026, 09:57 WIB"
+    }
+  ],
+  "product_discussions": [
+    {
+      "id": "disc_cf069c87",
+      "service_id": "srv_001",
+      "user_id": "usr_petani",
+      "user_name": "Pak Joko",
+      "user_avatar": "🌾",
+      "question": "Apakah traktor bisa masuk galengan sempit 80cm?",
+      "reply": "Bisa Pak Joko, roda traktor quick kami bisa diatur sempit.",
+      "replied_by": "Mas Bambang (Penyedia Jasa)",
+      "replied_at": "21 Sep 2026, 09:57 WIB",
+      "created_at": "21 Sep 2026, 09:57 WIB",
+      "updated_at": "2026-09-21T09:57:26.725282"
+    }
+  ]
+}
