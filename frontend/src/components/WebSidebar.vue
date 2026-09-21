@@ -208,7 +208,7 @@
 
       <!-- Tombol Keluar di Footer Sidebar -->
       <button
-        @click="logout"
+        @click="handleLogout"
         class="w-full py-2.5 px-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 border border-rose-500/20 text-xs font-bold transition-all flex items-center justify-center gap-2 active:scale-95"
         title="Keluar dari Akun"
       >
@@ -228,7 +228,7 @@
       </div>
 
       <button
-        @click="logout"
+        @click="handleLogout"
         class="w-full p-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 border border-rose-500/20 transition-all flex items-center justify-center active:scale-95"
         title="Keluar dari Akun"
       >
@@ -252,6 +252,11 @@ import {
 const route = useRoute();
 const router = useRouter();
 const { currentUserId, logout } = useUserState();
+
+const handleLogout = () => {
+  logout();
+  router.push('/login');
+};
 
 const isCollapsed = ref(localStorage.getItem('agribuddy_sidebar_collapsed') === 'true');
 

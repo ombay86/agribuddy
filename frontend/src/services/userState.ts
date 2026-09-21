@@ -97,8 +97,13 @@ PERSONAS['PETANI'] = PERSONAS['PETANI_MANDIRI'];
 PERSONAS['DISTRIBUTOR'] = PERSONAS['KIOS_SAPROTAN'];
 PERSONAS['AGEN_PEMBELI'] = PERSONAS['PENGGILINGAN_PADI'];
 
-const activeRole = ref<UserRole>('PETANI_MANDIRI');
-const isAuthenticated = ref<boolean>(true);
+const savedRole = (localStorage.getItem('agribuddy_active_role') as UserRole) || 'PETANI_MANDIRI';
+const savedAuth = localStorage.getItem('agribuddy_auth');
+// Default auth: false jika pernah logout ('false'), true jika baru pertama kali atau sudah login
+const initialAuth = savedAuth === 'false' ? false : true;
+
+const activeRole = ref<UserRole>(savedRole);
+const isAuthenticated = ref<boolean>(initialAuth);
 
 export const getActiveUserId = (): string => {
   return PERSONAS[activeRole.value]?.id || 'usr_petani';
@@ -111,11 +116,15 @@ export const useUserState = () => {
   const setRole = (role: UserRole) => {
     activeRole.value = role;
     isAuthenticated.value = true;
+    localStorage.setItem('agribuddy_active_role', role);
+    localStorage.setItem('agribuddy_auth', 'true');
   };
 
   const loginWithPersona = (role: UserRole) => {
     activeRole.value = role;
     isAuthenticated.value = true;
+    localStorage.setItem('agribuddy_active_role', role);
+    localStorage.setItem('agribuddy_auth', 'true');
   };
 
   const loginWithCredentials = (phoneNumber: string, pin: string) => {
@@ -134,11 +143,14 @@ export const useUserState = () => {
       activeRole.value = 'PETANI_MANDIRI';
     }
     isAuthenticated.value = true;
+    localStorage.setItem('agribuddy_active_role', activeRole.value);
+    localStorage.setItem('agribuddy_auth', 'true');
     return true;
   };
 
   const logout = () => {
     isAuthenticated.value = false;
+    localStorage.setItem('agribuddy_auth', 'false');
   };
 
   return {

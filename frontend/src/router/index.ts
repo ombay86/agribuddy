@@ -36,6 +36,8 @@ const routes = [
   { path: '/lumbung', name: 'Lumbung', component: LumbungView },
 ]
 
+import { useUserState } from '@/services/userState'
+
 const router = createRouter({
   history: createWebHistory(),
   routes,
@@ -43,5 +45,16 @@ const router = createRouter({
     return { top: 0 }
   }
 })
+
+router.beforeEach((to, from, next) => {
+  const { isAuthenticated } = useUserState();
+  if (to.path !== '/login' && !isAuthenticated.value) {
+    next('/login');
+  } else if (to.path === '/login' && isAuthenticated.value) {
+    next('/');
+  } else {
+    next();
+  }
+});
 
 export default router

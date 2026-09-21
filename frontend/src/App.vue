@@ -1,5 +1,11 @@
 <template>
-  <div class="min-h-screen bg-slate-50 flex">
+  <!-- Fullscreen Standalone View untuk Halaman Login / Auth (Tanpa Dashboard) -->
+  <div v-if="isAuthPage" class="min-h-screen">
+    <router-view />
+  </div>
+
+  <!-- Dashboard Shell Utama (Hanya Tampil Saat Pengguna Berada di Dashboard) -->
+  <div v-else class="min-h-screen bg-slate-50 flex">
     <!-- 1. Left Desktop Sidebar Navigation -->
     <WebSidebar />
 
@@ -20,7 +26,12 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 import WebSidebar from '@/components/WebSidebar.vue';
 import WebTopBar from '@/components/WebTopBar.vue';
 import BottomNav from '@/components/BottomNav.vue';
+
+const route = useRoute();
+const isAuthPage = computed(() => route.path === '/login');
 </script>
