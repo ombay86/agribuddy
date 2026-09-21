@@ -294,25 +294,25 @@
                   <!-- Gradient overlay for text contrast -->
                   <div class="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/20 pointer-events-none opacity-60 group-hover:opacity-75 transition-opacity"></div>
 
-                  <!-- Top Left: Category Badge -->
+                  <!-- Top Left: Availability Badge -->
                   <div class="absolute top-2 left-2 z-10">
-                    <span 
-                      class="text-[9px] md:text-[10px] font-black px-2 py-0.5 rounded-lg shadow-sm backdrop-blur-md flex items-center gap-1 uppercase tracking-wider"
-                      :class="getCategoryOverlayBadgeClass(service.category)"
-                    >
-                      <span>{{ getCategoryEmoji(service.category) }}</span>
-                      <span class="truncate max-w-[85px] md:max-w-[110px]">{{ service.category_label }}</span>
-                    </span>
-                  </div>
-
-                  <!-- Top Right: Availability Badge -->
-                  <div class="absolute top-2 right-2 z-10">
                     <span
                       class="text-[9px] md:text-[10px] font-black px-2 py-0.5 rounded-full backdrop-blur-md shadow-sm flex items-center gap-1 border"
                       :class="service.is_available ? 'bg-white/95 text-emerald-800 border-emerald-200' : 'bg-slate-900/85 text-slate-300 border-slate-700'"
                     >
                       <span class="w-1.5 h-1.5 rounded-full" :class="service.is_available ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'"></span>
                       <span>{{ service.is_available ? 'Siap' : 'Penuh' }}</span>
+                    </span>
+                  </div>
+
+                  <!-- Top Right: Category Icon with Label Color -->
+                  <div class="absolute top-2 right-2 z-10">
+                    <span 
+                      class="w-7 h-7 md:w-8 md:h-8 rounded-xl flex items-center justify-center shadow-md backdrop-blur-md text-sm md:text-base border border-white/20 transition-transform group-hover:scale-110"
+                      :class="getCategoryOverlayBadgeClass(service.category)"
+                      :title="service.category_label"
+                    >
+                      {{ getCategoryEmoji(service.category) }}
                     </span>
                   </div>
 
@@ -325,18 +325,24 @@
                 </div>
 
                 <!-- BOTTOM: Content & Details -->
-                <div class="p-3 flex flex-col justify-between flex-1 gap-2">
-                  <div class="space-y-1.5">
-                    <!-- Provider & Location Row -->
-                    <div class="flex items-center justify-between text-[11px] text-slate-500 font-medium gap-1">
-                      <span class="flex items-center gap-1 font-bold text-slate-700 truncate max-w-[58%]">
-                        <span>{{ service.provider_avatar || '🌾' }}</span>
-                        <span class="truncate">{{ service.provider_name }}</span>
-                      </span>
-                      <span class="flex items-center gap-0.5 text-[10px] text-slate-400 shrink-0">
-                        <MapPin :size="10" />
-                        <span class="truncate max-w-[80px] md:max-w-[95px]">{{ service.location.split('(')[0].trim() }}</span>
-                      </span>
+                <div class="p-3 flex flex-col justify-between flex-1 gap-2.5">
+                  <div class="space-y-2">
+                    <!-- Provider & Location Row (Atas Bawah untuk Karakter Maksimal) -->
+                    <div class="space-y-1">
+                      <!-- Baris 1: Nama Provider & Avatar -->
+                      <div class="flex items-center gap-1.5 text-xs text-slate-800 font-bold truncate">
+                        <span class="text-sm shrink-0">{{ service.provider_avatar || '🌾' }}</span>
+                        <span class="truncate font-black text-slate-800">{{ service.provider_name }}</span>
+                        <span class="text-[9px] font-extrabold px-1.5 py-0.2 rounded-md shrink-0" :class="getBadgeClass(service.category)">
+                          {{ service.provider_badge }}
+                        </span>
+                      </div>
+
+                      <!-- Baris 2: Lokasi Wilayah (Atas Bawah, Lebih Banyak Karakter) -->
+                      <div class="flex items-center gap-1 text-[11px] text-slate-500 font-medium truncate">
+                        <MapPin :size="11" class="text-slate-400 shrink-0" />
+                        <span class="truncate">{{ service.location }}</span>
+                      </div>
                     </div>
 
                     <!-- Product Title (2-Lines Clamp) -->
@@ -371,32 +377,32 @@
                     </div>
                   </div>
 
-                  <!-- Action Footer Buttons -->
-                  <div class="pt-2 border-t border-slate-100 flex items-center gap-1.5" @click.stop>
+                  <!-- Action Footer Buttons (Icon-Only Diskusi + Full Width Pesan) -->
+                  <div class="pt-2 border-t border-slate-100 flex items-center gap-2" @click.stop>
                     <!-- When It's My Service: Edit, Delete, & Diskusi -->
                     <template v-if="isMyService(service)">
                       <div class="flex items-center justify-between w-full">
-                        <div class="flex items-center gap-1">
+                        <div class="flex items-center gap-1.5">
                           <button
                             @click.stop="openProductDiscussion(service)"
-                            class="p-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs transition-all border border-amber-200"
+                            class="w-8 h-8 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 flex items-center justify-center transition-all border border-amber-200"
                             title="Lihat Pertanyaan Warga"
                           >
-                            <MessageCircle :size="13" />
+                            <MessageCircle :size="14" />
                           </button>
                           <button
                             @click.stop="openEditModal(service)"
-                            class="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs transition-all"
+                            class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-all border border-slate-200"
                             title="Edit Layanan"
                           >
-                            <Edit :size="13" />
+                            <Edit :size="14" />
                           </button>
                           <button
                             @click.stop="handleDeleteService(service.id)"
-                            class="p-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs transition-all"
+                            class="w-8 h-8 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 flex items-center justify-center transition-all border border-rose-200"
                             title="Hapus Layanan"
                           >
-                            <Trash2 :size="13" />
+                            <Trash2 :size="14" />
                           </button>
                         </div>
                         <span class="text-[9px] font-black text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-md">
@@ -405,29 +411,23 @@
                       </div>
                     </template>
 
-                    <!-- When It's Another User's Service: Diskusi, WA, Checkout -->
+                    <!-- When It's Another User's Service: Diskusi (Icon Only) & Pesan (Full Width) -->
                     <template v-else>
+                      <!-- Diskusi (Icon Only) -->
                       <button
                         @click.stop="openProductDiscussion(service)"
-                        class="p-1.5 md:px-2 md:py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-[11px] font-bold transition-all flex items-center justify-center gap-1 shrink-0"
+                        class="w-9 h-9 rounded-xl border border-slate-200 bg-slate-50 hover:bg-amber-50 hover:border-amber-300 text-slate-600 hover:text-amber-700 flex items-center justify-center shrink-0 active:scale-95 transition-all shadow-2xs"
                         title="Tanya Jawab / Diskusi Produk"
                       >
-                        <MessageCircle :size="13" class="text-amber-600" />
-                        <span class="hidden md:inline">Diskusi</span>
+                        <MessageCircle :size="16" class="text-amber-600" />
                       </button>
-                      <button
-                        @click.stop="openWhatsApp(service.phone, service.title)"
-                        class="p-1.5 md:px-2 md:py-1.5 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-bold transition-all flex items-center justify-center gap-1 shrink-0"
-                        title="Hubungi via WhatsApp"
-                      >
-                        <Phone :size="13" class="text-emerald-600" />
-                        <span class="hidden md:inline">WA</span>
-                      </button>
+
+                      <!-- Pesan (Checkout) - Full Width Sempurna, Tidak Terpotong -->
                       <button
                         @click.stop="openCheckoutModal(service)"
-                        class="flex-1 btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] md:text-xs font-black py-1.5 md:py-2 px-2.5 rounded-xl shadow-sm active:scale-95 transition-all flex items-center justify-center gap-1"
+                        class="flex-1 btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-2 px-3.5 rounded-xl shadow-sm active:scale-95 transition-all flex items-center justify-center gap-1.5 whitespace-nowrap"
                       >
-                        <ShoppingCart :size="13" />
+                        <ShoppingCart :size="14" />
                         <span>Pesan</span>
                       </button>
                     </template>
