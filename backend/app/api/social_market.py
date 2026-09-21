@@ -103,7 +103,9 @@ def get_market_listings():
 @router.post("/listings")
 def create_market_listing(payload: MarketListingCreate):
     listing_item = {
+        "seller_id": payload.seller_id or "usr_petani",
         "seller_name": payload.seller_name,
+        "harvest_ref_id": payload.harvest_ref_id,
         "commodity": payload.commodity,
         "total_weight_kg": payload.total_weight_kg,
         "starting_price_per_kg": payload.starting_price_per_kg,
@@ -127,6 +129,8 @@ def submit_listing_bid(listing_id: str, payload: MarketListingBid):
     bids = target.get("bids", [])
     new_bid = {
         "id": f"bid_{uuid.uuid4().hex[:6]}",
+        "listing_id": listing_id,
+        "bidder_id": payload.bidder_id or "usr_agen",
         "bidder_name": payload.bidder_name,
         "bidder_role": payload.bidder_role,
         "bid_price_per_kg": payload.bid_price_per_kg,
@@ -203,6 +207,7 @@ def create_community_post(payload: CommunityPostCreate):
         "BERITA_HARGA": "Info Pasar"
     }
     new_post = {
+        "author_id": payload.author_id or "usr_petani",
         "author_name": payload.author_name,
         "author_role": payload.author_role,
         "author_role_label": role_labels.get(payload.author_role, "Petani"),
@@ -238,6 +243,8 @@ def add_post_comment(post_id: str, payload: CommunityCommentCreate):
     comments = target.get("comments", [])
     new_comment = {
         "id": f"comm_{uuid.uuid4().hex[:6]}",
+        "post_id": post_id,
+        "author_id": payload.author_id or "usr_petani",
         "author_name": payload.author_name,
         "author_role": payload.author_role,
         "comment": payload.comment,

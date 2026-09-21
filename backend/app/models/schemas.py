@@ -66,6 +66,7 @@ class InventoryQuickAdjust(BaseModel):
 
 # Harvest Schemas
 class HarvestCreate(BaseModel):
+    farmland_id: Optional[str] = None # Petak sawah asal panen (Traceability)
     commodity: str
     total_weight_kg: float
     harvest_date: str
@@ -153,16 +154,18 @@ class UpdateOrderStatus(BaseModel):
 
 # 2. Bursa Pasar Komoditas (Harvest Marketplace & Bidding)
 class MarketListingCreate(BaseModel):
+    seller_id: Optional[str] = "usr_petani" # FK ke USER
     seller_name: str = "Pak Joko (Petani)"
     commodity: str
     total_weight_kg: float
     starting_price_per_kg: float
     min_order_kg: float = 500
     location: str = "Lumbung Desa Sukamaju"
-    harvest_ref_id: Optional[str] = None # Jika berasal dari stok lumbung
+    harvest_ref_id: Optional[str] = None # Jika berasal dari stok lumbung (FK ke HARVEST_STORAGE)
     notes: Optional[str] = ""
 
 class MarketListingBid(BaseModel):
+    bidder_id: Optional[str] = "usr_agen" # FK ke USER
     bidder_name: str # e.g. "Penggilingan Sri Jaya" or "KUD Sukamaju"
     bidder_role: str # "PENGGILINGAN" | "AGEN" | "KOPERASI"
     bid_price_per_kg: float
@@ -171,6 +174,7 @@ class MarketListingBid(BaseModel):
 
 # 3. Feed Sosial Komunitas Tani
 class CommunityPostCreate(BaseModel):
+    author_id: Optional[str] = "usr_petani" # FK ke USER
     author_name: str
     author_role: str = "PETANI" # "PETANI" | "KETUA_POKTAN" | "PENYULUH"
     title: str
@@ -179,6 +183,7 @@ class CommunityPostCreate(BaseModel):
     image_tag: Optional[str] = None
 
 class CommunityCommentCreate(BaseModel):
+    author_id: Optional[str] = "usr_petani" # FK ke USER
     author_name: str
     author_role: str
     comment: str

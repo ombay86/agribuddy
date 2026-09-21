@@ -45,6 +45,8 @@ export interface InventoryItem {
 
 export interface HarvestItem {
   id: string;
+  user_id?: string;
+  farmland_id?: string;
   commodity: string;
   total_weight_kg: number;
   harvest_date: string;
@@ -129,6 +131,8 @@ export interface SaprotanOrder {
 
 export interface MarketBid {
   id: string;
+  listing_id?: string;
+  bidder_id?: string;
   bidder_name: string;
   bidder_role: string;
   bid_price_per_kg: number;
@@ -140,7 +144,9 @@ export interface MarketBid {
 
 export interface MarketListing {
   id: string;
+  seller_id?: string;
   seller_name: string;
+  harvest_ref_id?: string;
   commodity: string;
   total_weight_kg: number;
   starting_price_per_kg: number;
@@ -155,6 +161,8 @@ export interface MarketListing {
 
 export interface CommunityComment {
   id: string;
+  post_id?: string;
+  author_id?: string;
   author_name: string;
   author_role: string;
   comment: string;
@@ -163,6 +171,7 @@ export interface CommunityComment {
 
 export interface CommunityPost {
   id: string;
+  author_id?: string;
   author_name: string;
   author_role: string;
   author_role_label: string;

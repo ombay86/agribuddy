@@ -158,6 +158,14 @@
       "detected_at": "21 Sep 2026, 09:03 WIB",
       "id": "dia_b621d405",
       "created_at": "2026-09-21T09:03:25.045144"
+    },
+    {
+      "disease_name": "Blas Daun (Pyricularia oryzae)",
+      "confidence": 0.93,
+      "severity": "Tinggi",
+      "detected_at": "21 Sep 2026, 11:22 WIB",
+      "id": "dia_8dba19b5",
+      "created_at": "2026-09-21T11:22:51.517296"
     }
   ],
   "partners": [
@@ -405,27 +413,27 @@
   ],
   "farm_plans": [
     {
-      "plan_id": "pln_80_2000",
+      "plan_id": "pln_100_4750",
       "user_id": "usr_001",
-      "land_size_ha": 0.8,
+      "land_size_ha": 1.0,
       "commodity": "Padi Sawah Inpari 32",
       "soil_type": "Lempung Berliat (Subur)",
       "water_source": "Irigasi Teknis Bendungan",
-      "location": "Desa Sukamaju Krajan",
+      "location": "Desa Sukamaju, Jawa Timur",
       "weather_condition": {
         "temp_celsius": 29.5,
-        "rain_probability": 20,
-        "season": "Musim Kemarau (Gadu)",
-        "note": "Kondisi cuaca cerah/normal (suhu 29.5°C). Dosis pemupukan NPK dan Urea standar berimbang dianjurkan."
+        "rain_probability": 65,
+        "season": "Musim Hujan (Rendeng)",
+        "note": "Curah hujan tinggi terdeteksi (probabilitas 65%). Dosis Urea diturunkan 15% untuk mencegah serangan Hawar Daun (Kresek) dan rebah batang, dengan penguatan Kalium NPK."
       },
       "financial_summary": {
-        "total_budget": 6612000,
-        "hpp_per_kg": 1230,
-        "projected_yield_kg": 5376,
+        "total_budget": 8174750,
+        "hpp_per_kg": 1216,
+        "projected_yield_kg": 6720,
         "projected_selling_price_per_kg": 6850,
-        "projected_revenue": 36825600,
-        "projected_net_profit": 30213600,
-        "roi_percentage": 457.0
+        "projected_revenue": 46032000,
+        "projected_net_profit": 37857250,
+        "roi_percentage": 463.1
       },
       "budget_items": [
         {
@@ -434,10 +442,10 @@
           "name": "Sewa Traktor & Operator (Bajak & Garu)",
           "category": "JASA_TRAKTOR",
           "recommended_provider": "Mas Bambang (Jasa Traktor Quick Sukamaju)",
-          "quantity": 0.8,
+          "quantity": 1.0,
           "unit": "Hektar",
           "unit_price": 1200000,
-          "total_price": 960000,
+          "total_price": 1200000,
           "notes": "Olah tanah sempurna gembur dan perataan gulma"
         },
         {
@@ -446,10 +454,10 @@
           "name": "Jasa Cangkul & Perbaikan Galengan/Pematang",
           "category": "JASA_CANGKUL",
           "recommended_provider": "Mang Udin & Kelompok Buruh Cangkul",
-          "quantity": 2,
+          "quantity": 3,
           "unit": "Orang-Hari",
           "unit_price": 166666,
-          "total_price": 400000,
+          "total_price": 500000,
           "notes": "Pembersihan kebocoran pematang sawah penahan air"
         },
         {
@@ -458,10 +466,10 @@
           "name": "Benih Padi Sawah Inpari 32 Bersertifikat",
           "category": "SAPROTAN",
           "recommended_provider": "Kios Tani Subur Makmur (Ibu Ratna)",
-          "quantity": 20.0,
+          "quantity": 25.0,
           "unit": "kg",
           "unit_price": 15000,
-          "total_price": 300000,
+          "total_price": 375000,
           "notes": "Daya tumbuh > 85%, tahan rebah"
         },
         {
@@ -470,10 +478,10 @@
           "name": "Upah Buruh Tanam (Sistem Jajar Legowo 2:1)",
           "category": "JASA_BURUH",
           "recommended_provider": "Kelompok Tani Makmur (Regu Tanam Melati)",
-          "quantity": 8,
+          "quantity": 10,
           "unit": "Orang-Hari",
           "unit_price": 140000,
-          "total_price": 1120000,
+          "total_price": 1400000,
           "notes": "Populasi rumpun optimal dan sirkulasi udara baik"
         },
         {
@@ -482,10 +490,10 @@
           "name": "Pupuk Urea N-46 (Subsidi)",
           "category": "PUPUK",
           "recommended_provider": "Kios Pupuk KPL Resmi",
-          "quantity": 160.0,
+          "quantity": 175.0,
           "unit": "kg",
           "unit_price": 2250,
-          "total_price": 360000,
+          "total_price": 393750,
           "notes": "Pemupukan dasar (1/3 dosis) dan susulan I & II"
         },
         {
@@ -494,10 +502,10 @@
           "name": "Pupuk Majemuk NPK Phonska 15-15-15",
           "category": "PUPUK",
           "recommended_provider": "Kios Pupuk KPL Resmi",
-          "quantity": 240.0,
+          "quantity": 320.0,
           "unit": "kg",
           "unit_price": 3300,
-          "total_price": 792000,
+          "total_price": 1056000,
           "notes": "Keseimbangan fosfat & kalium untuk bobot bulir"
         },
         {
@@ -506,10 +514,10 @@
           "name": "Pupuk Hayati Organik / Pembenah Tanah",
           "category": "PUPUK",
           "recommended_provider": "Koperasi Unit Desa (KUD Sukamaju)",
-          "quantity": 400.0,
+          "quantity": 500.0,
           "unit": "kg",
           "unit_price": 800,
-          "total_price": 320000,
+          "total_price": 400000,
           "notes": "Menjaga mikroba tanah jenis Lempung Berliat (Subur)"
         },
         {
@@ -518,10 +526,10 @@
           "name": "Operasional Pengairan (Irigasi Teknis Bendungan)",
           "category": "JASA_PENGAIRAN",
           "recommended_provider": "Pak Slamet (Jasa Pompa Air Alkon Sukamaju)",
-          "quantity": 0.8,
+          "quantity": 1.0,
           "unit": "Paket Lahan",
-          "unit_price": 150000,
-          "total_price": 120000,
+          "unit_price": 50000,
+          "total_price": 50000,
           "notes": "Memanfaatkan saluran irigasi teknis P3A poktan (hemat biaya operasional)."
         },
         {
@@ -533,7 +541,7 @@
           "quantity": 2,
           "unit": "Paket Obat",
           "unit_price": 325000,
-          "total_price": 520000,
+          "total_price": 650000,
           "notes": "Pencegahan dini hawar daun bakteri dan jamur bulir"
         },
         {
@@ -542,10 +550,10 @@
           "name": "Upah Panen / Sewa Mesin Combine Harvester",
           "category": "JASA_PANEN",
           "recommended_provider": "Bpk. Hendra Jaya (Mitra Penggilingan Sri Jaya)",
-          "quantity": 0.8,
+          "quantity": 1.0,
           "unit": "Hektar",
           "unit_price": 1800000,
-          "total_price": 1440000,
+          "total_price": 1800000,
           "notes": "Termasuk perontokan dan penimbangan langsung"
         },
         {
@@ -554,10 +562,10 @@
           "name": "Karung & Ongkos Angkut ke Lumbung/Pengepul",
           "category": "JASA_LOGISTIK",
           "recommended_provider": "Armada Pick-Up Desa Sukamaju",
-          "quantity": 0.8,
+          "quantity": 1.0,
           "unit": "Paket Muatan",
           "unit_price": 350000,
-          "total_price": 280000,
+          "total_price": 350000,
           "notes": "Karung isi 50-60kg dan pengiriman ke lumbung tani"
         }
       ],
@@ -568,8 +576,8 @@
           "day_range": "H-15 s/d H-5",
           "duration_days": 10,
           "status": "SELESAI",
-          "allocated_budget": 1660000,
-          "actual_cost": 1660000,
+          "allocated_budget": 2075000,
+          "actual_cost": 2075000,
           "tasks": [
             "Rendam benih 24 jam dan tiriskan 48 jam hingga berkecambah",
             "Bajak tanah pertama (singkal) sedalam 20-25 cm",
@@ -583,7 +591,7 @@
           "day_range": "H+1 s/d H+7",
           "duration_days": 7,
           "status": "SEDANG_BERJALAN",
-          "allocated_budget": 1548000,
+          "allocated_budget": 1918125,
           "actual_cost": 0,
           "tasks": [
             "Tanam bibit umur muda (15-18 hari setelah semai), 1-2 bibit per rumpun",
@@ -598,14 +606,14 @@
           "day_range": "H+18 s/d H+24",
           "duration_days": 6,
           "status": "BELUM",
-          "allocated_budget": 522000,
+          "allocated_budget": 665812,
           "actual_cost": 0,
           "tasks": [
             "Penyiangan rumput liar/gulma dengan alat gosrok/landak",
             "Taburkan pupuk susulan I (campuran NPK Phonska dan Urea)",
             "Kondisikan air macak-macak (nyemek) saat menabur pupuk"
           ],
-          "ai_tips": "Kondisi cuaca cerah/normal (suhu 29.5°C). Dosis pemupukan NPK dan Urea standar berimbang dianjurkan. Jangan tabur pupuk saat mendung pekat menjelang hujan deras agar tidak hanyut."
+          "ai_tips": "Curah hujan tinggi terdeteksi (probabilitas 65%). Dosis Urea diturunkan 15% untuk mencegah serangan Hawar Daun (Kresek) dan rebah batang, dengan penguatan Kalium NPK. Jangan tabur pupuk saat mendung pekat menjelang hujan deras agar tidak hanyut."
         },
         {
           "step_no": 4,
@@ -613,7 +621,7 @@
           "day_range": "H+40 s/d H+50",
           "duration_days": 10,
           "status": "BELUM",
-          "allocated_budget": 642000,
+          "allocated_budget": 715812,
           "actual_cost": 0,
           "tasks": [
             "Pengamatan malai bunting dan serangan hama sundep/penggerek batang",
@@ -628,7 +636,7 @@
           "day_range": "H+65 s/d H+85",
           "duration_days": 20,
           "status": "BELUM",
-          "allocated_budget": 520000,
+          "allocated_budget": 650000,
           "actual_cost": 0,
           "tasks": [
             "Semprot fungisida/bakterisida hayati bila tampak tanda daun menguning bercak",
@@ -643,7 +651,7 @@
           "day_range": "H+100 s/d H+115",
           "duration_days": 15,
           "status": "BELUM",
-          "allocated_budget": 1720000,
+          "allocated_budget": 2150000,
           "actual_cost": 0,
           "tasks": [
             "Cek kadar air gabah kering panen (target 14-18%)",
@@ -681,10 +689,10 @@
       ],
       "id": "far_892ac03e",
       "created_at": "2026-09-21T08:53:04.123669",
-      "updated_at": "2026-09-21T11:03:45.240576",
+      "updated_at": "2026-09-21T15:02:20.607464",
       "latitude": -7.2504,
       "longitude": 112.7512,
-      "coordinates_label": "-7.2504, 112.7512 (Desa Sukamaju Krajan)"
+      "coordinates_label": "-7.2504, 112.7512 (Desa Sukamaju)"
     }
   ],
   "ecosystem_services": [
@@ -1554,6 +1562,26 @@
       "reference_id": "ord_d7c7bf7e",
       "is_read": false,
       "created_at": "21 Sep 2026, 10:04 WIB"
+    },
+    {
+      "id": "notif_00470b17",
+      "user_id": "usr_001",
+      "title": "Pengikut Baru! 👤",
+      "message": "Seorang warga ekosistem mulai mengikuti profil usahatani Anda.",
+      "type": "NEW_FOLLOWER",
+      "reference_id": "usr_001",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 15:00 WIB"
+    },
+    {
+      "id": "notif_85ce9681",
+      "user_id": "usr_1923",
+      "title": "Pengikut Baru! 👤",
+      "message": "Seorang warga ekosistem mulai mengikuti profil usahatani Anda.",
+      "type": "NEW_FOLLOWER",
+      "reference_id": "usr_1923",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 15:00 WIB"
     }
   ],
   "order_messages": [
