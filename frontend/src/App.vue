@@ -1,22 +1,26 @@
 <template>
-  <div class="min-h-screen bg-slate-100 flex flex-col justify-between">
-    <!-- Responsive Web Layout Container -->
-    <div class="web-viewport flex flex-col min-h-screen relative">
-      <!-- Header with Desktop Navigation & Notifications -->
-      <HeaderBar />
+  <div class="min-h-screen bg-slate-50 flex">
+    <!-- 1. Left Desktop Sidebar Navigation -->
+    <WebSidebar />
 
-      <!-- Konten Halaman Aktif -->
-      <main class="flex-1 w-full pb-20 md:pb-8">
+    <!-- 2. Main Content Canvas -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <!-- Top Contextual Bar -->
+      <WebTopBar />
+
+      <!-- Main Router Canvas -->
+      <main class="flex-1 w-full max-w-[1600px] mx-auto p-4 md:p-6 lg:p-8 pb-28 md:pb-12">
         <router-view />
       </main>
-
-      <!-- Navigasi Bawah (Hanya tampil di Mobile) -->
-      <BottomNav class="md:hidden" />
     </div>
+
+    <!-- 3. Mobile Bottom Navigation (Khusus Layar HP) -->
+    <BottomNav class="md:hidden" />
   </div>
 </template>
 
 <script setup lang="ts">
-import HeaderBar from '@/components/HeaderBar.vue'
-import BottomNav from '@/components/BottomNav.vue'
+import WebSidebar from '@/components/WebSidebar.vue';
+import WebTopBar from '@/components/WebTopBar.vue';
+import BottomNav from '@/components/BottomNav.vue';
 </script>

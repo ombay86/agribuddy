@@ -1,364 +1,412 @@
 <template>
-  <div class="p-4 space-y-4 pb-28">
+  <div class="space-y-6">
     <!-- Header Banner Marketplace -->
-    <div class="bg-gradient-to-r from-emerald-800 to-teal-900 text-white p-5 rounded-3xl shadow-md relative overflow-hidden">
-      <div class="relative z-10 space-y-1.5">
-        <div class="inline-flex items-center gap-1.5 bg-emerald-400/20 text-emerald-200 text-[11px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">
-          <Store :size="13" /> Marketplace Ekosistem Tani
+    <div class="bg-gradient-to-r from-emerald-800 to-teal-900 text-white p-6 md:p-8 rounded-3xl shadow-md relative overflow-hidden">
+      <div class="relative z-10 space-y-2 max-w-3xl">
+        <div class="inline-flex items-center gap-1.5 bg-emerald-400/20 text-emerald-200 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
+          <Store :size="14" /> Marketplace Ekosistem Tani
         </div>
-        <h2 class="text-xl font-black tracking-tight leading-tight">
+        <h2 class="text-2xl md:text-3xl font-black tracking-tight leading-tight">
           Katalog Layanan & Produk Pendukung
         </h2>
-        <p class="text-xs text-emerald-100/90 leading-relaxed">
-          Temukan jasa olah tanah traktor, pengairan pompa, regu buruh cangkul & tanam, saprotan, hingga penggilingan padi dari sesama warga ekosistem.
+        <p class="text-xs md:text-sm text-emerald-100/90 leading-relaxed">
+          Temukan jasa olah tanah traktor, pengairan pompa, regu buruh cangkul & tanam, kios pupuk resmi, hingga penggilingan gabah langsung dari sesama warga ekosistem Sukamaju.
         </p>
       </div>
-      <!-- Action Buttons -->
-      <div class="relative z-10 pt-3 flex items-center gap-2 overflow-x-auto no-scrollbar">
-        <button
-          @click="openCreateModal"
-          class="btn-farmer bg-white text-emerald-900 hover:bg-emerald-50 text-xs font-black py-2.5 px-3.5 rounded-xl shadow-md active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
-        >
-          <PlusCircle :size="15" class="text-emerald-700" /> Pasang Layanan
-        </button>
-        <button
-          @click="toggleMyServicesOnly"
-          class="text-xs font-black py-2.5 px-3 rounded-xl border transition-all flex items-center gap-1.5 active:scale-95 shrink-0"
-          :class="showMyServicesOnly ? 'bg-emerald-700 text-white border-emerald-400' : 'bg-emerald-950/40 text-emerald-200 border-emerald-300/60 hover:bg-emerald-900/60'"
-        >
-          <Briefcase :size="14" /> {{ showMyServicesOnly ? 'Semua Katalog' : 'Layanan Saya' }}
-        </button>
-        <button
-          @click="toggleSellerOrdersView"
-          class="text-xs font-black py-2.5 px-3 rounded-xl border transition-all flex items-center gap-1.5 active:scale-95 shrink-0 relative"
-          :class="showSellerOrdersView ? 'bg-amber-500 text-slate-900 border-amber-300 font-black shadow-sm' : 'bg-emerald-950/40 text-emerald-200 border-emerald-300/60 hover:bg-emerald-900/60'"
-        >
-          <ClipboardList :size="14" /> Pesanan Masuk
-          <span v-if="pendingSellerOrdersCount > 0" class="bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full animate-pulse">
-            {{ pendingSellerOrdersCount }}
-          </span>
-        </button>
-      </div>
-      <div class="absolute -right-4 -bottom-6 text-emerald-700/20 select-none pointer-events-none text-9xl font-black">
+      <div class="absolute -right-4 -bottom-6 text-emerald-700/20 select-none pointer-events-none text-9xl md:text-[140px] font-black">
         🛒
       </div>
     </div>
 
-    <!-- SECTION SELLER ORDERS MANAGEMENT -->
-    <div v-if="showSellerOrdersView" class="space-y-3">
-      <div class="flex items-center justify-between px-1">
-        <div>
-          <h3 class="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-            <ClipboardList :size="14" class="text-amber-600" /> Pesanan Masuk Layanan Anda
-          </h3>
-          <p class="text-[11px] text-slate-500 font-semibold mt-0.5">
-            Beri konfirmasi kepastian pengerjaan, keberangkatan, atau stok barang ke pembeli.
+    <!-- RESPONSIVE 2-COLUMN MARKETPLACE LAYOUT: 3 COLS (SIDEBAR) vs 9 COLS (GRID / ORDERS) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <!-- ==================== SIDEBAR KIRI (3 COLS) ==================== -->
+      <div class="lg:col-span-3 space-y-4">
+        <!-- Quick Action Card -->
+        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-3">
+          <button
+            @click="openCreateModal"
+            class="w-full btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-3 rounded-2xl shadow-md active:scale-95 transition-all flex items-center justify-center gap-2"
+          >
+            <PlusCircle :size="16" /> Pasang Layanan Baru
+          </button>
+
+          <div class="space-y-2 pt-1">
+            <button
+              @click="toggleSellerOrdersView"
+              class="w-full p-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-between active:scale-95 text-left"
+              :class="showSellerOrdersView ? 'bg-amber-500 text-slate-900 border-amber-400 shadow-sm font-black' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'"
+            >
+              <span class="flex items-center gap-2">
+                <ClipboardList :size="16" class="text-amber-700" /> Pesanan Masuk Layanan
+              </span>
+              <span v-if="pendingSellerOrdersCount > 0" class="bg-rose-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full animate-pulse">
+                {{ pendingSellerOrdersCount }}
+              </span>
+            </button>
+
+            <button
+              @click="toggleMyServicesOnly"
+              class="w-full p-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-between active:scale-95 text-left"
+              :class="showMyServicesOnly ? 'bg-emerald-700 text-white border-emerald-800 shadow-sm font-black' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'"
+            >
+              <span class="flex items-center gap-2">
+                <Briefcase :size="16" :class="showMyServicesOnly ? 'text-white' : 'text-emerald-700'" /> {{ showMyServicesOnly ? 'Semua Katalog' : 'Layanan Saya Saja' }}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Kategori Card Vertikal -->
+        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <h4 class="text-xs font-black uppercase tracking-wider text-slate-800">
+              Kategori Layanan
+            </h4>
+            <button
+              v-if="selectedCategory !== 'SEMUA'"
+              @click="selectCategory('SEMUA')"
+              class="text-[10px] font-bold text-emerald-700 hover:underline"
+            >
+              Reset
+            </button>
+          </div>
+
+          <div class="space-y-1">
+            <button
+              v-for="cat in categories"
+              :key="cat.key"
+              @click="selectCategory(cat.key)"
+              class="w-full px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-between text-left active:scale-98"
+              :class="selectedCategory === cat.key
+                ? 'bg-emerald-50 text-emerald-800 font-black border border-emerald-300 shadow-2xs'
+                : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
+            >
+              <span class="flex items-center gap-2">
+                <span class="text-base">{{ cat.emoji }}</span>
+                <span>{{ cat.label }}</span>
+              </span>
+              <span v-if="selectedCategory === cat.key" class="text-emerald-600 font-black text-xs">●</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Edukasi Transaksi Aman -->
+        <div class="bg-gradient-to-br from-teal-50 to-emerald-50 border border-teal-200/70 rounded-3xl p-4.5 space-y-2">
+          <div class="flex items-center gap-1.5 text-xs font-black text-teal-800">
+            <span>🛡️</span> Transaksi Aman Ekosistem
+          </div>
+          <p class="text-[11px] text-teal-900/80 leading-relaxed font-medium">
+            Setiap checkout langsung tercatat di dasbor penjual dan dapat dimasukkan otomatis ke Buku Modal petak sawah Anda.
           </p>
         </div>
-        <span class="text-xs font-black text-amber-900 bg-amber-100 px-2.5 py-1 rounded-xl">
-          {{ filteredSellerOrders.length }} Pesanan
-        </span>
       </div>
 
-      <!-- Filter Tabs Pesanan Masuk -->
-      <div class="flex p-1 bg-slate-200/80 rounded-2xl gap-1 overflow-x-auto no-scrollbar text-xs font-black">
-        <button
-          v-for="flt in [
-            { key: 'SEMUA', label: 'Semua' },
-            { key: 'MENUNGGU', label: 'Perlu Konfirmasi' },
-            { key: 'PROSES', label: 'Sedang Proses / Jalan' },
-            { key: 'SELESAI', label: 'Selesai' },
-            { key: 'BATAL', label: 'Stok Habis / Batal' }
-          ]"
-          :key="flt.key"
-          @click="sellerOrdersFilter = flt.key"
-          class="flex-1 py-1.5 px-2 rounded-xl transition-all whitespace-nowrap text-center text-[11px]"
-          :class="sellerOrdersFilter === flt.key ? 'bg-white text-emerald-800 shadow-sm font-black' : 'text-slate-600 hover:text-slate-800'"
-        >
-          {{ flt.label }}
-        </button>
-      </div>
+      <!-- ==================== KANVAS KANAN (9 COLS) ==================== -->
+      <div class="lg:col-span-9 space-y-4">
+        <!-- MODE 1: PESANAN SELLER MANAGEMENT -->
+        <div v-if="showSellerOrdersView" class="space-y-4">
+          <div class="flex items-center justify-between px-1">
+            <div>
+              <h3 class="text-sm md:text-base font-black uppercase tracking-wider text-slate-800 flex items-center gap-2">
+                <ClipboardList :size="18" class="text-amber-600" /> Pesanan Masuk Layanan Anda
+              </h3>
+              <p class="text-xs text-slate-500 font-semibold mt-0.5">
+                Beri konfirmasi kepastian pengerjaan, keberangkatan, atau ketersediaan stok barang ke pembeli.
+              </p>
+            </div>
+            <span class="text-xs font-black text-amber-900 bg-amber-100 px-3 py-1 rounded-xl">
+              {{ filteredSellerOrders.length }} Pesanan
+            </span>
+          </div>
 
-      <!-- Empty State -->
-      <div v-if="filteredSellerOrders.length === 0" class="bg-white border border-slate-200 rounded-3xl p-8 text-center space-y-2">
-        <div class="text-3xl">📦</div>
-        <h4 class="text-xs font-black text-slate-800">Tidak ada pesanan pada filter ini</h4>
-        <p class="text-[11px] text-slate-500 max-w-xs mx-auto">
-          Saat ada warga yang memesan layanan Anda di katalog, pesanan akan muncul di sini untuk dikonfirmasi.
-        </p>
-      </div>
+          <!-- Filter Tabs Pesanan Masuk -->
+          <div class="flex p-1 bg-slate-200/80 rounded-2xl gap-1 overflow-x-auto no-scrollbar text-xs font-black">
+            <button
+              v-for="flt in [
+                { key: 'SEMUA', label: 'Semua' },
+                { key: 'MENUNGGU', label: 'Perlu Konfirmasi' },
+                { key: 'PROSES', label: 'Sedang Proses / Jalan' },
+                { key: 'SELESAI', label: 'Selesai' },
+                { key: 'BATAL', label: 'Stok Habis / Batal' }
+              ]"
+              :key="flt.key"
+              @click="sellerOrdersFilter = flt.key"
+              class="flex-1 py-2 px-2.5 rounded-xl transition-all whitespace-nowrap text-center text-xs"
+              :class="sellerOrdersFilter === flt.key ? 'bg-white text-emerald-800 shadow-sm font-black' : 'text-slate-600 hover:text-slate-800'"
+            >
+              {{ flt.label }}
+            </button>
+          </div>
 
-      <!-- List Pesanan Masuk (Grid Responsif Web) -->
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div
-          v-for="ord in filteredSellerOrders"
-          :key="ord.id"
-          class="bg-white border border-slate-200 rounded-3xl p-4.5 shadow-sm space-y-3 hover:border-emerald-300 transition-all flex flex-col justify-between"
-        >
-          <div class="space-y-3">
-            <!-- Header Pesanan -->
-            <div class="flex items-start justify-between gap-2">
-              <div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-xs font-black text-slate-800">{{ ord.buyer_name }}</span>
-                  <span class="text-[9px] font-bold text-slate-400">#{{ ord.id }}</span>
+          <!-- Empty State -->
+          <div v-if="filteredSellerOrders.length === 0" class="bg-white border border-slate-200 rounded-3xl p-10 text-center space-y-2">
+            <div class="text-4xl">📦</div>
+            <h4 class="text-sm font-black text-slate-800">Tidak ada pesanan pada filter ini</h4>
+            <p class="text-xs text-slate-500 max-w-xs mx-auto">
+              Saat ada warga yang memesan layanan Anda di katalog, pesanan akan muncul di sini untuk dikonfirmasi.
+            </p>
+          </div>
+
+          <!-- List Pesanan Masuk (Grid Responsif Web) -->
+          <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div
+              v-for="ord in filteredSellerOrders"
+              :key="ord.id"
+              class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-3.5 hover:border-emerald-300 transition-all flex flex-col justify-between"
+            >
+              <div class="space-y-3">
+                <!-- Header Pesanan -->
+                <div class="flex items-start justify-between gap-2">
+                  <div>
+                    <div class="flex items-center gap-1.5">
+                      <span class="text-xs font-black text-slate-800">{{ ord.buyer_name }}</span>
+                      <span class="text-[9px] font-bold text-slate-400">#{{ ord.id }}</span>
+                    </div>
+                    <p class="text-[10px] text-slate-500 font-semibold mt-0.5">Dipesan pada: {{ ord.created_at }}</p>
+                  </div>
+                  <!-- Status Badge -->
+                  <span
+                    class="text-[10px] font-extrabold px-2.5 py-1 rounded-full flex items-center gap-1"
+                    :class="getOrderStatusBadgeClass(ord.status)"
+                  >
+                    {{ getOrderStatusLabel(ord.status) }}
+                  </span>
                 </div>
-                <p class="text-[10px] text-slate-500 font-semibold mt-0.5">Dipesan pada: {{ ord.created_at }}</p>
+
+                <!-- Rincian Layanan & Biaya -->
+                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-1.5 text-xs">
+                  <div class="flex items-baseline justify-between">
+                    <span class="font-black text-slate-800">{{ ord.service_title }}</span>
+                    <span class="font-black text-emerald-700">Rp {{ ord.total_price.toLocaleString('id-ID') }}</span>
+                  </div>
+                  <div class="text-[11px] text-slate-500 font-semibold flex items-center justify-between">
+                    <span>Jumlah: <strong>{{ ord.quantity }} {{ ord.unit }}</strong></span>
+                    <span>Metode: <strong>{{ ord.payment_method }}</strong></span>
+                  </div>
+                  <div v-if="ord.delivery_notes" class="text-[11px] text-slate-600 italic pt-1 border-t border-slate-200/60">
+                    "{{ ord.delivery_notes }}"
+                  </div>
+                </div>
+
+                <!-- Catatan Terakhir dari Penjual jika ada -->
+                <div v-if="ord.seller_notes" class="p-2.5 bg-amber-50/70 border border-amber-200/60 rounded-xl text-[11px] text-amber-900 font-medium">
+                  <strong>Catatan Konfirmasi Anda:</strong> {{ ord.seller_notes }}
+                  <span v-if="ord.status_updated_at" class="block text-[9px] text-amber-700/80 mt-0.5">Diperbarui: {{ ord.status_updated_at }}</span>
+                </div>
               </div>
-              <!-- Status Badge -->
-              <span
-                class="text-[10px] font-extrabold px-2.5 py-1 rounded-full flex items-center gap-1"
-                :class="getOrderStatusBadgeClass(ord.status)"
+
+              <!-- Tombol Aksi Konfirmasi Seller & Chat Pembeli -->
+              <div class="pt-2 border-t border-slate-100 flex items-center justify-end gap-2 flex-wrap">
+                <button
+                  @click="openOrderChat(ord)"
+                  class="text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 py-2 px-3 rounded-xl active:scale-95 transition-all flex items-center gap-1.5"
+                  title="Buka Obrolan Transaksi dengan Pembeli"
+                >
+                  <MessageSquare :size="13" class="text-blue-600" /> Chat Pembeli
+                </button>
+                <button
+                  @click="openOrderStatusModal(ord)"
+                  class="btn-farmer bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs py-2 px-3.5 rounded-xl shadow-sm active:scale-95 transition-all flex items-center gap-1.5"
+                >
+                  <ClipboardList :size="13" /> Beri Konfirmasi / Ubah Status
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODE 2: NORMAL CATALOG SERVICES -->
+        <div v-else class="space-y-4">
+          <!-- Search Bar & Results Counter -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-3 md:p-4 shadow-sm flex items-center justify-between gap-3">
+            <div class="relative flex-1">
+              <Search :size="16" class="absolute inset-y-0 left-3 my-auto text-slate-400" />
+              <input
+                v-model="searchQuery"
+                type="text"
+                placeholder="Cari traktor rotary, pompa diesel, buruh tanam, NPK Phonska, gabah..."
+                class="w-full pl-9 pr-8 py-2.5 text-xs font-semibold rounded-xl border border-slate-300 focus:outline-none focus:border-emerald-500"
+                @input="fetchServices"
+              />
+              <button
+                v-if="searchQuery"
+                @click="searchQuery = ''; fetchServices()"
+                class="absolute inset-y-0 right-3 my-auto text-xs text-slate-400 font-bold"
               >
-                {{ getOrderStatusLabel(ord.status) }}
+                ✕
+              </button>
+            </div>
+
+            <div class="text-xs font-bold text-slate-500 shrink-0 hidden sm:block">
+              <span>{{ services.length }} Layanan Aktif</span>
+            </div>
+          </div>
+
+          <!-- Loading State -->
+          <div v-if="isLoading" class="text-center py-16 space-y-2 bg-white rounded-3xl border border-slate-200">
+            <Loader2 :size="32" class="animate-spin text-emerald-600 mx-auto" />
+            <p class="text-xs font-bold text-slate-500">Memuat katalog layanan ekosistem...</p>
+          </div>
+
+          <!-- Empty State -->
+          <div v-else-if="services.length === 0" class="bg-white border border-slate-200 rounded-3xl p-12 text-center space-y-3">
+            <div class="text-5xl">🔍</div>
+            <h3 class="text-base font-black text-slate-800">Tidak ada layanan ditemukan</h3>
+            <p class="text-xs text-slate-500 max-w-xs mx-auto">
+              Belum ada layanan atau produk yang sesuai dengan kriteria pencarian Anda.
+            </p>
+            <button
+              @click="openCreateModal"
+              class="btn-farmer bg-emerald-600 text-white text-xs font-black py-2.5 px-4 rounded-xl mx-auto flex items-center gap-1.5 shadow-sm"
+            >
+              <PlusCircle :size="15" /> Pasang Layanan Baru
+            </button>
+          </div>
+
+          <!-- Services Grid (Responsif Web Multi-Kolom 3 Cols) -->
+          <div v-else class="space-y-3">
+            <div class="flex items-center justify-between text-xs font-bold text-slate-600 px-1 sm:hidden">
+              <span>Ditemukan {{ services.length }} Layanan & Produk</span>
+              <span v-if="showMyServicesOnly" class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md text-[11px] font-black">
+                Layanan Saya
               </span>
             </div>
 
-            <!-- Rincian Layanan & Biaya -->
-            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-1.5 text-xs">
-              <div class="flex items-baseline justify-between">
-                <span class="font-black text-slate-800">{{ ord.service_title }}</span>
-                <span class="font-black text-emerald-700">Rp {{ ord.total_price.toLocaleString('id-ID') }}</span>
-              </div>
-              <div class="text-[11px] text-slate-500 font-semibold flex items-center justify-between">
-                <span>Jumlah: <strong>{{ ord.quantity }} {{ ord.unit }}</strong></span>
-                <span>Metode: <strong>{{ ord.payment_method }}</strong></span>
-              </div>
-              <div v-if="ord.delivery_notes" class="text-[11px] text-slate-600 italic pt-1 border-t border-slate-200/60">
-                "{{ ord.delivery_notes }}"
-              </div>
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              <div
+                v-for="service in services"
+                :key="service.id"
+                class="bg-white border rounded-3xl p-4.5 shadow-sm space-y-3 hover:border-emerald-300 hover:shadow-md transition-all flex flex-col justify-between"
+                :class="isMyService(service) ? 'border-emerald-200 bg-emerald-50/15 ring-1 ring-emerald-100' : 'border-slate-200'"
+              >
+                <div class="space-y-3">
+                  <!-- Header: Provider Info & Category -->
+                  <div class="flex items-start justify-between gap-2">
+                    <div class="flex items-center gap-2.5">
+                      <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-50 border border-emerald-200 flex items-center justify-center text-xl shadow-xs">
+                        {{ service.provider_avatar || '🌾' }}
+                      </div>
+                      <div>
+                        <div class="flex items-center gap-1.5">
+                          <h4 class="text-xs font-black text-slate-800">{{ service.provider_name }}</h4>
+                          <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full" :class="getBadgeClass(service.category)">
+                            {{ service.provider_badge }}
+                          </span>
+                        </div>
+                        <div class="text-[10px] text-slate-500 font-semibold flex items-center gap-1 mt-0.5">
+                          <MapPin :size="11" class="text-slate-400" /> {{ service.location }}
+                        </div>
+                      </div>
+                    </div>
 
-            <!-- Catatan Terakhir dari Penjual jika ada -->
-            <div v-if="ord.seller_notes" class="p-2.5 bg-amber-50/70 border border-amber-200/60 rounded-xl text-[11px] text-amber-900 font-medium">
-              <strong>Catatan Konfirmasi Anda:</strong> {{ ord.seller_notes }}
-              <span v-if="ord.status_updated_at" class="block text-[9px] text-amber-700/80 mt-0.5">Diperbarui: {{ ord.status_updated_at }}</span>
-            </div>
-          </div>
-
-          <!-- Tombol Aksi Konfirmasi Seller & Chat Pembeli -->
-          <div class="pt-2 border-t border-slate-100 flex items-center justify-end gap-2 flex-wrap">
-            <button
-              @click="openOrderChat(ord)"
-              class="text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 py-2 px-3 rounded-xl active:scale-95 transition-all flex items-center gap-1.5"
-              title="Buka Obrolan Transaksi dengan Pembeli"
-            >
-              <MessageSquare :size="13" class="text-blue-600" /> Chat Pembeli
-            </button>
-            <button
-              @click="openOrderStatusModal(ord)"
-              class="btn-farmer bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs py-2 px-3.5 rounded-xl shadow-sm active:scale-95 transition-all flex items-center gap-1.5"
-            >
-              <ClipboardList :size="13" /> Beri Konfirmasi / Ubah Status
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SECTION 2: NORMAL CATALOG SERVICES (KETIKA TIDAK MEMBUKA TAB PESANAN SELLER) -->
-    <div v-else class="space-y-4">
-      <!-- Search Bar & Filters -->
-      <div class="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm space-y-2.5">
-      <!-- Search Input -->
-      <div class="relative">
-        <Search :size="16" class="absolute inset-y-0 left-3 my-auto text-slate-400" />
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Cari traktor, pompa, buruh tanam, pupuk, gabah..."
-          class="w-full pl-9 pr-4 py-2 text-xs font-semibold rounded-xl border border-slate-300 focus:outline-none focus:border-emerald-500"
-          @input="fetchServices"
-        />
-        <button
-          v-if="searchQuery"
-          @click="searchQuery = ''; fetchServices()"
-          class="absolute inset-y-0 right-3 my-auto text-xs text-slate-400 font-bold"
-        >
-          ✕
-        </button>
-      </div>
-
-      <!-- Kategori Filter Chips -->
-      <div class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-xs font-bold">
-        <button
-          v-for="cat in categories"
-          :key="cat.key"
-          @click="selectCategory(cat.key)"
-          class="px-3 py-1.5 rounded-xl whitespace-nowrap transition-all flex items-center gap-1 shrink-0 active:scale-95"
-          :class="selectedCategory === cat.key
-            ? 'bg-emerald-600 text-white font-black shadow-sm'
-            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
-        >
-          <span>{{ cat.emoji }}</span>
-          <span>{{ cat.label }}</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Loading State -->
-    <div v-if="isLoading" class="text-center py-12 space-y-2">
-      <Loader2 :size="32" class="animate-spin text-emerald-600 mx-auto" />
-      <p class="text-xs font-bold text-slate-500">Memuat katalog layanan ekosistem...</p>
-    </div>
-
-    <!-- Empty State -->
-    <div v-else-if="services.length === 0" class="bg-white border border-slate-200 rounded-3xl p-8 text-center space-y-3">
-      <div class="text-4xl">🔍</div>
-      <h3 class="text-sm font-black text-slate-800">Tidak ada layanan ditemukan</h3>
-      <p class="text-xs text-slate-500 max-w-xs mx-auto">
-        Belum ada layanan atau produk yang sesuai dengan kriteria pencarian Anda.
-      </p>
-      <button
-        @click="openCreateModal"
-        class="btn-farmer bg-emerald-600 text-white text-xs font-black py-2 px-4 rounded-xl mx-auto flex items-center gap-1.5"
-      >
-        <PlusCircle :size="14" /> Pasang Layanan Baru
-      </button>
-    </div>
-
-    <!-- Services Grid/List (Responsif Web Multi-Kolom) -->
-    <div v-else class="space-y-3">
-      <div class="flex items-center justify-between text-xs font-bold text-slate-600 px-1">
-        <span>Ditemukan {{ services.length }} Layanan & Produk</span>
-        <span v-if="showMyServicesOnly" class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md text-[11px] font-black">
-          Kelola Layanan Akun Saya
-        </span>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div
-          v-for="service in services"
-          :key="service.id"
-          class="bg-white border rounded-3xl p-4.5 shadow-sm space-y-3 hover:border-emerald-300 transition-all flex flex-col justify-between"
-          :class="isMyService(service) ? 'border-emerald-200 bg-emerald-50/15 ring-1 ring-emerald-100' : 'border-slate-200'"
-        >
-          <div class="space-y-3">
-            <!-- Header: Provider Info & Category -->
-            <div class="flex items-start justify-between gap-2">
-              <div class="flex items-center gap-2.5">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-50 border border-emerald-200 flex items-center justify-center text-xl shadow-xs">
-                  {{ service.provider_avatar || '🌾' }}
-                </div>
-                <div>
-                  <div class="flex items-center gap-1.5">
-                    <h4 class="text-xs font-black text-slate-800">{{ service.provider_name }}</h4>
-                    <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full" :class="getBadgeClass(service.category)">
-                      {{ service.provider_badge }}
+                    <!-- Availability Tag -->
+                    <span
+                      class="text-[10px] font-extrabold px-2 py-0.5 rounded-md"
+                      :class="service.is_available ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-500'"
+                    >
+                      {{ service.is_available ? '● Siap' : '○ Penuh' }}
                     </span>
                   </div>
-                  <div class="text-[10px] text-slate-500 font-semibold flex items-center gap-1 mt-0.5">
-                    <MapPin :size="11" class="text-slate-400" /> {{ service.location }}
+
+                  <!-- Service Title & Price -->
+                  <div class="border-t border-slate-100 pt-2.5 flex items-start justify-between gap-2">
+                    <div>
+                      <span class="text-[10px] font-extrabold uppercase text-emerald-700 tracking-wider block">
+                        {{ service.category_label }}
+                      </span>
+                      <h3 class="text-sm font-black text-slate-800 mt-0.5 leading-snug">
+                        {{ service.title }}
+                      </h3>
+                    </div>
+                    <div class="text-right shrink-0">
+                      <div class="text-base font-black text-emerald-700">
+                        Rp {{ service.price.toLocaleString('id-ID') }}
+                      </div>
+                      <span class="text-[10px] text-slate-500 font-bold block">{{ service.price_unit }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Description -->
+                  <p class="text-xs text-slate-600 leading-relaxed line-clamp-3">
+                    {{ service.description }}
+                  </p>
+
+                  <!-- Skill & Service Tags -->
+                  <div v-if="service.tags && service.tags.length > 0" class="flex flex-wrap gap-1">
+                    <span
+                      v-for="(tag, tIdx) in service.tags"
+                      :key="tIdx"
+                      class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-lg"
+                    >
+                      # {{ tag }}
+                    </span>
                   </div>
                 </div>
-              </div>
 
-              <!-- Availability Tag -->
-              <span
-                class="text-[10px] font-extrabold px-2 py-0.5 rounded-md"
-                :class="service.is_available ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-500'"
-              >
-                {{ service.is_available ? '● Siap Kerja' : '○ Penuh' }}
-              </span>
-            </div>
+                <!-- Action Footer -->
+                <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap">
+                  <!-- When It's My Service: Edit, Delete, & Diskusi -->
+                  <template v-if="isMyService(service)">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                      <button
+                        @click="openProductDiscussion(service)"
+                        class="text-xs font-black text-amber-800 bg-amber-50 hover:bg-amber-100 px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1"
+                        title="Lihat Pertanyaan Warga"
+                      >
+                        <MessageCircle :size="13" /> Diskusi
+                      </button>
+                      <button
+                        @click="openEditModal(service)"
+                        class="text-xs font-black text-slate-700 bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1"
+                      >
+                        <Edit :size="13" /> Edit
+                      </button>
+                      <button
+                        @click="handleDeleteService(service.id)"
+                        class="text-xs font-black text-rose-600 bg-rose-50 hover:bg-rose-100 px-2 py-1.5 rounded-xl transition-all flex items-center gap-1"
+                      >
+                        <Trash2 :size="13" />
+                      </button>
+                    </div>
+                    <span class="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-1 rounded-lg">
+                      Layanan Anda
+                    </span>
+                  </template>
 
-            <!-- Service Title & Price -->
-            <div class="border-t border-slate-100 pt-2.5 flex items-start justify-between gap-2">
-              <div>
-                <span class="text-[10px] font-extrabold uppercase text-emerald-700 tracking-wider block">
-                  {{ service.category_label }}
-                </span>
-                <h3 class="text-sm font-black text-slate-800 mt-0.5 leading-snug">
-                  {{ service.title }}
-                </h3>
-              </div>
-              <div class="text-right shrink-0">
-                <div class="text-base font-black text-emerald-700">
-                  Rp {{ service.price.toLocaleString('id-ID') }}
-                </div>
-                <span class="text-[10px] text-slate-500 font-bold block">{{ service.price_unit }}</span>
-              </div>
-            </div>
-
-            <!-- Description -->
-            <p class="text-xs text-slate-600 leading-relaxed">
-              {{ service.description }}
-            </p>
-
-            <!-- Skill & Service Tags -->
-            <div v-if="service.tags && service.tags.length > 0" class="flex flex-wrap gap-1">
-              <span
-                v-for="(tag, tIdx) in service.tags"
-                :key="tIdx"
-                class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-lg"
-              >
-                # {{ tag }}
-              </span>
-            </div>
-          </div>
-
-          <!-- Action Footer -->
-          <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap">
-            <!-- When It's My Service: Edit, Delete, & Diskusi -->
-            <template v-if="isMyService(service)">
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <button
-                  @click="openProductDiscussion(service)"
-                  class="text-xs font-black text-amber-800 bg-amber-50 hover:bg-amber-100 px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1"
-                  title="Lihat Pertanyaan Warga"
-                >
-                  <MessageCircle :size="13" /> Diskusi
-                </button>
-                <button
-                  @click="openEditModal(service)"
-                  class="text-xs font-black text-slate-700 bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1"
-                >
-                  <Edit :size="13" /> Edit
-                </button>
-                <button
-                  @click="handleDeleteService(service.id)"
-                  class="text-xs font-black text-rose-600 bg-rose-50 hover:bg-rose-100 px-2 py-1.5 rounded-xl transition-all flex items-center gap-1"
-                >
-                  <Trash2 :size="13" />
-                </button>
-              </div>
-              <span class="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-1 rounded-lg">
-                Layanan Aktif
-              </span>
-            </template>
-
-            <!-- When It's Another User's Service: Diskusi, WA, Checkout -->
-            <template v-else>
-              <div class="flex items-center gap-1.5 w-full justify-between pt-1">
-                <button
-                  @click="openProductDiscussion(service)"
-                  class="text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 py-2 px-2.5 rounded-xl active:scale-95 transition-all flex items-center gap-1"
-                  title="Tanya Jawab / Diskusi Produk"
-                >
-                  <MessageCircle :size="13" class="text-amber-600" /> Diskusi
-                </button>
-                <div class="flex items-center gap-1.5">
-                  <button
-                    @click="contactService(service)"
-                    class="text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 py-2 px-2.5 rounded-xl active:scale-95 transition-all flex items-center gap-1"
-                    title="Chat via WhatsApp"
-                  >
-                    <MessageSquare :size="13" class="text-emerald-600" /> WA
-                  </button>
-                  <button
-                    @click="openCheckoutModal(service)"
-                    class="btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs py-2 px-3 rounded-xl shadow-sm active:scale-95 transition-all flex items-center gap-1.5"
-                  >
-                    <ShoppingCart :size="13" /> Pesan
-                  </button>
+                  <!-- When It's Another User's Service: Diskusi, WA, Checkout -->
+                  <template v-else>
+                    <div class="flex items-center gap-1.5 w-full justify-between pt-1">
+                      <button
+                        @click="openProductDiscussion(service)"
+                        class="text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 py-2 px-2.5 rounded-xl active:scale-95 transition-all flex items-center gap-1"
+                        title="Tanya Jawab / Diskusi Produk"
+                      >
+                        <MessageCircle :size="13" class="text-amber-600" /> Diskusi
+                      </button>
+                      <div class="flex items-center gap-1.5">
+                        <button
+                          @click="openWhatsApp(service.whatsapp_number, service.title)"
+                          class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold py-2 px-2.5 rounded-xl active:scale-95 transition-all flex items-center gap-1 border border-emerald-200"
+                        >
+                          <Phone :size="13" class="text-emerald-600" /> WA
+                        </button>
+                        <button
+                          @click="openCheckoutModal(service)"
+                          class="btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs py-2 px-3.5 rounded-xl shadow-sm active:scale-95 transition-all flex items-center gap-1.5"
+                        >
+                          <ShoppingCart :size="13" /> Pesan
+                        </button>
+                      </div>
+                    </div>
+                  </template>
                 </div>
               </div>
-            </template>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
     <!-- Modal Form: Tambah / Edit Layanan Pengguna -->
     <div v-if="isModalOpen" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in">

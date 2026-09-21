@@ -1,620 +1,633 @@
 <template>
-  <div class="p-4 space-y-4 pb-28">
+  <div class="space-y-6">
     <!-- Header Banner -->
-    <div class="bg-gradient-to-r from-emerald-800 to-teal-900 text-white p-5 rounded-3xl shadow-md relative overflow-hidden">
-      <div class="relative z-10 space-y-2">
-        <div class="inline-flex items-center gap-1.5 bg-emerald-400/20 text-emerald-200 text-[11px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">
-          <Sparkles :size="13" /> Rencana Tani AI & Modal
+    <div class="bg-gradient-to-r from-emerald-800 to-teal-900 text-white p-6 md:p-8 rounded-3xl shadow-md relative overflow-hidden">
+      <div class="relative z-10 space-y-2 max-w-3xl">
+        <div class="inline-flex items-center gap-1.5 bg-emerald-400/20 text-emerald-200 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
+          <Sparkles :size="14" /> Rencana Tani AI & Modal
         </div>
-        <h2 class="text-xl font-black tracking-tight leading-tight">
+        <h2 class="text-2xl md:text-3xl font-black tracking-tight leading-tight">
           Kalkulator Modal & Monitoring Siklus Tanam
         </h2>
-        <p class="text-xs text-emerald-100/90 leading-relaxed">
-          Cukup masukkan luas lahan, AI akan mengalkulasi modal operasional dari awal hingga panen dengan memperhitungkan kondisi cuaca, tanah, dan air.
+        <p class="text-xs md:text-sm text-emerald-100/90 leading-relaxed">
+          Cukup tentukan petak sawah dan luas lahan, AI akan mengalkulasi modal operasional (RAB), jadwal siklus budidaya, serta proyeksi bagi hasil kemitraan secara otomatis.
         </p>
       </div>
       <!-- Background icon decoration -->
-      <div class="absolute -right-4 -bottom-6 text-emerald-700/30 select-none pointer-events-none text-9xl font-black">
+      <div class="absolute -right-4 -bottom-6 text-emerald-700/30 select-none pointer-events-none text-9xl md:text-[140px] font-black">
         🌾
       </div>
     </div>
 
-    <!-- KELOLA PETAK SAWAH SAYA (MULTI-LAHAN SWITCHER) -->
-    <div class="bg-white border border-slate-200 rounded-3xl p-4.5 shadow-sm space-y-3">
-      <div class="flex items-center justify-between">
-        <div>
-          <span class="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
-            Multi-Lahan Usahatani
-          </span>
-          <h3 class="text-sm font-black text-slate-800 mt-1 flex items-center gap-1.5">
-            <Layers :size="16" class="text-emerald-600" /> Sawah yang Sedang Dikerjakan
-          </h3>
-        </div>
-        <button
-          @click="openAddFarmModal"
-          class="btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-1.5 px-3 rounded-xl shadow-sm active:scale-95 flex items-center gap-1 transition-all"
-        >
-          <PlusCircle :size="13" /> Tambah Sawah
-        </button>
-      </div>
-
-      <!-- Selector Chips Sawah -->
-      <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs font-bold">
-        <button
-          v-for="farm in farmlands"
-          :key="farm.id"
-          @click="selectFarmland(farm)"
-          class="px-3.5 py-2.5 rounded-2xl whitespace-nowrap transition-all flex items-center gap-2.5 shrink-0 border active:scale-95 text-left"
-          :class="activeFarmId === farm.id
-            ? 'bg-emerald-700 text-white border-emerald-800 shadow-md ring-2 ring-emerald-300/50'
-            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'"
-        >
-          <span class="text-xl">🌾</span>
-          <div>
-            <div class="font-extrabold text-xs leading-snug">{{ farm.name }}</div>
-            <div class="text-[10px] opacity-80 font-semibold">{{ farm.land_size_ha }} Ha • {{ farm.commodity }}</div>
+    <!-- RESPONSIVE 2-COLUMN DESKTOP GRID (8 COLS vs 4 COLS) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <!-- ==================== KOLOM KIRI (8 COLS): Form Parameter & Tab Modules ==================== -->
+      <div class="lg:col-span-8 space-y-6">
+        <!-- Form Input Parameter Lahan & Cuaca -->
+        <div class="bg-white border border-slate-200 rounded-3xl p-5 md:p-6 shadow-sm space-y-4">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <h3 class="text-sm md:text-base font-black text-slate-800 flex items-center gap-2">
+              <Calculator :size="18" class="text-emerald-600" /> Parameter Lahan Pertanian
+            </h3>
+            <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full">
+              AI Auto-Adjust
+            </span>
           </div>
-        </button>
-      </div>
-    </div>
 
-    <!-- Form Input Parameter Lahan & Cuaca -->
-    <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-4">
-      <div class="flex items-center justify-between pb-1 border-b border-slate-100">
-        <h3 class="text-sm font-black text-slate-800 flex items-center gap-2">
-          <Calculator :size="16" class="text-emerald-600" /> Parameter Lahan Pertanian
-        </h3>
-        <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-          AI Auto-Adjust
-        </span>
-      </div>
+          <!-- Luas Lahan Input & Quick Chips -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-slate-700 flex justify-between">
+              <span>Luas Lahan yang Direncanakan:</span>
+              <span class="text-emerald-800 font-extrabold">{{ form.land_size_ha }} Hektar ({{ (form.land_size_ha * 10000).toLocaleString() }} m²)</span>
+            </label>
+            <div class="relative">
+              <input
+                v-model.number="form.land_size_ha"
+                type="number"
+                step="0.1"
+                min="0.05"
+                max="20"
+                class="w-full px-4 py-2.5 rounded-2xl border border-slate-300 font-bold text-base text-slate-800 focus:outline-none focus:border-emerald-500"
+              />
+              <span class="absolute inset-y-0 right-0 pr-4 flex items-center text-xs font-bold text-slate-400">
+                Hektar
+              </span>
+            </div>
+            <!-- Quick Chips -->
+            <div class="flex items-center gap-1.5 pt-1">
+              <button
+                v-for="chip in [0.25, 0.5, 1.0, 1.5, 2.0]"
+                :key="chip"
+                @click="form.land_size_ha = chip"
+                type="button"
+                class="px-2.5 py-1 text-xs font-bold rounded-xl border transition-all active:scale-95"
+                :class="form.land_size_ha === chip 
+                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' 
+                  : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'"
+              >
+                {{ chip }} Ha
+              </button>
+            </div>
+          </div>
 
-      <!-- Luas Lahan Input & Quick Chips -->
-      <div class="space-y-1.5">
-        <label class="text-xs font-bold text-slate-700 flex justify-between">
-          <span>Luas Lahan yang Direncanakan:</span>
-          <span class="text-emerald-800 font-extrabold">{{ form.land_size_ha }} Hektar ({{ (form.land_size_ha * 10000).toLocaleString() }} m²)</span>
-        </label>
-        <div class="relative">
-          <input
-            v-model.number="form.land_size_ha"
-            type="number"
-            step="0.1"
-            min="0.05"
-            max="20"
-            class="w-full px-4 py-2.5 rounded-2xl border border-slate-300 font-bold text-base text-slate-800 focus:outline-none focus:border-emerald-500"
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <!-- Komoditas -->
+            <div>
+              <label class="text-xs font-bold text-slate-700 block mb-1">Komoditas Tanam</label>
+              <select
+                v-model="form.commodity"
+                class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500 bg-white"
+              >
+                <option value="Padi Sawah Inpari 32">Padi Sawah (Inpari 32 Bersertifikat)</option>
+                <option value="Padi Ciherang">Padi Ciherang Unggul</option>
+                <option value="Jagung Hibrida Bisi-18">Jagung Hibrida Bisi-18</option>
+                <option value="Kedelai Anjasmoro">Kedelai Anjasmoro</option>
+              </select>
+            </div>
+
+            <!-- Kondisi Tanah -->
+            <div>
+              <label class="text-xs font-bold text-slate-700 block mb-1">Kondisi Tanah Lahan</label>
+              <select
+                v-model="form.soil_type"
+                class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500 bg-white"
+              >
+                <option value="Lempung Berliat (Subur)">Lempung Berliat (Subur & Gembur)</option>
+                <option value="Lempung Berpasir">Lempung Berpasir (Perlu Tambah Organik)</option>
+                <option value="Aluvial Sawah Teknis">Aluvial Sawah Irigasi Teknis</option>
+                <option value="Tanah Masam / Gambut">Tanah Masam (Perlu Pengapuran Dolomit)</option>
+              </select>
+            </div>
+
+            <!-- Sumber Air -->
+            <div class="sm:col-span-2">
+              <label class="text-xs font-bold text-slate-700 block mb-1">Ketersediaan / Sumber Air</label>
+              <select
+                v-model="form.water_source"
+                class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500 bg-white"
+              >
+                <option value="Irigasi Teknis Bendungan">Irigasi Teknis Bendungan (Saluran Tersier P3A)</option>
+                <option value="Sumur Pompa Diesel / Bor">Sumur Pompa Diesel / Bor (Alkon 3 Inci)</option>
+                <option value="Sawah Tadah Hujan">Sawah Tadah Hujan (Tergantung Musim Hujan)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Komponen Peta Interaktif & Deteksi GPS Lahan -->
+          <FarmlandMapPicker
+            :initialLat="form.latitude"
+            :initialLon="form.longitude"
+            :initialLabel="form.location"
+            @update:coordinates="onCoordinatesUpdated"
           />
-          <span class="absolute inset-y-0 right-0 pr-4 flex items-center text-xs font-bold text-slate-400">
-            Hektar
-          </span>
-        </div>
-        <!-- Quick Chips -->
-        <div class="flex items-center gap-1.5 pt-1">
+
+          <!-- Submit AI Calculation -->
           <button
-            v-for="chip in [0.25, 0.5, 1.0, 1.5, 2.0]"
-            :key="chip"
-            @click="form.land_size_ha = chip"
-            type="button"
-            class="px-2.5 py-1 text-xs font-bold rounded-xl border transition-all active:scale-95"
-            :class="form.land_size_ha === chip 
-              ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' 
-              : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'"
+            @click="runCalculation"
+            :disabled="isLoading"
+            class="w-full btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm py-3 rounded-2xl shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 mt-2 disabled:opacity-60"
           >
-            {{ chip }} Ha
+            <Sparkles v-if="!isLoading" :size="16" />
+            <Loader2 v-else :size="16" class="animate-spin" />
+            <span>{{ isLoading ? 'AI Sedang Mengalkulasi Lahan...' : 'Kalkulasi Rencana Tani dengan AI' }}</span>
           </button>
         </div>
-      </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-        <!-- Komoditas -->
-        <div>
-          <label class="text-xs font-bold text-slate-700 block mb-1">Komoditas Tanam</label>
-          <select
-            v-model="form.commodity"
-            class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500 bg-white"
-          >
-            <option value="Padi Sawah Inpari 32">Padi Sawah (Inpari 32 Bersertifikat)</option>
-            <option value="Padi Ciherang">Padi Ciherang Unggul</option>
-            <option value="Jagung Hibrida Bisi-18">Jagung Hibrida Bisi-18</option>
-            <option value="Kedelai Anjasmoro">Kedelai Anjasmoro</option>
-          </select>
-        </div>
-
-        <!-- Kondisi Tanah -->
-        <div>
-          <label class="text-xs font-bold text-slate-700 block mb-1">Kondisi Tanah Lahan</label>
-          <select
-            v-model="form.soil_type"
-            class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500 bg-white"
-          >
-            <option value="Lempung Berliat (Subur)">Lempung Berliat (Subur & Gembur)</option>
-            <option value="Lempung Berpasir">Lempung Berpasir (Perlu Tambah Organik)</option>
-            <option value="Aluvial Sawah Teknis">Aluvial Sawah Irigasi Teknis</option>
-            <option value="Tanah Masam / Gambut">Tanah Masam (Perlu Pengapuran Dolomit)</option>
-          </select>
-        </div>
-
-        <!-- Sumber Air -->
-        <div class="sm:col-span-2">
-          <label class="text-xs font-bold text-slate-700 block mb-1">Ketersediaan / Sumber Air</label>
-          <select
-            v-model="form.water_source"
-            class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500 bg-white"
-          >
-            <option value="Irigasi Teknis Bendungan">Irigasi Teknis Bendungan (Saluran Tersier P3A)</option>
-            <option value="Sumur Pompa Diesel / Bor">Sumur Pompa Diesel / Bor (Alkon 3 Inci)</option>
-            <option value="Sawah Tadah Hujan">Sawah Tadah Hujan (Tergantung Musim Hujan)</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Komponen Peta Interaktif & Deteksi GPS Lahan -->
-      <FarmlandMapPicker
-        :initialLat="form.latitude"
-        :initialLon="form.longitude"
-        :initialLabel="form.location"
-        @update:coordinates="onCoordinatesUpdated"
-      />
-
-      <!-- Submit AI Calculation -->
-      <button
-        @click="runCalculation"
-        :disabled="isLoading"
-        class="w-full btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm py-3 rounded-2xl shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 mt-2 disabled:opacity-60"
-      >
-        <Sparkles v-if="!isLoading" :size="16" />
-        <Loader2 v-else :size="16" class="animate-spin" />
-        <span>{{ isLoading ? 'AI Sedang Mengalkulasi Lahan...' : 'Kalkulasi Rencana Tani dengan AI' }}</span>
-      </button>
-    </div>
-
-    <!-- AI Agronomic & Weather Adjustment Card -->
-    <div v-if="plan" class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-3xl p-4 shadow-sm space-y-2.5">
-      <div class="flex items-center justify-between">
-        <span class="text-[11px] font-black uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
-          <CloudSun :size="14" /> Analisis Cuaca & Agronomi AI
-        </span>
-        <span class="text-[10px] font-extrabold bg-amber-200/80 text-amber-900 px-2.5 py-0.5 rounded-full">
-          {{ plan.weather_condition.season }}
-        </span>
-      </div>
-
-      <!-- Koordinat GPS Lahan Aktif -->
-      <div class="flex items-center gap-2 text-[11px] text-amber-900 font-extrabold bg-amber-100/70 p-2 rounded-xl border border-amber-200/60">
-        <MapPin :size="13" class="text-amber-700 shrink-0" />
-        <div class="truncate">
-          <span>Lokasi: <strong>{{ plan.location }}</strong></span>
-          <span class="text-[10px] font-mono text-amber-800 font-bold ml-1.5">({{ plan.latitude ? plan.latitude.toFixed(4) : '-7.2504' }}, {{ plan.longitude ? plan.longitude.toFixed(4) : '112.7512' }})</span>
-        </div>
-      </div>
-
-      <p class="text-xs text-amber-900 leading-relaxed font-medium">
-        {{ plan.weather_condition.note }}
-      </p>
-      <div class="flex items-center gap-3 pt-1 text-[11px] text-amber-800 font-bold border-t border-amber-200/60">
-        <span>Suhu Rata-rata: {{ plan.weather_condition.temp_celsius }}°C</span>
-        <span>•</span>
-        <span>Peluang Hujan: {{ plan.weather_condition.rain_probability }}%</span>
-      </div>
-    </div>
-
-
-    <!-- Financial Projection Dashboard -->
-    <div v-if="plan" class="bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 text-white rounded-3xl p-5 shadow-lg space-y-4">
-      <div class="flex items-center justify-between">
-        <div>
-          <span class="text-[10px] font-black uppercase tracking-wider text-emerald-400">Proyeksi Finansial Tani</span>
-          <h3 class="text-base font-extrabold">Luas Lahan: {{ plan.land_size_ha }} Ha</h3>
-        </div>
-        <div class="bg-emerald-500/20 border border-emerald-400/40 px-3 py-1 rounded-2xl text-right">
-          <span class="text-[9px] text-emerald-300 font-extrabold uppercase block">Estimasi ROI</span>
-          <span class="text-base font-black text-emerald-400">+{{ plan.financial_summary.roi_percentage }}%</span>
-        </div>
-      </div>
-
-      <!-- Financial Metrics Grid -->
-      <div class="grid grid-cols-2 gap-3 pt-1">
-        <div class="bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/10">
-          <span class="text-[10px] text-slate-300 font-bold block">Total Modal (RAB)</span>
-          <div class="text-lg font-black text-white mt-0.5">
-            Rp {{ plan.financial_summary.total_budget.toLocaleString('id-ID') }}
-          </div>
-          <span class="text-[9px] text-emerald-300 font-semibold block mt-0.5">
-            HPP: Rp {{ plan.financial_summary.hpp_per_kg.toLocaleString('id-ID') }}/kg
-          </span>
-        </div>
-
-        <div class="bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/10">
-          <span class="text-[10px] text-slate-300 font-bold block">Proyeksi Laba Bersih</span>
-          <div class="text-lg font-black text-emerald-400 mt-0.5">
-            Rp {{ plan.financial_summary.projected_net_profit.toLocaleString('id-ID') }}
-          </div>
-          <span class="text-[9px] text-slate-300 font-semibold block mt-0.5">
-            Setelah dipotong modal
-          </span>
-        </div>
-
-        <div class="bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/10">
-          <span class="text-[10px] text-slate-300 font-bold block">Estimasi Hasil Panen</span>
-          <div class="text-base font-black text-white mt-0.5">
-            {{ plan.financial_summary.projected_yield_kg.toLocaleString('id-ID') }} <span class="text-xs font-bold text-slate-300">kg GKP</span>
-          </div>
-          <span class="text-[9px] text-amber-300 font-semibold block mt-0.5">
-            Harga: Rp {{ plan.financial_summary.projected_selling_price_per_kg.toLocaleString('id-ID') }}/kg
-          </span>
-        </div>
-
-        <div class="bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/10">
-          <span class="text-[10px] text-slate-300 font-bold block">Omzet Penjualan Bruto</span>
-          <div class="text-base font-black text-white mt-0.5">
-            Rp {{ plan.financial_summary.projected_revenue.toLocaleString('id-ID') }}
-          </div>
-          <span class="text-[9px] text-slate-300 font-semibold block mt-0.5">
-            Penyerapan bursa lumbung
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <!-- PANEL KOLABORATOR & BAGI HASIL USAHATANI -->
-    <div v-if="activeFarm" class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-3.5">
-      <div class="flex items-center justify-between pb-1 border-b border-slate-100">
-        <div>
-          <div class="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
-            <Users2 :size="12" /> Kemitraan & Bagi Hasil
-          </div>
-          <h3 class="text-sm font-black text-slate-800 mt-1">
-            Pengelola & Kolaborator Lahan
-          </h3>
-        </div>
-        <button
-          @click="openManageCollabModal"
-          class="text-xs font-black text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-xl border border-emerald-200 active:scale-95 transition-all flex items-center gap-1"
-        >
-          <UserPlus :size="13" /> Kelola / Tambah
-        </button>
-      </div>
-
-      <p class="text-xs text-slate-500 leading-relaxed">
-        Sawah <strong>{{ activeFarm.name }}</strong> dikelola bersama dengan proporsi persentase pembagian hasil berikut:
-      </p>
-
-      <!-- Multi-Segment Visual Progress Bar -->
-      <div class="space-y-1.5">
-        <div class="w-full h-4 bg-slate-100 rounded-full overflow-hidden flex shadow-inner">
-          <div
-            v-for="(collab, cIdx) in activeFarm.collaborators"
-            :key="collab.id"
-            :style="{ width: `${collab.share_percentage}%` }"
-            :class="getCollabColorBg(cIdx)"
-            class="h-full transition-all flex items-center justify-center text-[10px] font-black text-white"
-            :title="`${collab.name}: ${collab.share_percentage}%`"
-          >
-            <span v-if="collab.share_percentage >= 15">{{ collab.share_percentage }}%</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- List Kolaborator Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-        <div
-          v-for="(collab, cIdx) in activeFarm.collaborators"
-          :key="collab.id"
-          class="p-3 rounded-2xl border flex items-start justify-between gap-2"
-          :class="getCollabCardClass(cIdx)"
-        >
-          <div class="space-y-0.5">
-            <div class="flex items-center gap-1.5">
-              <span class="w-2.5 h-2.5 rounded-full" :class="getCollabColorDot(cIdx)"></span>
-              <h4 class="text-xs font-black text-slate-800">{{ collab.name }}</h4>
-            </div>
-            <p class="text-[10px] font-semibold text-slate-500">{{ collab.role }}</p>
-            <div v-if="plan" class="text-[11px] font-bold text-emerald-800 pt-1">
-              Est. Hasil: Rp {{ Math.round((collab.share_percentage / 100) * plan.financial_summary.projected_net_profit).toLocaleString('id-ID') }}
-            </div>
-          </div>
-          <div class="text-right">
-            <span class="text-sm font-black text-slate-800">{{ collab.share_percentage }}%</span>
-            <span class="text-[9px] text-slate-400 font-bold block">Bagi Hasil</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tab Section: RAB vs Monitoring vs Ekosistem vs Buku Modal -->
-    <div v-if="plan" class="space-y-4">
-      <!-- Tabs Switcher (4 Tabs) -->
-      <div class="flex p-1 bg-slate-200/80 rounded-2xl gap-1 overflow-x-auto no-scrollbar text-xs font-black">
-        <button
-          @click="activeTab = 'rab'"
-          class="flex-1 py-2 rounded-xl transition-all flex items-center justify-center gap-1 whitespace-nowrap"
-          :class="activeTab === 'rab' ? 'bg-white text-emerald-800 shadow-sm' : 'text-slate-600 hover:text-slate-800'"
-        >
-          <Coins :size="13" /> Rincian RAB
-        </button>
-        <button
-          @click="activeTab = 'monitoring'"
-          class="flex-1 py-2 rounded-xl transition-all flex items-center justify-center gap-1 whitespace-nowrap"
-          :class="activeTab === 'monitoring' ? 'bg-white text-emerald-800 shadow-sm' : 'text-slate-600 hover:text-slate-800'"
-        >
-          <CalendarCheck :size="13" /> Monitoring
-        </button>
-        <button
-          @click="activeTab = 'modal_lahan'"
-          class="flex-1 py-2 rounded-xl transition-all flex items-center justify-center gap-1 whitespace-nowrap"
-          :class="activeTab === 'modal_lahan' ? 'bg-white text-emerald-800 shadow-sm' : 'text-slate-600 hover:text-slate-800'"
-        >
-          <Receipt :size="13" /> Buku Modal
-        </button>
-        <button
-          @click="activeTab = 'mitra'"
-          class="flex-1 py-2 rounded-xl transition-all flex items-center justify-center gap-1 whitespace-nowrap"
-          :class="activeTab === 'mitra' ? 'bg-white text-emerald-800 shadow-sm' : 'text-slate-600 hover:text-slate-800'"
-        >
-          <Users2 :size="13" /> Jasa Mitra
-        </button>
-      </div>
-
-      <!-- TAB 1: Rincian Anggaran Biaya (RAB) -->
-      <div v-if="activeTab === 'rab'" class="space-y-3">
-        <div class="flex items-center justify-between text-xs text-slate-600 px-1 font-bold">
-          <span>Komponen Biaya Operasional ({{ plan.budget_items.length }} Item)</span>
-          <span class="text-emerald-700">Total: Rp {{ plan.financial_summary.total_budget.toLocaleString('id-ID') }}</span>
-        </div>
-
-        <div
-          v-for="item in plan.budget_items"
-          :key="item.id"
-          class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-2 hover:border-emerald-300 transition-all"
-        >
-          <div class="flex items-start justify-between">
-            <div>
-              <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full tracking-wider"
-                :class="getCategoryBadgeClass(item.category)"
-              >
-                {{ item.phase }}
-              </span>
-              <h4 class="text-sm font-extrabold text-slate-800 mt-1">{{ item.name }}</h4>
-            </div>
-            <div class="text-right">
-              <span class="text-sm font-black text-emerald-700">
-                Rp {{ item.total_price.toLocaleString('id-ID') }}
-              </span>
-              <div class="text-[10px] text-slate-500 font-semibold">
-                {{ item.quantity }} {{ item.unit }} @ Rp {{ item.unit_price.toLocaleString('id-ID') }}
-              </div>
-            </div>
-          </div>
-
-          <p class="text-xs text-slate-600 leading-snug">{{ item.notes }}</p>
-
-          <!-- Rekomendasi Penyedia Jasa di Ekosistem Sukamaju -->
-          <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5 flex items-center justify-between mt-2">
-            <div class="flex items-center gap-2">
-              <span class="text-sm">🤝</span>
-              <div>
-                <div class="text-[10px] text-slate-500 font-bold">Rekomendasi Warga Ekosistem:</div>
-                <div class="text-xs font-black text-slate-800">{{ item.recommended_provider }}</div>
-              </div>
-            </div>
+        <!-- Tab Section: RAB vs Monitoring vs Ekosistem vs Buku Modal -->
+        <div v-if="plan" class="space-y-4">
+          <!-- Tabs Switcher (4 Tabs) -->
+          <div class="flex p-1 bg-slate-200/80 rounded-2xl gap-1 overflow-x-auto no-scrollbar text-xs font-black">
             <button
-              @click="contactProvider(item.recommended_provider)"
-              class="text-[10px] font-black bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-2.5 py-1.5 rounded-lg active:scale-95 transition-all flex items-center gap-1"
+              @click="activeTab = 'rab'"
+              class="flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 whitespace-nowrap"
+              :class="activeTab === 'rab' ? 'bg-white text-emerald-800 shadow-sm' : 'text-slate-600 hover:text-slate-800'"
             >
-              <MessageSquare :size="12" /> Hubungi
+              <Coins :size="14" /> Rincian RAB
+            </button>
+            <button
+              @click="activeTab = 'monitoring'"
+              class="flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 whitespace-nowrap"
+              :class="activeTab === 'monitoring' ? 'bg-white text-emerald-800 shadow-sm' : 'text-slate-600 hover:text-slate-800'"
+            >
+              <CalendarCheck :size="14" /> Monitoring Fase
+            </button>
+            <button
+              @click="activeTab = 'modal_lahan'"
+              class="flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 whitespace-nowrap"
+              :class="activeTab === 'modal_lahan' ? 'bg-white text-emerald-800 shadow-sm' : 'text-slate-600 hover:text-slate-800'"
+            >
+              <Receipt :size="14" /> Buku Modal Lahan
+            </button>
+            <button
+              @click="activeTab = 'mitra'"
+              class="flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 whitespace-nowrap"
+              :class="activeTab === 'mitra' ? 'bg-white text-emerald-800 shadow-sm' : 'text-slate-600 hover:text-slate-800'"
+            >
+              <Users2 :size="14" /> Jasa Mitra
             </button>
           </div>
-        </div>
-      </div>
 
-      <!-- TAB 2: Monitoring Siklus Tanam & Catatan Aktual -->
-      <div v-if="activeTab === 'monitoring'" class="space-y-4">
-        <!-- Progress Bar Summary -->
-        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-2">
-          <div class="flex items-center justify-between text-xs font-black">
-            <span class="text-slate-700">Progres Siklus Tanam:</span>
-            <span class="text-emerald-700">{{ completedPhasesCount }} dari {{ plan.timeline_phases.length }} Fase Selesai ({{ progressPercentage }}%)</span>
-          </div>
-          <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+          <!-- TAB 1: Rincian Anggaran Biaya (RAB) -->
+          <div v-if="activeTab === 'rab'" class="space-y-3">
+            <div class="flex items-center justify-between text-xs text-slate-600 px-1 font-bold">
+              <span>Komponen Biaya Operasional ({{ plan.budget_items.length }} Item)</span>
+              <span class="text-emerald-700">Total: Rp {{ plan.financial_summary.total_budget.toLocaleString('id-ID') }}</span>
+            </div>
+
             <div
-              class="bg-emerald-600 h-full rounded-full transition-all duration-500"
-              :style="{ width: `${progressPercentage}%` }"
-            ></div>
-          </div>
-          <div class="flex items-center justify-between text-[10px] text-slate-500 pt-1 font-semibold">
-            <span>Persemaian (H-15)</span>
-            <span>Primordia (H+40)</span>
-            <span>Panen Raya (H+115)</span>
-          </div>
-        </div>
-
-        <!-- Phased Steps Interactive List -->
-        <div class="space-y-3">
-          <div
-            v-for="phase in plan.timeline_phases"
-            :key="phase.step_no"
-            class="bg-white border rounded-2xl p-4 shadow-sm space-y-3 transition-all"
-            :class="phase.status === 'SELESAI' 
-              ? 'border-emerald-300 bg-emerald-50/20' 
-              : phase.status === 'SEDANG_BERJALAN' 
-                ? 'border-amber-300 ring-1 ring-amber-200' 
-                : 'border-slate-200'"
-          >
-            <div class="flex items-start justify-between">
-              <div class="flex items-center gap-2">
-                <span
-                  class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black"
-                  :class="phase.status === 'SELESAI' 
-                    ? 'bg-emerald-600 text-white' 
-                    : phase.status === 'SEDANG_BERJALAN' 
-                      ? 'bg-amber-500 text-white animate-pulse' 
-                      : 'bg-slate-200 text-slate-600'"
-                >
-                  {{ phase.status === 'SELESAI' ? '✓' : phase.step_no }}
-                </span>
+              v-for="item in plan.budget_items"
+              :key="item.id"
+              class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-2 hover:border-emerald-300 transition-all"
+            >
+              <div class="flex items-start justify-between">
                 <div>
-                  <h4 class="text-xs font-black text-slate-800">{{ phase.name }}</h4>
-                  <div class="text-[10px] font-bold text-slate-500 flex items-center gap-1.5 mt-0.5">
-                    <Clock :size="11" /> {{ phase.day_range }} • Durasi {{ phase.duration_days }} hari
+                  <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full tracking-wider"
+                    :class="getCategoryBadgeClass(item.category)"
+                  >
+                    {{ item.phase }}
+                  </span>
+                  <h4 class="text-sm font-extrabold text-slate-800 mt-1">{{ item.name }}</h4>
+                </div>
+                <div class="text-right">
+                  <span class="text-sm font-black text-emerald-700">
+                    Rp {{ item.total_price.toLocaleString('id-ID') }}
+                  </span>
+                  <div class="text-[10px] text-slate-500 font-semibold">
+                    {{ item.quantity }} {{ item.unit }} @ Rp {{ item.unit_price.toLocaleString('id-ID') }}
                   </div>
                 </div>
               </div>
 
-              <!-- Status Dropdown / Toggle -->
-              <select
-                v-model="phase.status"
-                @change="saveStepUpdate(phase)"
-                class="text-[11px] font-black px-2.5 py-1 rounded-xl border focus:outline-none transition-all"
-                :class="phase.status === 'SELESAI' 
-                  ? 'bg-emerald-100 text-emerald-800 border-emerald-300' 
-                  : phase.status === 'SEDANG_BERJALAN' 
-                    ? 'bg-amber-100 text-amber-800 border-amber-300' 
-                    : 'bg-slate-100 text-slate-600 border-slate-200'"
-              >
-                <option value="BELUM">Belum Mulai</option>
-                <option value="SEDANG_BERJALAN">Sedang Berjalan</option>
-                <option value="SELESAI">Selesai ✓</option>
-              </select>
+              <p class="text-xs text-slate-600 leading-snug">{{ item.notes }}</p>
+
+              <!-- Rekomendasi Penyedia Jasa di Ekosistem Sukamaju -->
+              <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5 flex items-center justify-between mt-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-sm">🤝</span>
+                  <div>
+                    <div class="text-[10px] text-slate-500 font-bold">Rekomendasi Warga Ekosistem:</div>
+                    <div class="text-xs font-black text-slate-800">{{ item.recommended_provider }}</div>
+                  </div>
+                </div>
+                <button
+                  @click="contactProvider(item.recommended_provider)"
+                  class="text-[10px] font-black bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-2.5 py-1.5 rounded-lg active:scale-95 transition-all flex items-center gap-1"
+                >
+                  <MessageSquare :size="12" /> Hubungi
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: Monitoring Siklus Tanam & Catatan Aktual -->
+          <div v-if="activeTab === 'monitoring'" class="space-y-4">
+            <!-- Progress Bar Summary -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-2">
+              <div class="flex items-center justify-between text-xs font-black">
+                <span class="text-slate-700">Progres Siklus Tanam:</span>
+                <span class="text-emerald-700">{{ completedPhasesCount }} dari {{ plan.timeline_phases.length }} Fase Selesai ({{ progressPercentage }}%)</span>
+              </div>
+              <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                <div
+                  class="bg-emerald-600 h-full rounded-full transition-all duration-500"
+                  :style="{ width: `${progressPercentage}%` }"
+                ></div>
+              </div>
+              <div class="flex items-center justify-between text-[10px] text-slate-500 pt-1 font-semibold">
+                <span>Persemaian (H-15)</span>
+                <span>Primordia (H+40)</span>
+                <span>Panen Raya (H+115)</span>
+              </div>
             </div>
 
-            <!-- Task Checklist -->
-            <div class="space-y-1.5 pl-9">
+            <!-- Phased Steps Interactive List -->
+            <div class="space-y-3">
               <div
-                v-for="(task, tIdx) in phase.tasks"
-                :key="tIdx"
-                class="text-xs text-slate-700 flex items-start gap-2"
+                v-for="phase in plan.timeline_phases"
+                :key="phase.step_no"
+                class="bg-white border rounded-2xl p-4 shadow-sm space-y-3 transition-all"
+                :class="phase.status === 'SELESAI' 
+                  ? 'border-emerald-300 bg-emerald-50/20' 
+                  : phase.status === 'SEDANG_BERJALAN' 
+                    ? 'border-amber-300 ring-1 ring-amber-200' 
+                    : 'border-slate-200'"
               >
-                <span class="text-emerald-700 font-bold mt-0.5">•</span>
-                <span>{{ task }}</span>
-              </div>
-            </div>
+                <div class="flex items-start justify-between">
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black"
+                      :class="phase.status === 'SELESAI' 
+                        ? 'bg-emerald-600 text-white' 
+                        : phase.status === 'SEDANG_BERJALAN' 
+                          ? 'bg-amber-500 text-white animate-pulse' 
+                          : 'bg-slate-200 text-slate-600'"
+                    >
+                      {{ phase.status === 'SELESAI' ? '✓' : phase.step_no }}
+                    </span>
+                    <div>
+                      <h4 class="text-xs font-black text-slate-800">{{ phase.name }}</h4>
+                      <div class="text-[10px] font-bold text-slate-500 flex items-center gap-1.5 mt-0.5">
+                        <Clock :size="11" /> {{ phase.day_range }} • Durasi {{ phase.duration_days }} hari
+                      </div>
+                    </div>
+                  </div>
 
-            <!-- AI Tip for the Phase -->
-            <div class="bg-amber-50/70 border border-amber-200/70 rounded-xl p-2.5 text-xs text-amber-900 flex items-start gap-2">
-              <Sparkles :size="14" class="text-amber-600 shrink-0 mt-0.5" />
-              <span><strong class="font-black">Tips AI Agronomis:</strong> {{ phase.ai_tips }}</span>
-            </div>
+                  <!-- Status Dropdown / Toggle -->
+                  <select
+                    v-model="phase.status"
+                    @change="saveStepUpdate(phase)"
+                    class="text-[11px] font-black px-2.5 py-1 rounded-xl border focus:outline-none transition-all"
+                    :class="phase.status === 'SELESAI' 
+                      ? 'bg-emerald-100 text-emerald-800 border-emerald-300' 
+                      : phase.status === 'SEDANG_BERJALAN' 
+                        ? 'bg-amber-100 text-amber-800 border-amber-300' 
+                        : 'bg-slate-100 text-slate-600 border-slate-200'"
+                  >
+                    <option value="BELUM">Belum Mulai</option>
+                    <option value="SEDANG_BERJALAN">Sedang Berjalan</option>
+                    <option value="SELESAI">Selesai ✓</option>
+                  </select>
+                </div>
 
-            <!-- Realisasi Biaya Aktual vs Anggaran Rencana -->
-            <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div class="text-[11px]">
-                <span class="text-slate-500 font-bold">Anggaran Rencana: </span>
-                <span class="font-black text-slate-800">Rp {{ phase.allocated_budget.toLocaleString('id-ID') }}</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="text-[11px] font-bold text-slate-600">Realisasi Aktual:</span>
-                <div class="relative w-32">
-                  <span class="absolute inset-y-0 left-0 pl-2 flex items-center text-[10px] font-bold text-slate-400">Rp</span>
-                  <input
-                    v-model.number="phase.actual_cost"
-                    @blur="saveStepUpdate(phase)"
-                    type="number"
-                    placeholder="0"
-                    class="w-full pl-7 pr-2 py-1 text-xs font-black rounded-lg border border-slate-300 focus:outline-none focus:border-emerald-500 text-right"
-                  />
+                <!-- Task Checklist -->
+                <div class="space-y-1.5 pl-9">
+                  <div
+                    v-for="(task, tIdx) in phase.tasks"
+                    :key="tIdx"
+                    class="text-xs text-slate-700 flex items-start gap-2"
+                  >
+                    <span class="text-emerald-700 font-bold mt-0.5">•</span>
+                    <span>{{ task }}</span>
+                  </div>
+                </div>
+
+                <!-- AI Tip for the Phase -->
+                <div class="bg-amber-50/70 border border-amber-200/70 rounded-xl p-2.5 text-xs text-amber-900 flex items-start gap-2">
+                  <Sparkles :size="14" class="text-amber-600 shrink-0 mt-0.5" />
+                  <span><strong class="font-black">Tips AI Agronomis:</strong> {{ phase.ai_tips }}</span>
+                </div>
+
+                <!-- Realisasi Biaya Aktual vs Anggaran Rencana -->
+                <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div class="text-[11px]">
+                    <span class="text-slate-500 font-bold">Anggaran Rencana: </span>
+                    <span class="font-black text-slate-800">Rp {{ phase.allocated_budget.toLocaleString('id-ID') }}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[11px] font-bold text-slate-600">Realisasi Aktual:</span>
+                    <div class="relative w-32">
+                      <span class="absolute inset-y-0 left-0 pl-2 flex items-center text-[10px] font-bold text-slate-400">Rp</span>
+                      <input
+                        v-model.number="phase.actual_cost"
+                        @blur="saveStepUpdate(phase)"
+                        type="number"
+                        placeholder="0"
+                        class="w-full pl-7 pr-2 py-1 text-xs font-black rounded-lg border border-slate-300 focus:outline-none focus:border-emerald-500 text-right"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- TAB 3: Rekomendasi Jasa Ekosistem AgriBuddy -->
-      <div v-if="activeTab === 'mitra'" class="space-y-3">
-        <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-xs text-emerald-900 leading-relaxed font-medium">
-          <strong class="font-black">Semua kebutuhan rencana tanam Anda tersedia di Ekosistem Sukamaju:</strong> Hubungi mitra penyedia jasa olah tanah, pengairan, kios pupuk, atau pengepul hasil panen secara langsung.
-        </div>
-
-        <div
-          v-for="(rec, rIdx) in plan.ecosystem_recommendations"
-          :key="rIdx"
-          class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between hover:border-emerald-300 transition-all"
-        >
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-black text-lg">
-              {{ getRoleEmoji(rec.role_category) }}
+          <!-- TAB 3: Rekomendasi Jasa Ekosistem AgriBuddy -->
+          <div v-if="activeTab === 'mitra'" class="space-y-3">
+            <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-xs text-emerald-900 leading-relaxed font-medium">
+              <strong class="font-black">Semua kebutuhan rencana tanam Anda tersedia di Ekosistem Sukamaju:</strong> Hubungi mitra penyedia jasa olah tanah, pengairan, kios pupuk, atau pengepul hasil panen secara langsung.
             </div>
-            <div>
-              <span class="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-                {{ rec.role_category }}
-              </span>
-              <h4 class="text-xs font-black text-slate-800 mt-0.5">{{ rec.partner_name }}</h4>
-              <p class="text-[11px] text-slate-500 font-semibold">{{ rec.action_text }}</p>
-            </div>
-          </div>
-          <button
-            @click="openWhatsApp(rec.phone, rec.partner_name)"
-            class="btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs px-3 py-2 rounded-xl shadow-sm active:scale-95 transition-all flex items-center gap-1.5"
-          >
-            <Phone :size="13" /> Hubungi
-          </button>
-        </div>
-      </div>
 
-      <!-- TAB 4: BUKU MODAL USAHATANI LAHAN -->
-      <div v-if="activeTab === 'modal_lahan'" class="space-y-3">
-        <div class="bg-gradient-to-br from-emerald-900 to-teal-950 text-white p-4 rounded-3xl shadow-sm space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] font-extrabold uppercase text-emerald-300">Realisasi Modal Lahan</span>
-            <button
-              @click="openAddExpenseModal"
-              class="text-xs font-black bg-emerald-500/30 hover:bg-emerald-500/50 text-emerald-200 px-2.5 py-1 rounded-xl border border-emerald-400/40 active:scale-95 transition-all flex items-center gap-1"
+            <div
+              v-for="(rec, rIdx) in plan.ecosystem_recommendations"
+              :key="rIdx"
+              class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between hover:border-emerald-300 transition-all"
             >
-              <PlusCircle :size="12" /> Catat Modal Manual
-            </button>
-          </div>
-          <div class="flex items-baseline justify-between">
-            <div>
-              <div class="text-2xl font-black text-white">
-                Rp {{ (activeFarm?.capital_expenses?.reduce((acc, e) => acc + e.amount, 0) || 0).toLocaleString('id-ID') }}
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-black text-lg">
+                  {{ getRoleEmoji(rec.role_category) }}
+                </div>
+                <div>
+                  <span class="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+                    {{ rec.role_category }}
+                  </span>
+                  <h4 class="text-xs font-black text-slate-800 mt-0.5">{{ rec.partner_name }}</h4>
+                  <p class="text-[11px] text-slate-500 font-semibold">{{ rec.action_text }}</p>
+                </div>
               </div>
-              <p class="text-[11px] text-emerald-200 mt-0.5">
-                Total modal terpakai di {{ activeFarm?.name }}
+              <button
+                @click="openWhatsApp(rec.phone, rec.partner_name)"
+                class="btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs px-3 py-2 rounded-xl shadow-sm active:scale-95 transition-all flex items-center gap-1.5"
+              >
+                <Phone :size="13" /> Hubungi
+              </button>
+            </div>
+          </div>
+
+          <!-- TAB 4: BUKU MODAL USAHATANI LAHAN -->
+          <div v-if="activeTab === 'modal_lahan'" class="space-y-3">
+            <div class="bg-gradient-to-br from-emerald-900 to-teal-950 text-white p-5 rounded-3xl shadow-sm space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-extrabold uppercase text-emerald-300">Realisasi Modal Lahan</span>
+                <button
+                  @click="openAddExpenseModal"
+                  class="text-xs font-black bg-emerald-500/30 hover:bg-emerald-500/50 text-emerald-200 px-3 py-1.5 rounded-xl border border-emerald-400/40 active:scale-95 transition-all flex items-center gap-1"
+                >
+                  <PlusCircle :size="13" /> Catat Modal Manual
+                </button>
+              </div>
+              <div class="flex items-baseline justify-between">
+                <div>
+                  <div class="text-2xl md:text-3xl font-black text-white">
+                    Rp {{ (activeFarm?.capital_expenses?.reduce((acc, e) => acc + e.amount, 0) || 0).toLocaleString('id-ID') }}
+                  </div>
+                  <p class="text-[11px] text-emerald-200 mt-0.5">
+                    Total modal terpakai di {{ activeFarm?.name }}
+                  </p>
+                </div>
+                <div class="text-right text-xs text-slate-300">
+                  <span class="block text-[10px] text-slate-400">Anggaran RAB AI</span>
+                  <span class="font-bold text-white">Rp {{ plan?.financial_summary?.total_budget?.toLocaleString('id-ID') }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- List Transaksi / Belanja Buku Modal -->
+            <div v-if="!activeFarm?.capital_expenses || activeFarm.capital_expenses.length === 0" class="bg-white border border-slate-200 rounded-3xl p-8 text-center space-y-2">
+              <div class="text-3xl">📒</div>
+              <h4 class="text-xs font-black text-slate-800">Belum Ada Catatan Modal di Lahan Ini</h4>
+              <p class="text-[11px] text-slate-500 max-w-xs mx-auto">
+                Transaksi checkout dari Katalog atau pengeluaran operasional dapat dicatat ke sini.
               </p>
             </div>
-            <div class="text-right text-xs text-slate-300">
-              <span class="block text-[10px] text-slate-400">Anggaran RAB AI</span>
-              <span class="font-bold text-white">Rp {{ plan?.financial_summary?.total_budget?.toLocaleString('id-ID') }}</span>
+
+            <div v-else class="space-y-2">
+              <div
+                v-for="exp in activeFarm.capital_expenses"
+                :key="exp.id"
+                class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm space-y-1.5 hover:border-emerald-300 transition-all"
+              >
+                <div class="flex items-start justify-between">
+                  <div>
+                    <div class="flex items-center gap-1.5">
+                      <span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full"
+                        :class="exp.source === 'MARKETPLACE' ? 'bg-indigo-100 text-indigo-800' : 'bg-slate-100 text-slate-700'"
+                      >
+                        {{ exp.source === 'MARKETPLACE' ? '🛒 Checkout Katalog' : '📝 Manual' }}
+                      </span>
+                      <span class="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+                        {{ exp.category }}
+                      </span>
+                    </div>
+                    <h4 class="text-xs font-black text-slate-800 mt-1">{{ exp.item_name }}</h4>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-xs font-black text-emerald-700">
+                      Rp {{ exp.amount.toLocaleString('id-ID') }}
+                    </span>
+                    <span class="text-[9px] text-slate-400 font-semibold block">{{ exp.date }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== KOLOM KANAN (4 COLS): Multi-Lahan, Finansial, Kolaborator, Cuaca ==================== -->
+      <div class="lg:col-span-4 space-y-6">
+        <!-- KELOLA PETAK SAWAH SAYA (MULTI-LAHAN SWITCHER) -->
+        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-3.5">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
+                Multi-Lahan Usahatani
+              </span>
+              <h3 class="text-sm font-black text-slate-800 mt-1 flex items-center gap-1.5">
+                <Layers :size="16" class="text-emerald-600" /> Sawah yang Dikerjakan
+              </h3>
+            </div>
+            <button
+              @click="openAddFarmModal"
+              class="btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-1.5 px-3 rounded-xl shadow-sm active:scale-95 flex items-center gap-1 transition-all"
+            >
+              <PlusCircle :size="13" /> Tambah Sawah
+            </button>
+          </div>
+
+          <!-- List Sawah Cards Vertikal (Di Desktop) -->
+          <div class="space-y-2">
+            <button
+              v-for="farm in farmlands"
+              :key="farm.id"
+              @click="selectFarmland(farm)"
+              class="w-full p-3 rounded-2xl transition-all flex items-center justify-between border active:scale-98 text-left"
+              :class="activeFarmId === farm.id
+                ? 'bg-emerald-50/70 border-emerald-500 shadow-sm ring-2 ring-emerald-400/30'
+                : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'"
+            >
+              <div class="flex items-center gap-2.5">
+                <span class="text-2xl p-1 bg-white rounded-xl shadow-2xs border border-slate-200/60">🌾</span>
+                <div>
+                  <div class="font-extrabold text-xs text-slate-800 leading-snug">{{ farm.name }}</div>
+                  <div class="text-[10px] text-slate-500 font-semibold mt-0.5">{{ farm.land_size_ha }} Ha • {{ farm.commodity }}</div>
+                </div>
+              </div>
+              <span v-if="activeFarmId === farm.id" class="text-[10px] font-black text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
+                Aktif
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Proyeksi Finansial Dashboard -->
+        <div v-if="plan" class="bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 text-white rounded-3xl p-5 shadow-lg space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-[10px] font-black uppercase tracking-wider text-emerald-400">Proyeksi Finansial Tani</span>
+              <h3 class="text-sm font-extrabold">Luas Lahan: {{ plan.land_size_ha }} Ha</h3>
+            </div>
+            <div class="bg-emerald-500/20 border border-emerald-400/40 px-3 py-1 rounded-2xl text-right">
+              <span class="text-[9px] text-emerald-300 font-extrabold uppercase block">Estimasi ROI</span>
+              <span class="text-sm font-black text-emerald-400">+{{ plan.financial_summary.roi_percentage }}%</span>
+            </div>
+          </div>
+
+          <!-- Financial Metrics Grid -->
+          <div class="grid grid-cols-2 gap-2.5 pt-1">
+            <div class="bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/10">
+              <span class="text-[10px] text-slate-300 font-bold block">Total Modal (RAB)</span>
+              <div class="text-sm font-black text-white mt-0.5">
+                Rp {{ plan.financial_summary.total_budget.toLocaleString('id-ID') }}
+              </div>
+              <span class="text-[9px] text-emerald-300 font-semibold block mt-0.5">
+                HPP: Rp {{ plan.financial_summary.hpp_per_kg.toLocaleString('id-ID') }}/kg
+              </span>
+            </div>
+
+            <div class="bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/10">
+              <span class="text-[10px] text-slate-300 font-bold block">Proyeksi Laba Bersih</span>
+              <div class="text-sm font-black text-emerald-400 mt-0.5">
+                Rp {{ plan.financial_summary.projected_net_profit.toLocaleString('id-ID') }}
+              </div>
+              <span class="text-[9px] text-slate-300 font-semibold block mt-0.5">
+                Setelah dipotong modal
+              </span>
+            </div>
+
+            <div class="bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/10">
+              <span class="text-[10px] text-slate-300 font-bold block">Estimasi Hasil Panen</span>
+              <div class="text-xs font-black text-white mt-0.5">
+                {{ plan.financial_summary.projected_yield_kg.toLocaleString('id-ID') }} <span class="text-[10px] text-slate-300">kg GKP</span>
+              </div>
+              <span class="text-[9px] text-amber-300 font-semibold block mt-0.5">
+                Rp {{ plan.financial_summary.projected_selling_price_per_kg.toLocaleString('id-ID') }}/kg
+              </span>
+            </div>
+
+            <div class="bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/10">
+              <span class="text-[10px] text-slate-300 font-bold block">Omzet Bruto</span>
+              <div class="text-xs font-black text-white mt-0.5">
+                Rp {{ plan.financial_summary.projected_revenue.toLocaleString('id-ID') }}
+              </div>
+              <span class="text-[9px] text-slate-300 font-semibold block mt-0.5">
+                Bursa lumbung
+              </span>
             </div>
           </div>
         </div>
 
-        <!-- List Transaksi / Belanja Buku Modal -->
-        <div v-if="!activeFarm?.capital_expenses || activeFarm.capital_expenses.length === 0" class="bg-white border border-slate-200 rounded-3xl p-8 text-center space-y-2">
-          <div class="text-3xl">📒</div>
-          <h4 class="text-xs font-black text-slate-800">Belum Ada Catatan Modal di Lahan Ini</h4>
-          <p class="text-[11px] text-slate-500 max-w-xs mx-auto">
-            Transaksi checkout dari Katalog atau pengeluaran operasional dapat dicatat ke sini.
-          </p>
-        </div>
-
-        <div v-else class="space-y-2">
-          <div
-            v-for="exp in activeFarm.capital_expenses"
-            :key="exp.id"
-            class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm space-y-1.5 hover:border-emerald-300 transition-all"
-          >
-            <div class="flex items-start justify-between">
-              <div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full"
-                    :class="exp.source === 'MARKETPLACE' ? 'bg-indigo-100 text-indigo-800' : 'bg-slate-100 text-slate-700'"
-                  >
-                    {{ exp.source === 'MARKETPLACE' ? '🛒 Checkout Katalog' : '📝 Manual' }}
-                  </span>
-                  <span class="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-                    {{ exp.category }}
-                  </span>
-                </div>
-                <h4 class="text-xs font-black text-slate-800 mt-1">{{ exp.item_name }}</h4>
+        <!-- PANEL KOLABORATOR & BAGI HASIL USAHATANI -->
+        <div v-if="activeFarm" class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-3.5">
+          <div class="flex items-center justify-between pb-1 border-b border-slate-100">
+            <div>
+              <div class="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
+                <Users2 :size="12" /> Kemitraan & Bagi Hasil
               </div>
-              <div class="text-right">
-                <span class="text-xs font-black text-emerald-700">
-                  Rp {{ exp.amount.toLocaleString('id-ID') }}
-                </span>
-                <span class="text-[9px] text-slate-400 font-semibold block">{{ exp.date }}</span>
+              <h3 class="text-xs font-black text-slate-800 mt-1">
+                Pengelola & Kolaborator Lahan
+              </h3>
+            </div>
+            <button
+              @click="openManageCollabModal"
+              class="text-xs font-black text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-xl border border-emerald-200 active:scale-95 transition-all flex items-center gap-1"
+            >
+              <UserPlus :size="12" /> Kelola
+            </button>
+          </div>
+
+          <p class="text-[11px] text-slate-500 leading-relaxed">
+            Sawah <strong>{{ activeFarm.name }}</strong> dikelola bersama mitra tani:
+          </p>
+
+          <!-- Multi-Segment Visual Progress Bar -->
+          <div class="space-y-1">
+            <div class="w-full h-3.5 bg-slate-100 rounded-full overflow-hidden flex shadow-inner">
+              <div
+                v-for="(collab, cIdx) in activeFarm.collaborators"
+                :key="collab.id"
+                :style="{ width: `${collab.share_percentage}%` }"
+                :class="getCollabColorBg(cIdx)"
+                class="h-full transition-all flex items-center justify-center text-[9px] font-black text-white"
+                :title="`${collab.name}: ${collab.share_percentage}%`"
+              >
+                <span v-if="collab.share_percentage >= 15">{{ collab.share_percentage }}%</span>
               </div>
             </div>
+          </div>
+
+          <!-- List Kolaborator Cards -->
+          <div class="space-y-2 pt-1">
+            <div
+              v-for="(collab, cIdx) in activeFarm.collaborators"
+              :key="collab.id"
+              class="p-2.5 rounded-2xl border flex items-start justify-between gap-2"
+              :class="getCollabCardClass(cIdx)"
+            >
+              <div class="space-y-0.5">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full shrink-0" :class="getCollabColorDot(cIdx)"></span>
+                  <h4 class="text-xs font-black text-slate-800">{{ collab.name }}</h4>
+                </div>
+                <p class="text-[10px] font-semibold text-slate-500">{{ collab.role }}</p>
+                <div v-if="plan" class="text-[10px] font-bold text-emerald-800 pt-0.5">
+                  Est: Rp {{ Math.round((collab.share_percentage / 100) * plan.financial_summary.projected_net_profit).toLocaleString('id-ID') }}
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-xs font-black text-slate-800">{{ collab.share_percentage }}%</span>
+                <span class="text-[8px] text-slate-400 font-bold block">Bagi Hasil</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Agronomic & Weather Adjustment Card -->
+        <div v-if="plan" class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-3xl p-4.5 shadow-sm space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-black uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
+              <CloudSun :size="14" /> Analisis Cuaca & Agronomi AI
+            </span>
+            <span class="text-[10px] font-extrabold bg-amber-200/80 text-amber-900 px-2.5 py-0.5 rounded-full">
+              {{ plan.weather_condition.season }}
+            </span>
+          </div>
+
+          <!-- Koordinat GPS Lahan Aktif -->
+          <div class="flex items-center gap-2 text-[11px] text-amber-900 font-extrabold bg-amber-100/70 p-2 rounded-xl border border-amber-200/60">
+            <MapPin :size="13" class="text-amber-700 shrink-0" />
+            <div class="truncate">
+              <span>Lokasi: <strong>{{ plan.location }}</strong></span>
+              <span class="text-[10px] font-mono text-amber-800 font-bold ml-1.5">({{ plan.latitude ? plan.latitude.toFixed(4) : '-7.2504' }}, {{ plan.longitude ? plan.longitude.toFixed(4) : '112.7512' }})</span>
+            </div>
+          </div>
+
+          <p class="text-xs text-amber-900 leading-relaxed font-medium">
+            {{ plan.weather_condition.note }}
+          </p>
+          <div class="flex items-center gap-3 pt-1 text-[11px] text-amber-800 font-bold border-t border-amber-200/60">
+            <span>Suhu Rata-rata: {{ plan.weather_condition.temp_celsius }}°C</span>
+            <span>•</span>
+            <span>Peluang Hujan: {{ plan.weather_condition.rain_probability }}%</span>
           </div>
         </div>
       </div>
