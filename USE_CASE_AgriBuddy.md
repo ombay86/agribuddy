@@ -160,14 +160,17 @@ flowchart LR
     Bidder --- UC27
     Bidder --- UC28
 
-    %% Include & Extend
-    UC09 -. include .-> UC10
+    %% Asosiasi ke Aktor Sekunder (Murni Garis Lurus Association sesuai UML 2.5)
     UC10 --- OSM
-    UC12 -. include .-> AIEngine
-    UC15 -. include .-> AIEngine
+    UC12 --- AIEngine
+    UC15 --- AIEngine
+
+    %% Relasi Include (Hanya Antar-Use Case)
+    UC09 -. include .-> UC10
     UC25 -. include .-> UC26
     UC26 -. include .-> UC09
 
+    %% Relasi Extend (Hanya Antar-Use Case)
     UC20 -. extend .-> UC19
     UC23 -. extend .-> UC22
 
@@ -236,10 +239,11 @@ flowchart LR
     Petani --- UC14
     Petani --- UC15
 
-    UC09 -. "<<include>>" .-> UC10
     UC10 --- OSM
-    UC12 -. "<<include>>" .-> AIEngine
-    UC15 -. "<<include>>" .-> AIEngine
+    UC12 --- AIEngine
+    UC15 --- AIEngine
+
+    UC09 -. "<<include>>" .-> UC10
 ```
 
 ### 5.3. Paket 4: Marketplace Jasa, Pemesanan, & Chat Transaksi
@@ -315,12 +319,12 @@ flowchart LR
 | **UC-07** | Mengikuti Warga Lain (*Follow*) | Pengguna Terdaftar | - | - | Profil pengguna lain valid. | Hubungan pertemanan/pengikut tersimpan. |
 | **UC-08** | Menerima Notifikasi In-App | Pengguna Terdaftar | - | - | Terjadi peristiwa interaksi. | Notifikasi merah muncul di lonceng bilah atas. |
 | **UC-09** | Mengelola Data Petak Lahan Sawah | Petani | - | - | Petani telah terautentikasi. | Petak sawah tercatat dengan data luas dan komoditas. |
-| **UC-10** | Menentukan Titik Koordinat Peta | Petani | Layanan Peta GPS | `<<include>>` (UC-09) | Fitur geolokasi browser aktif. | Lintang dan bujur lahan sawah tersimpan presisi. |
+| **UC-10** | Menentukan Titik Koordinat Peta | Petani | Layanan Peta GPS | Asosiasi (Aktor Sekunder) & `<<include>>` (oleh UC-09) | Fitur geolokasi browser aktif. | Lintang dan bujur lahan sawah tersimpan presisi. |
 | **UC-11** | Mengatur Tim Bagi Hasil (%) | Petani | - | - | Petak sawah telah terdaftar. | Daftar anggota kolaborator & porsi bagi hasil tersimpan. |
-| **UC-12** | Menghitung Rencana AI & RAB | Petani | AI Decision Engine | `<<include>>` | Luas lahan dan jenis tanah valid. | RAB biaya modal, kebutuhan benih/pupuk, & jadwal dibuat. |
+| **UC-12** | Menghitung Rencana AI & RAB | Petani | AI Decision Engine | Asosiasi (Aktor Sekunder) | Luas lahan dan jenis tanah valid. | RAB biaya modal, kebutuhan benih/pupuk, & jadwal dibuat. |
 | **UC-13** | Memperbarui Progres Budidaya | Petani | - | - | Rencana tani aktif tersedia. | Status tahapan (*Selesai*) & realisasi biaya diperbarui. |
 | **UC-14** | Mengelola Buku Modal Lahan | Petani | - | - | Petak sawah terdaftar. | Arus kas pengeluaran modal per petak tercatat rapi. |
-| **UC-15** | Diagnosis Penyakit Daun Padi | Petani | AI Vision Engine | `<<include>>` | Foto daun padi diunggah. | Hasil analisis jenis penyakit & rekomendasi obat tampil. |
+| **UC-15** | Diagnosis Penyakit Daun Padi | Petani | AI Vision Engine | Asosiasi (Aktor Sekunder) | Foto daun padi diunggah. | Hasil analisis jenis penyakit & rekomendasi obat tampil. |
 | **UC-16** | Mengelola Pasang Layanan Jasa | Penyedia Jasa | - | - | Pengguna berperan sebagai mitra. | Jasa tayang di katalog publik (*available*). |
 | **UC-17** | Menjelajah & Filter Katalog Jasa | Petani / Pengguna | - | - | Layanan jasa aktif di katalog. | Hasil pencarian tersaring berdasarkan kategori & wilayah. |
 | **UC-18** | Tanya-Jawab Diskusi Produk | Petani, Penyedia | - | - | Produk jasa memiliki halaman tanya. | Diskusi publik terjalin dan notifikasi terkirim. |
@@ -398,6 +402,12 @@ flowchart LR
 ## 8. Kesimpulan & Relevansi Pengujian Akademis
 
 Rancangan Use Case Diagram AgriBuddy v2.0 ini:
-1. **Memenuhi Standar UML 2.5:** Memiliki batasan sistem yang tegas (*system boundary*), klasifikasi aktor primer dan sekunder, serta notasi relasi `<<include>>` dan `<<extend>>` yang sesuai dengan kaidah rekayasa perangkat lunak.
-2. **Menjawab Dinamika Ekosistem Tani:** Menjelaskan secara gamblang bagaimana peran fleksibel (*petani, tukang bajak, penyewa pompa, juragan gabah*) dapat saling bertukar peran secara elegan di satu platform.
-3. **Keterpaduan Sistem AI & IoT:** Menempatkan modul kecerdasan buatan (*Agronomic Decision Engine* dan *AI Vision Leaf Classifier*) sebagai aktor layanan eksternal yang diintegrasikan secara fungsional ke dalam alur kerja petani.
+1. **Mematuhi Kaidah Baku UML 2.5 secara Ketat:**
+   - **Garis Asosiasi Solid ke Aktor Sekunder**: Hubungan antara Use Case (`UC-10`, `UC-12`, `UC-15`) dengan aktor sistem sekunder eksternal (`Layanan Peta Geospasial` dan `AI Decision & Vision Engine`) dimodelkan menggunakan **garis solid Association biasa**. Sesuai kaidah baku UML 2.5, aktor sistem berada di luar batasan sistem (*system boundary*) sehingga tidak dapat menjadi subjek maupun objek dari relasi ketergantungan `<<include>>` atau `<<extend>>`.
+   - **Relasi `<<include>>` dan `<<extend>>` Murni Antar-Use Case**: Relasi dependensi hanya menghubungkan dua Use Case di dalam *system boundary*:
+     - `UC-09 (Kelola Lahan)` $\xrightarrow{\ll include\gg}$ `UC-10 (Tentukan Koordinat GPS)`: Syarat mutlak kelengkapan data lahan.
+     - `UC-25 (Simpan Panen)` $\xrightarrow{\ll include\gg}$ `UC-26 (Keterlacakan Lahan Asal)` $\xrightarrow{\ll include\gg}$ `UC-09`: Syarat mutlak *food traceability*.
+     - `UC-20 (Catat Buku Modal)` $\xrightarrow{\ll extend\gg}$ `UC-19 (Checkout)`: Alur opsional pasca-pemesanan.
+     - `UC-23 (Chat Transaksi)` $\xrightarrow{\ll extend\gg}$ `UC-22 (Live Tracking)`: Fitur komunikasi opsional selama pelacakan pesanan.
+2. **Menjawab Dinamika Ekosistem Tani:** Menjelaskan secara gamblang bagaimana peran fleksibel (*petani, tukang bajak, penyewa pompa, juragan gabah*) dapat saling bertukar peran secara elegan di satu platform berkat relasi pewarisan (*generalization*) dari entitas `Pengguna Terdaftar`.
+3. **Keterpaduan Sistem AI & Geospasial:** Menempatkan modul kecerdasan buatan (*Agronomic Decision Engine* dan *AI Vision Leaf Classifier*) serta pemetaan GPS sebagai aktor layanan eksternal yang diintegrasikan secara fungsional ke dalam alur operasional usahatani cerdas.
