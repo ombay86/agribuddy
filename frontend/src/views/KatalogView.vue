@@ -274,7 +274,7 @@
               </span>
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
               <div
                 v-for="service in services"
                 :key="service.id"
@@ -326,7 +326,7 @@
                 </div>
 
                 <!-- BOTTOM: Content & Details -->
-                <div class="p-3 flex flex-col justify-between flex-1 gap-2.5">
+                <div class="p-3.5 sm:p-4 flex flex-col justify-between flex-1 gap-2.5">
                   <div class="space-y-2">
                     <!-- Provider & Location Row (Atas Bawah untuk Karakter Maksimal) -->
                     <div class="space-y-1">
