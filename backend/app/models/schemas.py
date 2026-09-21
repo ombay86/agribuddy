@@ -206,6 +206,10 @@ class EcosystemServiceItem(BaseModel):
     provider_name: str
     provider_badge: str
     provider_avatar: str = "🌾"
+    image_url: Optional[str] = None
+    rating: Optional[float] = 4.9
+    completed_orders_count: Optional[int] = 0
+    promo_tag: Optional[str] = None
     title: str
     category: str  # JASA_TRAKTOR | JASA_PENGAIRAN | JASA_TENAGA_KERJA | SAPROTAN | HASIL_PANEN | PASCA_PANEN
     category_label: str
@@ -225,6 +229,8 @@ class ServiceItemCreate(BaseModel):
     price_unit: str
     location: str
     description: str
+    image_url: Optional[str] = None
+    promo_tag: Optional[str] = None
     tags: Optional[List[str]] = []
     phone: Optional[str] = None
     is_available: Optional[bool] = True
@@ -236,6 +242,8 @@ class ServiceItemUpdate(BaseModel):
     price_unit: Optional[str] = None
     location: Optional[str] = None
     description: Optional[str] = None
+    image_url: Optional[str] = None
+    promo_tag: Optional[str] = None
     tags: Optional[List[str]] = None
     phone: Optional[str] = None
     is_available: Optional[bool] = None

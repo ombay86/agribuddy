@@ -264,7 +264,7 @@
             </button>
           </div>
 
-          <!-- Services Grid (Responsif Web Multi-Kolom 3 Cols) -->
+          <!-- Services Grid (Responsif Web Multi-Kolom Tokopedia & Shopee Style Grid) -->
           <div v-else class="space-y-3">
             <div class="flex items-center justify-between text-xs font-bold text-slate-600 px-1 sm:hidden">
               <span>Ditemukan {{ services.length }} Layanan & Produk</span>
@@ -273,133 +273,165 @@
               </span>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
               <div
                 v-for="service in services"
                 :key="service.id"
-                class="bg-white border rounded-3xl p-4.5 shadow-sm space-y-3 hover:border-emerald-300 hover:shadow-md transition-all flex flex-col justify-between"
-                :class="isMyService(service) ? 'border-emerald-200 bg-emerald-50/15 ring-1 ring-emerald-100' : 'border-slate-200'"
+                @click="openCheckoutModal(service)"
+                class="bg-white border rounded-2xl overflow-hidden shadow-2xs hover:shadow-xl hover:border-emerald-500/50 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between group cursor-pointer relative"
+                :class="isMyService(service) ? 'border-emerald-300 ring-1 ring-emerald-200 bg-emerald-50/10' : 'border-slate-200/90'"
               >
-                <div class="space-y-3">
-                  <!-- Header: Provider Info & Category -->
-                  <div class="flex items-start justify-between gap-2">
-                    <div class="flex items-center gap-2.5">
-                      <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-50 border border-emerald-200 flex items-center justify-center text-xl shadow-xs">
-                        {{ service.provider_avatar || '🌾' }}
-                      </div>
-                      <div>
-                        <div class="flex items-center gap-1.5">
-                          <h4 class="text-xs font-black text-slate-800">{{ service.provider_name }}</h4>
-                          <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full" :class="getBadgeClass(service.category)">
-                            {{ service.provider_badge }}
-                          </span>
-                        </div>
-                        <div class="text-[10px] text-slate-500 font-semibold flex items-center gap-1 mt-0.5">
-                          <MapPin :size="11" class="text-slate-400" /> {{ service.location }}
-                        </div>
-                      </div>
-                    </div>
+                <!-- TOP: Thumbnail Image (Square Aspect 1:1) with Overlays -->
+                <div class="relative w-full aspect-square bg-slate-100 overflow-hidden">
+                  <img
+                    :src="service.image_url || getCategoryFallbackImage(service.category)"
+                    :alt="service.title"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                    @error="onImageError($event, service.category)"
+                  />
 
-                    <!-- Availability Tag -->
-                    <span
-                      class="text-[10px] font-extrabold px-2 py-0.5 rounded-md"
-                      :class="service.is_available ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-500'"
+                  <!-- Gradient overlay for text contrast -->
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/20 pointer-events-none opacity-60 group-hover:opacity-75 transition-opacity"></div>
+
+                  <!-- Top Left: Category Badge -->
+                  <div class="absolute top-2 left-2 z-10">
+                    <span 
+                      class="text-[9px] md:text-[10px] font-black px-2 py-0.5 rounded-lg shadow-sm backdrop-blur-md flex items-center gap-1 uppercase tracking-wider"
+                      :class="getCategoryOverlayBadgeClass(service.category)"
                     >
-                      {{ service.is_available ? '● Siap' : '○ Penuh' }}
+                      <span>{{ getCategoryEmoji(service.category) }}</span>
+                      <span class="truncate max-w-[85px] md:max-w-[110px]">{{ service.category_label }}</span>
                     </span>
                   </div>
 
-                  <!-- Service Title & Price -->
-                  <div class="border-t border-slate-100 pt-2.5 flex items-start justify-between gap-2">
-                    <div>
-                      <span class="text-[10px] font-extrabold uppercase text-emerald-700 tracking-wider block">
-                        {{ service.category_label }}
-                      </span>
-                      <h3 class="text-sm font-black text-slate-800 mt-0.5 leading-snug">
-                        {{ service.title }}
-                      </h3>
-                    </div>
-                    <div class="text-right shrink-0">
-                      <div class="text-base font-black text-emerald-700">
-                        Rp {{ service.price.toLocaleString('id-ID') }}
-                      </div>
-                      <span class="text-[10px] text-slate-500 font-bold block">{{ service.price_unit }}</span>
-                    </div>
+                  <!-- Top Right: Availability Badge -->
+                  <div class="absolute top-2 right-2 z-10">
+                    <span
+                      class="text-[9px] md:text-[10px] font-black px-2 py-0.5 rounded-full backdrop-blur-md shadow-sm flex items-center gap-1 border"
+                      :class="service.is_available ? 'bg-white/95 text-emerald-800 border-emerald-200' : 'bg-slate-900/85 text-slate-300 border-slate-700'"
+                    >
+                      <span class="w-1.5 h-1.5 rounded-full" :class="service.is_available ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'"></span>
+                      <span>{{ service.is_available ? 'Siap' : 'Penuh' }}</span>
+                    </span>
                   </div>
 
-                  <!-- Description -->
-                  <p class="text-xs text-slate-600 leading-relaxed line-clamp-3">
-                    {{ service.description }}
-                  </p>
-
-                  <!-- Skill & Service Tags -->
-                  <div v-if="service.tags && service.tags.length > 0" class="flex flex-wrap gap-1">
-                    <span
-                      v-for="(tag, tIdx) in service.tags"
-                      :key="tIdx"
-                      class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-lg"
-                    >
-                      # {{ tag }}
+                  <!-- Bottom Left: Promo / Advantage Banner (Shopee/Tokopedia style) -->
+                  <div v-if="service.promo_tag" class="absolute bottom-2 left-2 z-10">
+                    <span class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white text-[9px] font-black px-2 py-0.5 rounded-md shadow-sm flex items-center gap-1">
+                      ⚡ {{ service.promo_tag }}
                     </span>
                   </div>
                 </div>
 
-                <!-- Action Footer -->
-                <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap">
-                  <!-- When It's My Service: Edit, Delete, & Diskusi -->
-                  <template v-if="isMyService(service)">
-                    <div class="flex items-center gap-1.5 flex-wrap">
-                      <button
-                        @click="openProductDiscussion(service)"
-                        class="text-xs font-black text-amber-800 bg-amber-50 hover:bg-amber-100 px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1"
-                        title="Lihat Pertanyaan Warga"
-                      >
-                        <MessageCircle :size="13" /> Diskusi
-                      </button>
-                      <button
-                        @click="openEditModal(service)"
-                        class="text-xs font-black text-slate-700 bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1"
-                      >
-                        <Edit :size="13" /> Edit
-                      </button>
-                      <button
-                        @click="handleDeleteService(service.id)"
-                        class="text-xs font-black text-rose-600 bg-rose-50 hover:bg-rose-100 px-2 py-1.5 rounded-xl transition-all flex items-center gap-1"
-                      >
-                        <Trash2 :size="13" />
-                      </button>
+                <!-- BOTTOM: Content & Details -->
+                <div class="p-3 flex flex-col justify-between flex-1 gap-2">
+                  <div class="space-y-1.5">
+                    <!-- Provider & Location Row -->
+                    <div class="flex items-center justify-between text-[11px] text-slate-500 font-medium gap-1">
+                      <span class="flex items-center gap-1 font-bold text-slate-700 truncate max-w-[58%]">
+                        <span>{{ service.provider_avatar || '🌾' }}</span>
+                        <span class="truncate">{{ service.provider_name }}</span>
+                      </span>
+                      <span class="flex items-center gap-0.5 text-[10px] text-slate-400 shrink-0">
+                        <MapPin :size="10" />
+                        <span class="truncate max-w-[80px] md:max-w-[95px]">{{ service.location.split('(')[0].trim() }}</span>
+                      </span>
                     </div>
-                    <span class="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-1 rounded-lg">
-                      Layanan Anda
-                    </span>
-                  </template>
 
-                  <!-- When It's Another User's Service: Diskusi, WA, Checkout -->
-                  <template v-else>
-                    <div class="flex items-center gap-1.5 w-full justify-between pt-1">
-                      <button
-                        @click="openProductDiscussion(service)"
-                        class="text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 py-2 px-2.5 rounded-xl active:scale-95 transition-all flex items-center gap-1"
-                        title="Tanya Jawab / Diskusi Produk"
-                      >
-                        <MessageCircle :size="13" class="text-amber-600" /> Diskusi
-                      </button>
-                      <div class="flex items-center gap-1.5">
-                        <button
-                          @click="openWhatsApp(service.whatsapp_number, service.title)"
-                          class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold py-2 px-2.5 rounded-xl active:scale-95 transition-all flex items-center gap-1 border border-emerald-200"
-                        >
-                          <Phone :size="13" class="text-emerald-600" /> WA
-                        </button>
-                        <button
-                          @click="openCheckoutModal(service)"
-                          class="btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs py-2 px-3.5 rounded-xl shadow-sm active:scale-95 transition-all flex items-center gap-1.5"
-                        >
-                          <ShoppingCart :size="13" /> Pesan
-                        </button>
+                    <!-- Product Title (2-Lines Clamp) -->
+                    <h3 
+                      class="text-xs md:text-sm font-bold text-slate-800 line-clamp-2 leading-snug group-hover:text-emerald-700 transition-colors"
+                      :title="service.title"
+                    >
+                      {{ service.title }}
+                    </h3>
+
+                    <!-- Price Section -->
+                    <div class="pt-0.5">
+                      <div class="flex items-baseline gap-1 flex-wrap">
+                        <span class="text-sm md:text-base font-black text-emerald-700 tracking-tight">
+                          Rp {{ service.price.toLocaleString('id-ID') }}
+                        </span>
+                        <span class="text-[10px] md:text-[11px] text-slate-500 font-bold">
+                          {{ service.price_unit }}
+                        </span>
                       </div>
                     </div>
-                  </template>
+
+                    <!-- Social Proof: Rating & Completed Orders -->
+                    <div class="flex items-center gap-1.5 text-[10px] md:text-[11px] font-bold text-slate-600">
+                      <span class="text-amber-500 flex items-center gap-0.5 font-black">
+                        ★ {{ (service.rating || 4.9).toFixed(1) }}
+                      </span>
+                      <span class="text-slate-300">•</span>
+                      <span class="text-slate-500 text-[10px]">
+                        {{ service.completed_orders_count || 30 }}+ disewa
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Action Footer Buttons -->
+                  <div class="pt-2 border-t border-slate-100 flex items-center gap-1.5" @click.stop>
+                    <!-- When It's My Service: Edit, Delete, & Diskusi -->
+                    <template v-if="isMyService(service)">
+                      <div class="flex items-center justify-between w-full">
+                        <div class="flex items-center gap-1">
+                          <button
+                            @click.stop="openProductDiscussion(service)"
+                            class="p-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs transition-all border border-amber-200"
+                            title="Lihat Pertanyaan Warga"
+                          >
+                            <MessageCircle :size="13" />
+                          </button>
+                          <button
+                            @click.stop="openEditModal(service)"
+                            class="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs transition-all"
+                            title="Edit Layanan"
+                          >
+                            <Edit :size="13" />
+                          </button>
+                          <button
+                            @click.stop="handleDeleteService(service.id)"
+                            class="p-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs transition-all"
+                            title="Hapus Layanan"
+                          >
+                            <Trash2 :size="13" />
+                          </button>
+                        </div>
+                        <span class="text-[9px] font-black text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-md">
+                          Layanan Anda
+                        </span>
+                      </div>
+                    </template>
+
+                    <!-- When It's Another User's Service: Diskusi, WA, Checkout -->
+                    <template v-else>
+                      <button
+                        @click.stop="openProductDiscussion(service)"
+                        class="p-1.5 md:px-2 md:py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-[11px] font-bold transition-all flex items-center justify-center gap-1 shrink-0"
+                        title="Tanya Jawab / Diskusi Produk"
+                      >
+                        <MessageCircle :size="13" class="text-amber-600" />
+                        <span class="hidden md:inline">Diskusi</span>
+                      </button>
+                      <button
+                        @click.stop="openWhatsApp(service.phone, service.title)"
+                        class="p-1.5 md:px-2 md:py-1.5 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-bold transition-all flex items-center justify-center gap-1 shrink-0"
+                        title="Hubungi via WhatsApp"
+                      >
+                        <Phone :size="13" class="text-emerald-600" />
+                        <span class="hidden md:inline">WA</span>
+                      </button>
+                      <button
+                        @click.stop="openCheckoutModal(service)"
+                        class="flex-1 btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] md:text-xs font-black py-1.5 md:py-2 px-2.5 rounded-xl shadow-sm active:scale-95 transition-all flex items-center justify-center gap-1"
+                      >
+                        <ShoppingCart :size="13" />
+                        <span>Pesan</span>
+                      </button>
+                    </template>
+                  </div>
                 </div>
               </div>
             </div>
@@ -524,6 +556,42 @@
               placeholder="Jelaskan spesifikasi alat, kapasitas, jumlah operator, atau jaminan hasil kerja..."
               class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500"
             ></textarea>
+          </div>
+
+          <!-- Foto Thumbnail Layanan / Produk -->
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1">Foto / Thumbnail (Pilih Preset atau URL)</label>
+            <div class="space-y-1.5">
+              <input
+                v-model="serviceForm.image_url"
+                type="url"
+                placeholder="https://images.unsplash.com/... (atau pilih preset di bawah)"
+                class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500"
+              />
+              <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+                <button
+                  v-for="pImg in presetImages"
+                  :key="pImg.url"
+                  type="button"
+                  @click="serviceForm.image_url = pImg.url"
+                  class="px-2 py-1 rounded-lg text-[10px] font-bold border shrink-0 transition-all active:scale-95"
+                  :class="serviceForm.image_url === pImg.url ? 'bg-emerald-100 border-emerald-400 text-emerald-800' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'"
+                >
+                  {{ pImg.label }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tag Keunggulan / Promo Badge -->
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1">Badge Keunggulan / Promo (Opsional)</label>
+            <input
+              v-model="serviceForm.promo_tag"
+              type="text"
+              placeholder="Contoh: Bisa Bayar Panen, Siap Antar Sawah, Hasil Gembur Cepat"
+              class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500"
+            />
           </div>
 
           <!-- Tag Spesialisasi (Koma pisah) -->
@@ -887,7 +955,8 @@ import ProductDiscussionModal from '@/components/ProductDiscussionModal.vue';
 import { 
   Store, Search, PlusCircle, Briefcase, MapPin, 
   MessageSquare, Loader2, Edit, Trash2, Check,
-  ShoppingCart, CheckCircle2, ClipboardList, MessageCircle
+  ShoppingCart, CheckCircle2, ClipboardList, MessageCircle,
+  Phone, Star, Sparkles, Image as ImageIcon
 } from 'lucide-vue-next';
 
 // --- DISKUSI PESANAN & PRODUK STATE ---
@@ -928,8 +997,22 @@ const serviceForm = ref({
   location: 'Desa Sukamaju',
   phone: '628123456789',
   description: '',
+  image_url: '',
+  promo_tag: '',
   is_available: true
 });
+
+const presetImages = [
+  { label: '🚜 Traktor Kubota', url: 'https://images.unsplash.com/photo-1594771804886-a933bb2d609b?auto=format&fit=crop&w=600&q=80' },
+  { label: '⚙️ Rotavator Cepat', url: 'https://images.unsplash.com/photo-1589923188900-85dae523342b?auto=format&fit=crop&w=600&q=80' },
+  { label: '💧 Pompa Alkon', url: 'https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?auto=format&fit=crop&w=600&q=80' },
+  { label: '🌾 Regu Tanam Padi', url: 'https://images.unsplash.com/photo-1530507629858-e4977d30e9e0?auto=format&fit=crop&w=600&q=80' },
+  { label: '👨‍🌾 Cangkul Pematang', url: 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&w=600&q=80' },
+  { label: '🏪 Pupuk Subsidi', url: 'https://images.unsplash.com/photo-1628352081506-83c43123ed6d?auto=format&fit=crop&w=600&q=80' },
+  { label: '🌱 Bibit / Benih', url: 'https://images.unsplash.com/photo-1595974482597-4b8da8879bc5?auto=format&fit=crop&w=600&q=80' },
+  { label: '📦 Gabah Panen', url: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=600&q=80' },
+  { label: '🚚 Giling Padi', url: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=600&q=80' }
+];
 
 const categories = [
   { key: 'SEMUA', label: 'Semua', emoji: '🌟' },
@@ -940,6 +1023,58 @@ const categories = [
   { key: 'HASIL_PANEN', label: 'Bursa Panen', emoji: '📦' },
   { key: 'PASCA_PANEN', label: 'Penggilingan Padi', emoji: '🚚' }
 ];
+
+const getCategoryFallbackImage = (category: string) => {
+  const fallbacks: Record<string, string> = {
+    'JASA_TRAKTOR': 'https://images.unsplash.com/photo-1594771804886-a933bb2d609b?auto=format&fit=crop&w=600&q=80',
+    'JASA_PENGAIRAN': 'https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?auto=format&fit=crop&w=600&q=80',
+    'JASA_TENAGA_KERJA': 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80',
+    'SAPROTAN': 'https://images.unsplash.com/photo-1628352081506-83c43123ed6d?auto=format&fit=crop&w=600&q=80',
+    'HASIL_PANEN': 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=600&q=80',
+    'PASCA_PANEN': 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=600&q=80'
+  };
+  return fallbacks[category] || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=600&q=80';
+};
+
+const onImageError = (event: Event, category: string) => {
+  const target = event.target as HTMLImageElement;
+  if (target.dataset.triedFallback) {
+    target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><rect fill="%23ecfdf5" width="300" height="300"/><text fill="%23059669" font-family="sans-serif" font-size="20" font-weight="bold" x="50%" y="50%" text-anchor="middle" dominant-baseline="middle">AgriBuddy 🌾</text></svg>';
+    return;
+  }
+  target.dataset.triedFallback = 'true';
+  target.src = getCategoryFallbackImage(category);
+};
+
+const getCategoryOverlayBadgeClass = (category: string) => {
+  switch (category) {
+    case 'JASA_TRAKTOR': return 'bg-amber-600/90 text-white';
+    case 'JASA_PENGAIRAN': return 'bg-sky-600/90 text-white';
+    case 'JASA_TENAGA_KERJA': return 'bg-emerald-700/90 text-white';
+    case 'SAPROTAN': return 'bg-teal-700/90 text-white';
+    case 'HASIL_PANEN': return 'bg-orange-600/90 text-white';
+    case 'PASCA_PANEN': return 'bg-indigo-700/90 text-white';
+    default: return 'bg-slate-800/90 text-white';
+  }
+};
+
+const getCategoryEmoji = (category: string) => {
+  switch (category) {
+    case 'JASA_TRAKTOR': return '🚜';
+    case 'JASA_PENGAIRAN': return '💧';
+    case 'JASA_TENAGA_KERJA': return '🌾';
+    case 'SAPROTAN': return '🏪';
+    case 'HASIL_PANEN': return '📦';
+    case 'PASCA_PANEN': return '🚚';
+    default: return '🌾';
+  }
+};
+
+const openWhatsApp = (phone?: string, title?: string) => {
+  const p = (phone || '628123456789').replace(/[^0-9]/g, '');
+  const text = encodeURIComponent(`Halo, saya melihat layanan "${title || 'Katalog'}" di AgriBuddy dan ingin memesan / berkonsultasi.`);
+  window.open(`https://wa.me/${p}?text=${text}`, '_blank');
+};
 
 const fetchServices = async () => {
   try {
@@ -986,9 +1121,7 @@ const getBadgeClass = (category: string) => {
 };
 
 const contactService = (service: EcosystemServiceItem) => {
-  const phone = service.phone.replace(/[^0-9]/g, '');
-  const text = encodeURIComponent(`Halo ${service.provider_name}, saya melihat layanan "${service.title}" di Katalog AgriBuddy dan ingin memesan / berkonsultasi.`);
-  window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+  openWhatsApp(service.phone, service.title);
 };
 
 const openCreateModal = () => {
@@ -1003,6 +1136,8 @@ const openCreateModal = () => {
     location: 'Desa Sukamaju',
     phone: '',
     description: '',
+    image_url: '',
+    promo_tag: '',
     is_available: true
   };
   isModalOpen.value = true;
@@ -1011,7 +1146,7 @@ const openCreateModal = () => {
 const openEditModal = (service: EcosystemServiceItem) => {
   isEditing.value = true;
   currentEditingId.value = service.id;
-  tagsInput.value = service.tags.join(', ');
+  tagsInput.value = (service.tags || []).join(', ');
   serviceForm.value = {
     title: service.title,
     category: service.category,
@@ -1020,6 +1155,8 @@ const openEditModal = (service: EcosystemServiceItem) => {
     location: service.location,
     phone: service.phone,
     description: service.description,
+    image_url: service.image_url || '',
+    promo_tag: service.promo_tag || '',
     is_available: service.is_available
   };
   isModalOpen.value = true;

@@ -265,6 +265,10 @@ export interface EcosystemServiceItem {
   provider_name: string;
   provider_badge: string;
   provider_avatar: string;
+  image_url?: string;
+  rating?: number;
+  completed_orders_count?: number;
+  promo_tag?: string;
   title: string;
   category: string;
   category_label: string;
@@ -755,6 +759,8 @@ export const api = {
     price_unit: string;
     location: string;
     description: string;
+    image_url?: string;
+    promo_tag?: string;
     tags?: string[];
     phone?: string;
     is_available?: boolean;
