@@ -92,8 +92,8 @@
         </div>
 
         <!-- Edukasi Transaksi Aman -->
-        <div class="bg-gradient-to-br from-teal-50 to-emerald-50 border border-teal-200/70 rounded-3xl p-4.5 space-y-2">
-          <div class="flex items-center gap-1.5 text-xs font-black text-teal-800">
+        <div class="bg-gradient-to-br from-teal-50 to-emerald-50 border border-teal-200/70 rounded-2xl p-5 space-y-2 shadow-xs">
+          <div class="flex items-center gap-2 text-xs font-black text-teal-800">
             <span>🛡️</span> Transaksi Aman Ekosistem
           </div>
           <p class="text-[11px] text-teal-900/80 leading-relaxed font-medium">

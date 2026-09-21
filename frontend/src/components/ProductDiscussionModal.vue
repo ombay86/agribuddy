@@ -5,7 +5,7 @@
   >
     <div class="bg-white w-full max-w-xl rounded-3xl shadow-2xl flex flex-col h-[85vh] max-h-[720px] overflow-hidden border border-slate-200">
       <!-- Header Modal Diskusi Produk -->
-      <div class="bg-gradient-to-r from-emerald-800 to-teal-900 text-white p-4.5 flex items-center justify-between shrink-0">
+      <div class="bg-gradient-to-r from-emerald-800 to-teal-900 text-white p-4 sm:p-5 flex items-center justify-between shrink-0">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-xl shadow-xs">
             {{ service.provider_avatar || '🌾' }}

@@ -266,7 +266,7 @@
             <div
               v-for="prod in products"
               :key="prod.id"
-              class="bg-white border border-slate-200 rounded-3xl p-4.5 shadow-sm space-y-3 hover:border-emerald-300 transition-all"
+              class="bg-white border border-slate-200 rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-sm space-y-3 hover:border-emerald-300 transition-all"
             >
               <div class="flex items-start justify-between">
                 <div class="flex items-center gap-3">
@@ -319,7 +319,7 @@
             <div
               v-for="order in orders"
               :key="order.id"
-              class="bg-white border border-slate-200 rounded-3xl p-4.5 shadow-sm space-y-3"
+              class="bg-white border border-slate-200 rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-sm space-y-3"
             >
               <div class="flex items-start justify-between">
                 <div>
@@ -401,7 +401,7 @@
             <div
               v-for="item in listings"
               :key="item.id"
-              class="bg-white border rounded-3xl p-4.5 shadow-sm space-y-3"
+              class="bg-white border rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-sm space-y-3"
               :class="item.status === 'TERJUAL' ? 'border-slate-200 bg-slate-50/50' : 'border-amber-300'"
             >
               <!-- Header Listing -->
@@ -573,7 +573,7 @@
         </div>
 
         <!-- Panduan & Nilai Komunitas -->
-        <div class="bg-white border border-slate-200 rounded-3xl p-4.5 text-[11px] text-slate-500 space-y-1.5">
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 text-[11px] text-slate-500 space-y-1.5 shadow-xs">
           <div class="font-bold text-slate-700">🤝 Gotong Royong Digital</div>
           <p class="leading-relaxed">
             Saling berbagi kabar cuaca, kesiapan bibit, dan saling bantu antar poktan untuk kedaulatan pangan desa.

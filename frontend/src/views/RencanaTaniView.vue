@@ -602,10 +602,10 @@
         </div>
 
         <!-- AI Agronomic & Weather Adjustment Card -->
-        <div v-if="plan" class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-3xl p-4.5 shadow-sm space-y-2.5">
+        <div v-if="plan" class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-5 shadow-sm space-y-3">
           <div class="flex items-center justify-between">
-            <span class="text-[11px] font-black uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
-              <CloudSun :size="14" /> Analisis Cuaca & Agronomi AI
+            <span class="text-xs font-black uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
+              <CloudSun :size="16" class="text-amber-600" /> Analisis Cuaca & Agronomi AI
             </span>
             <span class="text-[10px] font-extrabold bg-amber-200/80 text-amber-900 px-2.5 py-0.5 rounded-full">
               {{ plan.weather_condition.season }}
@@ -613,8 +613,8 @@
           </div>
 
           <!-- Koordinat GPS Lahan Aktif -->
-          <div class="flex items-center gap-2 text-[11px] text-amber-900 font-extrabold bg-amber-100/70 p-2 rounded-xl border border-amber-200/60">
-            <MapPin :size="13" class="text-amber-700 shrink-0" />
+          <div class="flex items-center gap-2 text-[11px] text-amber-900 font-extrabold bg-amber-100/70 px-3 py-2 rounded-xl border border-amber-200/60">
+            <MapPin :size="14" class="text-amber-700 shrink-0" />
             <div class="truncate">
               <span>Lokasi: <strong>{{ plan.location }}</strong></span>
               <span class="text-[10px] font-mono text-amber-800 font-bold ml-1.5">({{ plan.latitude ? plan.latitude.toFixed(4) : '-7.2504' }}, {{ plan.longitude ? plan.longitude.toFixed(4) : '112.7512' }})</span>
@@ -624,7 +624,7 @@
           <p class="text-xs text-amber-900 leading-relaxed font-medium">
             {{ plan.weather_condition.note }}
           </p>
-          <div class="flex items-center gap-3 pt-1 text-[11px] text-amber-800 font-bold border-t border-amber-200/60">
+          <div class="flex items-center gap-3 pt-2 text-[11px] text-amber-800 font-bold border-t border-amber-200/60">
             <span>Suhu Rata-rata: {{ plan.weather_condition.temp_celsius }}°C</span>
             <span>•</span>
             <span>Peluang Hujan: {{ plan.weather_condition.rain_probability }}%</span>
