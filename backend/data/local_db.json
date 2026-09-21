@@ -413,10 +413,10 @@
       "water_source": "Irigasi Teknis Bendungan",
       "location": "Desa Sukamaju Krajan",
       "weather_condition": {
-        "temp_celsius": 26.0,
+        "temp_celsius": 29.5,
         "rain_probability": 20,
         "season": "Musim Kemarau (Gadu)",
-        "note": "Kondisi cuaca cerah/normal (suhu 26.0°C). Dosis pemupukan NPK dan Urea standar berimbang dianjurkan."
+        "note": "Kondisi cuaca cerah/normal (suhu 29.5°C). Dosis pemupukan NPK dan Urea standar berimbang dianjurkan."
       },
       "financial_summary": {
         "total_budget": 6612000,
@@ -605,7 +605,7 @@
             "Taburkan pupuk susulan I (campuran NPK Phonska dan Urea)",
             "Kondisikan air macak-macak (nyemek) saat menabur pupuk"
           ],
-          "ai_tips": "Kondisi cuaca cerah/normal (suhu 26.0°C). Dosis pemupukan NPK dan Urea standar berimbang dianjurkan. Jangan tabur pupuk saat mendung pekat menjelang hujan deras agar tidak hanyut."
+          "ai_tips": "Kondisi cuaca cerah/normal (suhu 29.5°C). Dosis pemupukan NPK dan Urea standar berimbang dianjurkan. Jangan tabur pupuk saat mendung pekat menjelang hujan deras agar tidak hanyut."
         },
         {
           "step_no": 4,
@@ -681,7 +681,7 @@
       ],
       "id": "far_892ac03e",
       "created_at": "2026-09-21T08:53:04.123669",
-      "updated_at": "2026-09-21T09:46:58.978654",
+      "updated_at": "2026-09-21T10:04:51.610198",
       "latitude": -7.2504,
       "longitude": 112.7512,
       "coordinates_label": "-7.2504, 112.7512 (Desa Sukamaju Krajan)"
@@ -1217,6 +1217,23 @@
       "delivery_notes": "Sawah Blok Krajan",
       "status": "MENUNGGU_KONFIRMASI",
       "created_at": "21 Sep 2026, 09:57 WIB"
+    },
+    {
+      "id": "ord_d7c7bf7e",
+      "service_id": "srv_006",
+      "service_title": "Jasa Cangkul & Perbaikan Galengan Pematang Sawah",
+      "seller_id": "usr_cangkul",
+      "seller_name": "Mang Udin",
+      "buyer_id": "usr_petani",
+      "buyer_name": "Pak Joko",
+      "quantity": 1.0,
+      "unit": "/ Orang / Hari",
+      "unit_price": 120000.0,
+      "total_price": 120000.0,
+      "payment_method": "YARNEN (Bayar Saat Panen)",
+      "delivery_notes": "",
+      "status": "MENUNGGU_KONFIRMASI",
+      "created_at": "21 Sep 2026, 10:04 WIB"
     }
   ],
   "notifications": [
@@ -1469,6 +1486,26 @@
       "reference_id": "srv_001",
       "is_read": false,
       "created_at": "21 Sep 2026, 09:57 WIB"
+    },
+    {
+      "id": "notif_c8d6fb6c",
+      "user_id": "usr_cangkul",
+      "title": "Pesanan Jasa Baru Masuk! 🛒",
+      "message": "Pak Joko memesan Jasa Cangkul & Perbaikan Galengan Pematang Sawah (1.0 / Orang / Hari) senilai Rp 120,000.",
+      "type": "ORDER_RECEIVED",
+      "reference_id": "ord_d7c7bf7e",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 10:04 WIB"
+    },
+    {
+      "id": "notif_b955a033",
+      "user_id": "usr_petani",
+      "title": "Pesanan Terkirim ke Mitra ✅",
+      "message": "Pesanan Jasa Cangkul & Perbaikan Galengan Pematang Sawah telah diteruskan ke Mang Udin. Menunggu konfirmasi pengerjaan.",
+      "type": "ORDER_STATUS",
+      "reference_id": "ord_d7c7bf7e",
+      "is_read": false,
+      "created_at": "21 Sep 2026, 10:04 WIB"
     }
   ],
   "order_messages": [
