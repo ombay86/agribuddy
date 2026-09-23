@@ -10,20 +10,20 @@ AgriBuddy adalah platform aplikasi web cerdas pendamping petani dan ekosistem pe
 ### Opsi 1: Menggunakan Skrip Otomatis (Rekomendasi)
 Cukup klik dua kali file **`run_app.bat`** di direktori utama.
 Skrip ini akan otomatis membuka:
-1. **Backend FastAPI:** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) (Swagger UI Interaktif)
+1. **Backend Node.js & Gemini API:** [http://127.0.0.1:8000/](http://127.0.0.1:8000/) (API Status & Base Endpoint)
 2. **Frontend Vue.js:** [http://localhost:5173](http://localhost:5173) (Aplikasi Web Responsif Desktop & Mobile)
 
 ---
 
 ### Opsi 2: Menjalankan Manual Lewat Terminal
 
-#### 1. Backend (FastAPI)
+#### 1. Backend (Node.js + Express + TypeScript + Gemini API)
 ```bash
 cd backend
-python -m pip install -r requirements.txt
-python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+npm install
+npm run dev
 ```
-Buka dokumentasi API di: `http://127.0.0.1:8000/docs`
+Base API Endpoint: `http://127.0.0.1:8000/api/v1`
 
 #### 2. Frontend (Vue.js 3 + Vite + Tailwind CSS)
 ```bash
@@ -71,7 +71,7 @@ Buka aplikasi di browser: `http://localhost:5173`
    - Notifikasi in-app terpadu untuk pesanan masuk, pembaruan status pesanan, pesan obrolan transaksi, pertanyaan produk, komentar postingan, dan pengikut baru dengan lonceng interaktif pada header bar.
 
 9. **Dokter Tani AI & Buku Tani**:
-   - Deteksi dini penyakit tanaman padi (Hawar Daun, Blas, dsb.) berbasis AI beserta dosis obat/penanganan.
+   - Deteksi dini penyakit tanaman padi (Hawar Daun, Blas, dsb.) didukung **Google Gemini API Multimodal Vision** (`gemini-2.5-flash`) dengan fallback ke basis pengetahuan fitopatologi Kementan/IRRI.
    - Inventaris stok saprotan dan hasil panen lumbung.
 
 ---
@@ -79,5 +79,5 @@ Buka aplikasi di browser: `http://localhost:5173`
 ## 🛠️ Tech Stack
 
 - **Frontend:** Vue.js 3, Vite, Tailwind CSS, TypeScript, Lucide Icons, Leaflet Maps.
-- **Backend:** Python, FastAPI, Uvicorn, Pydantic, In-Memory / File-based Database Persistence.
-- **AI Engine:** Agronomic calculation rules & Computer Vision Plant Disease Classifier.
+- **Backend:** Node.js, Express.js, TypeScript, Multer, In-Memory / File-based Database Persistence (`local_db.json`).
+- **AI Engine:** Google Gemini API (`@google/genai` multimodal vision `gemini-2.5-flash`) & Smart Agronomic Planner Engine.
