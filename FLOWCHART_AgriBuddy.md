@@ -8,7 +8,7 @@
 
 Dokumen ini memodelkan seluruh logika alur operasional dan algoritma alur kerja (*business process workflow*) dari sistem **AgriBuddy v2.0**. Pemodelan disusun mengacu pada standar internasional **ANSI/ISO 5807-1985** (*Information processing — Documentation symbols and conventions for data, program and system flowcharts*).
 
-Sistem AgriBuddy v2.0 difokuskan sebagai **Smart Farming Decision Support System (DSS)** berbasis arsitektur modern **Node.js (Express + TypeScript)** dengan integrasi kecerdasan buatan **Google Gemini 2.5 Flash Multimodal Vision API** dan layanan telemetri cuaca geospasial terbuka.
+Sistem AgriBuddy v2.0 difokuskan sebagai **Smart Farming Decision Support System (DSS)** berbasis arsitektur modern **Node.js (Express + TypeScript)** dengan integrasi kecerdasan buatan **Google Gemini 1.5 Flash Multimodal Vision API** dan layanan telemetri cuaca geospasial terbuka.
 
 ### Standar Simbol yang Digunakan
 | Simbol Notasi | Bentuk Geometris | Nama Standar | Fungsi & Makna Operasional |
@@ -72,7 +72,7 @@ flowchart TD
     %% JALUR 3: DOKTER TANI AI (GEMINI MULTIMODAL VISION)
     MenuChoice -->|Dokter Tani AI| DocMenu[Buka Modul Dokter Tani AI]
     DocMenu --> CapturePhoto[Ambil Foto Gejala Daun / Batang Sakit via Kamera HP / File]
-    CapturePhoto --> SendGemini[Kirim Payload Gambar Base64 ke Backend Node.js via Gemini 2.5 Flash Vision]
+    CapturePhoto --> SendGemini[Kirim Payload Gambar Base64 ke Backend Node.js via Gemini 1.5 Flash Vision]
     SendGemini --> GeminiInference[Google Gemini Mengekstraksi Fitur Visual Morfologi Daun]
     GeminiInference --> DiseaseCheck{Terdeteksi Gejala Penyakit?}
     DiseaseCheck -- Daun Sehat --> HealthyReport[Tampilkan Status: Tanaman Sehat & Rekomendasi Perawatan Rutin]
@@ -158,7 +158,7 @@ flowchart TD
     S3([Mulai: Deteksi Hama / Penyakit]) --> SnapDoc[Ambil Foto Daun Tanaman Sakit Menggunakan Kamera HP / Unggah File]
     SnapDoc --> CompressImg[Frontend Mengompres Citra & Konversi ke Base64 Data URL]
     CompressImg --> PostVision[Kirim Payload ke Backend Node.js Endpoint /api/doctor/diagnose]
-    PostVision --> CallGemini[Backend Memanggil Google Gemini 2.5 Flash Vision Multimodal API]
+    PostVision --> CallGemini[Backend Memanggil Google Gemini 1.5 Flash Vision Multimodal API]
     CallGemini --> GenDiagnosis[Gemini Menganalisis Pola Lesi, Gejala Nekrosis & Klorosis]
     GenDiagnosis --> ParseJSON[Parsing Response Terstruktur: Nama Penyakit, Tingkat Keparahan & Resep Obat]
     ParseJSON --> CheckHealthy{Apakah Tanaman Sakit?}

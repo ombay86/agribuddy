@@ -1,7 +1,7 @@
 # AgriBuddy — Smart Farming Decision Support System 🌾
 **Capstone Project / Tugas Akhir STSI4440**
 
-AgriBuddy adalah platform *Smart Farming Decision Support System (DSS)* terpadu pendamping petani padi untuk manajemen petak lahan geospasial, perencanaan anggaran biaya dan jadwal tanam berbasis AI (Smart Farm Planner), deteksi dini penyakit tanaman padi berbasis Computer Vision (**Google Gemini 2.5 Flash Multimodal Vision**), pencatatan inventaris sarana produksi dan hasil panen di lumbung (Buku Tani), serta direktori kemitraan layanan mekanisasi dan kios saprotan desa.
+AgriBuddy adalah platform *Smart Farming Decision Support System (DSS)* terpadu pendamping petani padi untuk manajemen petak lahan geospasial, perencanaan anggaran biaya dan jadwal tanam berbasis AI (Smart Farm Planner), deteksi dini penyakit tanaman padi berbasis Computer Vision (**Google Gemini 1.5 Flash Multimodal Vision**), pencatatan inventaris sarana produksi dan hasil panen di lumbung (Buku Tani), serta direktori kemitraan layanan mekanisasi dan kios saprotan desa.
 
 ---
 
@@ -49,7 +49,7 @@ Buka aplikasi di browser: `http://localhost:5173`
    - Analisis finansial: HPP per kg, proyeksi tonase panen, estimasi laba bersih, dan rasio ROI (%).
 
 3. **Dokter Tani AI — Deteksi Penyakit Daun Padi (Google Gemini Multimodal Vision)**:
-   - Diagnosis fitopatologi daun padi dari unggahan foto kamera petani menggunakan **Google Gemini 2.5 Flash Vision**.
+   - Diagnosis fitopatologi daun padi dari unggahan foto kamera petani menggunakan **Google Gemini 1.5 Flash Vision**.
    - Identifikasi penyakit: Hawar Daun Bakteri (Kresek), Blas Daun (Pyricularia), Bercak Coklat, atau Sehat.
    - Menyajikan skor keyakinan (*confidence score*), tingkat keparahan, gejala klinis, dan langkah mitigasi agronomi / dosis bakterisida anjuran Kementan & IRRI.
    - Dilengkapi *graceful fallback* ke basis pengetahuan lokal jika offline (*anti-crash*).
@@ -68,4 +68,4 @@ Buka aplikasi di browser: `http://localhost:5173`
 
 - **Frontend:** Vue.js 3, Vite, Tailwind CSS, TypeScript, Lucide Icons, Leaflet Maps.
 - **Backend:** Node.js, Express.js, TypeScript, Multer, File-based Database Persistence (`local_db.json`).
-- **AI Engine:** Google Gemini API (`@google/genai` multimodal vision `gemini-2.5-flash`) & Smart Agronomic Planner Engine.
+- **AI Engine:** Google Gemini API (`@google/genai` multimodal vision `gemini-1.5-flash`) & Smart Agronomic Planner Engine.

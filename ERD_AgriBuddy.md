@@ -96,7 +96,7 @@ erDiagram
         float confidence "Tingkat keyakinan model (0.0 - 1.0)"
         string severity "Tingkat keparahan (Aman / Sedang / Tinggi)"
         string detected_at "Waktu deteksi citra"
-        string ai_provider "Engine AI (Google Gemini 2.5 Flash Vision)"
+        string ai_provider "Engine AI (Google Gemini 1.5 Flash Vision)"
     }
 
     INVENTORY_ITEM {

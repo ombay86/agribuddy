@@ -8,7 +8,7 @@
 
 Diagram Use Case ini memodelkan seluruh kebutuhan fungsional dan batasan (*system boundary*) dari platform **AgriBuddy v2.0**. Sesuai penyederhanaan arsitektur sistem terkini, AgriBuddy berfokus murni pada **Smart Farming Decision Support System (DSS)** yang dirancang untuk mendampingi petani padi dalam mengambil keputusan budidaya yang presisi, efisien, dan berbasis data.
 
-Sistem memfasilitasi interaksi mulai dari pemantauan iklim lahan real-time, penyusunan Rencana Anggaran Biaya (RAB) dan jadwal tanam berbasis kecerdasan buatan (*Smart Farm Planner*), diagnosis penyakit daun padi multimodal (**Google Gemini 2.5 Flash Vision**), manajemen persediaan sarana produksi dan lumbung hasil panen berketertelusuran (*Buku Tani*), hingga kemudahan menghubungkan petani dengan penyedia alsintan dan saprotan desa secara langsung via WhatsApp.
+Sistem memfasilitasi interaksi mulai dari pemantauan iklim lahan real-time, penyusunan Rencana Anggaran Biaya (RAB) dan jadwal tanam berbasis kecerdasan buatan (*Smart Farm Planner*), diagnosis penyakit daun padi multimodal (**Google Gemini 1.5 Flash Vision**), manajemen persediaan sarana produksi dan lumbung hasil panen berketertelusuran (*Buku Tani*), hingga kemudahan menghubungkan petani dengan penyedia alsintan dan saprotan desa secara langsung via WhatsApp.
 
 ---
 
@@ -20,7 +20,7 @@ Sistem AgriBuddy mengidentifikasi **2 Aktor Primer (Pengguna Manusia)** serta **
 | :---: | :--- | :---: | :--- |
 | **1** | **Petani Mandiri** | Aktor Primer *(Pengguna Utama)* | Petani yang mengelola petak sawah, memantau cuaca, menyusun rencana kebutuhan modal tanam AI, mendiagnosis daun sakit lewat kamera, mengelola stok pupuk di gudang & panen di lumbung, serta menghubungi penyedia jasa via WhatsApp. |
 | **2** | **Mitra Usaha Tani** | Aktor Primer *(Penyedia Jasa / Kios)* | Pemilik alsintan (sewa traktor, pompa air), buruh cangkul, atau kios pupuk yang mendaftarkan profil jasanya ke dalam direktori usahatani agar dapat dihubungi oleh petani sekitar. |
-| **3** | **Google Gemini Vision Engine** | Aktor Sekunder *(Sistem AI Multimodal)* | Layanan kecerdasan buatan visual Google Gen AI (`gemini-2.5-flash`) yang memproses citra daun padi untuk mendiagnosis penyakit hawar daun, blas, bercak coklat, dan merumuskan rekomendasi agronomi nyata. |
+| **3** | **Google Gemini Vision Engine** | Aktor Sekunder *(Sistem AI Multimodal)* | Layanan kecerdasan buatan visual Google Gen AI (`gemini-1.5-flash`) yang memproses citra daun padi untuk mendiagnosis penyakit hawar daun, blas, bercak coklat, dan merumuskan rekomendasi agronomi nyata. |
 | **4** | **Layanan Cuaca & Peta Geospasial** | Aktor Sekunder *(External API)* | Layanan telemetri iklim mikro dan penyedia peta interaktif (Leaflet / OpenStreetMap) untuk deteksi koordinat GPS dan analisis irigasi sawah. |
 
 ---
@@ -98,7 +98,7 @@ flowchart LR
     %% Aktor Eksternal di Kanan
     subgraph AktorEksternal["AKTOR SEKUNDER (EXTERNAL SYSTEMS)"]
         direction TB
-        GeminiAI["Google Gemini 2.5 Flash<br/>Vision Engine"]
+        GeminiAI["Google Gemini 1.5 Flash<br/>Vision Engine"]
         GeoService["Layanan Cuaca & Peta<br/>(OpenStreetMap / GPS)"]
     end
 

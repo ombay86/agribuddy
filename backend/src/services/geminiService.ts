@@ -148,9 +148,11 @@ Kembalikan jawaban HANYA dalam format JSON valid (tanpa markdown backtick ataupu
   ]
 }`;
 
+        const selectedModel = config.geminiModel || 'gemini-1.5-flash';
+        console.log(`📡 Invoking Google Gemini Vision (${selectedModel}) for leaf diagnosis (${filename || 'uploaded_image'})...`);
         const base64Data = imageBuffer.toString('base64');
         const response = await this.ai.models.generateContent({
-          model: 'gemini-2.5-flash',
+          model: selectedModel,
           contents: [
             {
               role: 'user',
@@ -180,7 +182,7 @@ Kembalikan jawaban HANYA dalam format JSON valid (tanpa markdown backtick ataupu
             symptoms: Array.isArray(parsed.symptoms) && parsed.symptoms.length > 0 ? parsed.symptoms : ["Gejala bercak pada helai daun terdeteksi."],
             actions: Array.isArray(parsed.actions) && parsed.actions.length > 0 ? parsed.actions : ["Lakukan pemantauan berkala dan semprotkan fungisida/bakterisida anjuran."],
             detected_at: detectedAt,
-            ai_provider: "Google Gemini 2.5 Flash Vision"
+            ai_provider: `Google Gemini (${selectedModel})`
           };
         }
       } catch (err: any) {

@@ -8,7 +8,7 @@
 
 * **Nama Produk:** AgriBuddy
 * **Jenis Platform:** Modern Responsive Web Application (Desktop, Laptop, Tablet, & Mobile Browser)
-* **Visi Produk:** Menghadirkan platform *Smart Farming Decision Support System (DSS)* terpadu pendamping petani padi untuk manajemen petak lahan geospasial, perencanaan anggaran biaya dan jadwal tanam berbasis AI (Smart Farm Planner), deteksi dini fitopatologi daun padi berbasis Computer Vision (**Google Gemini 2.5 Flash Multimodal Vision**), pencatatan inventaris sarana produksi dan hasil panen di lumbung (Buku Tani), serta direktori kemitraan layanan mekanisasi dan kios saprotan desa.
+* **Visi Produk:** Menghadirkan platform *Smart Farming Decision Support System (DSS)* terpadu pendamping petani padi untuk manajemen petak lahan geospasial, perencanaan anggaran biaya dan jadwal tanam berbasis AI (Smart Farm Planner), deteksi dini fitopatologi daun padi berbasis Computer Vision (**Google Gemini 1.5 Flash Multimodal Vision**), pencatatan inventaris sarana produksi dan hasil panen di lumbung (Buku Tani), serta direktori kemitraan layanan mekanisasi dan kios saprotan desa.
 * **Fokus Riset Tugas Akhir / Capstone (STSI4440):** 
   Aplikasi difokuskan murni pada keunggulan ilmiah *Decision Support System (DSS)* dan *Artificial Intelligence (AI)* dalam membantu pengambilan keputusan budidaya padi oleh petani, menghilangkan fitur sekunder yang redundan (seperti media sosial umum dan bursa lelang bidding) demi menjaga ketajaman ruang lingkup penelitian dan keandalan sistem saat sidang pengujian.
 * **Tech Stack Terkini:**
@@ -16,7 +16,7 @@
   * **Backend API:** Node.js (v24+), Express.js, TypeScript.
   * **Database & Persistence:** File-based JSON Persistence Engine (`local_db.json`).
   * **AI & Machine Learning Engine:**
-    * **Google Gemini API** (`@google/genai` model `gemini-2.5-flash` multimodal vision) untuk analisis penyakit daun padi.
+    * **Google Gemini API** (`@google/genai` model `gemini-1.5-flash` multimodal vision) untuk analisis penyakit daun padi.
     * **Smart Agronomic Planner Engine** untuk kalkulasi Rencana Anggaran Biaya (RAB), tahapan budidaya (HST), prakiraan cuaca, dan rekomendasi irigasi.
 
 ---
@@ -57,7 +57,7 @@ Sesuai penyederhanaan arsitektur informasi terkini, platform mengusung **5 Modul
    │
    ├── 3. DOKTER TANI AI (Gemini Multimodal Vision - /dokter)
    │     ├── Unggah Foto Daun Padi / Pilihan Sampel Uji Cepat
-   │     ├── Inferensi Google Gemini 2.5 Flash Vision Multimodal
+   │     ├── Inferensi Google Gemini 1.5 Flash Vision Multimodal
    │     ├── Output: Nama Penyakit, Akurasi (%), Tingkat Keparahan, Gejala, & Solusi
    │     └── Riwayat Diagnosa Lab Pertanian
    │
@@ -101,7 +101,7 @@ Sesuai penyederhanaan arsitektur informasi terkini, platform mengusung **5 Modul
 ### FR-03: Dokter Tani AI — Fitopatologi Daun Padi (Gemini Vision)
 * **Deskripsi:** Modul kecerdasan buatan visual untuk deteksi dini penyakit tanaman padi dari citra daun.
 * **Fitur Utama:**
-  * Integrasi resmi **Google Gemini API** (`@google/genai` model `gemini-2.5-flash`) untuk inferensi multimodal visual.
+  * Integrasi resmi **Google Gemini API** (`@google/genai` model `gemini-1.5-flash`) untuk inferensi multimodal visual.
   * Klasifikasi kondisi daun padi:
     1. *Hawar Daun Bakteri (Kresek / Xanthomonas oryzae)*
     2. *Blas Daun (Pyricularia oryzae)*
