@@ -1,5 +1,5 @@
 # Flowchart Sistem & Spesifikasi Alur Proses — AgriBuddy v2.0
-**Pemodelan Logika Alur Bisnis Usahatani Cerdas: Perencanaan AI, Marketplace Jasa, Traceability Lumbung, & Bursa Lelang**  
+**Pemodelan Logika Alur Bisnis Usahatani Cerdas: Monitoring Telemetri, Perencanaan AI, Dokter Tani Multimodal Vision, Buku Kas, & Keterlacakan Lumbung**  
 *Capstone Project STSI4440 • Tugas Akhir Sarjana Sistem Informasi 2026*
 
 ---
@@ -7,6 +7,8 @@
 ## 1. Pendahuluan & Standar Notasi Diagram
 
 Dokumen ini memodelkan seluruh logika alur operasional dan algoritma alur kerja (*business process workflow*) dari sistem **AgriBuddy v2.0**. Pemodelan disusun mengacu pada standar internasional **ANSI/ISO 5807-1985** (*Information processing — Documentation symbols and conventions for data, program and system flowcharts*).
+
+Sistem AgriBuddy v2.0 difokuskan sebagai **Smart Farming Decision Support System (DSS)** berbasis arsitektur modern **Node.js (Express + TypeScript)** dengan integrasi kecerdasan buatan **Google Gemini 2.5 Flash Multimodal Vision API** dan layanan telemetri cuaca geospasial terbuka.
 
 ### Standar Simbol yang Digunakan
 | Simbol Notasi | Bentuk Geometris | Nama Standar | Fungsi & Makna Operasional |
@@ -22,7 +24,7 @@ Dokumen ini memodelkan seluruh logika alur operasional dan algoritma alur kerja 
 
 ## 2. Visual Flowchart Terpadu (Unified End-to-End System)
 
-Berikut adalah diagram alir proses sistem terpadu beresolusi tinggi yang menggambarkan integrasi dari saat pengguna masuk sistem, mengelola lahan dan rencana AI, bertransaksi di marketplace, mencatat panen lumbung berketertelusuran, hingga bertransaksi di bursa lelang komoditas:
+Berikut adalah diagram alir proses sistem terpadu beresolusi tinggi yang menggambarkan integrasi dari saat petani masuk sistem, mengelola sawah & cuaca, menyusun rencana budidaya AI, mendiagnosis penyakit via foto Gemini Vision, mencatat pembukuan kas modal, hingga menyimpan panen lumbung berketertelusuran:
 
 ![Flowchart Sistem Terpadu AgriBuddy v2.0](FLOWCHART_AgriBuddy.jpg)
 
@@ -35,111 +37,90 @@ Berikut adalah diagram alir proses sistem terpadu beresolusi tinggi yang menggam
 ```mermaid
 flowchart TD
     %% Titik Awal
-    Start([MULAI: Pengguna Mengakses AgriBuddy]) --> Login[Autentikasi Akun / Masuk Cepat Persona]
-    Login --> AuthCheck{Sesi Valid?}
+    Start([MULAI: Petani Mengakses AgriBuddy]) --> Login[Autentikasi Akun / Masuk Cepat Persona]
+    Login --> AuthCheck{Sesi Token Valid?}
     AuthCheck -- Tidak --> Login
     AuthCheck -- Ya --> Dashboard[Masuk ke Pusat Kendali Dashboard AgriBuddy]
 
-    %% Percabangan Menu Utama
+    %% Percabangan Menu Utama (5 Modul Inti)
     Dashboard --> MenuChoice{Pilih Menu / Aktivitas Usahatani}
 
-    %% JALUR 1: MANAJEMEN SAWAH & RENCANA AI
-    MenuChoice -->|Monitoring Lahan & AI| FarmMenu[Buka Tab Sawah & AI]
+    %% JALUR 1: MONITORING SAWAH & CUACA
+    MenuChoice -->|Monitoring Lahan & Cuaca| FarmMenu[Buka Tab Monitoring Sawah]
     FarmMenu --> FarmAction{Aktivitas Lahan}
     
-    FarmAction -->|Petak Baru| InputLand[Input Nama Petak, Luas Ha, & Komoditas]
-    InputLand --> PickGPS[Kunci Titik Koordinat via Peta GPS OpenStreetMap]
+    FarmAction -->|Petak Baru| InputLand[Input Nama Petak, Luas Ha, Komoditas & Varietas]
+    InputLand --> PickGPS[Kunci Titik Koordinat via Peta Interaktif Leaflet / OSM]
     PickGPS --> SaveLand[(Simpan ke Basis Data FARMLAND)]
-    SaveLand --> CollabSet[Atur Anggota Tim & Proporsi Bagi Hasil %]
-    CollabSet --> FarmAction
+    SaveLand --> FarmMenu
 
-    FarmAction -->|Rencana Tani AI| CallAI[Kirim Parameter Tanah, Cuaca, & Luas ke AI Engine]
-    CallAI --> GenPlan[AI Menghasilkan RAB Modal, Kebutuhan Pupuk & 5 Fase Kerja]
-    GenPlan --> SavePlan[(Simpan ke FARM_PLAN & FARM_PLAN_STEP)]
-    SavePlan --> ExecPhase[Petani Melaksanakan Budidaya & Update Progres Lapangan]
+    FarmAction -->|Pantau Kondisi| FetchWeather[Sistem Mengambil Data Cuaca Realtime BMKG / Open-Meteo]
+    FetchWeather --> DisplayWeather[Tampilkan Suhu, Kelembaban, Curah Hujan & Status Irigasi]
+    DisplayWeather --> FarmAction
+
+    %% JALUR 2: RENCANA TANI AI & RAB MODAL
+    MenuChoice -->|Rencana Tani AI| PlanMenu[Buka Modul Rencana Tani AI]
+    PlanMenu --> InputPlanParams[Pilih Petak Sawah, Target Komoditas, Luas, & Tanggal Mulai]
+    InputPlanParams --> ReqAIPlan[Kirim Parameter Agronomi ke Backend Node.js]
+    ReqAIPlan --> CalcAIPlan[Algoritma AI Menghitung 5 Fase Budidaya, Kebutuhan Pupuk NPK & Biaya Modal RAB]
+    CalcAIPlan --> SavePlan[(Simpan ke Basis Data FARM_PLAN & FARM_PLAN_STEP)]
+    SavePlan --> ExecPhase[Petani Melaksanakan Budidaya & Update Progres Tiap Fase]
     ExecPhase --> CheckHarvest{Masa Panen Tiba?}
     CheckHarvest -- Belum --> ExecPhase
-    CheckHarvest -- Ya --> ToHarvest[Lanjut ke Pengelolaan Hasil Panen]
+    CheckHarvest -- Ya --> ToHarvest[Lanjut ke Pengelolaan Hasil Panen Lumbung]
 
-    %% JALUR 2: MARKETPLACE JASA & CHECKOUT
-    MenuChoice -->|Katalog Jasa & Saprotan| BrowseMarket[Jelajah Katalog Layanan: Traktor, Pompa, Buruh Tanam, Benih]
-    BrowseMarket --> AskProd{Perlu Tanya Spesifikasi?}
-    AskProd -- Ya --> DiscProd[Kirim Pertanyaan di Diskusi Publik Produk]
-    DiscProd --> WaitReply[Penyedia Jasa Memberikan Jawaban Resmi]
-    WaitReply --> AskProd
-    AskProd -- Tidak --> Checkout[Klik Pesan Sekarang: Masukkan Kuantitas & Metode Bayar COD/Yarnen/Transfer]
-    Checkout --> CreateOrder[(Terbitkan Pesanan: Status MENUNGGU di SERVICE_ORDER)]
-    CreateOrder --> PromptModal{Catat Otomatis ke Buku Kas Modal Lahan?}
-    PromptModal -- Ya --> SelectPlot[Pilih Petak Lahan Sasaran]
-    SelectPlot --> RecordExpense[(Catat ke CAPITAL_EXPENSE Lahan)]
-    RecordExpense --> SellerTrack[Notifikasi Terkirim ke Penyedia Jasa / Seller]
-    PromptModal -- Tidak --> SellerTrack
+    %% JALUR 3: DOKTER TANI AI (GEMINI MULTIMODAL VISION)
+    MenuChoice -->|Dokter Tani AI| DocMenu[Buka Modul Dokter Tani AI]
+    DocMenu --> CapturePhoto[Ambil Foto Gejala Daun / Batang Sakit via Kamera HP / File]
+    CapturePhoto --> SendGemini[Kirim Payload Gambar Base64 ke Backend Node.js via Gemini 2.5 Flash Vision]
+    SendGemini --> GeminiInference[Google Gemini Mengekstraksi Fitur Visual Morfologi Daun]
+    GeminiInference --> DiseaseCheck{Terdeteksi Gejala Penyakit?}
+    DiseaseCheck -- Daun Sehat --> HealthyReport[Tampilkan Status: Tanaman Sehat & Rekomendasi Perawatan Rutin]
+    DiseaseCheck -- Terinfeksi --> InfectionReport[Diagnosis: Identifikasi Patogen, Tingkat Keparahan & Gejala Klinis]
+    InfectionReport --> ShowDosage[Rekomendasi Tindakan Hayati/Kimia & Dosis Fungisida Berimbang]
 
-    SellerTrack --> SellerAction{Konfirmasi Seller}
-    SellerAction -- Jadwal Penuh / Tolak --> RejectOrder[Status DIBATALKAN]
-    SellerAction -- Terima & Proses --> ProcessOrder[Status DIPROSES: Persiapan Armada]
-    ProcessOrder --> DispatchOrder[Status SEDANG_DIKIRIM: Armada Berangkat ke Sawah]
-    DispatchOrder --> LiveChat[Koordinasi Waktu Tiba & Lokasi via Chat Transaksi]
-    LiveChat --> CompleteOrder[Status SELESAI: Pengerjaan Tuntas di Lahan]
+    %% JALUR 4: BUKU TANI & LUMBUNG TRACEABILITY
+    ToHarvest --> HarvestMenu[Buka Tab Lumbung & Buku Tani]
+    MenuChoice -->|Buku Tani & Lumbung| HarvestMenu
+    HarvestMenu --> BookAction{Aktivitas Pembukuan}
+    
+    BookAction -->|Catat Modal Operasional| InputExpense[Input Nominal Pengeluaran, Kategori Pupuk/Benih/Upah, & Bukti]
+    InputExpense --> SaveExpense[(Simpan ke Basis Data CAPITAL_EXPENSE)]
+    SaveExpense --> HarvestMenu
 
-    %% JALUR 3: LUMBUNG TRACEABILITY & BURSA LELANG
-    ToHarvest --> HarvestMenu[Buka Tab Lumbung Hasil Panen]
-    MenuChoice -->|Lumbung & Lelang Panen| HarvestMenu
-    HarvestMenu --> StoreHarvest[Input Tonase Panen Kg & Kadar Air]
-    StoreHarvest --> BindTraceability[Wajib Tautkan Petak Sawah Asal Panen - Traceability]
-    BindTraceability --> SaveLumbung[(Simpan Stok ke HARVEST_STORAGE dengan farmland_id)]
-    SaveLumbung --> AuctionChoice{Buka Bursa Lelang Komoditas?}
-    AuctionChoice -- Tidak --> KeepStore[Stok Aman Tersimpan di Lumbung Petani]
-    AuctionChoice -- Ya --> OpenListing[Tentukan Harga Pembukaan Rp/Kg & Min Order Kg]
-    OpenListing --> SaveListing[(Terbitkan Lelang di MARKET_LISTING: Status DIBUKA)]
-    SaveListing --> WaitBids[Pedagang / Pengepul Mengajukan Penawaran Harga Bid]
-    WaitBids --> ReviewBid{Petani Menyetujui Tawaran Harga?}
-    ReviewBid -- Tolak --> RejectBid[Tawaran Ditolak: Menunggu Penawar Lain]
-    RejectBid --> WaitBids
-    ReviewBid -- Setujui --> DealAuction[Lelang Selesai: Kesepakatan Harga Tercapai]
-    DealAuction --> DeductStock[(Potong Volume Fisik di Lumbung HARVEST_STORAGE)]
+    BookAction -->|Catat Panen| InputHarvest[Input Tanggal Panen, Tonase Kg, & Kadar Air Gabah]
+    InputHarvest --> BindTraceability[Wajib Tautkan Petak Sawah Asal Panen - Traceability Mandatori]
+    BindTraceability --> SaveLumbung[(Simpan Stok Fisik ke Basis Data HARVEST_STORAGE)]
+    SaveLumbung --> HarvestMenu
 
-    %% JALUR 4: DOKTER TANI AI (COMPUTER VISION)
-    MenuChoice -->|Dokter Tani AI| UploadLeaf[Unggah Foto Daun Padi Terindikasi Penyakit]
-    UploadLeaf --> CVProcess[AI Computer Vision Mengekstraksi Fitur Citra Daun]
-    CVProcess --> DiseaseCheck{Terdeteksi Gejala Penyakit?}
-    DiseaseCheck -- Daun Sehat --> HealthyReport[Tampilkan Status: Tanaman Sehat & Tips Pemeliharaan]
-    DiseaseCheck -- Terinfeksi --> InfectionReport[Diagnosis: Kresek, Blas, atau Bercak Coklat]
-    InfectionReport --> ShowDosage[Rekomendasikan Dosis Bahan Aktif & Fungisida Penanganan]
-
-    %% JALUR 5: JEJARING KOMUNITAS TANI
-    MenuChoice -->|Jejaring Sosial Tani| FeedCommunity[Akses Linimasa Kabar Warga Tani]
-    FeedCommunity --> SocialAction{Aktivitas Sosial}
-    SocialAction -->|Posting| CreatePost[Tulis Status & Bagikan Foto Sawah ke Feed]
-    SocialAction -->|Interaksi| LikeComment[Beri Reaksi Suka & Komentar Diskusi Lapangan]
-    SocialAction -->|Kemitraan| FollowFarmer[Ikuti Profil Rekan Tani & Calon Mitra Garap]
+    %% JALUR 5: DIREKTORI LAYANAN ALSINTAN & SAPROTAN (WHATSAPP DIRECT)
+    MenuChoice -->|Direktori Layanan & Alsintan| ServiceDir[Jelajah Katalog Layanan: Traktor, Drone Sprayer, Kios Pupuk]
+    ServiceDir --> SelectVendor[Pilih Penyedia Jasa / Toko Terdekat]
+    SelectVendor --> ContactWA[Klik 'Hubungi Penyedia' -> Redirect ke WhatsApp Web / App API]
+    ContactWA --> DirectChat[Negosiasi Jadwal & Pemesanan Langsung Petani - Penyedia via WA]
 
     %% Terminasi Selesai / Logout
-    CompleteOrder --> LoopBack[Selesai Transaksi / Kembali ke Dashboard]
-    DealAuction --> LoopBack
-    KeepStore --> LoopBack
+    HealthyReport --> LoopBack[Selesai Aktivitas / Kembali ke Dashboard]
     ShowDosage --> LoopBack
-    HealthyReport --> LoopBack
-    CreatePost --> LoopBack
-    LikeComment --> LoopBack
-    FollowFarmer --> LoopBack
-    RejectOrder --> LoopBack
+    SaveExpense --> LoopBack
+    SaveLumbung --> LoopBack
+    DirectChat --> LoopBack
 
     LoopBack --> LogoutChoice{Ingin Keluar Sistem?}
     LogoutChoice -- Tidak --> Dashboard
-    LogoutChoice -- Ya --> EndSession[Hapus Sesi Autentikasi & Reset State]
+    LogoutChoice -- Ya --> EndSession[Hapus Token JWT Sesi & Reset State Aplikasi]
     EndSession --> Finish([SELESAI: Pengguna Keluar])
 
-    %% Styling
+    %% Styling Visual
     classDef startEnd fill:#064e3b,stroke:#059669,stroke-width:2px,color:#ffffff,font-weight:bold;
     classDef process fill:#f0fdf4,stroke:#16a34a,stroke-width:1.5px,color:#14532d;
     classDef decision fill:#eff6ff,stroke:#2563eb,stroke-width:1.5px,color:#1e3a8a,font-weight:600;
     classDef storage fill:#fef3c7,stroke:#d97706,stroke-width:1.5px,color:#78350f;
 
     class Start,Finish startEnd;
-    class Login,Dashboard,FarmMenu,InputLand,PickGPS,CollabSet,CallAI,GenPlan,ExecPhase,BrowseMarket,DiscProd,WaitReply,Checkout,SelectPlot,ProcessOrder,DispatchOrder,LiveChat,CompleteOrder,HarvestMenu,StoreHarvest,BindTraceability,KeepStore,OpenListing,WaitBids,DealAuction,UploadLeaf,CVProcess,HealthyReport,InfectionReport,ShowDosage,FeedCommunity,CreatePost,LikeComment,FollowFarmer,LoopBack,EndSession process;
-    class AuthCheck,MenuChoice,FarmAction,CheckHarvest,AskProd,PromptModal,SellerAction,AuctionChoice,ReviewBid,DiseaseCheck,SocialAction,LogoutChoice decision;
-    class SaveLand,SavePlan,CreateOrder,RecordExpense,SaveLumbung,SaveListing,DeductStock storage;
+    class Login,Dashboard,FarmMenu,InputLand,PickGPS,FetchWeather,DisplayWeather,PlanMenu,InputPlanParams,ReqAIPlan,CalcAIPlan,ExecPhase,ToHarvest,DocMenu,CapturePhoto,SendGemini,GeminiInference,HealthyReport,InfectionReport,ShowDosage,HarvestMenu,InputExpense,InputHarvest,BindTraceability,ServiceDir,SelectVendor,ContactWA,DirectChat,LoopBack,EndSession process;
+    class AuthCheck,MenuChoice,FarmAction,CheckHarvest,DiseaseCheck,BookAction,LogoutChoice decision;
+    class SaveLand,SavePlan,SaveExpense,SaveLumbung storage;
 ```
 
 ---
@@ -148,99 +129,75 @@ flowchart TD
 
 Untuk kemudahan penulisan narasi teknis pada **Bab 3 (Metodologi/Perancangan)** dan **Bab 4 (Implementasi & Pengujian)** skripsi, berikut adalah pemecahan flowchart per modul:
 
-### 4.1. Alur 1: Pendaftaran Lahan Sawah & Perhitungan Rencana AI (RAB)
+### 4.1. Alur 1: Pendaftaran Lahan Sawah, Geotagging & Telemetri Cuaca
 ```mermaid
 flowchart TD
-    S1([Mulai: Tambah Lahan]) --> In1[Input Nama Petak, Luas Ha, Jenis Tanah, Komoditas]
-    In1 --> GPS1[Buka Peta Leaflet & Ambil Titik Koordinat GPS Lintang/Bujur]
-    GPS1 --> D1[(Simpan ke FARMLAND)]
-    D1 --> Col1[Tentukan Kolaborator & Persentase Bagi Hasil %]
-    Col1 --> ClickAI[Tekan Tombol 'Hitung Ulang Rencana AI']
-    ClickAI --> CallEngine[Backend FastAPI Memanggil Agronomic Decision Engine]
-    CallEngine --> CalcRAB[Kalkulasi Kebutuhan Benih, Dosis Pupuk Dasar & Susulan, Biaya Olah Lahan]
-    CalcRAB --> EstYield[Hitung Estimasi Tonase Panen & Proyeksi Laba Bersih]
-    EstYield --> D2[(Simpan Rencana ke FARM_PLAN & 5 Langkah di FARM_PLAN_STEP)]
-    D2 --> End1([Selesai: Rencana Tani Siap Dijalankan])
+    S1([Mulai: Manajemen Lahan]) --> In1[Input Nama Petak, Luas Ha, Jenis Tanah, Komoditas & Varietas]
+    In1 --> GPS1[Buka Peta Leaflet Interaktif & Kunci Titik Koordinat GPS Lintang/Bujur]
+    GPS1 --> D1[(Simpan Data ke Tabel FARMLAND)]
+    D1 --> FetchApi[Backend Node.js Request Cuaca ke Open-Meteo API berdasarkan Koordinat]
+    FetchApi --> ShowDash[Tampilkan Indikator Cuaca: Suhu, Curah Hujan, Kelembaban & Status Irigasi]
+    ShowDash --> End1([Selesai: Petak Lahan Terpantau])
 ```
 
-### 4.2. Alur 2: Pemesanan Layanan Alsintan (In-App Checkout) & Integrasi Buku Modal
+### 4.2. Alur 2: Penyusunan Rencana Tani AI & Anggaran Biaya Modal (RAB)
 ```mermaid
 flowchart TD
-    S2([Mulai: Pesan Layanan]) --> Browse2[Buka Katalog: Pilih Sewa Traktor / Pompa Irigasi]
-    Browse2 --> CheckAvail{Armada Tersedia?}
-    CheckAvail -- Tidak --> S2
-    CheckAvail -- Ya --> ModalCheckout[Buka Modal Checkout: Masukkan Luas Sawah Ha]
-    ModalCheckout --> AutoCalc[Sistem Mengalkulasi Subtotal = Luas x Tarif Satuan]
-    AutoCalc --> PayMethod[Pilih Metode Pembayaran: COD / YARNEN / Transfer QRIS]
-    PayMethod --> ConfirmOrder[Klik 'Konfirmasi Pesanan']
-    ConfirmOrder --> D3[(Insert ke SERVICE_ORDER: Status MENUNGGU)]
-    D3 --> PromptModal{Muncul Pop-up: 'Masukkan ke Buku Modal Lahan?'}
-    PromptModal -- Ya --> SelectFarm[Pilih Petak Sawah yang Dibiayai]
-    SelectFarm --> D4[(Insert ke CAPITAL_EXPENSE Lahan: Kategori OLAH_TANAH)]
-    SelectFarm --> NotifSeller[Kirim Notifikasi ORDER_RECEIVED ke Seller]
-    PromptModal -- Tidak --> NotifSeller
-    NotifSeller --> End2([Selesai: Pesanan Menunggu Konfirmasi Seller])
+    S2([Mulai: Rencana Tani AI]) --> PickFarm[Pilih Petak Sawah Sasaran & Jadwal Tanam]
+    PickFarm --> SubmitAgronomy[Kirim Parameter Agronomi ke Endpoint /api/plans/generate]
+    SubmitAgronomy --> CalcPlan[Backend Node.js Menghitung 5 Fase Budidaya & Dosis Pupuk NPK]
+    CalcPlan --> CalcRAB[Kalkulasi Estimasi Anggaran Modal: Benih, Pupuk, Tenaga Kerja & Proyeksi Panen]
+    CalcRAB --> D2[(Simpan Rencana ke FARM_PLAN & 5 Langkah Detail ke FARM_PLAN_STEP)]
+    D2 --> ViewTimeline[Tampilkan Timeline Kerja Interaktif & Checklist Tiap Fase Budidaya]
+    ViewTimeline --> End2([Selesai: Rencana Budidaya Siap Dijalankan])
 ```
 
-### 4.3. Alur 3: Manajemen Pesanan Seller & Live Tracking Pembeli
+### 4.3. Alur 3: Dokter Tani AI (Diagnosis Penyakit Citra Daun via Google Gemini Multimodal Vision)
 ```mermaid
 flowchart TD
-    S3([Pesanan Masuk di Akun Seller]) --> ViewOrder[Seller Melihat Detail Pesanan & Catatan Petak Sawah]
-    ViewOrder --> DecSeller{Konfirmasi Penjual?}
-    DecSeller -- Tolak / Jadwal Penuh --> CancelStat[Update Status: DIBATALKAN]
-    CancelStat --> End3([Pesanan Batal])
-    DecSeller -- Terima Pesanan --> ProcStat[Update Status: DIPROSES]
-    ProcStat --> PrepMach[Persiapan Bahan Bakar & Armada Traktor]
-    PrepMach --> DispStat[Update Status: SEDANG_DIKIRIM (Berangkat ke Lahan)]
-    DispStat --> LiveMap[Pembeli Memantau Status & Kotak Catatan Jam Tiba Armada]
-    LiveMap --> ChatBtn{Butuh Koordinasi Rute?}
-    ChatBtn -- Ya --> SendChat[Kirim Pesan Obrolan Transaksi: 'Lewat Pematang Timur']
-    SendChat --> D5[(Simpan ke ORDER_MESSAGE & Trigger Notifikasi)]
-    D5 --> LiveMap
-    ChatBtn -- Tidak --> WorkDone[Pekerjaan Olah Tanah Selesai di Lokasi]
-    WorkDone --> DoneStat[Update Status: SELESAI]
-    DoneStat --> End3b([Selesai: Transaksi Berhasil Tuntas])
+    S3([Mulai: Deteksi Hama / Penyakit]) --> SnapDoc[Ambil Foto Daun Tanaman Sakit Menggunakan Kamera HP / Unggah File]
+    SnapDoc --> CompressImg[Frontend Mengompres Citra & Konversi ke Base64 Data URL]
+    CompressImg --> PostVision[Kirim Payload ke Backend Node.js Endpoint /api/doctor/diagnose]
+    PostVision --> CallGemini[Backend Memanggil Google Gemini 2.5 Flash Vision Multimodal API]
+    CallGemini --> GenDiagnosis[Gemini Menganalisis Pola Lesi, Gejala Nekrosis & Klorosis]
+    GenDiagnosis --> ParseJSON[Parsing Response Terstruktur: Nama Penyakit, Tingkat Keparahan & Resep Obat]
+    ParseJSON --> CheckHealthy{Apakah Tanaman Sakit?}
+    CheckHealthy -- Tidak --> DispHealthy[Tampilkan Label Tanaman Sehat & Tips Nutrisi Preventif]
+    CheckHealthy -- Ya --> DispDisease[Tampilkan Identifikasi Penyakit, Bahan Aktif Fungisida & Tindakan Darurat]
+    DispHealthy --> End3([Selesai])
+    DispDisease --> End3
 ```
 
-### 4.4. Alur 4: Keterlacakan Lumbung (*Food Traceability*) & Bursa Lelang Komoditas
+### 4.4. Alur 4: Pembukuan Kas Modal & Keterlacakan Lumbung (*Food Traceability*)
 ```mermaid
 flowchart TD
-    S4([Masa Panen Selesai]) --> OpenLumbung[Buka Menu Monitoring -> Tab Lumbung]
-    OpenLumbung --> InHarvest[Input Volume Tonase Kg & Mutu Kadar Air Gabah]
+    S4([Mulai: Buku Tani & Lumbung]) --> ChooseAct{Pilih Jenis Pencatatan}
+    
+    ChooseAct -- Kas Modal Sawah --> InputCost[Input Kategori: Benih, Pupuk, atau Upah & Nominal Biaya]
+    InputCost --> PickTargetFarm[Pilih Petak Sawah yang Dibiayai]
+    PickTargetFarm --> D4[(Simpan ke CAPITAL_EXPENSE dengan farmland_id)]
+    D4 --> UpdateRecap[Perbarui Total Realisasi Biaya Modal Petak Sawah]
+    UpdateRecap --> End4([Selesai])
+
+    ChooseAct -- Hasil Panen Lumbung --> InHarvest[Input Tanggal Panen, Volume Tonase Kg, & Kadar Air Gabah]
     InHarvest --> SelectOrigin[Wajib Pilih Petak Sawah Asal Panen]
-    SelectOrigin --> TraceCheck{Validasi farmland_id?}
-    TraceCheck -- Kosong --> SelectOrigin
-    TraceCheck -- Terisi --> D6[(Insert ke HARVEST_STORAGE dengan farmland_id)]
-    D6 --> AuctionDecision{Ingin Dijual di Bursa Lelang?}
-    AuctionDecision -- Tidak --> SaveLumbungOnly[Stok Panen Aman Tersimpan di Lumbung]
-    SaveLumbungOnly --> End4([Selesai])
-    AuctionDecision -- Ya --> InputAuction[Tentukan Harga Pembukaan Rp/Kg & Batas Min Order]
-    InputAuction --> D7[(Publish ke MARKET_LISTING: Status DIBUKA)]
-    D7 --> BidArrives[Pedagang / Pengepul Mengajukan Tawaran Harga Bid]
-    BidArrives --> D8[(Tercatat di MARKET_BID)]
-    D8 --> SellerReview{Petani Menyetujui Tawaran?}
-    SellerReview -- Tolak --> RejectBid[Status DITOLAK: Menunggu Penawar Lain]
-    RejectBid --> BidArrives
-    SellerReview -- Setujui --> AcceptBid[Status DISETUJUI: Kesepakatan Harga Terjalin]
-    AcceptBid --> DeductLumbung[(Update HARVEST_STORAGE: Potong Volume Fisik Terjual)]
-    DeductLumbung --> End4b([Selesai: Komoditas Terjual dengan Riwayat Lahan Valid])
+    SelectOrigin --> ValidateOrigin{Apakah farmland_id Valid?}
+    ValidateOrigin -- Tidak --> SelectOrigin
+    ValidateOrigin -- Ya --> D5[(Simpan Stok ke HARVEST_STORAGE dengan Tautan farmland_id)]
+    D5 --> GenTrace[Sistem Memvalidasi Sertifikat Asal Panen - Traceability Terpenuhi]
+    GenTrace --> End4
 ```
 
-### 4.5. Alur 5: Dokter Tani AI (Computer Vision Diagnosis Penyakit Daun)
+### 4.5. Alur 5: Direktori Layanan Alsintan & Saprotan (Pemesanan Langsung WhatsApp)
 ```mermaid
 flowchart TD
-    S5([Petani Menemukan Gejala Penyakit]) --> OpenDoc[Buka Fitur Dokter Tani AI]
-    OpenDoc --> SnapPhoto[Ambil Foto Daun Padi Menggunakan Kamera / Galeri HP]
-    SnapPhoto --> Preprocess[Resize Citra 224x224 & Normalisasi Tensor RGB]
-    Preprocess --> CNNInference[Eksekusi Model CNN Deep Learning Classifier]
-    CNNInference --> CheckDisease{Hasil Diagnosis?}
-    CheckDisease -- Sehat --> ResHealthy[Label: DAUN SEHAT (Confidence Score %)]
-    ResHealthy --> Tips1[Tampilkan Tips Pemeliharaan Preventif & Jadwal Pemupukan]
-    CheckDisease -- Sakit --> ResInfect[Label: KRESEK / BLAS / BERCAK COKLAT (Score %)]
-    ResInfect --> ShowMeds[Tampilkan Deskripsi Gejala, Patogen Penyebab, & Dosis Fungisida]
-    ShowMeds --> RecKatalog[Rekomendasikan Pembelian Obat di Katalog Saprotan KPL]
-    Tips1 --> End5([Selesai])
-    RecKatalog --> End5
+    S5([Mulai: Cari Layanan Tani]) --> BrowseServ[Jelajah Direktori: Sewa Traktor, Drone Sprayer, Kios Saprotan]
+    BrowseServ --> FilterServ[Filter Berdasarkan Kategori & Wilayah Terdekat]
+    FilterServ --> ClickWA[Klik Tombol 'Hubungi via WhatsApp']
+    ClickWA --> GenWALink[Sistem Merangkai Link wa.me dengan Template Teks Otomatis]
+    GenWALink --> OpenWA[Membuka Aplikasi WhatsApp: Terhubung Langsung ke Pemilik Jasa]
+    OpenWA --> NegotiateDeal[Petani & Penyedia Bersepakat Jadwal & Tarif secara Fleksibel]
+    NegotiateDeal --> End5([Selesai: Transaksi Berjalan Tanpa Biaya Admin])
 ```
 
 ---
@@ -249,13 +206,12 @@ flowchart TD
 
 | Titik Keputusan (*Decision Node*) | Kondisi Evaluasi | Alur Jika Kondisi Terpenuhi (*True*) | Alur Jika Kondisi Gagal (*False*) |
 | :--- | :--- | :--- | :--- |
-| **`AuthCheck`** | Memeriksa token/sesi login di `localStorage`. | Masuk ke dashboard utama. | Kembali ke layar `/login`. |
-| **`FarmAction`** | Apakah petani mendaftarkan sawah baru atau menghitung rencana AI? | Masuk ke alur formulir peta GPS. | Masuk ke alur pemanggilan Agronomic Decision Engine. |
-| **`PromptModal`** | Apakah petani menyetujui biaya pesanan dicatat ke buku modal sawah? | Menyimpan record baru ke `CAPITAL_EXPENSE` petak sawah. | Melewati pencatatan kas modal (hanya menyimpan `SERVICE_ORDER`). |
-| **`SellerAction`** | Penjual mengonfirmasi ketersediaan armada traktor/pekerja. | Mengubah status pesanan menjadi `DIPROSES` lalu `SEDANG_DIKIRIM`. | Mengubah status menjadi `DIBATALKAN` beserta catatan alasan penolakan. |
-| **`TraceCheck`** | Memeriksa apakah data hasil panen memiliki tautan `farmland_id`. | Menyimpan panen dengan sertifikat asal lahan (*food traceability*). | Sistem memblokir penyimpanan hingga petani memilih petak sawah asal. |
-| **`ReviewBid`** | Petani mengevaluasi harga penawaran pedagang di bursa lelang. | Status tawaran `DISETUJUI` dan stok lumbung otomatis dipotong. | Status tawaran `DITOLAK`, listing tetap dibuka untuk pedagang lain. |
-| **`DiseaseCheck`** | Model CNN mendeteksi tanda infeksi patogen pada daun padi. | Menampilkan nama penyakit, tingkat keparahan, dan anjuran dosis obat. | Menampilkan keterangan tanaman sehat dan anjuran sanitasi rutin. |
+| **`AuthCheck`** | Memeriksa token/sesi login di `localStorage`. | Masuk ke dashboard kendali utama. | Kembali ke layar `/login` untuk autentikasi. |
+| **`FarmAction`** | Apakah petani mendaftarkan petak sawah baru atau memantau telemetri? | Masuk ke formulir peta Leaflet koordinat GPS. | Menampilkan widget telemetri cuaca Open-Meteo & status irigasi. |
+| **`CheckHarvest`** | Apakah budidaya telah mencapai fase akhir (Masa Panen)? | Mengarahkan petani mencatat hasil tonase ke modul Lumbung. | Melanjutkan checklist kegiatan pemeliharaan fase berjalan. |
+| **`DiseaseCheck`** | Google Gemini Vision mendeteksi tanda infeksi patogen / lesi daun. | Menampilkan nama penyakit, tingkat keparahan, dan anjuran fungisida. | Menampilkan keterangan tanaman sehat dan rekomendasi sanitasi rutin. |
+| **`ValidateOrigin`** | Memeriksa apakah data panen memiliki foreign key `farmland_id` valid. | Menyimpan stok ke lumbung dengan rantai ketertelusuran (*traceability*). | Sistem memblokir penyimpanan sampai petani memilih petak sawah asal. |
+| **`LogoutChoice`** | Pengguna menekan tombol keluar sistem. | Menghapus token JWT lokal dan mereset status aplikasi. | Tetap berada di dashboard usahatani. |
 
 ---
 
@@ -263,5 +219,5 @@ flowchart TD
 
 Pemodelan Flowchart Sistem AgriBuddy v2.0 ini:
 1. **Memenuhi Kaidah ANSI/ISO 5807:** Setiap percabangan logika didefinisikan secara deterministik dengan masukan, proses, titik keputusan, dan koneksi basis data yang transparan.
-2. **Keterpaduan Antarmodul:** Menjelaskan secara runut bagaimana keluaran dari satu proses (misal: pesanan katalog) langsung menjadi masukan bagi proses lainnya (buku kas modal lahan sawah), serta bagaimana siklus panen sawah berlanjut ke rantai pasok bursa lelang (*traceability supply chain*).
-3. **Kesiapan Naskah Skripsi:** Menyediakan flowchart global untuk pemaparan arsitektur sistem di Bab 3, serta 5 flowchart modular untuk melengkapi analisis perancangan rinci di Bab 4.
+2. **Keterpaduan Alur Cerdas (AI-Driven DSS):** Menggambarkan secara presisi bagaimana data geospasial sawah dan citra daun diproses oleh backend Node.js dan model kecerdasan buatan Google Gemini Vision untuk menghasilkan keputusan agronomis yang akurat.
+3. **Kesiapan Naskah Skripsi:** Menyediakan flowchart global untuk pemaparan arsitektur sistem di Bab 3, serta 5 flowchart modular untuk melengkapi analisis perancangan rinci di Bab 4 skripsi.
