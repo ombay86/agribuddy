@@ -9,5 +9,5 @@ export const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   apiV1Str: process.env.API_V1_STR || '/api/v1',
   geminiApiKey: process.env.GEMINI_API_KEY || '',
-  geminiModel: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
+  geminiModel: process.env.GEMINI_MODEL || 'auto',
 };

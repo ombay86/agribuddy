@@ -17,6 +17,7 @@ PORT = 8820
 DIAGRAMS = [
     {
         "id": "erd",
+        "port": 8831,
         "md_file": "ERD_AgriBuddy.md",
         "svg_file": "ERD_AgriBuddy.svg",
         "jpg_file": "ERD_AgriBuddy.jpg",
@@ -28,6 +29,7 @@ DIAGRAMS = [
     },
     {
         "id": "use_case",
+        "port": 8832,
         "md_file": "USE_CASE_AgriBuddy.md",
         "svg_file": "USE_CASE_AgriBuddy.svg",
         "jpg_file": "USE_CASE_AgriBuddy.jpg",
@@ -39,6 +41,7 @@ DIAGRAMS = [
     },
     {
         "id": "flowchart",
+        "port": 8833,
         "md_file": "FLOWCHART_AgriBuddy.md",
         "svg_file": "FLOWCHART_AgriBuddy.svg",
         "jpg_file": "FLOWCHART_AgriBuddy.jpg",
@@ -50,6 +53,7 @@ DIAGRAMS = [
     },
     {
         "id": "activity",
+        "port": 8834,
         "md_file": "ACTIVITY_DIAGRAM_AgriBuddy.md",
         "svg_file": "ACTIVITY_DIAGRAM_AgriBuddy.svg",
         "jpg_file": "ACTIVITY_DIAGRAM_AgriBuddy.jpg",
@@ -80,6 +84,7 @@ def render_diagram(diag):
     brain_jpg = os.path.join(BRAIN_DIR, diag["jpg_file"])
     html_init = os.path.join(WORKSPACE, f"_temp_{diag['id']}_init.html")
     html_final = os.path.join(WORKSPACE, f"_temp_{diag['id']}_final.html")
+    diag_port = diag.get("port", PORT)
 
     mermaid_code = extract_first_mermaid(md_path)
     
@@ -165,7 +170,7 @@ def render_diagram(diag):
         svgEl.setAttribute('height', vh);
         svgEl.style.maxWidth = 'none';
 
-        fetch('http://127.0.0.1:{PORT}/save_svg', {{
+        fetch('http://127.0.0.1:{diag_port}/save_svg', {{
           method: 'POST',
           headers: {{ 'Content-Type': 'application/json' }},
           body: JSON.stringify({{
@@ -175,7 +180,7 @@ def render_diagram(diag):
         }});
       }} catch (err) {{
         console.error("Render error:", err);
-        fetch('http://127.0.0.1:{PORT}/report_error', {{
+        fetch('http://127.0.0.1:{diag_port}/report_error', {{
           method: 'POST',
           headers: {{ 'Content-Type': 'application/json' }},
           body: JSON.stringify({{ error: err.message || String(err) }})
@@ -189,14 +194,9 @@ def render_diagram(diag):
     with open(html_init, "w", encoding="utf-8") as f:
         f.write(init_html_content)
 
-    socketserver.TCPServer.allow_reuse_address = True
-    httpd = socketserver.TCPServer(("127.0.0.1", PORT), CustomHandler)
+    httpd = http.server.HTTPServer(("127.0.0.1", diag_port), CustomHandler)
 
-    def serve():
-        while not data_received["done"]:
-            httpd.handle_request()
-
-    server_thread = threading.Thread(target=serve, daemon=True)
+    server_thread = threading.Thread(target=httpd.serve_forever, daemon=True)
     server_thread.start()
 
     cmd1 = [
@@ -205,7 +205,7 @@ def render_diagram(diag):
         "--disable-gpu",
         "--hide-scrollbars",
         "--window-size=2400,1600",
-        f"http://127.0.0.1:{PORT}/{os.path.basename(html_init)}"
+        f"http://127.0.0.1:{diag_port}/{os.path.basename(html_init)}"
     ]
 
     print("[Step 1] Rendering Mermaid in Edge headless...")
@@ -220,6 +220,8 @@ def render_diagram(diag):
         proc.wait(timeout=2)
     except Exception:
         proc.kill()
+
+    httpd.shutdown()
     httpd.server_close()
 
     if data_received.get("error"):

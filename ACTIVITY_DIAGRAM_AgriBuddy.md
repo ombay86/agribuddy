@@ -6,7 +6,7 @@
 
 ## 1. Pendahuluan & Standar Notasi UML 2.5
 
-Activity Diagram (*Diagram Aktivitas*) memodelkan aspek dinamis dari sistem **AgriBuddy v2.0**, yang menggambarkan aliran kontrol (*control flow*) dan aliran data antaraksi pengguna, antarmuka klien (*frontend*), server backend (*Node.js & Express API*), serta penyedia layanan eksternal (*Google Gemini 1.5 Flash Vision & Open-Meteo Weather API*).
+Activity Diagram (*Diagram Aktivitas*) memodelkan aspek dinamis dari sistem **AgriBuddy v2.0**, yang menggambarkan aliran kontrol (*control flow*) dan aliran data antaraksi pengguna, antarmuka klien (*frontend*), server backend (*Node.js & Express API*), serta penyedia layanan eksternal (*Google Gemini Multimodal Vision & Open-Meteo Weather API*).
 
 Sistem AgriBuddy v2.0 difokuskan sebagai **Smart Farming Decision Support System (DSS)** berbasis arsitektur modern Node.js + TypeScript dengan integrasi kecerdasan buatan Google Gemini Multimodal Vision API. Berdasarkan standar **UML 2.5 (OMG)**, diagram ini membagi tanggung jawab komputasi menggunakan **Partisi Swimlane (*Swimlanes*)**, serta mengakomodasi eksekusi tugas konkuren melalui batang sinkronisasi **Fork** dan **Join**.
 
@@ -111,7 +111,7 @@ flowchart TD
         BE_SavePlan[(Simpan Rencana ke FARM_PLAN & FARM_PLAN_STEP)]
 
         BE_PrepGemini[Validasi MIME Type Gambar & Susun Prompt Agronomi Sistem]
-        BE_ReqGeminiVision[Panggil Google Gemini 1.5 Flash Vision Multimodal API]
+        BE_ReqGeminiVision[Panggil Google Gemini Multimodal Vision Multimodal API]
         BE_ParseGemini[Parsing Respon JSON: Gejala, Patogen, & Resep Bahan Aktif]
 
         BE_SaveExpense[(Insert Pengeluaran ke CAPITAL_EXPENSE)]
@@ -122,7 +122,7 @@ flowchart TD
     %% SWIMLANE 4: LAYANAN EKSTERNAL (GEMINI & OPEN-METEO)
     subgraph LaneExternal["PARTISI 4: LAYANAN EKSTERNAL (GEMINI & OPEN-METEO)"]
         EXT_WeatherAPI[Open-Meteo Server: Hitung Suhu, Kelembaban, & Presipitasi Hujan]
-        EXT_GeminiModel[Google Gemini 1.5 Flash Vision: Deteksi Lesi & Patogen Visual]
+        EXT_GeminiModel[Google Gemini Multimodal Vision: Deteksi Lesi & Patogen Visual]
     end
 
     %% ALIRAN KONTROL LINTAS PARTISI (CROSS-LANE CONTROL FLOW)
@@ -241,7 +241,7 @@ flowchart TD
 
 ---
 
-### 4.3. AD-03: Alur Dokter Tani AI (Google Gemini 1.5 Flash Multimodal Vision)
+### 4.3. AD-03: Alur Dokter Tani AI (Google Gemini Multimodal Vision (Auto-Discovery Latest))
 Menggambarkan alur klasifikasi citra penyakit daun berbasis *Generative AI Multimodal Vision* dari penangkapan gambar di kamera smartphone hingga diagnosis klinis dan anjuran penanganan.
 
 ```mermaid
@@ -261,7 +261,7 @@ flowchart TD
 
     subgraph P_Backend["Backend Node.js Server"]
         F3 --> G3[Siapkan Prompt Agronomi Khusus Tanaman & Injeksi Image InlineData]
-        G3 --> K3[Invoke Google Gemini 1.5 Flash Multimodal Vision API]
+        G3 --> K3[Invoke Google Gemini Multimodal Vision (Auto-Discovery Latest) API]
         L3[Parsing Respon JSON: Gejala, Patogen, Resep Obat Kimia/Hayati] --> H3
     end
 
@@ -343,5 +343,5 @@ Salah satu keunggulan perancangan Activity Diagram AgriBuddy v2.0 adalah penerap
 
 Rancangan Activity Diagram AgriBuddy v2.0 ini:
 1. **Mematuhi Standar Baku UML 2.5:** Menggunakan notasi partisi swimlane yang tegas untuk memisahkan tanggung jawab antarentitas (*Separation of Concerns*), serta menerapkan batang sinkronisasi *Fork/Join* secara akurat.
-2. **Mengintegrasikan Teknologi AI Modern:** Menunjukkan secara transparan integrasi Google Gemini 1.5 Flash Multimodal Vision API dalam penanganan diagnosis visual penyakit tanaman.
+2. **Mengintegrasikan Teknologi AI Modern:** Menunjukkan secara transparan integrasi Google Gemini Multimodal Vision (Auto-Discovery Latest) API dalam penanganan diagnosis visual penyakit tanaman.
 3. **Kesiapan Naskah Skripsi:** Menyediakan diagram terpadu (*overview*) untuk pemaparan dinamika sistem di Bab 3, serta 5 diagram modular untuk analisis perancangan rinci per modul fungsional di Bab 4.

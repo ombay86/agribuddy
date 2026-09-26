@@ -98,6 +98,7 @@ function formatCurrentTimestamp(): string {
 
 export class GeminiService {
   private ai: GoogleGenAI | null = null;
+  private cachedModel: string | null = null;
 
   constructor() {
     if (config.geminiApiKey) {
@@ -113,8 +114,60 @@ export class GeminiService {
   }
 
   /**
+   * Menemukan daftar kandidat model Gemini aktif secara otomatis (Auto-Discovery).
+   * Prioritas: model eksplisit di .env -> model live Google API terbaru -> moving alias 'gemini-flash-latest' -> fallback standar.
+   */
+  private async getCandidateModels(): Promise<string[]> {
+    const list: string[] = [];
+
+    // 1. Jika pengguna menetapkan model spesifik di .env dan bukan 'auto' / 'latest'
+    if (config.geminiModel && config.geminiModel !== 'auto' && config.geminiModel !== 'latest') {
+      list.push(config.geminiModel);
+    }
+
+    // 2. Jika sudah pernah ada model yang sukses terverifikasi pada sesi ini
+    if (this.cachedModel && !list.includes(this.cachedModel)) {
+      list.push(this.cachedModel);
+    }
+
+    // 3. Live discovery dari Google AI API
+    if (this.ai && config.geminiApiKey) {
+      try {
+        const liveList = await this.ai.models.list();
+        const flashModels: string[] = [];
+        for await (const m of liveList) {
+          const rawName = (m.name || '').replace(/^models\//, '');
+          if (rawName.includes('flash') && !rawName.includes('embedding') && !rawName.includes('tts') && !rawName.includes('audio')) {
+            flashModels.push(rawName);
+          }
+        }
+        // Urutkan versi model dari yang paling tinggi / baru
+        flashModels.sort().reverse();
+        for (const fm of flashModels) {
+          if (!list.includes(fm)) list.push(fm);
+        }
+      } catch (err) {
+        // Lewati jika models.list mengalami timeout atau restricted
+      }
+    }
+
+    // 4. Moving alias resmi Google (selalu otomatis diarahkan Google ke versi terbaru)
+    const movingDefaults = [
+      'gemini-flash-latest',
+      'gemini-2.0-flash',
+      'gemini-1.5-flash',
+      'gemini-pro-latest'
+    ];
+    for (const d of movingDefaults) {
+      if (!list.includes(d)) list.push(d);
+    }
+
+    return list;
+  }
+
+  /**
    * Mendiagnosis penyakit daun padi menggunakan Google Gemini Multimodal Vision API.
-   * Dilengkapi graceful fallback ke basis data penyakit agrikultur jika API key tidak tersedia atau error jaringan.
+   * Dilengkapi auto-discovery model terbaru dan graceful fallback ke basis data penyakit agrikultur.
    */
   public async diagnoseLeafImage(
     imageBuffer: Buffer,
@@ -124,9 +177,10 @@ export class GeminiService {
     const detectedAt = formatCurrentTimestamp();
 
     if (this.ai && config.geminiApiKey) {
-      try {
-        console.log(`🤖 Invoking Google Gemini Vision for leaf diagnosis (${filename || 'uploaded_image'})...`);
-        const prompt = `Anda adalah pakar agronomi dan fitopatologi tanaman padi (Dokter Tani AI).
+      const candidates = await this.getCandidateModels();
+      console.log(`📡 Auto-detecting active Gemini model (candidates: ${candidates.slice(0, 3).join(', ')})...`);
+
+      const prompt = `Anda adalah pakar agronomi dan fitopatologi tanaman padi (Dokter Tani AI).
 Analisis gambar daun padi ini secara cermat. Tentukan apakah tanaman terserang penyakit atau sehat.
 Penyakit utama tanaman padi meliputi:
 1. Hawar Daun Bakteri (Kresek / Xanthomonas oryzae)
@@ -148,45 +202,49 @@ Kembalikan jawaban HANYA dalam format JSON valid (tanpa markdown backtick ataupu
   ]
 }`;
 
-        const selectedModel = config.geminiModel || 'gemini-1.5-flash';
-        console.log(`📡 Invoking Google Gemini Vision (${selectedModel}) for leaf diagnosis (${filename || 'uploaded_image'})...`);
-        const base64Data = imageBuffer.toString('base64');
-        const response = await this.ai.models.generateContent({
-          model: selectedModel,
-          contents: [
-            {
-              role: 'user',
-              parts: [
-                { text: prompt },
-                {
-                  inlineData: {
-                    data: base64Data,
-                    mimeType: mimeType || 'image/jpeg'
-                  }
-                }
-              ]
-            }
-          ]
-        });
+      const base64Data = imageBuffer.toString('base64');
 
-        const rawText = response.text || '';
-        // Bersihkan formatting markdown seperti ```json ... ```
-        const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          const parsed = JSON.parse(jsonMatch[0]);
-          return {
-            disease_name: parsed.disease_name || "Penyakit Daun Padi",
-            english_name: parsed.english_name || "Rice Leaf Condition",
-            confidence: typeof parsed.confidence === 'number' ? Math.round(parsed.confidence * 100) / 100 : 0.94,
-            severity: parsed.severity || "Sedang",
-            symptoms: Array.isArray(parsed.symptoms) && parsed.symptoms.length > 0 ? parsed.symptoms : ["Gejala bercak pada helai daun terdeteksi."],
-            actions: Array.isArray(parsed.actions) && parsed.actions.length > 0 ? parsed.actions : ["Lakukan pemantauan berkala dan semprotkan fungisida/bakterisida anjuran."],
-            detected_at: detectedAt,
-            ai_provider: `Google Gemini (${selectedModel})`
-          };
+      for (const selectedModel of candidates) {
+        try {
+          console.log(`🤖 Invoking Google Gemini Vision using model: "${selectedModel}"...`);
+          const response = await this.ai.models.generateContent({
+            model: selectedModel,
+            contents: [
+              {
+                role: 'user',
+                parts: [
+                  { text: prompt },
+                  {
+                    inlineData: {
+                      data: base64Data,
+                      mimeType: mimeType || 'image/jpeg'
+                    }
+                  }
+                ]
+              }
+            ]
+          });
+
+          const rawText = response.text || '';
+          const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            const parsed = JSON.parse(jsonMatch[0]);
+            this.cachedModel = selectedModel; // Kunci model yang sukses untuk request berikutnya
+            console.log(`✅ Gemini diagnosis succeeded with model: "${selectedModel}"`);
+            return {
+              disease_name: parsed.disease_name || "Penyakit Daun Padi",
+              english_name: parsed.english_name || "Rice Leaf Condition",
+              confidence: typeof parsed.confidence === 'number' ? Math.round(parsed.confidence * 100) / 100 : 0.94,
+              severity: parsed.severity || "Sedang",
+              symptoms: Array.isArray(parsed.symptoms) && parsed.symptoms.length > 0 ? parsed.symptoms : ["Gejala bercak pada helai daun terdeteksi."],
+              actions: Array.isArray(parsed.actions) && parsed.actions.length > 0 ? parsed.actions : ["Lakukan pemantauan berkala dan semprotkan fungisida/bakterisida anjuran."],
+              detected_at: detectedAt,
+              ai_provider: `Google Gemini (${selectedModel})`
+            };
+          }
+        } catch (err: any) {
+          console.warn(`⚠️ Model "${selectedModel}" returned error: ${err?.message || err}. Trying next available model...`);
         }
-      } catch (err: any) {
-        console.warn('⚠️ Gemini API call failed or timed out. Falling back to local agronomy engine:', err?.message || err);
       }
     }
 
