@@ -1,42 +1,43 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import JejaringView from '@/views/JejaringView.vue'
 import MonitoringView from '@/views/MonitoringView.vue'
+import RencanaTaniView from '@/views/RencanaTaniView.vue'
+import DokterTaniView from '@/views/DokterTaniView.vue'
+import BukuTaniView from '@/views/BukuTaniView.vue'
 import KatalogView from '@/views/KatalogView.vue'
 import ProfilView from '@/views/ProfilView.vue'
 import LoginView from '@/views/LoginView.vue'
-import DokterTaniView from '@/views/DokterTaniView.vue'
-import RencanaTaniView from '@/views/RencanaTaniView.vue'
-import BukuTaniView from '@/views/BukuTaniView.vue'
-import LumbungView from '@/views/LumbungView.vue'
-import PesananView from '@/views/PesananView.vue'
+import { useUserState } from '@/services/userState'
 
 const routes = [
   { path: '/login', name: 'Login', component: LoginView },
-  // 1. Menu Utama: Jejaring (Aktivitas Orang Lain)
-  { path: '/', name: 'Jejaring', component: JejaringView },
-  { path: '/jejaring', redirect: '/' },
 
-  // 2. Menu Kedua: Monitoring (Pantau Sawah & AI)
-  { path: '/monitoring', name: 'Monitoring', component: MonitoringView },
+  // 1. Menu Utama: Monitoring Sawah & Cuaca (Beranda Utama)
+  { path: '/', name: 'Monitoring', component: MonitoringView },
+  { path: '/monitoring', redirect: '/' },
 
-  // 3. Menu Ketiga: Katalog (Marketplace Layanan & Produk)
-  { path: '/katalog', name: 'Katalog', component: KatalogView },
+  // 2. Rencana Tani AI (Smart Farm Planner & Biaya Modal)
+  { path: '/rencana', name: 'RencanaTani', component: RencanaTaniView },
 
-  // 4. Menu Keempat: Pesanan & Transaksi (Monitoring Pesanan Khusus)
-  { path: '/pesanan', name: 'Pesanan', component: PesananView },
-  { path: '/transaksi', redirect: '/pesanan' },
+  // 3. Dokter Tani AI (Deteksi Penyakit Daun via Gemini Vision)
+  { path: '/dokter', name: 'DokterTani', component: DokterTaniView },
 
-  // 5. Menu Kelima: Profil (Saya & Kelola Layanan)
+  // 4. Buku Tani (Inventaris Saprotan & Lumbung Panen)
+  { path: '/buku-tani', name: 'BukuTani', component: BukuTaniView },
+  { path: '/inventaris', redirect: '/buku-tani' },
+  { path: '/lumbung', redirect: '/buku-tani' },
+
+  // 5. Direktori Layanan & Mitra Ekosistem (Kontak Langsung via WhatsApp)
+  { path: '/layanan', name: 'Layanan', component: KatalogView },
+  { path: '/katalog', redirect: '/layanan' },
+
+  // 6. Profil Petani Mandiri
   { path: '/profil', name: 'Profil', component: ProfilView },
 
-  // Direct shortcuts & compatibility
-  { path: '/dokter', name: 'DokterTani', component: DokterTaniView },
-  { path: '/rencana', name: 'RencanaTani', component: RencanaTaniView },
-  { path: '/inventaris', name: 'BukuTani', component: BukuTaniView },
-  { path: '/lumbung', name: 'Lumbung', component: LumbungView },
+  // Redirect legacy paths
+  { path: '/jejaring', redirect: '/' },
+  { path: '/pesanan', redirect: '/layanan' },
+  { path: '/transaksi', redirect: '/layanan' },
 ]
-
-import { useUserState } from '@/services/userState'
 
 const router = createRouter({
   history: createWebHistory(),

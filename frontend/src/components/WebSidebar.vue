@@ -22,7 +22,7 @@
                 v2.0
               </span>
             </div>
-            <p class="text-[10px] text-slate-400 font-semibold whitespace-nowrap">Ekosistem Tani Cerdas</p>
+            <p class="text-[10px] text-slate-400 font-semibold whitespace-nowrap">Smart Farming DSS</p>
           </div>
         </router-link>
 
@@ -30,7 +30,7 @@
         <button
           @click="toggleSidebar"
           class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all active:scale-95 flex items-center justify-center shrink-0 border border-transparent hover:border-slate-700"
-          title="Minimize Sidebar (Hanya Ikon)"
+          title="Minimize Sidebar"
         >
           <PanelLeftClose :size="18" />
         </button>
@@ -38,7 +38,6 @@
 
       <!-- Minimized Header View -->
       <div v-else class="flex flex-col items-center gap-2 pb-1">
-        <!-- Expand Button on Top Right / Centered in Minimized Rail -->
         <button
           @click="toggleSidebar"
           class="w-full p-2 rounded-xl text-slate-400 hover:text-emerald-400 hover:bg-slate-800 transition-all active:scale-95 flex items-center justify-center border border-slate-800 hover:border-emerald-500/30"
@@ -47,148 +46,102 @@
           <PanelLeftOpen :size="18" class="text-emerald-400" />
         </button>
 
-        <router-link to="/" class="group mt-1" title="AgriBuddy v2.0 - Ekosistem Tani Cerdas">
+        <router-link to="/" class="group mt-1" title="AgriBuddy - Smart Farming DSS">
           <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-xl shadow-md group-hover:scale-105 transition-transform">
             🌾
           </div>
         </router-link>
       </div>
 
-      <!-- Navigation Links (Compact & Fit to Screen) -->
+      <!-- Navigation Links -->
       <nav class="space-y-1 text-xs flex-1 overflow-y-auto no-scrollbar">
-        <!-- Section: Menu Utama -->
         <span v-if="!isCollapsed" class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-3 block mb-1.5">
-          Menu Utama
+          Modul Usahatani Cerdas
         </span>
         <div v-else class="border-t border-slate-800/80 my-1.5 mx-1"></div>
 
-        <!-- 1. Jejaring -->
+        <!-- 1. Monitoring Sawah (Beranda) -->
         <router-link
           to="/"
           class="rounded-xl font-bold transition-all group flex items-center"
           :class="[
-            $route.path === '/' || $route.path === '/jejaring' ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white',
-            isCollapsed ? 'justify-center p-2.5 relative' : 'gap-3 px-3 py-2'
+            $route.path === '/' || $route.path === '/monitoring' ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white',
+            isCollapsed ? 'justify-center p-2.5 relative' : 'gap-3 px-3 py-2.5'
           ]"
-          title="Jejaring Komunitas"
-        >
-          <Users :size="18" class="shrink-0" />
-          <span v-if="!isCollapsed" class="truncate">Jejaring Komunitas</span>
-        </router-link>
-
-        <!-- 2. Monitoring Sawah & AI -->
-        <router-link
-          to="/monitoring"
-          class="rounded-xl font-bold transition-all group flex items-center"
-          :class="[
-            $route.path === '/monitoring' ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white',
-            isCollapsed ? 'justify-center p-2.5 relative' : 'gap-3 px-3 py-2'
-          ]"
-          title="Monitoring Sawah & AI"
+          title="Monitoring Sawah & Cuaca"
         >
           <Activity :size="18" class="shrink-0" />
-          <span v-if="!isCollapsed" class="truncate">Monitoring Sawah & AI</span>
+          <span v-if="!isCollapsed" class="truncate">Monitoring Sawah</span>
         </router-link>
 
-        <!-- 3. Katalog Marketplace -->
+        <!-- 2. Rencana Tani AI -->
         <router-link
-          to="/katalog"
+          to="/rencana"
           class="rounded-xl font-bold transition-all group flex items-center"
           :class="[
-            $route.path === '/katalog' ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white',
-            isCollapsed ? 'justify-center p-2.5 relative' : 'gap-3 px-3 py-2'
+            $route.path === '/rencana' ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white',
+            isCollapsed ? 'justify-center p-2.5 relative' : 'gap-3 px-3 py-2.5'
           ]"
-          title="Katalog Layanan & Jasa"
+          title="Rencana Tani AI & RAB"
         >
-          <Store :size="18" class="shrink-0" />
-          <span v-if="!isCollapsed" class="truncate">Katalog Layanan & Jasa</span>
+          <CalendarDays :size="18" class="shrink-0 text-emerald-400" />
+          <span v-if="!isCollapsed" class="truncate">Rencana Tani AI</span>
         </router-link>
 
-        <!-- 4. Transaksi & Pesanan -->
-        <router-link
-          to="/pesanan"
-          class="rounded-xl font-bold transition-all group flex items-center"
-          :class="[
-            $route.path === '/pesanan' || $route.path === '/transaksi' ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white',
-            isCollapsed ? 'justify-center p-2.5 relative' : 'justify-between px-3 py-2'
-          ]"
-          title="Pesanan & Transaksi"
-        >
-          <div class="flex items-center" :class="isCollapsed ? 'justify-center' : 'gap-3'">
-            <Receipt :size="18" class="shrink-0" />
-            <span v-if="!isCollapsed" class="truncate">Pesanan & Transaksi</span>
-          </div>
-
-          <!-- Pending Orders Count Badge -->
-          <template v-if="pendingOrdersCount > 0">
-            <span v-if="!isCollapsed" class="bg-amber-500 text-slate-900 text-[10px] font-black px-1.5 py-0.2 rounded-full">
-              {{ pendingOrdersCount }}
-            </span>
-            <!-- Dot indicator for collapsed state -->
-            <span v-else class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-amber-500 rounded-full border-2 border-slate-900 animate-pulse"></span>
-          </template>
-        </router-link>
-
-        <!-- Section: Modul Pendukung -->
-        <span v-if="!isCollapsed" class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-3 block pt-3 mb-1.5">
-          Modul Pendukung
-        </span>
-        <div v-else class="border-t border-slate-800/80 my-2 mx-1"></div>
-
-        <!-- 5. Dokter Tani AI -->
+        <!-- 3. Dokter Tani AI -->
         <router-link
           to="/dokter"
           class="rounded-xl font-bold transition-all group flex items-center"
           :class="[
             $route.path === '/dokter' ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white',
-            isCollapsed ? 'justify-center p-2.5 relative' : 'gap-3 px-3 py-2'
+            isCollapsed ? 'justify-center p-2.5 relative' : 'gap-3 px-3 py-2.5'
           ]"
-          title="Dokter Tani AI"
+          title="Dokter Tani AI (Gemini Vision)"
         >
           <Sparkles :size="18" class="text-amber-400 shrink-0" />
           <span v-if="!isCollapsed" class="truncate">Dokter Tani AI</span>
         </router-link>
 
-        <!-- 6. Buku Tani (Stok Saprotan) -->
+        <!-- 4. Buku Tani (Stok & Lumbung) -->
         <router-link
-          to="/inventaris"
+          to="/buku-tani"
           class="rounded-xl font-bold transition-all group flex items-center"
           :class="[
-            $route.path === '/inventaris' ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white',
-            isCollapsed ? 'justify-center p-2.5 relative' : 'gap-3 px-3 py-2'
+            $route.path === '/buku-tani' || $route.path === '/inventaris' || $route.path === '/lumbung' ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white',
+            isCollapsed ? 'justify-center p-2.5 relative' : 'gap-3 px-3 py-2.5'
           ]"
-          title="Buku Tani (Stok)"
+          title="Buku Tani (Gudang & Lumbung)"
         >
           <Package :size="18" class="shrink-0" />
-          <span v-if="!isCollapsed" class="truncate">Buku Tani (Stok)</span>
+          <span v-if="!isCollapsed" class="truncate">Buku Tani</span>
         </router-link>
 
-        <!-- 7. Lumbung Panen -->
+        <!-- 5. Direktori Layanan Ekosistem -->
         <router-link
-          to="/lumbung"
+          to="/layanan"
           class="rounded-xl font-bold transition-all group flex items-center"
           :class="[
-            $route.path === '/lumbung' ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white',
-            isCollapsed ? 'justify-center p-2.5 relative' : 'gap-3 px-3 py-2'
+            $route.path === '/layanan' || $route.path === '/katalog' ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white',
+            isCollapsed ? 'justify-center p-2.5 relative' : 'gap-3 px-3 py-2.5'
           ]"
-          title="Lumbung & Bursa Lelang"
+          title="Direktori Layanan & Mitra"
         >
-          <Warehouse :size="18" class="shrink-0" />
-          <span v-if="!isCollapsed" class="truncate">Lumbung & Bursa Lelang</span>
+          <Store :size="18" class="shrink-0" />
+          <span v-if="!isCollapsed" class="truncate">Direktori Layanan</span>
         </router-link>
 
-        <!-- 8. Profil Saya -->
+        <!-- 6. Profil Petani Mandiri -->
         <router-link
           to="/profil"
           class="rounded-xl font-bold transition-all group flex items-center"
           :class="[
             $route.path === '/profil' ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white',
-            isCollapsed ? 'justify-center p-2.5 relative' : 'gap-3 px-3 py-2'
+            isCollapsed ? 'justify-center p-2.5 relative' : 'gap-3 px-3 py-2.5'
           ]"
-          title="Profil & Layanan Saya"
+          title="Profil Usahatani"
         >
           <User :size="18" class="shrink-0" />
-          <span v-if="!isCollapsed" class="truncate">Profil & Layanan Saya</span>
+          <span v-if="!isCollapsed" class="truncate">Profil Usahatani</span>
         </router-link>
       </nav>
     </div>
@@ -203,10 +156,9 @@
         <span class="text-emerald-400 font-extrabold">{{ weather?.temp_celsius || 28 }}°C</span>
       </div>
       <p class="text-[10px] text-slate-400 leading-snug line-clamp-2">
-        {{ weather?.advice_title || 'Kondisi sawah optimal untuk pemupukan dan penyiangan.' }}
+        {{ weather?.advice_title || 'Kondisi sawah optimal untuk budidaya terencana.' }}
       </p>
 
-      <!-- Tombol Keluar di Footer Sidebar -->
       <button
         @click="handleLogout"
         class="w-full py-2.5 px-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 border border-rose-500/20 text-xs font-bold transition-all flex items-center justify-center gap-2 active:scale-95"
@@ -221,7 +173,7 @@
     <div v-else class="p-2.5 border-t border-slate-800 bg-slate-950/60 flex flex-col items-center gap-2.5 shrink-0">
       <div
         class="w-full py-2 rounded-xl bg-slate-800/60 text-slate-300 flex flex-col items-center justify-center gap-0.5 cursor-pointer"
-        :title="`Cuaca Sukamaju: ${weather?.temp_celsius || 28}°C - ${weather?.advice_title || 'Optimal'}`"
+        :title="`Cuaca: ${weather?.temp_celsius || 28}°C - ${weather?.advice_title || 'Optimal'}`"
       >
         <CloudSun :size="16" class="text-amber-400" />
         <span class="text-[10px] font-black text-emerald-400">{{ weather?.temp_celsius || 28 }}°</span>
@@ -239,19 +191,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { useUserState } from '@/services/userState';
 import { api, WeatherData } from '@/services/api';
 import { 
-  Users, Activity, Store, Receipt, Sparkles, 
-  Package, Warehouse, User, LogOut, 
+  Activity, CalendarDays, Sparkles, 
+  Package, Store, User, LogOut, 
   CloudSun, PanelLeftClose, PanelLeftOpen
 } from 'lucide-vue-next';
 
-const route = useRoute();
 const router = useRouter();
-const { currentUserId, logout } = useUserState();
+const { logout } = useUserState();
 
 const handleLogout = () => {
   logout();
@@ -266,30 +217,17 @@ const toggleSidebar = () => {
 };
 
 const weather = ref<WeatherData | null>(null);
-const pendingOrdersCount = ref(0);
-
-const isTransaksiTab = computed(() => {
-  return route.path === '/monitoring' && route.query.tab === 'transaksi';
-});
 
 const fetchSidebarData = async () => {
   try {
-    const [w, sellerOrders] = await Promise.all([
-      api.getWeather(),
-      api.getSellerOrders(currentUserId.value).catch(() => [])
-    ]);
+    const w = await api.getWeather();
     weather.value = w;
-    pendingOrdersCount.value = sellerOrders.filter(o => o.status === 'MENUNGGU_KONFIRMASI').length;
   } catch (err) {
     console.error('Error fetching sidebar data:', err);
   }
 };
 
 onMounted(() => {
-  fetchSidebarData();
-});
-
-watch(currentUserId, () => {
   fetchSidebarData();
 });
 </script>
