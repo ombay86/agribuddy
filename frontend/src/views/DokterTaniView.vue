@@ -162,57 +162,59 @@
         ref="chatContainerRef"
         class="flex-1 min-h-0 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6 custom-chat-scrollbar"
       >
-        <!-- State 1: Percakapan Masih Kosong (Welcome Screen & Suggestion Prompts) -->
+        <!-- State 1: Percakapan Masih Kosong (Welcome Screen, 2 Pertanyaan Populer, & Panduan Cepat API Key) -->
         <div
           v-if="messages.length === 0"
-          class="max-w-xl mx-auto py-8 sm:py-12 text-center space-y-6 animate-in fade-in duration-300"
+          class="max-w-xl mx-auto py-2 sm:py-4 text-center space-y-3 animate-in fade-in duration-300"
         >
-          <div class="w-16 h-16 rounded-3xl bg-gradient-to-br from-emerald-500 to-tani-900 text-white flex items-center justify-center mx-auto shadow-lg shadow-emerald-900/20">
-            <Sparkles :size="32" />
+          <!-- Compact Greeting Banner -->
+          <div class="flex items-center justify-center gap-3 text-left bg-emerald-50/80 border border-emerald-200/70 p-3 rounded-2xl shadow-2xs">
+            <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-tani-900 text-white flex items-center justify-center shrink-0 shadow-md shadow-emerald-900/10">
+              <Sparkles :size="20" />
+            </div>
+            <div class="min-w-0">
+              <h3 class="text-xs sm:text-sm font-black text-slate-800 leading-snug">
+                Halo {{ currentPersona.name }}! Ada yang bisa Agri AI bantu?
+              </h3>
+              <p class="text-[10px] sm:text-[11px] text-slate-500 line-clamp-1">
+                Tanya penyakit daun padi, dosis pupuk berimbang, hama wereng, atau kirim foto daun.
+              </p>
+            </div>
           </div>
 
-          <div class="space-y-1.5">
-            <h3 class="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">
-              Halo {{ currentPersona.name }}! Ada yang bisa Agri AI bantu?
-            </h3>
-            <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
-              Konsultasikan penyakit daun padi, rekomendasi dosis pupuk berimbang, hama wereng, atau kirim foto daun untuk dianalisis langsung.
-            </p>
-          </div>
-
-          <!-- Prompt Suggestions Chips -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-left pt-2">
+          <!-- 2 Contoh Pertanyaan Populer (1 Baris Ringkas) -->
+          <div class="grid grid-cols-2 gap-2 text-left">
             <button
-              v-for="(p, idx) in promptSuggestions"
+              v-for="(p, idx) in promptSuggestions.slice(0, 2)"
               :key="idx"
               @click="applyPromptSuggestion(p)"
-              class="p-3.5 bg-white border border-slate-200/90 hover:border-emerald-500 rounded-2xl shadow-2xs hover:shadow-sm transition-all active:scale-98 cursor-pointer group flex items-start gap-2.5"
+              class="p-2 sm:p-2.5 bg-white border border-slate-200/90 hover:border-emerald-500 rounded-xl shadow-2xs hover:shadow-xs transition-all active:scale-98 cursor-pointer group flex items-center gap-2"
             >
-              <span class="text-lg shrink-0 mt-0.5">{{ p.icon }}</span>
-              <div>
-                <h5 class="text-xs font-bold text-slate-800 group-hover:text-emerald-700 leading-snug">
+              <span class="text-base shrink-0">{{ p.icon }}</span>
+              <div class="min-w-0">
+                <h5 class="text-[11px] font-bold text-slate-800 group-hover:text-emerald-700 leading-tight truncate">
                   {{ p.title }}
                 </h5>
-                <p class="text-[10px] text-slate-400 mt-0.5 line-clamp-1">
+                <p class="text-[9px] text-slate-400 truncate">
                   {{ p.subtitle }}
                 </p>
               </div>
             </button>
           </div>
 
-          <!-- Visual Guide: Cara Mendapatkan Google Gemini API Key -->
-          <div class="mt-4 p-4 sm:p-5 bg-gradient-to-br from-amber-50/70 via-white to-emerald-50/60 border border-amber-200/90 rounded-3xl text-left shadow-xs space-y-3">
-            <div class="flex items-start justify-between gap-2">
-              <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center font-black shadow-xs text-sm">
-                  <Key :size="16" />
+          <!-- Visual Guide: Panduan Cepat Pasang Google Gemini API Key Pribadi (Langsung Terlihat Tanpa Scroll) -->
+          <div class="p-3.5 sm:p-4 bg-gradient-to-br from-amber-50/70 via-white to-emerald-50/60 border border-amber-200/90 rounded-2xl text-left shadow-xs space-y-2.5">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <div class="w-7 h-7 rounded-lg bg-amber-500 text-white flex items-center justify-center font-black shadow-2xs text-xs shrink-0">
+                  <Key :size="14" />
                 </div>
-                <div>
-                  <h4 class="text-xs sm:text-sm font-black text-slate-800">
-                    Panduan Cepat: Pasang Google Gemini API Key Pribadi
+                <div class="min-w-0">
+                  <h4 class="text-xs sm:text-sm font-black text-slate-800 truncate">
+                    Panduan Cepat: Pasang Gemini API Key Pribadi
                   </h4>
-                  <p class="text-[10px] sm:text-[11px] text-slate-500">
-                    Dapatkan kuota AI gratis tanpa batas antrean dari Google AI Studio (Model BYOK)
+                  <p class="text-[10px] sm:text-[11px] text-slate-500 truncate">
+                    Dapatkan kuota AI gratis tanpa batas antrean dari Google AI Studio (BYOK)
                   </p>
                 </div>
               </div>
@@ -224,60 +226,60 @@
               </span>
             </div>
 
-            <!-- 3 Langkah Visual -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+            <!-- 3 Langkah Visual (1 Baris 3 Kolom) -->
+            <div class="grid grid-cols-3 gap-1.5 sm:gap-2 text-xs">
               <!-- Step 1 -->
-              <div class="bg-white/90 border border-slate-200/80 rounded-2xl p-2.5 space-y-1 shadow-2xs">
-                <div class="flex items-center gap-1.5 text-amber-800 font-black text-[11px]">
-                  <span class="w-5 h-5 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center text-[10px] font-black">1</span>
-                  <span>Buka AI Studio</span>
+              <div class="bg-white/90 border border-slate-200/80 rounded-xl p-2 space-y-0.5 shadow-2xs">
+                <div class="flex items-center gap-1 text-amber-800 font-black text-[10px] sm:text-[11px]">
+                  <span class="w-4 h-4 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center text-[9px] font-black shrink-0">1</span>
+                  <span class="truncate">Buka AI Studio</span>
                 </div>
-                <p class="text-[10px] text-slate-500 leading-tight">
-                  Login ke Google AI Studio dengan akun Google Anda.
+                <p class="text-[9px] sm:text-[10px] text-slate-500 leading-tight">
+                  Login dengan akun Google
                 </p>
               </div>
 
               <!-- Step 2 -->
-              <div class="bg-white/90 border border-slate-200/80 rounded-2xl p-2.5 space-y-1 shadow-2xs">
-                <div class="flex items-center gap-1.5 text-emerald-800 font-black text-[11px]">
-                  <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-[10px] font-black">2</span>
-                  <span>Create API Key</span>
+              <div class="bg-white/90 border border-slate-200/80 rounded-xl p-2 space-y-0.5 shadow-2xs">
+                <div class="flex items-center gap-1 text-emerald-800 font-black text-[10px] sm:text-[11px]">
+                  <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-[9px] font-black shrink-0">2</span>
+                  <span class="truncate">Create Key</span>
                 </div>
-                <p class="text-[10px] text-slate-500 leading-tight">
-                  Klik tombol <strong>"Create API key"</strong> dan salin kodenya.
+                <p class="text-[9px] sm:text-[10px] text-slate-500 leading-tight">
+                  Klik <strong>"Create API key"</strong>
                 </p>
               </div>
 
               <!-- Step 3 -->
-              <div class="bg-white/90 border border-slate-200/80 rounded-2xl p-2.5 space-y-1 shadow-2xs">
-                <div class="flex items-center gap-1.5 text-sky-800 font-black text-[11px]">
-                  <span class="w-5 h-5 rounded-full bg-sky-100 text-sky-800 flex items-center justify-center text-[10px] font-black">3</span>
-                  <span>Tempel di Sini</span>
+              <div class="bg-white/90 border border-slate-200/80 rounded-xl p-2 space-y-0.5 shadow-2xs">
+                <div class="flex items-center gap-1 text-sky-800 font-black text-[10px] sm:text-[11px]">
+                  <span class="w-4 h-4 rounded-full bg-sky-100 text-sky-800 flex items-center justify-center text-[9px] font-black shrink-0">3</span>
+                  <span class="truncate">Pasang di Sini</span>
                 </div>
-                <p class="text-[10px] text-slate-500 leading-tight">
-                  Klik tombol di bawah dan simpan kunci ke profil Anda.
+                <p class="text-[9px] sm:text-[10px] text-slate-500 leading-tight">
+                  Simpan ke profil Anda
                 </p>
               </div>
             </div>
 
-            <!-- Tombol Aksi Cepat -->
-            <div class="flex flex-wrap items-center gap-2 pt-0.5">
+            <!-- Tombol Aksi Cepat (1 Baris Ringkas) -->
+            <div class="grid grid-cols-2 gap-2 pt-0.5">
               <a
                 href="https://aistudio.google.com/app/apikey"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-[11px] px-3.5 py-1.5 rounded-xl transition-all shadow-xs active:scale-95"
+                class="inline-flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-[10px] sm:text-[11px] py-2 px-2.5 rounded-xl transition-all shadow-xs active:scale-95 text-center"
               >
-                <span>🌐 Buka Google AI Studio</span>
-                <ExternalLink :size="12" />
+                <span>🌐 Buka AI Studio</span>
+                <ExternalLink :size="11" />
               </a>
               <button
                 type="button"
                 @click="openKeyModal"
-                class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] px-3.5 py-1.5 rounded-xl transition-all shadow-xs active:scale-95 cursor-pointer"
+                class="inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] sm:text-[11px] py-2 px-2.5 rounded-xl transition-all shadow-xs active:scale-95 cursor-pointer text-center"
               >
-                <Key :size="12" />
-                <span>{{ hasCustomApiKey ? 'Ubah / Periksa API Key' : '🔑 Masukkan Kunci Sekarang' }}</span>
+                <Key :size="11" />
+                <span class="truncate">{{ hasCustomApiKey ? 'Ubah / Periksa Key' : '🔑 Masukkan Kunci' }}</span>
               </button>
             </div>
           </div>
