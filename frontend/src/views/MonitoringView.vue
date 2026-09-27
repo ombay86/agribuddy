@@ -420,19 +420,43 @@
           </div>
         </div>
 
-        <!-- WIDGET 5: Kesiapan Sarana Produksi di Gudang (Low Stock Alert) -->
+        <!-- WIDGET 5: Logistik Tani — Stok Gudang & Lumbung Panen -->
         <div class="bg-white border border-slate-200/90 rounded-3xl p-5 md:p-6 shadow-xs space-y-4">
           <div class="flex items-center justify-between pb-2 border-b border-slate-100">
             <h4 class="text-sm font-black text-slate-800 flex items-center gap-2">
-              <Package :size="16" class="text-emerald-600" />
-              Kesiapan Stok Gudang
+              <Warehouse :size="16" class="text-emerald-600" />
+              Logistik Tani: Gudang & Lumbung
             </h4>
-            <router-link to="/buku-tani" class="text-[11px] font-bold text-emerald-700 hover:text-emerald-800">
-              Kelola →
+            <router-link to="/buku-tani" class="text-[11px] font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1">
+              <span>Buka Buku Tani</span>
+              <ArrowRight :size="12" />
             </router-link>
           </div>
 
-          <div class="space-y-2 text-xs">
+          <!-- Mini Tab Switcher: Gudang vs Lumbung -->
+          <div class="flex p-1 bg-slate-100 rounded-2xl">
+            <button
+              @click="logisticsTab = 'gudang'"
+              type="button"
+              class="flex-1 py-1.5 px-2.5 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              :class="logisticsTab === 'gudang' ? 'bg-white text-emerald-800 shadow-2xs' : 'text-slate-500 hover:text-slate-800'"
+            >
+              <Package :size="13" />
+              <span>Gudang Saprotan</span>
+            </button>
+            <button
+              @click="logisticsTab = 'lumbung'"
+              type="button"
+              class="flex-1 py-1.5 px-2.5 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              :class="logisticsTab === 'lumbung' ? 'bg-white text-emerald-800 shadow-2xs' : 'text-slate-500 hover:text-slate-800'"
+            >
+              <Warehouse :size="13" />
+              <span>Lumbung ({{ totalHarvestStockTon }} Ton)</span>
+            </button>
+          </div>
+
+          <!-- TAB 1: GUDANG SAPROTAN -->
+          <div v-if="logisticsTab === 'gudang'" class="space-y-2.5 text-xs">
             <div
               v-for="item in inventorySummary"
               :key="item.id"
@@ -459,15 +483,64 @@
                 Aman
               </span>
             </div>
+
+            <!-- Quick WhatsApp CTA to nearest KPL kiosk -->
+            <router-link
+              to="/layanan"
+              class="block p-2.5 rounded-2xl border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100 text-emerald-900 transition-all text-xs font-bold text-center mt-2"
+            >
+              🛒 Pesan Saprotan via Kios KPL →
+            </router-link>
           </div>
 
-          <!-- Quick WhatsApp CTA to nearest KPL kiosk -->
-          <router-link
-            to="/layanan"
-            class="block p-3 rounded-2xl border border-emerald-200 bg-emerald-50/60 hover:bg-emerald-100/70 text-emerald-900 transition-all text-xs font-bold text-center"
-          >
-            🛒 Pesan Saprotan via WhatsApp Kios KPL →
-          </router-link>
+          <!-- TAB 2: LUMBUNG HASIL PANEN -->
+          <div v-else-if="logisticsTab === 'lumbung'" class="space-y-2.5 text-xs">
+            <!-- Stat Baris: Total Berat & Nilai Pasar -->
+            <div class="grid grid-cols-2 gap-2">
+              <div class="p-2.5 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-0.5">
+                <span class="text-[10px] font-bold text-emerald-800 uppercase block">Total Simpanan</span>
+                <span class="text-sm font-black text-emerald-950">{{ totalHarvestStockKg.toLocaleString('id-ID') }} Kg</span>
+                <span class="text-[9px] text-emerald-700 font-semibold block">≈ {{ totalHarvestStockTon }} Ton Hasil Panen</span>
+              </div>
+              <div class="p-2.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-0.5">
+                <span class="text-[10px] font-bold text-slate-500 uppercase block">Estimasi Nilai</span>
+                <span class="text-sm font-black text-slate-800">Rp {{ totalHarvestValueFormatted }}</span>
+                <span class="text-[9px] text-slate-400 font-semibold block">Dasar harga GKP Rp 6.800/kg</span>
+              </div>
+            </div>
+
+            <!-- List Catatan Panen di Lumbung -->
+            <div v-if="harvests.length > 0" class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+              <div
+                v-for="h in harvests"
+                :key="h.id"
+                class="p-2 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-2"
+              >
+                <div class="truncate">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-xs">🌾</span>
+                    <span class="font-bold text-slate-800 text-[11px] truncate">{{ h.commodity }}</span>
+                  </div>
+                  <span class="text-[9px] text-slate-400 block">{{ h.harvest_date }} · {{ h.notes || 'Lumbung Mandiri' }}</span>
+                </div>
+                <div class="text-right shrink-0">
+                  <span class="font-black text-emerald-800 text-xs">{{ h.total_weight_kg.toLocaleString('id-ID') }} Kg</span>
+                  <span class="text-[8px] font-extrabold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded-md block mt-0.5 uppercase">{{ h.status }}</span>
+                </div>
+              </div>
+            </div>
+            <div v-else class="text-center py-3 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-[10px] text-slate-400">
+              Belum ada stok hasil panen tersimpan di lumbung.
+            </div>
+
+            <!-- Quick CTA ke Bursa Panen -->
+            <router-link
+              to="/buku-tani"
+              class="block p-2.5 rounded-2xl border border-teal-200 bg-teal-50/70 hover:bg-teal-100 text-teal-900 transition-all text-xs font-bold text-center mt-2"
+            >
+              🌾 Buka Lumbung & Taksasi Harga Pasar →
+            </router-link>
+          </div>
         </div>
 
       </div>
@@ -533,12 +606,12 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { api, WeatherData, Farmland, InventoryItem, DiagnosisResult } from '@/services/api';
+import { api, WeatherData, Farmland, InventoryItem, HarvestItem, DiagnosisResult } from '@/services/api';
 import { 
   Activity, Navigation, Droplets, CloudRain, 
   CheckCircle2, AlertTriangle, Sparkles, Calendar,
   CalendarDays, CheckSquare, Check, ArrowRight, Camera,
-  Wallet, Package, Store, TrendingUp, CloudSun
+  Wallet, Package, Store, TrendingUp, CloudSun, Warehouse
 } from 'lucide-vue-next';
 
 // State
@@ -547,12 +620,34 @@ const isLocatingWeather = ref(false);
 const farmlands = ref<Farmland[]>([]);
 const selectedFarmId = ref<string>('farm_001');
 
-// Inventaris Ringkas
+// Logistik Ringkas (Gudang vs Lumbung)
+const logisticsTab = ref<'gudang' | 'lumbung'>('gudang');
+
+// Inventaris Ringkas Gudang
 const inventorySummary = ref<InventoryItem[]>([
   { id: 'inv_1', name: 'Pupuk Urea N-46', type: 'PUPUK', quantity: 1, unit: 'Karung (50kg)', min_threshold: 2, is_low_stock: true },
   { id: 'inv_2', name: 'Pupuk NPK Phonska Plus', type: 'PUPUK', quantity: 4, unit: 'Karung (50kg)', min_threshold: 2, is_low_stock: false },
   { id: 'inv_3', name: 'Fungisida Tembaga Hidroksida', type: 'OBAT', quantity: 3, unit: 'Botol 500ml', min_threshold: 1, is_low_stock: false },
 ]);
+
+// Lumbung Hasil Panen
+const harvests = ref<HarvestItem[]>([
+  { id: 'hrv_1', commodity: 'Gabah Kering Panen (GKP)', total_weight_kg: 2400, harvest_date: '2026-08-20', status: 'TERSIMPAN', notes: 'Lumbung Utama' },
+  { id: 'hrv_2', commodity: 'Beras Konsumsi Super', total_weight_kg: 450, harvest_date: '2026-08-25', status: 'TERSIMPAN', notes: 'Gilingan Mandiri' }
+]);
+
+const totalHarvestStockKg = computed(() => {
+  return harvests.value.reduce((sum, h) => sum + (Number(h.total_weight_kg) || 0), 0);
+});
+
+const totalHarvestStockTon = computed(() => {
+  return (totalHarvestStockKg.value / 1000).toFixed(1);
+});
+
+const totalHarvestValueFormatted = computed(() => {
+  const val = totalHarvestStockKg.value * 6800;
+  return val.toLocaleString('id-ID');
+});
 
 // Diagnosa Daun Terakhir
 const lastDiagnosis = ref<DiagnosisResult>({
@@ -900,6 +995,16 @@ onMounted(async () => {
     }
   } catch (err) {
     console.warn('Could not load inventory:', err);
+  }
+
+  // Load Harvests (Lumbung Panen) from API
+  try {
+    const hrv = await api.getHarvests();
+    if (hrv && hrv.length > 0) {
+      harvests.value = hrv;
+    }
+  } catch (err) {
+    console.warn('Could not load harvests:', err);
   }
 
   loadTasks();
