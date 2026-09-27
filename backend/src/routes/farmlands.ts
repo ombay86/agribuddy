@@ -72,6 +72,7 @@ router.post('/', (req: Request, res: Response) => {
     id: `farm_${crypto.randomBytes(3).toString('hex')}`,
     user_id: userId,
     name: payload.name,
+    status: payload.status || "ACTIVE",
     land_size_ha: Number(payload.land_size_ha),
     commodity: payload.commodity || "Padi Sawah Inpari 32",
     soil_type: payload.soil_type || "Lempung Berliat (Subur)",
@@ -103,6 +104,7 @@ router.put('/:farmId', (req: Request, res: Response) => {
 
   const updates: Record<string, any> = {};
   if (payload.name !== undefined) updates.name = payload.name;
+  if (payload.status !== undefined) updates.status = payload.status;
   if (payload.land_size_ha !== undefined) {
     if (payload.land_size_ha <= 0) {
       return res.status(400).json({ detail: "Luas lahan harus lebih besar dari 0 Ha." });

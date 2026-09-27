@@ -763,16 +763,16 @@
       "coordinates_label": "-7.2504, 112.7512 (Desa Sukamaju Krajan)"
     },
     {
-      "plan_id": "plan_muj5rmho",
+      "plan_id": "plan_muj630cc",
       "user_id": "usr_petani",
       "land_size_ha": 1,
       "commodity": "Padi Sawah Inpari 32",
       "soil_type": "Lempung Berliat (Subur)",
       "water_source": "Irigasi Teknis Bendungan",
-      "location": "Citayam, Tajurhalang, Bogor",
-      "latitude": -6.444296917143691,
-      "longitude": 106.74132853535849,
-      "coordinates_label": "-6.4443, 106.7413",
+      "location": "Desa Sukamaju, Jawa Timur",
+      "latitude": -7.2504,
+      "longitude": 112.7512,
+      "coordinates_label": "-7.2504, 112.7512 (Desa Sukamaju)",
       "weather_condition": {
         "temp_celsius": 26,
         "rain_probability": 20,
@@ -1044,7 +1044,7 @@
       ],
       "id": "far_3d4b8a3b",
       "created_at": "2026-09-23T15:21:32.822Z",
-      "updated_at": "2026-09-27T01:47:04.478Z"
+      "updated_at": "2026-09-27T01:55:55.646Z"
     }
   ],
   "ecosystem_services": [

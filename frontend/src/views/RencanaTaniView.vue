@@ -47,8 +47,44 @@
 
     <!-- ==================== TAB 1: RENCANA TANAM (PERENCANAAN LAHAN BARU - WIZARD STEPPER) ==================== -->
     <div v-if="topTab === 'rencana'" class="space-y-6">
-      <!-- Stepper / Timeline Header -->
-      <div class="bg-white border border-slate-200/90 rounded-3xl p-4 md:p-6 shadow-xs max-w-3xl mx-auto">
+      <!-- Sub-mode Switcher: Rancang Lahan Baru vs Daftar Rencana Tersimpan -->
+      <div class="flex items-center justify-between bg-slate-100/90 p-1.5 rounded-2xl max-w-3xl mx-auto border border-slate-200/90 shadow-2xs">
+        <div class="flex items-center gap-1.5 w-full">
+          <button
+            @click="rencanaSubMode = 'wizard'"
+            type="button"
+            class="flex-1 py-2 px-3 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none"
+            :class="rencanaSubMode === 'wizard' 
+              ? 'bg-white text-emerald-800 shadow-xs font-black border border-slate-200/60' 
+              : 'text-slate-600 hover:text-slate-900 font-bold'"
+          >
+            <PlusCircle :size="14" />
+            <span>+ Rancang Lahan Baru</span>
+          </button>
+          <button
+            @click="rencanaSubMode = 'saved'"
+            type="button"
+            class="flex-1 py-2 px-3 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none"
+            :class="rencanaSubMode === 'saved' 
+              ? 'bg-white text-emerald-800 shadow-xs font-black border border-slate-200/60' 
+              : 'text-slate-600 hover:text-slate-900 font-bold'"
+          >
+            <FolderKanban :size="14" />
+            <span>Daftar Rencana Tersimpan</span>
+            <span 
+              class="text-[10px] font-black px-2 py-0.5 rounded-full"
+              :class="rencanaSubMode === 'saved' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700'"
+            >
+              {{ draftFarmlands.length }}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ==================== SUB-VIEW: WIZARD STEPPER ==================== -->
+      <div v-if="rencanaSubMode === 'wizard'" class="space-y-6">
+        <!-- Stepper / Timeline Header -->
+        <div class="bg-white border border-slate-200/90 rounded-3xl p-4 md:p-6 shadow-xs max-w-3xl mx-auto">
         <div class="flex items-center justify-between relative px-4 md:px-8">
           <!-- Connecting Line -->
           <div class="absolute left-10 right-10 top-5 h-1 bg-slate-200 z-0">
@@ -540,7 +576,7 @@
           </div>
         </div>
 
-        <!-- Action Stepper Final (Back & Simpan Garap) -->
+        <!-- Action Stepper Final (Back & Simpan Draft / Simpan Garap) -->
         <div class="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <button
             @click="wizardStep = 2"
@@ -550,16 +586,163 @@
             <span>⬅ Kembali ke Rincian RAB</span>
           </button>
 
+          <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+            <!-- Tombol 1: Simpan Rencana Saja (Draft) -->
+            <button
+              @click="savePlanAsDraft"
+              :disabled="isSavingDraft || isSavingToActive"
+              type="button"
+              class="py-2 px-3.5 rounded-xl border border-emerald-600 text-emerald-800 hover:bg-emerald-50 text-xs font-bold shadow-2xs active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-60"
+            >
+              <Loader2 v-if="isSavingDraft" :size="14" class="animate-spin" />
+              <Bookmark v-else :size="14" class="text-emerald-700" />
+              <span>{{ isSavingDraft ? 'Menyimpan...' : '💾 Simpan Rencana Saja' }}</span>
+            </button>
+
+            <!-- Tombol 2: Simpan & Mulai Garap (Aktif) -->
+            <button
+              @click="savePlanToActiveFarmland"
+              :disabled="isSavingToActive || isSavingDraft"
+              type="button"
+              class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-4 rounded-xl shadow-xs active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-60"
+            >
+              <Loader2 v-if="isSavingToActive" :size="14" class="animate-spin" />
+              <span v-else>🚀</span>
+              <span>{{ isSavingToActive ? 'Menyimpan...' : 'Simpan & Mulai Garap ➔' }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- End of v-if="rencanaSubMode === 'wizard'" -->
+      </div>
+
+      <!-- ==================== SUB-VIEW: DAFTAR RENCANA TERSIMPAN (DRAFT) ==================== -->
+      <div v-else-if="rencanaSubMode === 'saved'" class="space-y-4 max-w-4xl mx-auto">
+        <!-- Header Rencana Tersimpan -->
+        <div class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
+              <Bookmark :size="12" /> Draft Usahatani
+            </div>
+            <h3 class="text-base font-black text-slate-800 mt-1 flex items-center gap-2">
+              Daftar Rencana Tanam Tersimpan
+            </h3>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Kelola rencana yang telah dihitung anggarannya. Anda dapat mengedit parameter, menghapusnya, atau langsung mengeksekusinya ke pengerjaan lahan aktif.
+            </p>
+          </div>
           <button
-            @click="savePlanToActiveFarmland"
-            :disabled="isSavingToActive"
+            @click="createNewPlanDraft"
             type="button"
-            class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-4 rounded-xl shadow-xs active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-60"
+            class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-2 px-3.5 rounded-xl shadow-xs active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer self-start sm:self-auto shrink-0"
           >
-            <Loader2 v-if="isSavingToActive" :size="14" class="animate-spin" />
-            <span v-else>🚀</span>
-            <span>{{ isSavingToActive ? 'Menyimpan...' : 'Simpan & Mulai Garap (Pindah ke Kontrol Tanam)' }}</span>
+            <PlusCircle :size="14" />
+            <span>+ Rancang Lahan Baru</span>
           </button>
+        </div>
+
+        <!-- Empty State -->
+        <div v-if="draftFarmlands.length === 0" class="bg-white border border-dashed border-slate-300 rounded-3xl p-10 text-center space-y-3">
+          <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-3xl mx-auto">
+            📁
+          </div>
+          <div class="space-y-1">
+            <h4 class="text-sm font-black text-slate-800">Belum Ada Rencana Tersimpan</h4>
+            <p class="text-xs text-slate-500 max-w-md mx-auto">
+              Saat Anda merancang petak sawah baru di form kalkulasi, pilih "Simpan Rencana Saja" pada tahap akhir untuk menyimpannya sebagai draft di sini.
+            </p>
+          </div>
+          <button
+            @click="rencanaSubMode = 'wizard'"
+            type="button"
+            class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-4 rounded-xl shadow-xs active:scale-95 transition-all inline-flex items-center gap-1.5 cursor-pointer"
+          >
+            <PlusCircle :size="14" /> Mulai Rancang Sekarang
+          </button>
+        </div>
+
+        <!-- Cards List Drafts -->
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div
+            v-for="draft in draftFarmlands"
+            :key="draft.id"
+            class="bg-white border border-slate-200/90 hover:border-emerald-400 rounded-3xl p-5 shadow-xs transition-all flex flex-col justify-between space-y-4"
+          >
+            <!-- Card Top: Info -->
+            <div class="space-y-3">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <span class="text-[9px] font-black uppercase text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-200 tracking-wider">
+                    Draft Rencana
+                  </span>
+                  <h4 class="text-base font-black text-slate-800 mt-1.5 leading-snug">
+                    {{ draft.name }}
+                  </h4>
+                  <p class="text-xs text-slate-500 font-medium mt-0.5">
+                    📍 {{ draft.location }}
+                  </p>
+                </div>
+                <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-xl shrink-0 border border-emerald-100">
+                  🌾
+                </div>
+              </div>
+
+              <!-- Parameter Chips -->
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="bg-slate-50 p-2 rounded-xl border border-slate-100">
+                  <span class="text-[10px] text-slate-400 font-bold block">Komoditas</span>
+                  <span class="font-extrabold text-slate-700 truncate block">{{ draft.commodity }}</span>
+                </div>
+                <div class="bg-slate-50 p-2 rounded-xl border border-slate-100">
+                  <span class="text-[10px] text-slate-400 font-bold block">Luas Lahan</span>
+                  <span class="font-extrabold text-slate-700 block">{{ draft.land_size_ha }} Ha ({{ (draft.land_size_ha * 10000).toLocaleString('id-ID') }} m²)</span>
+                </div>
+              </div>
+
+              <!-- Estimasi Anggaran RAB -->
+              <div class="bg-emerald-50/70 border border-emerald-100/90 rounded-2xl p-2.5 flex items-center justify-between text-xs">
+                <div class="flex items-center gap-1.5 text-emerald-900 font-bold text-[11px]">
+                  <Coins :size="14" class="text-emerald-600" />
+                  <span>Estimasi Plafon RAB:</span>
+                </div>
+                <span class="font-black text-emerald-800 text-xs">
+                  Rp {{ (Math.round((draft.land_size_ha || 1) * 6400000)).toLocaleString('id-ID') }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Card Bottom: Action Buttons -->
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+              <div class="flex items-center gap-1.5">
+                <button
+                  @click="editDraftFarm(draft)"
+                  type="button"
+                  title="Edit parameter rencana ini"
+                  class="py-1.5 px-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer active:scale-95"
+                >
+                  <Pencil :size="12" />
+                  <span>Edit</span>
+                </button>
+                <button
+                  @click="deleteDraftFarm(draft)"
+                  type="button"
+                  title="Hapus draft rencana ini"
+                  class="py-1.5 px-2 rounded-xl border border-rose-200 text-rose-600 hover:bg-rose-50 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer active:scale-95"
+                >
+                  <Trash2 :size="12" />
+                </button>
+              </div>
+
+              <button
+                @click="activateDraftFarm(draft)"
+                type="button"
+                class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-1.5 px-3 rounded-xl shadow-xs active:scale-95 transition-all flex items-center gap-1 cursor-pointer"
+              >
+                <Play :size="12" />
+                <span>Mulai Garap ➔</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -596,7 +779,7 @@
               @change="onActiveFarmChanged"
               class="bg-transparent text-slate-800 text-xs font-black px-1 py-1 focus:outline-none cursor-pointer"
             >
-              <option v-for="f in farmlands" :key="f.id" :value="f.id">
+              <option v-for="f in activeFarmlands" :key="f.id" :value="f.id">
                 {{ f.name }} ({{ f.land_size_ha }} Ha)
               </option>
             </select>
@@ -861,7 +1044,7 @@
           <!-- List Sawah Cards Vertikal -->
           <div class="space-y-2">
             <button
-              v-for="farm in farmlands"
+              v-for="farm in activeFarmlands"
               :key="farm.id"
               @click="selectFarmland(farm)"
               class="w-full p-3 rounded-2xl transition-all flex items-center justify-between border active:scale-98 text-left cursor-pointer"
@@ -1262,7 +1445,8 @@ import {
   Sparkles, Calculator, CloudSun, Coins, CalendarCheck, 
   Users2, MessageSquare, Clock, Phone, Loader2, MapPin,
   Layers, UserPlus, PlusCircle, Receipt, Trash2, Check,
-  Scale, CheckSquare, Navigation
+  Scale, CheckSquare, Navigation, FolderKanban, Bookmark,
+  Play, Pencil
 } from 'lucide-vue-next';
 
 const route = useRoute();
@@ -1278,12 +1462,14 @@ const setTopTab = (tab: 'rencana' | 'kontrol') => {
   router.replace({ query: { ...route.query, tab } });
 };
 
-// --- WIZARD STEPPER STATE (TAB 1: RENCANA TANAM) ---
+// --- WIZARD STEPPER & SUB-MODE STATE (TAB 1: RENCANA TANAM) ---
+const rencanaSubMode = ref<'wizard' | 'saved'>('wizard');
 const wizardStep = ref<1 | 2 | 3>(1);
 const isLoading = ref(false);
 const isDetectingLocation = ref(false);
 const aiLocationRecommendationNote = ref('');
 const isSavingToActive = ref(false);
+const isSavingDraft = ref(false);
 
 const plan = ref<FarmPlan | null>(null);
 
@@ -1388,6 +1574,96 @@ const runCalculation = async () => {
   }
 };
 
+// Simpan rencana sebagai draft usahatani
+const savePlanAsDraft = async () => {
+  try {
+    isSavingDraft.value = true;
+    const nameToSave = form.value.name.trim() || `Draft Rencana (${form.value.commodity})`;
+    await api.createFarmland({
+      name: nameToSave,
+      status: 'DRAFT',
+      land_size_ha: form.value.land_size_ha,
+      commodity: form.value.commodity,
+      location: form.value.location,
+      latitude: form.value.latitude,
+      longitude: form.value.longitude,
+      soil_type: form.value.soil_type,
+      water_source: form.value.water_source
+    }, currentUserId.value);
+
+    await loadFarmlands();
+    rencanaSubMode.value = 'saved';
+  } catch (err: any) {
+    alert(err.message || 'Gagal menyimpan draft rencana');
+  } finally {
+    isSavingDraft.value = false;
+  }
+};
+
+// Reset form dan buka rancangan baru
+const createNewPlanDraft = () => {
+  form.value = {
+    name: 'Sawah Blok Baru',
+    land_size_ha: 1.0,
+    commodity: 'Padi Sawah Inpari 32',
+    soil_type: 'Lempung Berliat (Subur)',
+    water_source: 'Irigasi Teknis Bendungan',
+    location: currentPersona.value.location || 'Desa Sukamaju, Jawa Timur',
+    latitude: -7.2504,
+    longitude: 112.7512,
+    coordinates_label: '-7.2504, 112.7512 (Desa Sukamaju)'
+  };
+  wizardStep.value = 1;
+  rencanaSubMode.value = 'wizard';
+  runCalculation();
+};
+
+// Edit draft rencana: isi form dan buka wizard di Step 1
+const editDraftFarm = async (draft: Farmland) => {
+  form.value = {
+    name: draft.name,
+    land_size_ha: draft.land_size_ha,
+    commodity: draft.commodity,
+    soil_type: draft.soil_type || 'Lempung Berliat (Subur)',
+    water_source: draft.water_source || 'Irigasi Teknis Bendungan',
+    location: draft.location,
+    latitude: draft.latitude || -7.2504,
+    longitude: draft.longitude || 112.7512,
+    coordinates_label: `${draft.latitude ? draft.latitude.toFixed(4) : '-7.2504'}, ${draft.longitude ? draft.longitude.toFixed(4) : '112.7512'} (${draft.location})`
+  };
+  wizardStep.value = 1;
+  rencanaSubMode.value = 'wizard';
+  await runCalculation();
+};
+
+// Eksekusi / aktivasi draft menjadi lahan garap aktif
+const activateDraftFarm = async (draft: Farmland) => {
+  if (!confirm(`Mulai pengerjaan lahan untuk "${draft.name}" sekarang? Status akan aktif dan lahan masuk ke Kontrol Tanam & Modal.`)) {
+    return;
+  }
+  try {
+    const updated = await api.updateFarmland(draft.id, { status: 'ACTIVE' });
+    await loadFarmlands();
+    await selectFarmland(updated);
+    setTopTab('kontrol');
+  } catch (err: any) {
+    alert(err.message || 'Gagal mengaktifkan lahan garap');
+  }
+};
+
+// Hapus draft rencana
+const deleteDraftFarm = async (draft: Farmland) => {
+  if (!confirm(`Hapus draft rencana usahatani "${draft.name}"?`)) {
+    return;
+  }
+  try {
+    await api.deleteFarmland(draft.id);
+    await loadFarmlands();
+  } catch (err: any) {
+    alert(err.message || 'Gagal menghapus draft rencana');
+  }
+};
+
 // Simpan rencana ke lahan aktif & pindah ke Tab Kontrol Tanam & Modal
 const savePlanToActiveFarmland = async () => {
   try {
@@ -1395,6 +1671,7 @@ const savePlanToActiveFarmland = async () => {
     const nameToSave = form.value.name.trim() || `Sawah Blok Baru (${form.value.commodity})`;
     const created = await api.createFarmland({
       name: nameToSave,
+      status: 'ACTIVE',
       land_size_ha: form.value.land_size_ha,
       commodity: form.value.commodity,
       location: form.value.location,
@@ -1420,8 +1697,16 @@ const farmlands = ref<Farmland[]>([]);
 const activeFarmId = ref<string>('');
 const activeFarmPlan = ref<FarmPlan | null>(null);
 
+const draftFarmlands = computed(() => {
+  return farmlands.value.filter(f => f.status === 'DRAFT');
+});
+
+const activeFarmlands = computed(() => {
+  return farmlands.value.filter(f => f.status !== 'DRAFT');
+});
+
 const activeFarm = computed(() => {
-  return farmlands.value.find(f => f.id === activeFarmId.value) || farmlands.value[0] || null;
+  return activeFarmlands.value.find(f => f.id === activeFarmId.value) || activeFarmlands.value[0] || null;
 });
 
 // Load Plan khusus untuk sawah aktif di Tab 2
@@ -1616,9 +1901,10 @@ const loadFarmlands = async () => {
   try {
     const list = await api.getFarmlands(currentUserId.value);
     farmlands.value = list;
-    if (list.length > 0) {
+    const activeList = list.filter(f => f.status !== 'DRAFT');
+    if (activeList.length > 0) {
       const queryFarmId = (route.query.farm_id as string) || localStorage.getItem('agribuddy_active_farm_id');
-      const target = list.find(f => f.id === queryFarmId) || list[0];
+      const target = activeList.find(f => f.id === queryFarmId) || activeList[0];
       activeFarmId.value = target.id;
       await loadActiveFarmPlan(target);
       loadCheckedTasks();
@@ -1636,7 +1922,7 @@ const selectFarmland = async (farm: Farmland) => {
 };
 
 const onActiveFarmChanged = () => {
-  const farm = farmlands.value.find(f => f.id === activeFarmId.value);
+  const farm = activeFarmlands.value.find(f => f.id === activeFarmId.value);
   if (farm) {
     selectFarmland(farm);
   }

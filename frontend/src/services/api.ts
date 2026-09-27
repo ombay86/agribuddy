@@ -316,6 +316,7 @@ export interface Farmland {
   id: string;
   user_id: string;
   name: string;
+  status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED';
   land_size_ha: number;
   commodity: string;
   soil_type: string;
