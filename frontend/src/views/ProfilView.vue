@@ -76,21 +76,17 @@
         />
       </div>
       <h3 class="text-lg font-black mt-3">{{ profile.full_name }}</h3>
-      <span class="inline-block text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-700/60 text-emerald-200 border border-emerald-500/30 mt-1">
-        {{ currentPersona.badge }}
-      </span>
-      <p class="text-xs text-emerald-200 mt-1">{{ profile.village }}</p>
-      
-      <div class="mt-4 pt-4 border-t border-white/15 grid grid-cols-2 gap-2 text-center text-xs">
-        <div class="bg-white/10 p-2.5 rounded-2xl">
-          <span class="text-emerald-300 block text-[10px] font-bold uppercase">Luas Lahan</span>
-          <span class="font-black text-sm">{{ profile.land_size_ha }} Hektar</span>
-        </div>
-        <div class="bg-white/10 p-2.5 rounded-2xl">
-          <span class="text-emerald-300 block text-[10px] font-bold uppercase">Komoditas Fokus</span>
-          <span class="font-black text-sm">{{ profile.commodity }}</span>
-        </div>
+      <div class="flex items-center justify-center gap-1.5 mt-1">
+        <span class="text-xs font-black text-emerald-200 bg-white/15 px-2.5 py-0.5 rounded-full border border-white/20">
+          @{{ profile.username || currentPersona.username || 'petani' }}
+        </span>
+        <span class="inline-block text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-700/60 text-emerald-200 border border-emerald-500/30">
+          {{ currentPersona.badge }}
+        </span>
       </div>
+      <p class="text-xs text-emerald-200 mt-1.5 flex items-center justify-center gap-1">
+        <span>📍</span> {{ profile.village }}
+      </p>
     </div>
 
     <!-- Form Pengaturan Profil Usahatani -->
@@ -105,45 +101,48 @@
           <input
             v-model="profile.full_name"
             type="text"
-            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-emerald-500"
+            placeholder="Nama lengkap petani..."
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-emerald-500 font-medium"
           />
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1 flex items-center justify-between">
+              <span>Username (@)</span>
+              <span class="text-[10px] text-emerald-600 font-semibold">Unik & Pencarian</span>
+            </label>
+            <div class="relative flex items-center">
+              <span class="absolute left-3.5 text-slate-400 font-black text-sm select-none">@</span>
+              <input
+                v-model="profile.username"
+                @input="handleUsernameInput"
+                type="text"
+                placeholder="username_petani"
+                class="w-full pl-8 pr-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-800 focus:outline-none focus:border-emerald-500"
+              />
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1">Digunakan untuk tag @kolaborator & pencarian profil</p>
+          </div>
+
           <div>
             <label class="text-xs font-bold text-slate-700 block mb-1">No. WhatsApp</label>
             <input
               v-model="profile.whatsapp_number"
               type="text"
-              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-emerald-500"
-            />
-          </div>
-          <div>
-            <label class="text-xs font-bold text-slate-700 block mb-1">Luas Lahan (Ha)</label>
-            <input
-              v-model.number="profile.land_size_ha"
-              type="number"
-              step="0.1"
-              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-emerald-500"
+              placeholder="08123456789"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-emerald-500 font-medium"
             />
           </div>
         </div>
 
         <div>
-          <label class="text-xs font-bold text-slate-700 block mb-1">Desa & Kecamatan Lahan</label>
+          <label class="text-xs font-bold text-slate-700 block mb-1">Desa & Kecamatan Domisili</label>
           <input
             v-model="profile.village"
             type="text"
-            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-emerald-500"
-          />
-        </div>
-
-        <div>
-          <label class="text-xs font-bold text-slate-700 block mb-1">Komoditas Unggulan</label>
-          <input
-            v-model="profile.commodity"
-            type="text"
-            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-emerald-500"
+            placeholder="Desa & Kecamatan..."
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-emerald-500 font-medium"
           />
         </div>
 
@@ -152,6 +151,7 @@
           <textarea
             v-model="profile.bio"
             rows="2"
+            placeholder="Keterangan atau kelompok tani..."
             class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:border-emerald-500"
           ></textarea>
         </div>
@@ -251,7 +251,14 @@ import {
 } from 'lucide-vue-next';
 
 const router = useRouter();
-const { logout, currentPersona, customAvatar, setCustomAvatar } = useUserState();
+const {
+  logout,
+  currentPersona,
+  customAvatar,
+  setCustomAvatar,
+  customUsername,
+  setCustomUsername
+} = useUserState();
 
 const cameraInputRef = ref<HTMLInputElement | null>(null);
 const fileInputRef = ref<HTMLInputElement | null>(null);
@@ -260,15 +267,22 @@ const profile = ref<UserProfile>({
   id: 'usr_001',
   phone_number: '08123456789',
   full_name: 'Pak Joko',
+  username: 'pak_joko',
   village: 'Desa Sukamaju, Jawa Timur',
-  commodity: 'Padi Inpari 32',
-  land_size_ha: 1.2,
   whatsapp_number: '08123456789',
   bio: 'Petani Padi Binaan Kelompok Tani Makmur'
 });
 
 const myServices = ref<EcosystemServiceItem[]>([]);
 const isSaving = ref(false);
+
+const handleUsernameInput = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  // Format username: tanpa spasi, huruf kecil, hanya alfanumerik, underscore, dan titik
+  const sanitized = target.value.toLowerCase().replace(/^@+/, '').replace(/[^a-z0-9_.]/g, '');
+  profile.value.username = sanitized;
+  setCustomUsername(sanitized);
+};
 
 // Helper untuk kompresi foto lokal agar ringan (<60KB) dan hemat penyimpanan browser
 const compressImage = (file: File): Promise<string> => {
@@ -348,6 +362,15 @@ const loadProfile = async () => {
     } else if (profile.value.avatar_url && !customAvatar.value) {
       setCustomAvatar(profile.value.avatar_url);
     }
+
+    // Sinkronisasi username kustom / persona
+    if (customUsername.value) {
+      profile.value.username = customUsername.value;
+    } else if (profile.value.username) {
+      setCustomUsername(profile.value.username);
+    } else {
+      profile.value.username = currentPersona.value.username || 'pak_joko';
+    }
   } catch (err) {
     console.error(err);
   }
@@ -358,6 +381,9 @@ const saveProfile = async () => {
   try {
     if (customAvatar.value) {
       profile.value.avatar_url = customAvatar.value;
+    }
+    if (profile.value.username) {
+      setCustomUsername(profile.value.username);
     }
     profile.value = await api.updateProfile(profile.value);
     alert('Profil usahatani berhasil diperbarui!');

@@ -15,6 +15,7 @@ export interface Persona {
   id: string;
   role: UserRole;
   name: string;
+  username: string;
   badge: string;
   serviceCategory: string;
   entityName: string;
@@ -28,6 +29,7 @@ export const PERSONAS: Record<string, Persona> = {
     id: 'usr_petani',
     role: 'PETANI_MANDIRI',
     name: 'Pak Joko',
+    username: 'pak_joko',
     badge: 'Petani Mandiri',
     serviceCategory: 'Budidaya Padi',
     entityName: 'Kelompok Tani Makmur',
@@ -39,6 +41,7 @@ export const PERSONAS: Record<string, Persona> = {
     id: 'usr_traktor',
     role: 'JASA_TRAKTOR',
     name: 'Mas Bambang',
+    username: 'bambang_traktor',
     badge: 'Sewa Traktor',
     serviceCategory: 'Jasa Olah Tanah',
     entityName: 'Bengkel & Traktor Quick Kubota',
@@ -50,6 +53,7 @@ export const PERSONAS: Record<string, Persona> = {
     id: 'usr_pengairan',
     role: 'JASA_PENGAIRAN',
     name: 'Pak Slamet',
+    username: 'slamet_irigasi',
     badge: 'Jasa Pengairan',
     serviceCategory: 'Pompanisasi & Irigasi',
     entityName: 'Jasa Pompa Air Alkon 3 Inci',
@@ -61,6 +65,7 @@ export const PERSONAS: Record<string, Persona> = {
     id: 'usr_cangkul',
     role: 'JASA_CANGKUL',
     name: 'Mang Udin',
+    username: 'udin_cangkul',
     badge: 'Jasa Cangkul',
     serviceCategory: 'Tenaga Kerja Tani',
     entityName: 'Regu Tanam & Cangkul Galengan',
@@ -72,6 +77,7 @@ export const PERSONAS: Record<string, Persona> = {
     id: 'usr_distributor',
     role: 'KIOS_SAPROTAN',
     name: 'Ibu Ratna',
+    username: 'ratna_kios',
     badge: 'Kios Saprotan',
     serviceCategory: 'Penyedia Pupuk & Benih',
     entityName: 'Kios Tani Subur Makmur (KPL Resmi)',
@@ -83,6 +89,7 @@ export const PERSONAS: Record<string, Persona> = {
     id: 'usr_agen',
     role: 'PENGGILINGAN_PADI',
     name: 'Bpk. Hendra Jaya',
+    username: 'gilingan_hendra',
     badge: 'Penggilingan Padi',
     serviceCategory: 'Penyerapan Gabah & Logistik',
     entityName: 'Penggilingan Padi Sri Jaya',
@@ -105,6 +112,7 @@ const initialAuth = savedAuth === 'false' ? false : true;
 const activeRole = ref<UserRole>(savedRole);
 const isAuthenticated = ref<boolean>(initialAuth);
 const customAvatar = ref<string | null>(localStorage.getItem('agribuddy_custom_avatar'));
+const customUsername = ref<string | null>(localStorage.getItem('agribuddy_custom_username'));
 
 export const getActiveUserId = (): string => {
   return PERSONAS[activeRole.value]?.id || 'usr_petani';
@@ -115,6 +123,7 @@ export const useUserState = () => {
     const base = PERSONAS[activeRole.value] || PERSONAS['PETANI_MANDIRI'];
     return {
       ...base,
+      username: customUsername.value || base.username || 'pak_joko',
       customAvatar: customAvatar.value
     };
   });
@@ -126,6 +135,15 @@ export const useUserState = () => {
       localStorage.setItem('agribuddy_custom_avatar', avatarDataUrl);
     } else {
       localStorage.removeItem('agribuddy_custom_avatar');
+    }
+  };
+
+  const setCustomUsername = (username: string | null) => {
+    customUsername.value = username;
+    if (username) {
+      localStorage.setItem('agribuddy_custom_username', username);
+    } else {
+      localStorage.removeItem('agribuddy_custom_username');
     }
   };
 
@@ -176,6 +194,8 @@ export const useUserState = () => {
     currentUserId,
     customAvatar,
     setCustomAvatar,
+    customUsername,
+    setCustomUsername,
     setRole,
     loginWithPersona,
     loginWithCredentials,

@@ -6,6 +6,7 @@ const router = Router();
 const PUBLIC_PROFILES_DATA: Record<string, any> = {
   "Pak Joko": {
     id: "usr_petani",
+    username: "pak_joko",
     name: "Pak Joko",
     role_label: "Petani Mandiri (Sukamaju)",
     category_badge: "Petani Mandiri",
@@ -23,6 +24,7 @@ const PUBLIC_PROFILES_DATA: Record<string, any> = {
   },
   "Mas Bambang": {
     id: "usr_traktor",
+    username: "bambang_traktor",
     name: "Mas Bambang",
     role_label: "Jasa Olah Tanah & Traktor Quick",
     category_badge: "Sewa Traktor",
@@ -40,6 +42,7 @@ const PUBLIC_PROFILES_DATA: Record<string, any> = {
   },
   "Pak Slamet": {
     id: "usr_pengairan",
+    username: "slamet_irigasi",
     name: "Pak Slamet",
     role_label: "Jasa Pompa Air & Irigasi",
     category_badge: "Jasa Pengairan",
@@ -57,6 +60,7 @@ const PUBLIC_PROFILES_DATA: Record<string, any> = {
   },
   "Mang Udin": {
     id: "usr_cangkul",
+    username: "udin_cangkul",
     name: "Mang Udin",
     role_label: "Jasa Cangkul & Regu Tanam",
     category_badge: "Jasa Cangkul & Tanam",
@@ -74,6 +78,7 @@ const PUBLIC_PROFILES_DATA: Record<string, any> = {
   },
   "Ibu Ratna": {
     id: "usr_distributor",
+    username: "ratna_kios",
     name: "Ibu Ratna",
     role_label: "Kios Saprotan & Pupuk Resmi KPL",
     category_badge: "Kios Saprotan",
@@ -91,6 +96,7 @@ const PUBLIC_PROFILES_DATA: Record<string, any> = {
   },
   "Kios Tani Subur Makmur": {
     id: "usr_distributor",
+    username: "kios_makmur",
     name: "Kios Tani Subur Makmur",
     role_label: "Kios Saprotan & Pupuk Resmi KPL",
     category_badge: "Kios Saprotan",
@@ -108,6 +114,7 @@ const PUBLIC_PROFILES_DATA: Record<string, any> = {
   },
   "Bpk. Hendra Jaya": {
     id: "usr_agen",
+    username: "gilingan_hendra",
     name: "Bpk. Hendra Jaya",
     role_label: "Penggilingan Padi & Pengepul GKP",
     category_badge: "Penggilingan Padi",
@@ -174,12 +181,30 @@ router.put('/profile', (req: Request, res: Response) => {
   res.json(updated);
 });
 
+// GET /users-search
+router.get('/users-search', (req: Request, res: Response) => {
+  const query = (req.query.q as string || '').trim().replace(/^@/, '').toLowerCase();
+  const allProfiles = Object.values(PUBLIC_PROFILES_DATA);
+  if (!query) {
+    return res.json(allProfiles);
+  }
+  const filtered = allProfiles.filter((p: any) => 
+    p.username?.toLowerCase().includes(query) ||
+    p.name?.toLowerCase().includes(query) ||
+    p.category_badge?.toLowerCase().includes(query) ||
+    p.village?.toLowerCase().includes(query)
+  );
+  res.json(filtered);
+});
+
 // GET /users/:authorName
 router.get('/users/:authorName', (req: Request, res: Response) => {
   const { authorName } = req.params;
-  const cleanName = decodeURIComponent(authorName).trim();
+  const cleanName = decodeURIComponent(authorName).trim().replace(/^@/, '');
 
-  let profile = PUBLIC_PROFILES_DATA[cleanName];
+  let profile = Object.values(PUBLIC_PROFILES_DATA).find(
+    (p: any) => p.username?.toLowerCase() === cleanName.toLowerCase() || p.name?.toLowerCase() === cleanName.toLowerCase()
+  );
   if (!profile) {
     for (const key of Object.keys(PUBLIC_PROFILES_DATA)) {
       if (key.toLowerCase().includes(cleanName.toLowerCase()) || cleanName.toLowerCase().includes(key.toLowerCase())) {
@@ -192,6 +217,7 @@ router.get('/users/:authorName', (req: Request, res: Response) => {
   if (!profile) {
     profile = {
       id: `usr_${cleanName.replace(/\s+/g, '_').toLowerCase()}`,
+      username: cleanName.replace(/\s+/g, '_').toLowerCase(),
       name: cleanName,
       role_label: "Warga Komunitas Tani Sukamaju",
       category_badge: "Warga Komunitas",

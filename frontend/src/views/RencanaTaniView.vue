@@ -1367,7 +1367,7 @@
             >
               <option value="">-- Ketik / Pilih Mitra Terdaftar --</option>
               <option v-for="p in availableUsersToTag" :key="p.id" :value="p.id">
-                {{ p.avatar }} {{ p.name }} — {{ p.badge }} ({{ p.location }})
+                {{ p.avatar }} @{{ p.username }} • {{ p.name }} — {{ p.badge }} ({{ p.location }})
               </option>
             </select>
           </div>

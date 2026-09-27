@@ -13,9 +13,10 @@ export interface UserProfile {
   id: string;
   phone_number: string;
   full_name: string;
+  username?: string;
   village: string;
-  commodity: string;
-  land_size_ha: number;
+  commodity?: string;
+  land_size_ha?: number;
   whatsapp_number: string;
   bio: string;
   avatar_url?: string;

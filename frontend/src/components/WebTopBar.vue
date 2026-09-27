@@ -154,7 +154,7 @@
         <span v-else class="text-lg">{{ currentPersona.avatar || '👨‍🌾' }}</span>
         <div class="text-left hidden sm:block">
           <p class="text-xs font-black text-slate-800 leading-tight">{{ currentPersona.name }}</p>
-          <p class="text-[10px] font-semibold text-emerald-700">{{ currentPersona.badge }}</p>
+          <p class="text-[10px] font-semibold text-emerald-700">@{{ currentPersona.username }} • {{ currentPersona.badge }}</p>
         </div>
       </router-link>
     </div>
