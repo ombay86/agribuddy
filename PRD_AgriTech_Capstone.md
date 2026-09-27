@@ -10,7 +10,7 @@
 * **Jenis Platform:** Modern Responsive Progressive Web Application (Desktop, Laptop, Tablet, & Mobile Browser)
 * **Visi Produk:** Menghadirkan platform *Smart Farming Decision Support System (DSS)* terpadu pendamping petani padi untuk manajemen petak lahan geospasial, perencanaan anggaran biaya dan jadwal tanam berbasis AI (Smart Farm Planner), kendali modal dan siklus budidaya interaktif, deteksi dini fitopatologi daun padi berbasis Computer Vision (**Google Gemini 2.5 Flash Multimodal Vision**), asisten tanya-jawab agronomi (Agri AI Chat), pencatatan inventaris sarana produksi dan hasil panen di lumbung yang terisolasi aman per akun usahatani (Buku Tani), serta direktori kemitraan layanan mekanisasi dan kios saprotan desa terhubung langsung via WhatsApp.
 * **Fokus Riset Tugas Akhir / Capstone (STSI4440):** 
-  Aplikasi difokuskan murni pada keunggulan ilmiah *Decision Support System (DSS)* dan *Artificial Intelligence (AI)* dalam membantu pengambilan keputusan budidaya padi oleh petani, menghilangkan fitur sekunder yang redundan demi menjaga ketajaman ruang lingkup penelitian dan keandalan sistem saat sidang pengujian.
+  Aplikasi difokuskan pada keunggulan fungsional *Decision Support System (DSS)* dan *Artificial Intelligence (AI)* terpadu dalam membantu pengambilan keputusan agronomi dan manajemen usahatani budidaya padi secara presisi, terukur, dan berbasis data ilmiah.
 * **Tech Stack Terkini:**
   * **Frontend:** Vue.js 3 (Composition API `<script setup>`), Vite, TypeScript, Tailwind CSS, Lucide Icons, Leaflet Maps (OpenStreetMap), SweetAlert2 (Desain Modal Konfirmasi & Notifikasi Interaktif Modern).
   * **Backend API:** Node.js (v20+ / v24+), Express.js, TypeScript.

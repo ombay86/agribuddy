@@ -443,15 +443,23 @@ def build_docx():
 
     # Save document
     output_filename = "PRD_AgriBuddy_Capstone.docx"
-    doc.save(output_filename)
-    print(f"Successfully generated: {output_filename} (Size: {os.path.getsize(output_filename)} bytes)")
+    try:
+        doc.save(output_filename)
+        print(f"Successfully generated: {output_filename} (Size: {os.path.getsize(output_filename)} bytes)")
+    except PermissionError:
+        output_filename = "PRD_AgriBuddy_Capstone_v2.5.docx"
+        doc.save(output_filename)
+        print(f"File locked by Word. Generated with fallback name: {output_filename} (Size: {os.path.getsize(output_filename)} bytes)")
 
     # Also copy to artifacts directory
     artifact_dir = r"C:\Users\Asus\.gemini\antigravity\brain\e07e4502-5d72-499c-989c-c0ab02ab60ae"
-    dest_path = os.path.join(artifact_dir, output_filename)
+    dest_path = os.path.join(artifact_dir, "PRD_AgriBuddy_Capstone.docx")
     import shutil
-    shutil.copy2(output_filename, dest_path)
-    print(f"Copied to artifact directory: {dest_path}")
+    try:
+        shutil.copy2(output_filename, dest_path)
+        print(f"Copied to artifact directory: {dest_path}")
+    except Exception as e:
+        print(f"Note: Could not copy to artifact directory: {e}")
 
 if __name__ == '__main__':
     build_docx()
