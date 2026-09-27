@@ -205,6 +205,7 @@ const runDiagnosis = async (file?: File, sampleKey?: string) => {
   try {
     const result = await api.diagnoseLeaf(file, sampleKey);
     diagnosisResult.value = result;
+    localStorage.setItem('agribuddy_last_diagnosis', JSON.stringify(result));
   } catch (err) {
     alert('Gagal mendiagnosis foto daun. Pastikan server backend menyala.');
     console.error(err);
