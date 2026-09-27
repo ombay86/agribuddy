@@ -16,3 +16,28 @@
 .btn-farmer {
   @apply py-3.5 px-5 rounded-2xl font-bold text-base flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 touch-manipulation;
 }
+
+/* Custom Sleek Chat Scrollbar */
+.custom-chat-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-chat-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-chat-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1; /* slate-300 */
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.2s ease;
+}
+.custom-chat-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8; /* slate-400 */
+}
+/* Firefox support */
+.custom-chat-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+

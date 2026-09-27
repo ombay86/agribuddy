@@ -5,17 +5,20 @@
   </div>
 
   <!-- Dashboard Shell Utama (Hanya Tampil Saat Pengguna Berada di Dashboard) -->
-  <div v-else class="min-h-screen bg-slate-50 flex">
+  <div v-else class="bg-slate-50 flex" :class="isDokterPage ? 'h-screen overflow-hidden' : 'min-h-screen'">
     <!-- 1. Left Desktop Sidebar Navigation -->
     <WebSidebar />
 
     <!-- 2. Main Content Canvas -->
-    <div class="flex-1 flex flex-col min-w-0">
+    <div class="flex-1 flex flex-col min-w-0" :class="{ 'h-screen overflow-hidden': isDokterPage }">
       <!-- Top Contextual Bar -->
       <WebTopBar />
 
       <!-- Main Router Canvas -->
-      <main class="flex-1 w-full max-w-[1600px] mx-auto p-4 md:p-6 lg:p-8 pb-28 md:pb-12">
+      <main
+        class="flex-1 w-full mx-auto min-h-0"
+        :class="isDokterPage ? 'max-w-none p-0 overflow-hidden flex flex-col' : 'max-w-[1600px] p-4 md:p-6 lg:p-8 pb-28 md:pb-12'"
+      >
         <router-view />
       </main>
     </div>
@@ -34,4 +37,5 @@ import BottomNav from '@/components/BottomNav.vue';
 
 const route = useRoute();
 const isAuthPage = computed(() => route.path === '/login');
+const isDokterPage = computed(() => route.path === '/dokter');
 </script>

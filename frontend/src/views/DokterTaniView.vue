@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-[calc(100vh-4rem)] overflow-hidden bg-slate-50 relative">
+  <div class="flex flex-1 h-full min-h-0 overflow-hidden bg-slate-50 relative">
     <!-- BACKDROP DRAWER RIWAYAT DI MOBILE -->
     <div
       v-if="isHistoryOpen"
@@ -44,7 +44,7 @@
       </div>
 
       <!-- Daftar Sesi Chat -->
-      <div class="flex-1 overflow-y-auto px-2 space-y-1 py-1 no-scrollbar">
+      <div class="flex-1 min-h-0 overflow-y-auto px-2 space-y-1 py-1 custom-chat-scrollbar">
         <div
           v-if="chatSessions.length === 0"
           class="p-6 text-center text-xs text-slate-400 font-medium space-y-1"
@@ -160,7 +160,7 @@
       <!-- Area Percakapan (Scrollable Message List) -->
       <div
         ref="chatContainerRef"
-        class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6"
+        class="flex-1 min-h-0 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6 custom-chat-scrollbar"
       >
         <!-- State 1: Percakapan Masih Kosong (Welcome Screen & Suggestion Prompts) -->
         <div
@@ -334,7 +334,7 @@
       </div>
 
       <!-- STICKY BOTTOM CHAT INPUT BAR -->
-      <footer class="p-3 sm:p-4 bg-white border-t border-slate-200/90 shrink-0">
+      <footer class="p-3 sm:p-4 bg-white border-t border-slate-200/90 shrink-0 pb-16 md:pb-4">
         <div class="max-w-3xl mx-auto space-y-2">
           <!-- Pratinjau Lampiran Gambar sebelum dikirim -->
           <div
