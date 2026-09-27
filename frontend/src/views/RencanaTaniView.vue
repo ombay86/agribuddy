@@ -1,5 +1,34 @@
 <template>
-  <div class="space-y-6 pb-20 md:pb-8">
+  <div class="space-y-4 sm:space-y-6 pb-20 md:pb-8">
+    <!-- SUBMENU SEGMENTED PILL BAR (STICKY DI MOBILE & DESKTOP) -->
+    <div class="sticky top-[48px] sm:top-[56px] md:top-[64px] z-20 bg-slate-50/95 backdrop-blur-md pt-0.5 pb-2 -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0">
+      <div class="grid grid-cols-2 p-1 bg-slate-200/90 rounded-2xl gap-1 border border-slate-300/80 shadow-2xs w-full max-w-md mx-auto">
+        <button
+          @click="setTopTab('rencana')"
+          type="button"
+          class="py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer select-none text-center"
+          :class="topTab === 'rencana'
+            ? 'bg-emerald-700 text-white shadow-2xs font-black'
+            : 'bg-white/70 text-slate-600 hover:text-slate-900 hover:bg-white font-bold'"
+        >
+          <Sparkles :size="14" class="shrink-0" :class="topTab === 'rencana' ? 'text-emerald-200' : 'text-slate-400'" />
+          <span class="truncate">🌾 Rencana Tanam</span>
+        </button>
+
+        <button
+          @click="setTopTab('kontrol')"
+          type="button"
+          class="py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer select-none text-center"
+          :class="topTab === 'kontrol'
+            ? 'bg-emerald-700 text-white shadow-2xs font-black'
+            : 'bg-white/70 text-slate-600 hover:text-slate-900 hover:bg-white font-bold'"
+        >
+          <Scale :size="14" class="shrink-0" :class="topTab === 'kontrol' ? 'text-emerald-200' : 'text-slate-400'" />
+          <span class="truncate">⚖️ Kontrol Tanam</span>
+        </button>
+      </div>
+    </div>
+
     <!-- Header Banner Dinamis -->
     <div class="bg-gradient-to-r from-emerald-800 via-teal-900 to-slate-900 text-white p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl shadow-md relative overflow-hidden">
       <div class="relative z-10 space-y-1.5 sm:space-y-2 max-w-3xl">

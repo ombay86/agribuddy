@@ -270,7 +270,7 @@ const mobilePageTitle = computed(() => {
   if (p === '/' || p.startsWith('/monitoring')) return 'Monitoring Sawah';
   if (p === '/rencana') {
     return (route.query.tab === 'kontrol' || route.query.tab === 'ceklis')
-      ? 'Kontrol Modal'
+      ? 'Kontrol Tanam'
       : 'Rencana Tanam';
   }
   if (p === '/dokter') return 'Agri AI';
