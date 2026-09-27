@@ -41,7 +41,7 @@ router.get('/', (req: Request, res: Response) => {
   const userId = (req.query.user_id as string) || (req.headers['x-user-id'] as string) || '';
   const harvests = db.getCollection("harvests");
 
-  let userHarvests = harvests;
+  let userHarvests: any[] = [];
   if (userId) {
     if (isUserJoko(userId)) {
       userHarvests = harvests.filter((item: any) => !item.user_id || isUserJoko(item.user_id));
@@ -55,7 +55,7 @@ router.get('/', (req: Request, res: Response) => {
 
 // POST /
 router.post('/', (req: Request, res: Response) => {
-  const userId = (req.query.user_id as string) || (req.headers['x-user-id'] as string) || 'usr_petani';
+  const userId = (req.query.user_id as string) || (req.headers['x-user-id'] as string) || req.body.user_id || 'usr_petani';
   const data = req.body;
   const newHarvest = {
     ...data,

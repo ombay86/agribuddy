@@ -10,7 +10,7 @@ router.get('/', (req: Request, res: Response) => {
   const userId = (req.query.user_id as string) || (req.headers['x-user-id'] as string) || '';
   const items = db.getCollection("inventory");
 
-  let userItems = items;
+  let userItems: any[] = [];
   if (userId) {
     if (isUserJoko(userId)) {
       userItems = items.filter((item: any) => !item.user_id || isUserJoko(item.user_id));
@@ -28,7 +28,7 @@ router.get('/', (req: Request, res: Response) => {
 
 // POST /
 router.post('/', (req: Request, res: Response) => {
-  const userId = (req.query.user_id as string) || (req.headers['x-user-id'] as string) || 'usr_petani';
+  const userId = (req.query.user_id as string) || (req.headers['x-user-id'] as string) || req.body.user_id || 'usr_petani';
   const item = {
     ...req.body,
     user_id: userId

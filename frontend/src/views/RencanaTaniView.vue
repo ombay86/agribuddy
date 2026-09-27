@@ -2477,6 +2477,9 @@ const loadFarmlands = async () => {
       loadCheckedTasks();
     } else {
       activeFarmId.value = '';
+      activeFarmPlan.value = null;
+      localStorage.removeItem(`agribuddy_active_farm_${currentUserId.value}`);
+      localStorage.removeItem('agribuddy_active_farm_id');
     }
   } catch (err) {
     console.error('Error loading farmlands:', err);
@@ -2586,6 +2589,7 @@ const handleUpdateFarmland = async () => {
 const handleDeleteFarm = async () => {
   if (!activeFarm.value) return;
   const farmName = activeFarm.value.name;
+  const targetFarmId = activeFarm.value.id;
   const confirmed = await showConfirm({
     title: `Hapus Lahan "${farmName}"?`,
     text: 'Semua data tahapan siklus, pengelola kemitraan, dan pengeluaran modal lahan ini akan dihapus permanen.',
@@ -2596,7 +2600,9 @@ const handleDeleteFarm = async () => {
   if (!confirmed) return;
 
   try {
-    await api.deleteFarmland(activeFarm.value.id);
+    await api.deleteFarmland(targetFarmId);
+    localStorage.removeItem(`agribuddy_active_farm_${currentUserId.value}`);
+    localStorage.removeItem('agribuddy_active_farm_id');
     await loadFarmlands();
     window.dispatchEvent(new CustomEvent('agribuddy:refresh-farmlands'));
     showSuccess('Lahan Dihapus', `Lahan "${farmName}" berhasil dihapus.`);

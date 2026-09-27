@@ -202,30 +202,6 @@ router.post('/register', (req: Request, res: Response) => {
 
     const insertedUser = db.insert("users", newUser);
 
-    // Otomatis buatkan 1 petak sawah perdana untuk user jika berperan Petani Mandiri
-    if (role === 'PETANI_MANDIRI') {
-      db.insert("farmlands", {
-        id: `farm_${Date.now()}`,
-        user_id: newUserId,
-        owner_name: full_name.trim(),
-        name: `Petak Sawah ${full_name.trim()}`,
-        ownership_type: "MILIK_SENDIRI",
-        land_size_ha: Number(land_size_ha) || 1.0,
-        status: "Aktif Garap",
-        commodity: (commodity && commodity.trim()) || "Padi Sawah Inpari 32",
-        soil_type: "Lempung Berliat (Subur)",
-        water_source: "Irigasi Teknis Desa",
-        location: (village && village.trim()) || "Desa Sukamaju, Jawa Timur",
-        latitude: -7.2504,
-        longitude: 112.7512,
-        collaborators: [],
-        capital_expenses: [],
-        planting_date: new Date().toISOString().split('T')[0],
-        target_harvest_date: "",
-        created_at: new Date().toISOString()
-      });
-    }
-
     res.json({
       success: true,
       message: "Akun baru berhasil didaftarkan!",

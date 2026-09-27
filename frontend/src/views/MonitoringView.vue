@@ -1068,12 +1068,14 @@ onMounted(async () => {
 
   // Load Inventory Summary from API
   try {
-    const inv = await api.getInventory();
+    const inv = await api.getInventory(currentUserId.value);
     if (inv && inv.length > 0) {
       inventorySummary.value = inv.slice(0, 3).map(item => ({
         ...item,
         is_low_stock: item.quantity <= item.min_threshold
       }));
+    } else {
+      inventorySummary.value = [];
     }
   } catch (err) {
     console.warn('Could not load inventory:', err);
@@ -1081,9 +1083,11 @@ onMounted(async () => {
 
   // Load Harvests (Lumbung Panen) from API
   try {
-    const hrv = await api.getHarvests();
+    const hrv = await api.getHarvests(currentUserId.value);
     if (hrv && hrv.length > 0) {
       harvests.value = hrv;
+    } else {
+      harvests.value = [];
     }
   } catch (err) {
     console.warn('Could not load harvests:', err);

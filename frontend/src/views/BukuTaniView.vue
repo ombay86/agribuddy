@@ -812,9 +812,10 @@ const totalHarvestWeight = computed(() => {
 
 const loadData = async () => {
   try {
+    const uid = currentUserId.value;
     const [inv, hrv, prices] = await Promise.all([
-      api.getInventory(),
-      api.getHarvests(),
+      api.getInventory(uid),
+      api.getHarvests(uid),
       api.getMarketPrices()
     ]);
     inventory.value = inv;
@@ -860,7 +861,7 @@ const saveNewInventory = async () => {
     return;
   }
   try {
-    const created = await api.addInventory(newInventory.value);
+    const created = await api.addInventory(newInventory.value, currentUserId.value);
     inventory.value.push(created);
     showAddInventoryModal.value = false;
     newInventory.value = {
@@ -883,7 +884,7 @@ const saveNewHarvest = async () => {
     return;
   }
   try {
-    const created = await api.addHarvest(newHarvest.value);
+    const created = await api.addHarvest(newHarvest.value, currentUserId.value);
     harvests.value.unshift(created);
     showAddHarvestModal.value = false;
     newHarvest.value = {

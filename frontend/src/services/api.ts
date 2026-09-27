@@ -551,8 +551,12 @@ export const api = {
 
 
   // Inventaris Saprotan
-  async getInventory(): Promise<InventoryItem[]> {
-    const res = await fetch(`${BASE_URL}/inventory`, {
+  async getInventory(userId?: string): Promise<InventoryItem[]> {
+    const uid = userId || getActiveUserId();
+    const params = new URLSearchParams();
+    if (uid) params.append('user_id', uid);
+    const query = params.toString() ? `?${params.toString()}` : '';
+    const res = await fetch(`${BASE_URL}/inventory${query}`, {
       headers: getAuthHeaders()
     });
     if (!res.ok) throw new Error('Gagal memuat stok');
@@ -569,11 +573,15 @@ export const api = {
     return res.json();
   },
 
-  async addInventory(item: Partial<InventoryItem>): Promise<InventoryItem> {
-    const res = await fetch(`${BASE_URL}/inventory`, {
+  async addInventory(item: Partial<InventoryItem>, userId?: string): Promise<InventoryItem> {
+    const uid = userId || getActiveUserId();
+    const params = new URLSearchParams();
+    if (uid) params.append('user_id', uid);
+    const query = params.toString() ? `?${params.toString()}` : '';
+    const res = await fetch(`${BASE_URL}/inventory${query}`, {
       method: 'POST',
       headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify(item),
+      body: JSON.stringify({ ...item, user_id: uid }),
     });
     if (!res.ok) throw new Error('Gagal menambah item');
     return res.json();
@@ -621,19 +629,27 @@ export const api = {
   },
 
   // Lumbung Panen
-  async getHarvests(): Promise<HarvestItem[]> {
-    const res = await fetch(`${BASE_URL}/harvest`, {
+  async getHarvests(userId?: string): Promise<HarvestItem[]> {
+    const uid = userId || getActiveUserId();
+    const params = new URLSearchParams();
+    if (uid) params.append('user_id', uid);
+    const query = params.toString() ? `?${params.toString()}` : '';
+    const res = await fetch(`${BASE_URL}/harvest${query}`, {
       headers: getAuthHeaders()
     });
     if (!res.ok) throw new Error('Gagal memuat lumbung');
     return res.json();
   },
 
-  async addHarvest(data: Partial<HarvestItem>): Promise<HarvestItem> {
-    const res = await fetch(`${BASE_URL}/harvest`, {
+  async addHarvest(data: Partial<HarvestItem>, userId?: string): Promise<HarvestItem> {
+    const uid = userId || getActiveUserId();
+    const params = new URLSearchParams();
+    if (uid) params.append('user_id', uid);
+    const query = params.toString() ? `?${params.toString()}` : '';
+    const res = await fetch(`${BASE_URL}/harvest${query}`, {
       method: 'POST',
       headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify(data),
+      body: JSON.stringify({ ...data, user_id: uid }),
     });
     if (!res.ok) throw new Error('Gagal mencatat panen');
     return res.json();

@@ -202,6 +202,8 @@ export const useUserState = () => {
   };
 
   const setRole = (role: UserRole) => {
+    registeredUser.value = null;
+    localStorage.removeItem('agribuddy_registered_user');
     activeRole.value = role;
     isAuthenticated.value = true;
     localStorage.setItem('agribuddy_active_role', role);

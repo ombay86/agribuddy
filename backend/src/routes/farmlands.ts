@@ -137,54 +137,11 @@ router.get('/', (req: Request, res: Response) => {
   const farms = db.getCollection("farmlands");
 
   if (userId) {
-    let userFarms = farms.filter((f: any) => 
+    const userFarms = farms.filter((f: any) => 
       f.user_id === userId || 
       (isUserJoko(userId) && isUserJoko(f.user_id)) ||
       (f.collaborators && f.collaborators.some((c: any) => c.user_id === userId && c.status === 'ACTIVE'))
     );
-
-    // Auto-provision initial farmland HANYA jika pengguna adalah Pak Joko dan belum ada lahan
-    if (userFarms.length === 0 && isUserJoko(userId)) {
-      const users = db.getCollection("users");
-      const user = users.find((u: any) => isUserJoko(u.id));
-      if (user) {
-        const ownerName = user.full_name || "Pak Joko";
-        const landHa = Number(user.land_size_ha) || 0.8;
-        const newFarm = {
-          id: `farm_${crypto.randomBytes(3).toString('hex')}`,
-          user_id: userId,
-          owner_name: ownerName,
-          name: `Petak Sawah ${ownerName}`,
-          ownership_type: "MILIK_SENDIRI",
-          land_size_ha: landHa,
-          status: "ACTIVE",
-          commodity: user.commodity || "Padi Sawah Inpari 32",
-          soil_type: "Lempung Berliat (Subur)",
-          water_source: "Irigasi Teknis Bendungan",
-          location: user.village || "Desa Sukamaju Krajan",
-          latitude: -7.2504,
-          longitude: 112.7512,
-          collaborators: [
-            {
-              id: `collab_${crypto.randomBytes(3).toString('hex')}`,
-              user_id: userId,
-              name: ownerName,
-              role: "Pemilik Lahan & Pengelola Utama",
-              share_percentage: 100.0,
-              phone: user.phone_number || user.whatsapp_number || ""
-            }
-          ],
-          capital_expenses: [],
-          timeline_phases: getDefaultPhases(landHa),
-          total_budget: Math.round(landHa * 6400000),
-          planting_date: new Date().toISOString().split('T')[0],
-          target_harvest_date: "",
-          created_at: new Date().toISOString()
-        };
-        const inserted = db.insert("farmlands", newFarm);
-        userFarms = [inserted];
-      }
-    }
 
     const enriched = userFarms.map((f: any) => ({
       ...f,
@@ -194,12 +151,8 @@ router.get('/', (req: Request, res: Response) => {
     return res.json(enriched);
   }
 
-  const enrichedAll = farms.map((f: any) => ({
-    ...f,
-    timeline_phases: enrichPhases(f.timeline_phases, f.land_size_ha || 0.8),
-    total_budget: f.total_budget || Math.round((f.land_size_ha || 0.8) * 6400000)
-  }));
-  res.json(enrichedAll);
+  // Jika tidak ada userId spesifik, jangan bocorkan lahan akun lain ke publik
+  return res.json([]);
 });
 
 // GET /farmlands/:farmId

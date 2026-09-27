@@ -30,6 +30,8 @@ export const useFarmlandState = () => {
         }
       } else {
         activeFarmId.value = '';
+        localStorage.removeItem(`agribuddy_active_farm_${targetUserId}`);
+        localStorage.removeItem('agribuddy_active_farm_id');
       }
     } catch (e) {
       console.error('Error loading global farmlands:', e);

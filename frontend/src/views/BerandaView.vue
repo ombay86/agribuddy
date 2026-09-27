@@ -149,14 +149,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { api, WeatherData, InventoryItem, HarvestItem } from '@/services/api';
+import { useUserState } from '@/services/userState';
 import { 
   MapPin, Droplets, CloudRain, CheckCircle2, AlertTriangle, 
   Sparkles, Camera, Package, Warehouse, AlertCircle, Check, 
   TrendingUp, Info, CalendarCheck, ArrowRight, Navigation 
 } from 'lucide-vue-next';
 
+const { currentUserId } = useUserState();
 const weather = ref<WeatherData | null>(null);
 const inventoryList = ref<InventoryItem[]>([]);
 const harvestList = ref<HarvestItem[]>([]);
@@ -191,12 +193,13 @@ const detectGPSWeather = () => {
   );
 };
 
-onMounted(async () => {
+const loadDashboardData = async () => {
   try {
+    const uid = currentUserId.value;
     const [w, inv, hrv] = await Promise.all([
       api.getWeather(),
-      api.getInventory(),
-      api.getHarvests()
+      api.getInventory(uid),
+      api.getHarvests(uid)
     ]);
     weather.value = w;
     inventoryList.value = inv;
@@ -206,6 +209,14 @@ onMounted(async () => {
   } catch (err) {
     console.error('Error fetching dashboard data:', err);
   }
+};
+
+watch(currentUserId, () => {
+  loadDashboardData();
+});
+
+onMounted(() => {
+  loadDashboardData();
 });
 </script>
 
