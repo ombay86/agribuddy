@@ -23,7 +23,10 @@ router.get('/', (req: Request, res: Response) => {
   const farms = db.getCollection("farmlands");
 
   if (userId) {
-    return res.json(farms.filter((f: any) => f.user_id === userId));
+    return res.json(farms.filter((f: any) => 
+      f.user_id === userId || 
+      (f.collaborators && f.collaborators.some((c: any) => c.user_id === userId && c.status === 'ACTIVE'))
+    ));
   }
   res.json(farms);
 });
@@ -153,8 +156,39 @@ router.post('/:farmId/collaborators', (req: Request, res: Response) => {
     newC.id = `collab_${crypto.randomBytes(3).toString('hex')}`;
   }
 
+  // Jika ada user_id yang ditag, default status adalah PENDING
+  if (!newC.status) {
+    newC.status = newC.user_id ? 'PENDING' : 'ACTIVE';
+  }
+
   collabs.push(newC);
   const updated = db.update("farmlands", farmId, { collaborators: collabs });
+
+  // Buat notifikasi jika kolaborator ditag dari akun pengguna yang ada
+  if (newC.user_id && newC.status === 'PENDING') {
+    const users = db.getCollection("users");
+    const owner = users.find((u: any) => u.id === farm.user_id);
+    const ownerName = owner?.full_name || "Pemilik Lahan";
+
+    db.insert("notifications", {
+      user_id: newC.user_id, // Penerima notifikasi
+      type: 'COLLAB_INVITE',
+      title: 'Undangan Kolaborasi Baru 🤝',
+      message: `${ownerName} mengundang Anda untuk mengelola lahan "${farm.name}" (${farm.land_size_ha} Ha) dengan peran "${newC.role}" dan bagi hasil ${newC.share_percentage}%.`,
+      from_user_id: farm.user_id,
+      from_user_name: ownerName,
+      to_user_id: newC.user_id,
+      to_user_name: newC.name,
+      farm_id: farm.id,
+      farm_name: farm.name,
+      collab_id: newC.id,
+      share_percentage: newC.share_percentage,
+      role: newC.role,
+      status: 'PENDING',
+      is_read: false
+    });
+  }
+
   res.json(updated);
 });
 

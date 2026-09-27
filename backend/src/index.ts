@@ -11,6 +11,7 @@ import networkRouter from './routes/network.js';
 import farmPlanRouter from './routes/farmPlan.js';
 import catalogRouter from './routes/catalog.js';
 import farmlandsRouter from './routes/farmlands.js';
+import notificationsRouter from './routes/notifications.js';
 
 const app = express();
 
@@ -34,6 +35,7 @@ api.use('/network', networkRouter);
 api.use('/farm-plan', farmPlanRouter);
 api.use('/catalog', catalogRouter);
 api.use('/farmlands', farmlandsRouter);
+api.use('/notifications', notificationsRouter);
 
 app.use(config.apiV1Str, api);
 

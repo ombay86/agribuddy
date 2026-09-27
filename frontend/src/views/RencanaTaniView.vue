@@ -1177,16 +1177,26 @@
             </button>
           </div>
 
-          <div v-if="!activeFarm.collaborators || activeFarm.collaborators.length === 0"
-            class="text-center py-6 bg-slate-50 rounded-2xl border border-dashed border-slate-200 space-y-1">
-            <span class="text-xl">🤝</span>
-            <p class="text-xs font-bold text-slate-700">Belum Ada Mitra Terdaftar</p>
-            <p class="text-[10px] text-slate-400">Tambahkan mitra melalui tombol Kelola.</p>
-          </div>
+          <div class="space-y-2 pt-1">
+            <!-- Kartu Pemilik Lahan (Porsi Utama) -->
+            <div class="p-2.5 rounded-2xl border border-emerald-300 bg-emerald-50/60 flex items-start justify-between gap-2 shadow-2xs">
+              <div class="space-y-0.5">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-sm">👑</span>
+                  <h4 class="text-xs font-black text-slate-800">{{ currentPersona.name || 'Pemilik Lahan' }}</h4>
+                  <span class="text-[9px] font-black bg-emerald-200 text-emerald-900 px-1.5 py-0.2 rounded-md">Pemilik</span>
+                </div>
+                <p class="text-[10px] font-semibold text-slate-500">Pemegang Hak & Sisa Porsi Bagi Hasil</p>
+              </div>
+              <div class="text-right shrink-0">
+                <span class="text-xs font-black text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded-lg">{{ ownerSharePercentage }}%</span>
+                <span class="text-[8px] text-slate-400 font-bold block mt-0.5">Bagi Hasil</span>
+              </div>
+            </div>
 
-          <div v-else class="space-y-2 pt-1">
+            <!-- List Kolaborator -->
             <div
-              v-for="(collab, cIdx) in activeFarm.collaborators"
+              v-for="(collab, cIdx) in (activeFarm.collaborators || [])"
               :key="collab.id"
               class="p-2.5 rounded-2xl border flex items-start justify-between gap-2"
               :class="getCollabCardClass(cIdx)"
@@ -1195,12 +1205,18 @@
                 <div class="flex items-center gap-1.5">
                   <span class="w-2.5 h-2.5 rounded-full shrink-0" :class="getCollabColorDot(cIdx)"></span>
                   <h4 class="text-xs font-black text-slate-800">{{ collab.name }}</h4>
+                  <span
+                    v-if="collab.status === 'PENDING'"
+                    class="text-[8px] font-black bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded-md border border-amber-200"
+                  >
+                    Menunggu
+                  </span>
                 </div>
                 <p class="text-[10px] font-semibold text-slate-500">{{ collab.role }}</p>
               </div>
               <div class="text-right shrink-0">
                 <span class="text-xs font-black text-slate-800">{{ collab.share_percentage }}%</span>
-                <span class="text-[9px] text-slate-400 font-bold block">Bagi Hasil</span>
+                <span class="text-[8px] text-slate-400 font-bold block">Bagi Hasil</span>
               </div>
             </div>
           </div>
@@ -1324,20 +1340,46 @@
         </div>
 
         <!-- Daftar Kolaborator Saat Ini -->
-        <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
+        <div class="space-y-2 max-h-56 overflow-y-auto pr-1">
+          <!-- Kartu Pemilik Lahan (Porsi Utama Auto-Balance) -->
+          <div class="p-2.5 rounded-2xl border border-emerald-300 bg-emerald-50/70 flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+              <span class="text-base">👑</span>
+              <div>
+                <div class="flex items-center gap-1.5">
+                  <p class="font-black text-slate-800">{{ currentPersona.name || 'Pemilik Lahan' }}</p>
+                  <span class="text-[9px] font-black bg-emerald-200 text-emerald-900 px-1.5 py-0.2 rounded-md">Pemilik Lahan</span>
+                </div>
+                <p class="text-[10px] text-slate-500 font-semibold">Sisa porsi otomatis setelah dibagi ke mitra</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="font-black text-emerald-900 bg-emerald-200/80 px-2 py-0.5 rounded-lg text-xs">{{ ownerSharePercentage }}%</span>
+              <span class="text-[8px] font-bold text-slate-400 block mt-0.5">Bagi Hasil</span>
+            </div>
+          </div>
+
+          <!-- Kolaborator Lainnya -->
           <div
             v-for="collab in activeFarm.collaborators"
             :key="collab.id"
             class="p-2.5 rounded-2xl border border-slate-200 bg-slate-50 flex items-center justify-between text-xs"
           >
             <div>
-              <p class="font-bold text-slate-800">{{ collab.name }}</p>
-              <p class="text-[10px] text-slate-500">{{ collab.role }}</p>
+              <div class="flex items-center gap-1.5">
+                <p class="font-bold text-slate-800">{{ collab.name }}</p>
+                <span
+                  class="text-[9px] font-black px-1.5 py-0.2 rounded-md"
+                  :class="collab.status === 'PENDING' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-emerald-100 text-emerald-800'"
+                >
+                  {{ collab.status === 'PENDING' ? '⏳ Menunggu Persetujuan' : '✓ Aktif' }}
+                </span>
+              </div>
+              <p class="text-[10px] text-slate-500 font-medium">{{ collab.role }}</p>
             </div>
             <div class="flex items-center gap-2">
-              <span class="font-black text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-lg">{{ collab.share_percentage }}%</span>
+              <span class="font-black text-slate-800 bg-white border border-slate-200 px-2 py-0.5 rounded-lg">{{ collab.share_percentage }}%</span>
               <button
-                v-if="activeFarm.collaborators.length > 1"
                 @click="handleRemoveCollaborator(collab.id)"
                 class="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"
                 title="Hapus kolaborator"
@@ -1349,8 +1391,25 @@
         </div>
 
         <form @submit.prevent="handleAddCollaborator" class="space-y-2.5 pt-2 border-t border-slate-100">
-          <span class="text-[10px] font-bold text-slate-400 uppercase block">+ Tambah Mitra / Penggarap</span>
+          <span class="text-[10px] font-black text-slate-500 uppercase tracking-wider block">+ Tag & Undang Mitra Baru</span>
+          
+          <!-- Dropdown Tag Akun Pengguna Terdaftar -->
           <div>
+            <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Pilih Pengguna AgriBuddy</label>
+            <select
+              v-model="newCollabForm.user_id"
+              @change="onUserTagSelected"
+              class="w-full px-3 py-1.5 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500 bg-white cursor-pointer"
+            >
+              <option value="">-- Ketik / Pilih Mitra Terdaftar --</option>
+              <option v-for="p in availableUsersToTag" :key="p.id" :value="p.id">
+                {{ p.avatar }} {{ p.name }} — {{ p.badge }} ({{ p.location }})
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Nama Lengkap Mitra</label>
             <input
               v-model="newCollabForm.name"
               type="text"
@@ -1359,34 +1418,57 @@
               class="w-full px-3 py-1.5 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500"
             />
           </div>
+
           <div class="grid grid-cols-2 gap-2">
-            <input
-              v-model="newCollabForm.role"
-              type="text"
-              required
-              placeholder="Peran (misal: Penggarap)"
-              class="w-full px-3 py-1.5 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500"
-            />
-            <div class="relative">
+            <div>
+              <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Peran</label>
               <input
-                v-model.number="newCollabForm.share_percentage"
-                type="number"
-                min="1"
-                max="100"
+                v-model="newCollabForm.role"
+                type="text"
                 required
-                class="w-full px-3 py-1.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
+                placeholder="Peran (misal: Penggarap)"
+                class="w-full px-3 py-1.5 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500"
               />
-              <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs font-bold text-slate-400">%</span>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">
+                Porsi Bagi Hasil (Maks {{ ownerSharePercentage }}%)
+              </label>
+              <div class="relative">
+                <input
+                  v-model.number="newCollabForm.share_percentage"
+                  type="number"
+                  min="1"
+                  :max="ownerSharePercentage"
+                  required
+                  class="w-full px-3 py-1.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
+                />
+                <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs font-bold text-slate-400">%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Info Simulasi Proporsional Porsi Pemilik -->
+          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] space-y-1">
+            <div class="flex justify-between font-bold">
+              <span class="text-slate-500">Porsi Pemilik Saat Ini:</span>
+              <span class="text-slate-800">{{ ownerSharePercentage }}%</span>
+            </div>
+            <div class="flex justify-between font-bold">
+              <span class="text-emerald-700">Porsi Pemilik Setelah Ditambah:</span>
+              <span :class="ownerSharePercentage - (newCollabForm.share_percentage || 0) < 0 ? 'text-rose-600' : 'text-emerald-800'">
+                {{ Math.max(0, ownerSharePercentage - (newCollabForm.share_percentage || 0)) }}%
+              </span>
             </div>
           </div>
 
           <button
             type="submit"
-            :disabled="isSubmittingCollab"
+            :disabled="isSubmittingCollab || ownerSharePercentage <= 0"
             class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-2 rounded-xl active:scale-95 transition-all flex items-center justify-center gap-1 cursor-pointer disabled:opacity-60"
           >
             <Loader2 v-if="isSubmittingCollab" :size="13" class="animate-spin" />
-            <span v-else>+ Tambah Kolaborator</span>
+            <span v-else>+ Kirim Undangan Kolaborasi</span>
           </button>
         </form>
       </div>
@@ -1479,10 +1561,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { api, FarmPlan, TimelinePhase, Farmland, Collaborator, CapitalExpense } from '@/services/api';
-import { useUserState } from '@/services/userState';
+import { useUserState, PERSONAS } from '@/services/userState';
 import FarmlandMapPicker from '@/components/FarmlandMapPicker.vue';
 import { 
   Sparkles, Calculator, CloudSun, Coins, CalendarCheck, 
@@ -2044,11 +2126,34 @@ const handleCreateFarmland = async () => {
   }
 };
 
+const ownerSharePercentage = computed(() => {
+  if (!activeFarm.value) return 100;
+  const collabs = activeFarm.value.collaborators || [];
+  const totalCollabsShare = collabs
+    .filter(c => c.status !== 'REJECTED')
+    .reduce((sum, c) => sum + (Number(c.share_percentage) || 0), 0);
+  return Math.max(0, 100 - totalCollabsShare);
+});
+
+const availableUsersToTag = computed(() => {
+  return Object.values(PERSONAS).filter(p => p.id !== currentUserId.value);
+});
+
+const onUserTagSelected = () => {
+  const selectedPersona = availableUsersToTag.value.find(p => p.id === newCollabForm.value.user_id);
+  if (selectedPersona) {
+    newCollabForm.value.name = selectedPersona.name;
+    newCollabForm.value.role = selectedPersona.serviceCategory || selectedPersona.badge;
+  }
+};
+
 const openManageCollabModal = () => {
+  const maxAvailable = ownerSharePercentage.value;
   newCollabForm.value = {
+    user_id: '',
     name: '',
     role: 'Penggarap & Perawatan Lahan',
-    share_percentage: 25,
+    share_percentage: Math.min(20, maxAvailable),
     phone: ''
   };
   isManageCollabModalOpen.value = true;
@@ -2056,21 +2161,36 @@ const openManageCollabModal = () => {
 
 const handleAddCollaborator = async () => {
   if (!activeFarm.value) return;
+  if (newCollabForm.value.share_percentage > ownerSharePercentage.value) {
+    alert(`Persentase tidak boleh melebihi sisa porsi pemilik (${ownerSharePercentage.value}%).`);
+    return;
+  }
+  if (newCollabForm.value.share_percentage <= 0) {
+    alert('Persentase bagi hasil harus lebih besar dari 0%.');
+    return;
+  }
   try {
     isSubmittingCollab.value = true;
     const updated = await api.addCollaborator(activeFarm.value.id, {
       id: '',
+      user_id: newCollabForm.value.user_id || undefined,
       name: newCollabForm.value.name,
       role: newCollabForm.value.role,
       share_percentage: newCollabForm.value.share_percentage,
-      phone: newCollabForm.value.phone
+      phone: newCollabForm.value.phone,
+      status: newCollabForm.value.user_id ? 'PENDING' : 'ACTIVE'
     });
 
     const fIdx = farmlands.value.findIndex(f => f.id === activeFarm.value?.id);
     if (fIdx !== -1) farmlands.value[fIdx] = updated;
 
-    newCollabForm.value.name = '';
-    newCollabForm.value.phone = '';
+    newCollabForm.value = {
+      user_id: '',
+      name: '',
+      role: 'Penggarap & Perawatan Lahan',
+      share_percentage: Math.min(20, ownerSharePercentage.value),
+      phone: ''
+    };
   } catch (err: any) {
     alert(err.message || 'Gagal menambahkan kolaborator');
   } finally {
@@ -2216,5 +2336,10 @@ onMounted(async () => {
       console.error('Initial plan precalc error:', e);
     }
   }
+  window.addEventListener('agribuddy:refresh-farmlands', loadFarmlands);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('agribuddy:refresh-farmlands', loadFarmlands);
 });
 </script>

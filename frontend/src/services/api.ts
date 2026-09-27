@@ -295,9 +295,11 @@ export interface EcosystemServiceItem {
 // --- MULTI-FARMLAND, KOLABORATOR & BUKU MODAL SCHEMAS ---
 export interface Collaborator {
   id: string;
+  user_id?: string;
   name: string;
   role: string;
   share_percentage: number;
+  status?: 'PENDING' | 'ACTIVE' | 'REJECTED';
   phone?: string;
 }
 
@@ -368,6 +370,26 @@ export interface InAppNotification {
   message: string;
   type: 'ORDER_RECEIVED' | 'NEW_FOLLOWER' | 'NEW_COMMENT' | 'ORDER_STATUS' | 'ORDER_DISCUSSION' | 'PRODUCT_DISCUSSION' | 'SYSTEM';
   reference_id?: string;
+  is_read: boolean;
+  created_at: string;
+}
+
+export interface CollabNotification {
+  id: string;
+  user_id: string;
+  type: 'COLLAB_INVITE' | 'COLLAB_RESPONSE' | string;
+  title: string;
+  message: string;
+  from_user_id?: string;
+  from_user_name?: string;
+  to_user_id?: string;
+  to_user_name?: string;
+  farm_id?: string;
+  farm_name?: string;
+  collab_id?: string;
+  share_percentage?: number;
+  role?: string;
+  status: 'PENDING' | 'RESOLVED_ACCEPTED' | 'RESOLVED_REJECTED' | 'INFO';
   is_read: boolean;
   created_at: string;
 }
@@ -921,6 +943,34 @@ export const api = {
       method: 'POST',
     });
     if (!res.ok) throw new Error('Gagal menandai semua notifikasi dibaca');
+    return res.json();
+  },
+
+  // --- COLLABORATION INVITATIONS & REALTIME NOTIFICATIONS ---
+  async getCollabNotifications(userId: string): Promise<CollabNotification[]> {
+    const res = await fetch(`${BASE_URL}/notifications?user_id=${encodeURIComponent(userId)}`);
+    if (!res.ok) throw new Error('Gagal memuat notifikasi kolaborasi');
+    return res.json();
+  },
+
+  async respondCollabNotification(notifId: string, action: 'ACCEPT' | 'REJECT'): Promise<{ success: boolean; message: string; farm_id: string }> {
+    const res = await fetch(`${BASE_URL}/notifications/${notifId}/respond`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || 'Gagal memproses respon kolaborasi');
+    }
+    return res.json();
+  },
+
+  async markCollabNotificationRead(notifId: string): Promise<any> {
+    const res = await fetch(`${BASE_URL}/notifications/${notifId}/read`, {
+      method: 'PATCH',
+    });
+    if (!res.ok) throw new Error('Gagal menandai notifikasi dibaca');
     return res.json();
   },
 
