@@ -1,40 +1,41 @@
 <template>
-  <header class="bg-white border-b border-slate-200/90 px-4 md:px-8 py-3.5 sticky top-0 z-30 flex items-center justify-between shadow-2xs">
+  <header class="bg-white border-b border-slate-200/90 px-3 sm:px-6 md:px-8 py-2.5 sm:py-3.5 sticky top-0 z-30 flex items-center justify-between gap-2 shadow-2xs">
     <!-- Left: Contextual Title & Breadcrumbs -->
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
       <!-- Mobile Logo Icon -->
-      <router-link to="/" class="md:hidden w-9 h-9 rounded-xl bg-emerald-50 text-white flex items-center justify-center p-1 shrink-0 border border-emerald-200 shadow-2xs" title="AgriBuddy">
+      <router-link to="/" class="md:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-50 text-white flex items-center justify-center p-1 shrink-0 border border-emerald-200 shadow-2xs" title="AgriBuddy">
         <img src="/logo/logo-color-icon.svg" alt="AgriBuddy Logo" class="w-full h-full object-contain" />
       </router-link>
 
       <!-- Contextual Title & Breadcrumbs -->
-      <div>
+      <div class="min-w-0 flex-1">
         <div class="hidden sm:flex items-center gap-1 text-[11px] font-bold text-slate-400">
           <span>AgriBuddy</span>
           <span>/</span>
           <span class="text-emerald-700 capitalize">{{ currentSectionName }}</span>
         </div>
-        <h2 class="text-sm md:text-base font-black text-slate-800 tracking-tight leading-tight">
-          {{ currentPageTitle }}
+        <h2 class="text-xs sm:text-sm md:text-base font-black text-slate-800 tracking-tight leading-tight truncate">
+          <span class="sm:hidden">{{ mobilePageTitle }}</span>
+          <span class="hidden sm:inline">{{ currentPageTitle }}</span>
         </h2>
       </div>
     </div>
 
     <!-- Right: Notifications & User Profile -->
-    <div class="flex items-center gap-2.5">
+    <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
       <!-- Dropdown Selector Petak Sawah (Khusus Halaman Dashboard & Selalu Sticky) -->
       <div
         v-if="isDashboardPage && globalFarmlands.length > 0"
-        class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200/90 border border-slate-200/90 rounded-2xl px-2.5 py-1.5 transition-all shadow-2xs"
+        class="flex items-center gap-1 sm:gap-1.5 bg-slate-100 hover:bg-slate-200/90 border border-slate-200/90 rounded-2xl px-2 sm:px-2.5 py-1 sm:py-1.5 transition-all shadow-2xs shrink-0"
         title="Pilih petak sawah yang sedang dipantau di dashboard"
       >
-        <span class="text-sm shrink-0">🌾</span>
+        <span class="text-xs sm:text-sm shrink-0">🌾</span>
         <div class="flex flex-col text-left pr-0.5">
-          <span class="text-[9px] font-black uppercase text-emerald-800 leading-none">Petak Sawah:</span>
+          <span class="hidden sm:inline text-[9px] font-black uppercase text-emerald-800 leading-none">Petak Sawah:</span>
           <select
             v-model="activeFarmId"
             @change="setActiveFarmId(activeFarmId)"
-            class="bg-transparent text-xs font-black text-slate-800 focus:outline-none cursor-pointer pr-1 py-0.5 truncate max-w-[130px] sm:max-w-[210px]"
+            class="bg-transparent text-[11px] sm:text-xs font-black text-slate-800 focus:outline-none cursor-pointer pr-1 py-0.5 truncate max-w-[85px] sm:max-w-[210px]"
           >
             <option v-for="f in globalFarmlands" :key="f.id" :value="f.id">
               {{ f.name }} ({{ f.land_size_ha }} Ha)
@@ -44,17 +45,17 @@
       </div>
 
       <!-- Notification Bell -->
-      <div class="relative">
+      <div class="relative shrink-0">
         <button
           @click="isNotifOpen = !isNotifOpen"
           type="button"
-          class="relative w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200/80 flex items-center justify-center text-slate-600 transition-all cursor-pointer active:scale-95"
+          class="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200/80 flex items-center justify-center text-slate-600 transition-all cursor-pointer active:scale-95"
           title="Notifikasi Kolaborasi & Usahatani"
         >
-          <Bell :size="17" />
+          <Bell :size="16" />
           <span
             v-if="pendingInvitesCount > 0"
-            class="absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center animate-pulse"
+            class="absolute -top-1 -right-1 min-w-3.5 h-3.5 sm:min-w-4 sm:h-4 px-1 rounded-full bg-rose-500 text-white text-[8px] sm:text-[9px] font-black flex items-center justify-center animate-pulse"
           >
             {{ pendingInvitesCount }}
           </span>
@@ -63,7 +64,7 @@
         <!-- Notification Popover -->
         <div
           v-if="isNotifOpen"
-          class="absolute right-0 mt-2 w-80 sm:w-96 bg-white border border-slate-200 rounded-3xl shadow-xl z-50 p-4 space-y-3 animate-in fade-in"
+          class="fixed inset-x-3 top-14 sm:absolute sm:inset-x-auto sm:right-0 sm:top-auto sm:mt-2 w-auto sm:w-96 bg-white border border-slate-200 rounded-3xl shadow-xl z-50 p-4 space-y-3 animate-in fade-in"
         >
           <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
             <div class="flex items-center gap-1.5">
@@ -256,5 +257,20 @@ const currentPageTitle = computed(() => {
   if (p === '/layanan' || p === '/katalog') return 'Direktori Layanan Mekanisasi & Saprotan Tani';
   if (p === '/profil') return 'Identitas Petani & Pengaturan Usahatani';
   return 'AgriBuddy Smart Farming';
+});
+
+const mobilePageTitle = computed(() => {
+  const p = route.path;
+  if (p === '/' || p.startsWith('/monitoring')) return 'Monitoring Sawah';
+  if (p === '/rencana') {
+    return (route.query.tab === 'kontrol' || route.query.tab === 'ceklis')
+      ? 'Kontrol Modal'
+      : 'Rencana Tanam';
+  }
+  if (p === '/dokter') return 'Agri AI';
+  if (p === '/buku-tani' || p === '/inventaris' || p === '/lumbung') return 'Buku Tani';
+  if (p === '/layanan' || p === '/katalog') return 'Direktori Layanan';
+  if (p === '/profil') return 'Profil Saya';
+  return 'AgriBuddy';
 });
 </script>

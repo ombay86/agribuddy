@@ -1,17 +1,17 @@
 <template>
   <div class="space-y-6 pb-20 md:pb-8">
     <!-- Header Banner Dinamis -->
-    <div class="bg-gradient-to-r from-emerald-800 via-teal-900 to-slate-900 text-white p-6 md:p-8 rounded-3xl shadow-md relative overflow-hidden">
-      <div class="relative z-10 space-y-2 max-w-3xl">
-        <div class="inline-flex items-center gap-1.5 bg-emerald-400/20 text-emerald-200 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider border border-emerald-400/30">
-          <Sparkles v-if="topTab === 'rencana'" :size="14" />
-          <Scale v-else :size="14" />
+    <div class="bg-gradient-to-r from-emerald-800 via-teal-900 to-slate-900 text-white p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl shadow-md relative overflow-hidden">
+      <div class="relative z-10 space-y-1.5 sm:space-y-2 max-w-3xl">
+        <div class="inline-flex items-center gap-1.5 bg-emerald-400/20 text-emerald-200 text-[10px] sm:text-xs font-black px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-wider border border-emerald-400/30">
+          <Sparkles v-if="topTab === 'rencana'" :size="13" />
+          <Scale v-else :size="13" />
           <span>{{ topTab === 'rencana' ? 'Modul Perencanaan Pra-Tanam' : 'Modul Kontrol Usahatani & Modal' }}</span>
         </div>
-        <h2 class="text-2xl md:text-3xl font-black tracking-tight leading-tight">
+        <h2 class="text-lg sm:text-2xl md:text-3xl font-black tracking-tight leading-tight">
           {{ topTab === 'rencana' ? 'Rencana Tanam & Estimasi Anggaran (RAB)' : 'Kontrol Tanam & Modal Usahatani' }}
         </h2>
-        <p class="text-xs md:text-sm text-emerald-100/90 leading-relaxed font-medium">
+        <p class="text-[11px] sm:text-xs md:text-sm text-emerald-100/90 leading-relaxed font-medium">
           {{ topTab === 'rencana' 
             ? 'Rancang estimasi anggaran biaya (RAB) pra-tanam secara presisi, petakan kebutuhan saprotan dan mitra budidaya sebelum musim tanam.' 
             : 'Pantau eksekusi 5 fase budidaya di lapangan dan kendalikan pengeluaran modal riil terhadap pagu anggaran yang direncanakan.' 
@@ -19,39 +19,39 @@
         </p>
       </div>
       <!-- Background icon decoration -->
-      <div class="absolute -right-4 -bottom-6 text-emerald-700/20 select-none pointer-events-none text-9xl md:text-[140px] font-black">
+      <div class="absolute -right-3 -bottom-5 text-emerald-700/20 select-none pointer-events-none text-7xl sm:text-9xl md:text-[140px] font-black">
         {{ topTab === 'rencana' ? '🌾' : '⚖️' }}
       </div>
     </div>
 
     <!-- ==================== TAB 1: RENCANA TANAM (PERENCANAAN LAHAN BARU - WIZARD STEPPER) ==================== -->
-    <div v-if="topTab === 'rencana'" class="space-y-6">
-      <!-- Sub-mode Switcher: Rancang Lahan Baru vs Daftar Rencana Tersimpan (Strictly Single Line) -->
-      <div class="flex justify-center">
-        <div class="inline-flex p-1 bg-slate-100/90 rounded-xl gap-1.5 border border-slate-200/80 shadow-2xs whitespace-nowrap">
+    <div v-if="topTab === 'rencana'" class="space-y-4 sm:space-y-6">
+      <!-- Sub-mode Switcher: Rancang Lahan Baru vs Daftar Rencana Tersimpan (Responsive Grid on Mobile) -->
+      <div class="flex justify-center w-full px-1">
+        <div class="grid grid-cols-2 p-1 bg-slate-100/90 rounded-2xl gap-1 border border-slate-200/80 shadow-2xs w-full max-w-sm sm:max-w-md sm:flex sm:w-auto sm:gap-1.5">
           <button
             @click="rencanaSubMode = 'wizard'"
             type="button"
-            class="py-2 px-4 rounded-lg text-xs transition-all flex items-center justify-center gap-2 cursor-pointer select-none whitespace-nowrap shrink-0"
+            class="py-2 px-2 sm:px-4 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none text-center"
             :class="rencanaSubMode === 'wizard' 
               ? 'bg-white text-emerald-800 shadow-2xs font-black border border-slate-200/60' 
               : 'text-slate-500 hover:text-slate-800 font-semibold'"
           >
-            <PlusCircle :size="14" />
-            <span class="whitespace-nowrap leading-none">+ Rancang Lahan Baru</span>
+            <PlusCircle :size="14" class="shrink-0" />
+            <span class="truncate leading-none">+ Rancang Baru</span>
           </button>
           <button
             @click="rencanaSubMode = 'saved'"
             type="button"
-            class="py-2 px-4 rounded-lg text-xs transition-all flex items-center justify-center gap-2 cursor-pointer select-none whitespace-nowrap shrink-0"
+            class="py-2 px-2 sm:px-4 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none text-center"
             :class="rencanaSubMode === 'saved' 
               ? 'bg-white text-emerald-800 shadow-2xs font-black border border-slate-200/60' 
               : 'text-slate-500 hover:text-slate-800 font-semibold'"
           >
-            <FolderKanban :size="14" />
-            <span class="whitespace-nowrap leading-none">Daftar Rencana Tersimpan</span>
+            <FolderKanban :size="14" class="shrink-0" />
+            <span class="truncate leading-none">Tersimpan</span>
             <span 
-              class="text-[10px] font-black px-2 py-0.5 rounded-full leading-none"
+              class="text-[10px] font-black px-1.5 py-0.5 rounded-full leading-none shrink-0"
               :class="rencanaSubMode === 'saved' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700'"
             >
               {{ draftFarmlands.length }}
@@ -61,12 +61,12 @@
       </div>
 
       <!-- ==================== SUB-VIEW: WIZARD STEPPER ==================== -->
-      <div v-if="rencanaSubMode === 'wizard'" class="space-y-6">
+      <div v-if="rencanaSubMode === 'wizard'" class="space-y-4 sm:space-y-6">
         <!-- Stepper / Timeline Header -->
-        <div class="bg-white border border-slate-200/90 rounded-3xl p-4 md:p-6 shadow-xs max-w-3xl mx-auto">
-        <div class="flex items-center justify-between relative px-4 md:px-8">
+        <div class="bg-white border border-slate-200/90 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-6 shadow-xs max-w-3xl mx-auto">
+        <div class="flex items-center justify-between relative px-2 sm:px-4 md:px-8">
           <!-- Connecting Line -->
-          <div class="absolute left-10 right-10 top-5 h-1 bg-slate-200 z-0">
+          <div class="absolute left-8 right-8 sm:left-12 sm:right-12 top-4 sm:top-5 h-1 bg-slate-200 z-0">
             <div 
               class="h-full bg-emerald-600 transition-all duration-300"
               :style="{ width: wizardStep === 1 ? '0%' : wizardStep === 2 ? '50%' : '100%' }"
@@ -80,7 +80,7 @@
             class="relative z-10 flex flex-col items-center gap-1 cursor-pointer group"
           >
             <div 
-              class="w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center font-bold text-xs transition-all shadow-2xs"
+              class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center font-bold text-xs transition-all shadow-2xs"
               :class="wizardStep === 1 
                 ? 'bg-emerald-600 text-white ring-4 ring-emerald-100 scale-105' 
                 : wizardStep > 1 
@@ -88,10 +88,10 @@
                   : 'bg-white border-2 border-slate-300 text-slate-500'"
             >
               <span v-if="wizardStep > 1">✓</span>
-              <MapPin v-else :size="15" />
+              <MapPin v-else :size="14" />
             </div>
             <span 
-              class="text-[11px] font-bold transition-colors"
+              class="text-[10px] sm:text-[11px] font-bold transition-colors text-center line-clamp-1"
               :class="wizardStep >= 1 ? 'text-emerald-900' : 'text-slate-400'"
             >
               1. Lokasi & Lahan
@@ -107,7 +107,7 @@
             :class="plan ? 'cursor-pointer group' : 'cursor-not-allowed opacity-50'"
           >
             <div 
-              class="w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center font-bold text-xs transition-all shadow-2xs"
+              class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center font-bold text-xs transition-all shadow-2xs"
               :class="wizardStep === 2 
                 ? 'bg-emerald-600 text-white ring-4 ring-emerald-100 scale-105' 
                 : wizardStep > 2 
@@ -115,13 +115,13 @@
                   : 'bg-white border-2 border-slate-300 text-slate-500'"
             >
               <span v-if="wizardStep > 2">✓</span>
-              <Coins v-else :size="15" />
+              <Coins v-else :size="14" />
             </div>
             <span 
-              class="text-[11px] font-bold transition-colors"
+              class="text-[10px] sm:text-[11px] font-bold transition-colors text-center line-clamp-1"
               :class="wizardStep >= 2 ? 'text-emerald-900' : 'text-slate-400'"
             >
-              2. Rincian RAB AI
+              2. Estimasi RAB
             </span>
           </button>
 
@@ -134,15 +134,15 @@
             :class="plan ? 'cursor-pointer group' : 'cursor-not-allowed opacity-50'"
           >
             <div 
-              class="w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center font-bold text-xs transition-all shadow-2xs"
+              class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center font-bold text-xs transition-all shadow-2xs"
               :class="wizardStep === 3 
                 ? 'bg-emerald-600 text-white ring-4 ring-emerald-100 scale-105' 
                 : 'bg-white border-2 border-slate-300 text-slate-500'"
             >
-              <Sparkles :size="15" />
+              <Sparkles :size="14" />
             </div>
             <span 
-              class="text-[11px] font-bold transition-colors"
+              class="text-[10px] sm:text-[11px] font-bold transition-colors text-center line-clamp-1"
               :class="wizardStep === 3 ? 'text-emerald-900' : 'text-slate-400'"
             >
               3. Finansial & Mitra
@@ -152,7 +152,7 @@
       </div>
 
       <!-- ==================== WIZARD STEP 1: FORM PARAMETER & LOKASI DI ATAS ==================== -->
-      <div v-if="wizardStep === 1" class="bg-white border border-slate-200/90 rounded-3xl p-5 md:p-6 shadow-xs space-y-4 max-w-3xl mx-auto">
+      <div v-if="wizardStep === 1" class="bg-white border border-slate-200/90 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xs space-y-4 max-w-3xl mx-auto">
         <div class="flex items-center justify-between pb-2 border-b border-slate-100">
           <div>
             <span class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
