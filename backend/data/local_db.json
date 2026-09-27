@@ -763,30 +763,30 @@
       "coordinates_label": "-7.2504, 112.7512 (Desa Sukamaju Krajan)"
     },
     {
-      "plan_id": "plan_muj372u6",
+      "plan_id": "plan_muj4y8rr",
       "user_id": "usr_petani",
-      "land_size_ha": 0.8,
+      "land_size_ha": 0.65,
       "commodity": "Padi Sawah Inpari 32",
       "soil_type": "Lempung Berliat (Subur)",
       "water_source": "Irigasi Teknis Bendungan",
-      "location": "Desa Sukamaju Krajan",
+      "location": "Desa Sukamaju Barat",
       "latitude": -7.2504,
       "longitude": 112.7512,
-      "coordinates_label": "-7.2504, 112.7512 (Desa Sukamaju Krajan)",
+      "coordinates_label": "-7.2504, 112.7512 (Desa Sukamaju Barat)",
       "weather_condition": {
         "temp_celsius": 26,
-        "rain_probability": 65,
-        "season": "Musim Hujan (Rendeng)",
-        "note": "Curah hujan tinggi terdeteksi (65%). Dosis Urea diturunkan 15% untuk mencegah serangan Hawar Daun dan rebah batang."
+        "rain_probability": 20,
+        "season": "Musim Kemarau (Gadu)",
+        "note": "Kondisi cuaca cerah/normal (26°C). Dosis pemupukan NPK dan Urea standar berimbang dianjurkan."
       },
       "financial_summary": {
-        "total_budget": 6899800,
-        "hpp_per_kg": 1391,
-        "projected_yield_kg": 4960,
+        "total_budget": 5599750,
+        "hpp_per_kg": 1390,
+        "projected_yield_kg": 4030,
         "projected_selling_price_per_kg": 6800,
-        "projected_revenue": 33728000,
-        "projected_net_profit": 26828200,
-        "roi_percentage": 388.8
+        "projected_revenue": 27404000,
+        "projected_net_profit": 21804250,
+        "roi_percentage": 389.4
       },
       "budget_items": [
         {
@@ -795,10 +795,10 @@
           "name": "Sewa Traktor & Operator (Bajak & Garu)",
           "category": "JASA_TRAKTOR",
           "recommended_provider": "Mas Bambang (Jasa Traktor Quick Sukamaju)",
-          "quantity": 0.8,
+          "quantity": 0.65,
           "unit": "Hektar",
           "unit_price": 1200000,
-          "total_price": 960000,
+          "total_price": 780000,
           "notes": "Olah tanah sempurna gembur dan perataan gulma"
         },
         {
@@ -810,7 +810,7 @@
           "quantity": 2,
           "unit": "Orang-Hari",
           "unit_price": 166667,
-          "total_price": 400000,
+          "total_price": 325000,
           "notes": "Pembersihan kebocoran pematang sawah penahan air"
         },
         {
@@ -819,10 +819,10 @@
           "name": "Benih Padi Sawah Inpari 32 Bersertifikat",
           "category": "SAPROTAN",
           "recommended_provider": "Kios Tani Subur Makmur (Ibu Ratna)",
-          "quantity": 20,
+          "quantity": 16.3,
           "unit": "kg",
           "unit_price": 15000,
-          "total_price": 300000,
+          "total_price": 243750,
           "notes": "Daya tumbuh > 85%, tahan rebah"
         },
         {
@@ -831,10 +831,10 @@
           "name": "Upah Buruh Tanam (Sistem Jajar Legowo 2:1)",
           "category": "JASA_BURUH",
           "recommended_provider": "Kelompok Tani Makmur (Regu Tanam Melati)",
-          "quantity": 8,
+          "quantity": 7,
           "unit": "Orang-Hari",
           "unit_price": 140000,
-          "total_price": 1120000,
+          "total_price": 910000,
           "notes": "Populasi rumpun optimal dan sirkulasi udara baik"
         },
         {
@@ -843,10 +843,10 @@
           "name": "Pupuk Urea N-46 (Subsidi)",
           "category": "PUPUK",
           "recommended_provider": "Kios Pupuk KPL Resmi",
-          "quantity": 140,
+          "quantity": 130,
           "unit": "kg",
           "unit_price": 2250,
-          "total_price": 315000,
+          "total_price": 292500,
           "notes": "Pemupukan dasar (1/3 dosis) dan susulan I & II"
         },
         {
@@ -855,10 +855,10 @@
           "name": "Pupuk Majemuk NPK Phonska 15-15-15",
           "category": "PUPUK",
           "recommended_provider": "Kios Pupuk KPL Resmi",
-          "quantity": 256,
+          "quantity": 195,
           "unit": "kg",
           "unit_price": 3300,
-          "total_price": 844800,
+          "total_price": 643500,
           "notes": "Nutrisi N-P-K berimbang untuk anakan dan pembentukan malai"
         },
         {
@@ -867,10 +867,10 @@
           "name": "Bahan Organik / Pupuk Kandang Fermentasi",
           "category": "PUPUK_ORGANIK",
           "recommended_provider": "Kelompok Ternak Desa",
-          "quantity": 0.8,
+          "quantity": 0.7,
           "unit": "Ton",
           "unit_price": 400000,
-          "total_price": 320000,
+          "total_price": 260000,
           "notes": "Memperbaiki struktur mikroorganisme tanah dan porositas"
         },
         {
@@ -879,10 +879,10 @@
           "name": "Biaya Pengairan & Distribusi Air (Irigasi Teknis Bendungan)",
           "category": "PENGAIRAN",
           "recommended_provider": "Pak Slamet (Jasa Pompa Air & Irigasi)",
-          "quantity": 0.8,
+          "quantity": 0.7,
           "unit": "Paket Musim",
           "unit_price": 150000,
-          "total_price": 120000,
+          "total_price": 97500,
           "notes": "Irigasi berkala macak-macak sesuai umur tanaman"
         },
         {
@@ -891,10 +891,10 @@
           "name": "Insektisida & Fungisida Ramah Lingkungan",
           "category": "PESTISIDA",
           "recommended_provider": "Kios Tani Subur Makmur",
-          "quantity": 0.8,
+          "quantity": 0.7,
           "unit": "Paket Musim",
           "unit_price": 650000,
-          "total_price": 520000,
+          "total_price": 422500,
           "notes": "Pencegahan dini wereng batang coklat dan penggerek batang"
         },
         {
@@ -906,7 +906,7 @@
           "quantity": 2,
           "unit": "Aplikasi",
           "unit_price": 116667,
-          "total_price": 280000,
+          "total_price": 227500,
           "notes": "Aplikasi umur 20 HST, 40 HST, dan 60 HST"
         },
         {
@@ -915,10 +915,10 @@
           "name": "Upah Regu Panen Gabah (Bawon / Gejlok)",
           "category": "JASA_BURUH",
           "recommended_provider": "Bpk. Hendra Jaya (Mitra Penggilingan Padi)",
-          "quantity": 0.8,
+          "quantity": 0.7,
           "unit": "Hektar",
           "unit_price": 1800000,
-          "total_price": 1440000,
+          "total_price": 1170000,
           "notes": "Pemotongan sabit bergerigi & perontokan mesin threser"
         },
         {
@@ -927,10 +927,10 @@
           "name": "Karung Kemasan & Pengangkutan ke Lumbung",
           "category": "LOGISTIK",
           "recommended_provider": "Armada Angkut Desa",
-          "quantity": 0.8,
+          "quantity": 0.7,
           "unit": "Paket Angkut",
           "unit_price": 350000,
-          "total_price": 280000,
+          "total_price": 227500,
           "notes": "Pengangkutan gabah dari pematang sawah ke lumbung simpan"
         }
       ],
@@ -941,8 +941,8 @@
           "day_range": "H-15 s/d H-1",
           "duration_days": 15,
           "status": "SELESAI",
-          "allocated_budget": 1660000,
-          "actual_cost": 1660000,
+          "allocated_budget": 1348750,
+          "actual_cost": 1348750,
           "tasks": [
             "Bajak singkal dan pembalikan tanah dengan traktor",
             "Perbaikan pematang dan galengan sawah penahan air",
@@ -957,7 +957,7 @@
           "day_range": "HST 1 s/d HST 5",
           "duration_days": 5,
           "status": "SEDANG_BERJALAN",
-          "allocated_budget": 1120000,
+          "allocated_budget": 910000,
           "actual_cost": 0,
           "tasks": [
             "Pencabutan bibit semai (dapog) umur 15-18 hari",
@@ -972,7 +972,7 @@
           "day_range": "HST 7 s/d HST 35",
           "duration_days": 28,
           "status": "BELUM",
-          "allocated_budget": 782900,
+          "allocated_budget": 640250,
           "actual_cost": 0,
           "tasks": [
             "Pemupukan dasar susulan I (HST 7-10): Urea + NPK Phonska",
@@ -988,7 +988,7 @@
           "day_range": "HST 40 s/d HST 75",
           "duration_days": 35,
           "status": "BELUM",
-          "allocated_budget": 854400,
+          "allocated_budget": 672750,
           "actual_cost": 0,
           "tasks": [
             "Pemupukan susulan III / booster malai (HST 45-50): Fokus unsur Kalium & Fosfat",
@@ -1004,7 +1004,7 @@
           "day_range": "HST 80 s/d HST 105",
           "duration_days": 25,
           "status": "BELUM",
-          "allocated_budget": 1720000,
+          "allocated_budget": 1397500,
           "actual_cost": 0,
           "tasks": [
             "Pengeringan total petak sawah 7-10 hari sebelum jadwal panen",
@@ -1044,7 +1044,7 @@
       ],
       "id": "far_3d4b8a3b",
       "created_at": "2026-09-23T15:21:32.822Z",
-      "updated_at": "2026-09-27T00:35:06.656Z"
+      "updated_at": "2026-09-27T01:24:13.674Z"
     }
   ],
   "ecosystem_services": [

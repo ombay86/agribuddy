@@ -292,10 +292,10 @@
 
           <div class="pt-1 flex items-center justify-between">
             <router-link
-              to="/rencana"
+              :to="{ path: '/rencana', query: { tab: 'kontrol', farm_id: selectedFarmId } }"
               class="text-xs font-black text-emerald-700 hover:text-emerald-800 flex items-center gap-1 group"
             >
-              <span>Buka Seluruh 5 Fase Rencana Budidaya</span>
+              <span>Buka Seluruh 5 Fase Kontrol Tanam & Modal</span>
               <ArrowRight :size="13" class="group-hover:translate-x-1 transition-transform" />
             </router-link>
           </div>
@@ -484,8 +484,8 @@
           <CalendarDays :size="20" />
         </div>
         <div>
-          <h5 class="text-xs font-black text-slate-800">Rencana Tani</h5>
-          <p class="text-[10px] text-slate-400">RAB & Dosis Pupuk</p>
+          <h5 class="text-xs font-black text-slate-800">Rencana Tanam</h5>
+          <p class="text-[10px] text-slate-400">RAB & Kontrol Modal</p>
         </div>
       </router-link>
 

@@ -47,7 +47,7 @@ const route = useRoute();
 const currentSectionName = computed(() => {
   const p = route.path;
   if (p === '/' || p.startsWith('/monitoring')) return 'Monitoring Usahatani';
-  if (p === '/rencana') return 'Rencana Tani AI';
+  if (p === '/rencana') return 'Rencana Tanam & Kontrol Modal';
   if (p === '/dokter') return 'Dokter Tani AI';
   if (p === '/buku-tani' || p === '/inventaris' || p === '/lumbung') return 'Buku Tani';
   if (p === '/layanan' || p === '/katalog') return 'Direktori Layanan';
@@ -58,7 +58,7 @@ const currentSectionName = computed(() => {
 const currentPageTitle = computed(() => {
   const p = route.path;
   if (p === '/' || p.startsWith('/monitoring')) return 'Monitoring Sawah, Cuaca & Irigasi Cerdas';
-  if (p === '/rencana') return 'Rencana Tani AI & Kalkulator Modal Usahatani';
+  if (p === '/rencana') return 'Rencana Tanam & Kontrol Modal Usahatani';
   if (p === '/dokter') return 'Dokter Tani AI — Deteksi Penyakit Daun Padi';
   if (p === '/buku-tani' || p === '/inventaris' || p === '/lumbung') return 'Buku Tani — Manajemen Stok & Lumbung Panen';
   if (p === '/layanan' || p === '/katalog') return 'Direktori Layanan Mekanisasi & Saprotan Tani';

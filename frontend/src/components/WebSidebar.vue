@@ -85,7 +85,7 @@
           title="Rencana Tani AI & RAB"
         >
           <CalendarDays :size="18" class="shrink-0 text-emerald-400" />
-          <span v-if="!isCollapsed" class="truncate">Rencana Tani AI</span>
+          <span v-if="!isCollapsed" class="truncate">Rencana Tanam</span>
         </router-link>
 
         <!-- 3. Dokter Tani AI -->
