@@ -1991,6 +1991,7 @@
   "ai_chat_sessions": [
     {
       "id": "session_1790491928400",
+      "user_id": "usr_petani",
       "title": "halo. sudah bisakah kamu merespon sa...",
       "created_at": "27 Sep, 13.52 WIB",
       "updated_at": "2026-09-27T06:53:46.438Z",

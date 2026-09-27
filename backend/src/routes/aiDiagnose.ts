@@ -81,6 +81,7 @@ router.get('/history', (req: Request, res: Response) => {
 // POST /chat
 router.post('/chat', async (req: Request, res: Response) => {
   try {
+    const userId = (req.headers['x-user-id'] as string) || 'usr_petani';
     const { session_id, message, image_base64, history = [] } = req.body;
     const sessions = db.getCollection("ai_chat_sessions");
 
@@ -95,6 +96,12 @@ router.post('/chat', async (req: Request, res: Response) => {
     let currentSessionId = session_id;
     let session = sessions.find((s: any) => s.id === currentSessionId);
 
+    // Jika sesi yang diminta ternyata milik user lain, buatkan sesi baru khusus user ini
+    if (session && session.user_id && session.user_id !== userId) {
+      currentSessionId = null;
+      session = null;
+    }
+
     const titleCandidate = (message || 'Konsultasi Tanaman')
       .replace(/\n+/g, ' ')
       .trim()
@@ -104,6 +111,7 @@ router.post('/chat', async (req: Request, res: Response) => {
       currentSessionId = `session_${Date.now()}`;
       session = db.insert("ai_chat_sessions", {
         id: currentSessionId,
+        user_id: userId,
         title: titleCandidate + (titleCandidate.length >= 36 ? '...' : ''),
         created_at: timeStr,
         updated_at: timeStr,
@@ -159,10 +167,19 @@ router.post('/chat', async (req: Request, res: Response) => {
 
 // GET /chat-sessions
 router.get('/chat-sessions', (req: Request, res: Response) => {
+  const userId = (req.headers['x-user-id'] as string) || 'usr_petani';
   const sessions = db.getCollection("ai_chat_sessions");
+  
+  // Filter sesi obrolan agar strictly privat untuk masing-masing user
+  const userSessions = sessions.filter((s: any) => {
+    if (!s.user_id) return userId === 'usr_petani';
+    return s.user_id === userId;
+  });
+
   // Urutkan dari sesi terbaru
-  const sorted = [...sessions].reverse().map((s: any) => ({
+  const sorted = [...userSessions].reverse().map((s: any) => ({
     id: s.id,
+    user_id: s.user_id || 'usr_petani',
     title: s.title || "Konsultasi Pertanian",
     created_at: s.created_at,
     updated_at: s.updated_at,
@@ -174,10 +191,15 @@ router.get('/chat-sessions', (req: Request, res: Response) => {
 // GET /chat-sessions/:id
 router.get('/chat-sessions/:id', (req: Request, res: Response) => {
   const { id } = req.params;
+  const userId = (req.headers['x-user-id'] as string) || 'usr_petani';
   const sessions = db.getCollection("ai_chat_sessions");
   const session = sessions.find((s: any) => s.id === id);
   if (!session) {
     return res.status(404).json({ detail: "Sesi percakapan tidak ditemukan" });
+  }
+  const sessionOwner = session.user_id || 'usr_petani';
+  if (sessionOwner !== userId) {
+    return res.status(403).json({ detail: "Akses ke sesi percakapan ditolak (privat untuk pengguna lain)" });
   }
   res.json(session);
 });
@@ -185,10 +207,17 @@ router.get('/chat-sessions/:id', (req: Request, res: Response) => {
 // DELETE /chat-sessions/:id
 router.delete('/chat-sessions/:id', (req: Request, res: Response) => {
   const { id } = req.params;
-  const success = db.delete("ai_chat_sessions", id);
-  if (!success) {
+  const userId = (req.headers['x-user-id'] as string) || 'usr_petani';
+  const sessions = db.getCollection("ai_chat_sessions");
+  const session = sessions.find((s: any) => s.id === id);
+  if (!session) {
     return res.status(404).json({ detail: "Sesi percakapan tidak ditemukan" });
   }
+  const sessionOwner = session.user_id || 'usr_petani';
+  if (sessionOwner !== userId) {
+    return res.status(403).json({ detail: "Tidak dapat menghapus sesi percakapan pengguna lain" });
+  }
+  db.delete("ai_chat_sessions", id);
   res.json({ message: "Sesi percakapan berhasil dihapus" });
 });
 

@@ -602,12 +602,16 @@ const loadSessions = async () => {
   try {
     const list = await api.getChatSessions();
     chatSessions.value = list;
-    if (!activeSessionId.value && list.length > 0) {
+    if (list.length > 0) {
       // Buka sesi terakhir jika ada
       await switchSession(list[0].id);
+    } else {
+      // Pengguna baru / belum memiliki riwayat obrolan: tampilkan layar awal bersih
+      startNewChat();
     }
   } catch (err) {
     console.error('Gagal memuat sesi chat:', err);
+    startNewChat();
   }
 };
 
