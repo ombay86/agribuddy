@@ -1,30 +1,31 @@
 <template>
   <div class="space-y-4 sm:space-y-6 pb-20 md:pb-8">
-    <!-- SUBMENU SEGMENTED PILL BAR (STICKY DI MOBILE & DESKTOP) -->
-    <div class="sticky top-[48px] sm:top-[56px] md:top-[64px] z-20 bg-slate-50/95 backdrop-blur-md pt-0.5 pb-2 -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0">
-      <div class="grid grid-cols-2 p-1 bg-slate-200/90 rounded-2xl gap-1 border border-slate-300/80 shadow-2xs w-full max-w-md mx-auto">
+
+    <!-- Tab Switcher: Desktop only (sm:flex) — Mobile sudah ada di WebTopBar Row 2 -->
+    <div class="hidden sm:flex justify-center w-full">
+      <div class="flex p-1 bg-slate-100/90 rounded-2xl gap-1.5 border border-slate-200/80 shadow-2xs">
         <button
           @click="setTopTab('rencana')"
           type="button"
-          class="py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer select-none text-center"
+          class="py-2.5 px-4 rounded-xl text-sm transition-all flex items-center gap-2 cursor-pointer select-none"
           :class="topTab === 'rencana'
             ? 'bg-emerald-700 text-white shadow-2xs font-black'
-            : 'bg-white/70 text-slate-600 hover:text-slate-900 hover:bg-white font-bold'"
+            : 'text-slate-600 hover:text-slate-900 hover:bg-white font-bold'"
         >
           <Sparkles :size="14" class="shrink-0" :class="topTab === 'rencana' ? 'text-emerald-200' : 'text-slate-400'" />
-          <span class="truncate">🌾 Rencana Tanam</span>
+          <span>🌾 Rencana Tanam</span>
         </button>
 
         <button
           @click="setTopTab('kontrol')"
           type="button"
-          class="py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer select-none text-center"
+          class="py-2.5 px-4 rounded-xl text-sm transition-all flex items-center gap-2 cursor-pointer select-none"
           :class="topTab === 'kontrol'
             ? 'bg-emerald-700 text-white shadow-2xs font-black'
-            : 'bg-white/70 text-slate-600 hover:text-slate-900 hover:bg-white font-bold'"
+            : 'text-slate-600 hover:text-slate-900 hover:bg-white font-bold'"
         >
           <Scale :size="14" class="shrink-0" :class="topTab === 'kontrol' ? 'text-emerald-200' : 'text-slate-400'" />
-          <span class="truncate">⚖️ Kontrol Tanam</span>
+          <span>⚖️ Kontrol Tanam</span>
         </button>
       </div>
     </div>
@@ -2488,9 +2489,20 @@ onMounted(async () => {
     }
   }
   window.addEventListener('agribuddy:refresh-farmlands', loadFarmlands);
+  // Listen ke event navigasi tab dari WebTopBar Row 2 (mobile)
+  const onRencanaTabEvent = (e: Event) => {
+    const tab = (e as CustomEvent).detail?.tab;
+    if (tab === 'kontrol' || tab === 'ceklis') topTab.value = 'kontrol';
+    else topTab.value = 'rencana';
+  };
+  window.addEventListener('agribuddy:rencana-tab', onRencanaTabEvent);
+  (window as any).__cleanupRencanaTabListener = () => window.removeEventListener('agribuddy:rencana-tab', onRencanaTabEvent);
 });
 
 onUnmounted(() => {
   window.removeEventListener('agribuddy:refresh-farmlands', loadFarmlands);
+  if ((window as any).__cleanupRencanaTabListener) {
+    (window as any).__cleanupRencanaTabListener();
+  }
 });
 </script>

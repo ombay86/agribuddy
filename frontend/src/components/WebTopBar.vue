@@ -1,5 +1,7 @@
 <template>
-  <header class="bg-white border-b border-slate-200/90 px-3 sm:px-6 md:px-8 py-2.5 sm:py-3.5 sticky top-0 z-30 flex items-center justify-between gap-2 shadow-2xs">
+  <header class="bg-white border-b border-slate-200/90 sticky top-0 z-30 shadow-xs">
+    <!-- Row 1: Logo, Title, Actions -->
+    <div class="px-3 sm:px-6 md:px-8 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
     <!-- Left: Contextual Title & Breadcrumbs -->
     <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
       <!-- Mobile Logo Icon -->
@@ -159,24 +161,66 @@
         </div>
       </router-link>
     </div>
+    </div><!-- end Row 1 -->
+
+    <!-- Row 2: Submenu Tabs (hanya muncul di /rencana, mobile only) -->
+    <div
+      v-if="isRencanaPage"
+      class="sm:hidden border-t border-slate-100 bg-white grid grid-cols-2"
+    >
+      <button
+        type="button"
+        @click="navigateRencanaTab('rencana')"
+        class="flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold transition-all border-b-2"
+        :class="!isKontrolTab
+          ? 'text-emerald-700 border-emerald-600 font-black bg-emerald-50/60'
+          : 'text-slate-500 border-transparent hover:text-slate-700'"
+      >
+        <span>🌾</span>
+        <span>Rencana Tanam</span>
+      </button>
+
+      <button
+        type="button"
+        @click="navigateRencanaTab('kontrol')"
+        class="flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold transition-all border-b-2"
+        :class="isKontrolTab
+          ? 'text-emerald-700 border-emerald-600 font-black bg-emerald-50/60'
+          : 'text-slate-500 border-transparent hover:text-slate-700'"
+      >
+        <span>⚖️</span>
+        <span>Kontrol Tanam</span>
+      </button>
+    </div><!-- end Row 2 -->
   </header>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useUserState } from '@/services/userState';
 import { useFarmlandState } from '@/composables/useFarmlandState';
 import { api, CollabNotification } from '@/services/api';
 import { Bell, Loader2 } from 'lucide-vue-next';
 
 const route = useRoute();
+const router = useRouter();
 const { currentUserId, currentPersona, customAvatar } = useUserState();
 const { globalFarmlands, activeFarmId, loadGlobalFarmlands, setActiveFarmId } = useFarmlandState();
 
 const isDashboardPage = computed(() => {
   return route.path === '/' || route.path === '/monitoring';
 });
+
+const isRencanaPage = computed(() => route.path === '/rencana');
+const isKontrolTab = computed(() =>
+  route.path === '/rencana' && (route.query.tab === 'kontrol' || route.query.tab === 'ceklis')
+);
+
+const navigateRencanaTab = (tab: 'rencana' | 'kontrol') => {
+  router.replace({ path: '/rencana', query: { ...route.query, tab } });
+  window.dispatchEvent(new CustomEvent('agribuddy:rencana-tab', { detail: { tab } }));
+};
 
 const isNotifOpen = ref(false);
 const notifications = ref<CollabNotification[]>([]);
