@@ -18,6 +18,7 @@ export interface UserProfile {
   land_size_ha: number;
   whatsapp_number: string;
   bio: string;
+  avatar_url?: string;
 }
 
 export interface WeatherData {

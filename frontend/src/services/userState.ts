@@ -104,15 +104,31 @@ const initialAuth = savedAuth === 'false' ? false : true;
 
 const activeRole = ref<UserRole>(savedRole);
 const isAuthenticated = ref<boolean>(initialAuth);
+const customAvatar = ref<string | null>(localStorage.getItem('agribuddy_custom_avatar'));
 
 export const getActiveUserId = (): string => {
   return PERSONAS[activeRole.value]?.id || 'usr_petani';
 };
 
 export const useUserState = () => {
-  const currentPersona = computed(() => PERSONAS[activeRole.value] || PERSONAS['PETANI_MANDIRI']);
+  const currentPersona = computed(() => {
+    const base = PERSONAS[activeRole.value] || PERSONAS['PETANI_MANDIRI'];
+    return {
+      ...base,
+      customAvatar: customAvatar.value
+    };
+  });
   const currentUserId = computed(() => currentPersona.value.id);
   
+  const setCustomAvatar = (avatarDataUrl: string | null) => {
+    customAvatar.value = avatarDataUrl;
+    if (avatarDataUrl) {
+      localStorage.setItem('agribuddy_custom_avatar', avatarDataUrl);
+    } else {
+      localStorage.removeItem('agribuddy_custom_avatar');
+    }
+  };
+
   const setRole = (role: UserRole) => {
     activeRole.value = role;
     isAuthenticated.value = true;
@@ -158,6 +174,8 @@ export const useUserState = () => {
     isAuthenticated,
     currentPersona,
     currentUserId,
+    customAvatar,
+    setCustomAvatar,
     setRole,
     loginWithPersona,
     loginWithCredentials,

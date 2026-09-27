@@ -17,8 +17,63 @@
 
     <!-- Kartu Identitas Petani / Pengguna -->
     <div class="bg-gradient-to-br from-emerald-800 to-tani-900 text-white p-5 rounded-3xl shadow-md text-center relative overflow-hidden">
-      <div class="w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-4xl mx-auto border-2 border-white/30 shadow-inner">
-        {{ currentPersona.avatar }}
+      <!-- Avatar Section with Camera & File Upload -->
+      <div class="relative w-24 h-24 mx-auto mb-3">
+        <div class="w-24 h-24 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-4xl mx-auto border-2 border-white/40 shadow-inner overflow-hidden">
+          <img
+            v-if="customAvatar || profile.avatar_url"
+            :src="customAvatar || profile.avatar_url"
+            alt="Foto Profil"
+            class="w-full h-full object-cover"
+          />
+          <span v-else>{{ currentPersona.avatar || '👨‍🌾' }}</span>
+        </div>
+
+        <!-- Floating Action Buttons -->
+        <div class="absolute -bottom-2 inset-x-0 flex items-center justify-center gap-1.5 z-10">
+          <button
+            type="button"
+            @click="cameraInputRef?.click()"
+            class="w-8 h-8 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center shadow-lg border-2 border-white transition-all active:scale-95 cursor-pointer"
+            title="Ambil Foto Kamera"
+          >
+            <Camera :size="14" />
+          </button>
+          <button
+            type="button"
+            @click="fileInputRef?.click()"
+            class="w-8 h-8 rounded-full bg-white hover:bg-slate-100 text-emerald-800 flex items-center justify-center shadow-lg border-2 border-emerald-600 transition-all active:scale-95 cursor-pointer"
+            title="Unggah Foto dari Galeri"
+          >
+            <Upload :size="14" />
+          </button>
+          <button
+            v-if="customAvatar || profile.avatar_url"
+            type="button"
+            @click="removeAvatar"
+            class="w-8 h-8 rounded-full bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center shadow-lg border-2 border-white transition-all active:scale-95 cursor-pointer"
+            title="Hapus Foto Profil"
+          >
+            <Trash2 :size="13" />
+          </button>
+        </div>
+
+        <!-- Hidden File Inputs -->
+        <input
+          ref="cameraInputRef"
+          type="file"
+          accept="image/*"
+          capture="user"
+          class="hidden"
+          @change="handleFileChange"
+        />
+        <input
+          ref="fileInputRef"
+          type="file"
+          accept="image/*"
+          class="hidden"
+          @change="handleFileChange"
+        />
       </div>
       <h3 class="text-lg font-black mt-3">{{ profile.full_name }}</h3>
       <span class="inline-block text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-700/60 text-emerald-200 border border-emerald-500/30 mt-1">
@@ -182,10 +237,24 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserState } from '@/services/userState';
 import { api, UserProfile, EcosystemServiceItem } from '@/services/api';
-import { ArrowLeft, CheckCircle2, UserCheck, Save, LogOut, Store, PlusCircle } from 'lucide-vue-next';
+import {
+  ArrowLeft,
+  CheckCircle2,
+  UserCheck,
+  Save,
+  LogOut,
+  Store,
+  PlusCircle,
+  Camera,
+  Upload,
+  Trash2
+} from 'lucide-vue-next';
 
 const router = useRouter();
-const { logout, currentPersona } = useUserState();
+const { logout, currentPersona, customAvatar, setCustomAvatar } = useUserState();
+
+const cameraInputRef = ref<HTMLInputElement | null>(null);
+const fileInputRef = ref<HTMLInputElement | null>(null);
 
 const profile = ref<UserProfile>({
   id: 'usr_001',
@@ -201,6 +270,69 @@ const profile = ref<UserProfile>({
 const myServices = ref<EcosystemServiceItem[]>([]);
 const isSaving = ref(false);
 
+// Helper untuk kompresi foto lokal agar ringan (<60KB) dan hemat penyimpanan browser
+const compressImage = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxDim = 400;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxDim) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          }
+        } else {
+          if (height > maxDim) {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(e.target?.result as string);
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.82));
+      };
+      img.onerror = reject;
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+};
+
+const handleFileChange = async (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  if (!target.files || target.files.length === 0) return;
+  const file = target.files[0];
+  try {
+    const compressedBase64 = await compressImage(file);
+    setCustomAvatar(compressedBase64);
+    profile.value.avatar_url = compressedBase64;
+  } catch (err) {
+    console.error('Gagal memproses foto profil:', err);
+    alert('Format foto tidak didukung atau terjadi kesalahan.');
+  } finally {
+    target.value = '';
+  }
+};
+
+const removeAvatar = () => {
+  setCustomAvatar(null);
+  profile.value.avatar_url = undefined;
+};
+
 const loadProfile = async () => {
   try {
     const [prof, serv] = await Promise.all([
@@ -209,6 +341,13 @@ const loadProfile = async () => {
     ]);
     profile.value = prof;
     myServices.value = serv;
+
+    // Sinkronisasi avatar kustom dari local state / profile
+    if (customAvatar.value && !profile.value.avatar_url) {
+      profile.value.avatar_url = customAvatar.value;
+    } else if (profile.value.avatar_url && !customAvatar.value) {
+      setCustomAvatar(profile.value.avatar_url);
+    }
   } catch (err) {
     console.error(err);
   }
@@ -217,6 +356,9 @@ const loadProfile = async () => {
 const saveProfile = async () => {
   isSaving.value = true;
   try {
+    if (customAvatar.value) {
+      profile.value.avatar_url = customAvatar.value;
+    }
     profile.value = await api.updateProfile(profile.value);
     alert('Profil usahatani berhasil diperbarui!');
   } catch (err) {

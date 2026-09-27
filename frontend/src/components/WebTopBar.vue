@@ -145,7 +145,13 @@
         class="flex items-center gap-2 p-1.5 pr-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200/80 transition-all"
         title="Lihat Profil Usahatani"
       >
-        <span class="text-lg">{{ currentPersona.avatar || '👨‍🌾' }}</span>
+        <img
+          v-if="customAvatar"
+          :src="customAvatar"
+          alt="Avatar"
+          class="w-7 h-7 rounded-full object-cover border border-emerald-500 shadow-2xs"
+        />
+        <span v-else class="text-lg">{{ currentPersona.avatar || '👨‍🌾' }}</span>
         <div class="text-left hidden sm:block">
           <p class="text-xs font-black text-slate-800 leading-tight">{{ currentPersona.name }}</p>
           <p class="text-[10px] font-semibold text-emerald-700">{{ currentPersona.badge }}</p>
@@ -164,7 +170,7 @@ import { api, CollabNotification } from '@/services/api';
 import { Bell, Loader2 } from 'lucide-vue-next';
 
 const route = useRoute();
-const { currentUserId, currentPersona } = useUserState();
+const { currentUserId, currentPersona, customAvatar } = useUserState();
 const { globalFarmlands, activeFarmId, loadGlobalFarmlands, setActiveFarmId } = useFarmlandState();
 
 const isDashboardPage = computed(() => {
