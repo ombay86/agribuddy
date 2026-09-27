@@ -298,8 +298,8 @@
                 class="w-8 h-8 rounded-full overflow-hidden border border-emerald-400 shadow-2xs flex items-center justify-center bg-emerald-600 text-white text-xs font-black"
               >
                 <img
-                  v-if="customAvatar"
-                  :src="customAvatar"
+                  v-if="currentPersona.customAvatar"
+                  :src="currentPersona.customAvatar"
                   alt="User"
                   class="w-full h-full object-cover"
                 />
@@ -630,7 +630,7 @@ import {
   Key, Eye, EyeOff, ExternalLink
 } from 'lucide-vue-next';
 
-const { currentPersona, customAvatar } = useUserState();
+const { currentPersona } = useUserState();
 
 // State API Key Management (BYOK) - Terisolasi ketat per profil pengguna
 const isKeyModalOpen = ref(false);

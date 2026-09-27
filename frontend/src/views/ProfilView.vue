@@ -567,20 +567,16 @@ const loadProfile = async () => {
     profile.value = prof;
     myServices.value = serv;
 
-    // Sinkronisasi avatar kustom dari local state / profile
+    // Pastikan username profil menampilkan username unik persona/user aktif
+    if (!profile.value.username) {
+      profile.value.username = currentPersona.value.username;
+    }
+
+    // Sinkronisasi avatar jika tersedia
     if (customAvatar.value && !profile.value.avatar_url) {
       profile.value.avatar_url = customAvatar.value;
     } else if (profile.value.avatar_url && !customAvatar.value) {
       setCustomAvatar(profile.value.avatar_url);
-    }
-
-    // Sinkronisasi username kustom / persona
-    if (customUsername.value) {
-      profile.value.username = customUsername.value;
-    } else if (profile.value.username) {
-      setCustomUsername(profile.value.username);
-    } else {
-      profile.value.username = currentPersona.value.username || 'pak_joko';
     }
   } catch (err) {
     console.error(err);
@@ -593,13 +589,17 @@ const saveProfile = async () => {
     if (customAvatar.value) {
       profile.value.avatar_url = customAvatar.value;
     }
-    if (profile.value.username) {
-      setCustomUsername(profile.value.username);
+    const updated = await api.updateProfile(profile.value);
+    profile.value = updated;
+    if (updated.username) {
+      setCustomUsername(updated.username);
     }
-    profile.value = await api.updateProfile(profile.value);
+    if (updated.avatar_url) {
+      setCustomAvatar(updated.avatar_url);
+    }
     alert('Profil usahatani berhasil diperbarui!');
-  } catch (err) {
-    alert('Gagal menyimpan profil');
+  } catch (err: any) {
+    alert(err?.response?.data?.detail || err?.message || 'Gagal menyimpan profil');
     console.error(err);
   } finally {
     isSaving.value = false;

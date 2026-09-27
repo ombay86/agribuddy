@@ -149,8 +149,8 @@
         title="Lihat Profil Usahatani"
       >
         <img
-          v-if="customAvatar"
-          :src="customAvatar"
+          v-if="currentPersona.customAvatar"
+          :src="currentPersona.customAvatar"
           alt="Avatar"
           class="w-7 h-7 rounded-full object-cover border border-emerald-500 shadow-2xs"
         />
@@ -205,7 +205,7 @@ import { Bell, Loader2 } from 'lucide-vue-next';
 
 const route = useRoute();
 const router = useRouter();
-const { currentUserId, currentPersona, customAvatar } = useUserState();
+const { currentUserId, currentPersona } = useUserState();
 const { globalFarmlands, activeFarmId, loadGlobalFarmlands, setActiveFarmId } = useFarmlandState();
 
 const isDashboardPage = computed(() => {

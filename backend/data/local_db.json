@@ -6,7 +6,8 @@
       "full_name": "Pak Joko",
       "village": "Desa Sukamaju, Jawa Timur",
       "commodity": "Padi",
-      "created_at": "2026-09-20T22:55:36.860226"
+      "created_at": "2026-09-20T22:55:36.860226",
+      "username": "pak_joko"
     },
     {
       "id": "usr_petani",
@@ -33,7 +34,8 @@
       "land_size_ha": 0,
       "whatsapp_number": "085712345678",
       "bio": "Pengelola KPL resmi penyalur pupuk subsidi dan benih bersertifikat di Sukamaju.",
-      "created_at": "2026-09-20T23:43:51.015517"
+      "created_at": "2026-09-20T23:43:51.015517",
+      "username": "ratna_kios"
     },
     {
       "id": "usr_agen",
@@ -45,7 +47,8 @@
       "land_size_ha": 0,
       "whatsapp_number": "081356789012",
       "bio": "Mitra penyerapan gabah dan penggilingan beras petani lokal dengan timbangan digital.",
-      "created_at": "2026-09-20T23:43:51.015519"
+      "created_at": "2026-09-20T23:43:51.015519",
+      "username": "gilingan_hendra"
     },
     {
       "id": "usr_traktor",
@@ -59,7 +62,8 @@
       "land_size_ha": 0,
       "whatsapp_number": "081298765432",
       "bio": "Menyediakan jasa bajak singkal & rotavator lengkap operator untuk olah tanah sawah siap tanam.",
-      "created_at": "2026-09-21T08:53:01.457976"
+      "created_at": "2026-09-21T08:53:01.457976",
+      "username": "bambang_traktor"
     },
     {
       "id": "usr_pengairan",
@@ -73,7 +77,8 @@
       "land_size_ha": 0,
       "whatsapp_number": "085799988811",
       "bio": "Layanan sedot air sungai / embung dan persewaan pompa alkon ke petak sawah.",
-      "created_at": "2026-09-21T08:53:01.457977"
+      "created_at": "2026-09-21T08:53:01.457977",
+      "username": "slamet_irigasi"
     },
     {
       "id": "usr_cangkul",
@@ -87,7 +92,8 @@
       "land_size_ha": 0,
       "whatsapp_number": "087811223344",
       "bio": "Koordinator regu tenaga kerja cangkul pematang sawah dan penanaman padi jajar legowo.",
-      "created_at": "2026-09-21T08:53:01.457978"
+      "created_at": "2026-09-21T08:53:01.457978",
+      "username": "udin_cangkul"
     }
   ],
   "inventory": [
@@ -1512,6 +1518,83 @@
       "updated_at": "2026-09-27T02:34:41.330Z",
       "planting_date": "2026-07-14",
       "target_harvest_date": "2026-11-06"
+    },
+    {
+      "id": "farm_0885a6",
+      "user_id": "usr_agen",
+      "owner_name": "Bpk. Hendra Jaya",
+      "name": "Petak Sawah Bpk. Hendra Jaya",
+      "ownership_type": "MILIK_SENDIRI",
+      "land_size_ha": 0.8,
+      "status": "ACTIVE",
+      "commodity": "Gabah Kering Panen (GKP)",
+      "soil_type": "Lempung Berliat (Subur)",
+      "water_source": "Irigasi Teknis Bendungan",
+      "location": "Kawasan Sentra Penggilingan Padi Km 3",
+      "latitude": -7.2504,
+      "longitude": 112.7512,
+      "collaborators": [
+        {
+          "id": "collab_450331",
+          "user_id": "usr_agen",
+          "name": "Bpk. Hendra Jaya",
+          "role": "Pemilik Lahan & Pengelola Utama",
+          "share_percentage": 100,
+          "phone": "081356789012"
+        }
+      ],
+      "capital_expenses": [],
+      "timeline_phases": [
+        {
+          "step_no": 1,
+          "name": "Fase 1: Olah Tanah & Bajak Garu",
+          "day_range": "H-14 s/d H-1",
+          "duration_days": 14,
+          "status": "SELESAI",
+          "target_cost": 960000,
+          "actual_cost": 0
+        },
+        {
+          "step_no": 2,
+          "name": "Fase 2: Tanam Padi & Persemaian",
+          "day_range": "HST 1 - 15",
+          "duration_days": 15,
+          "status": "SEDANG_BERJALAN",
+          "target_cost": 850000,
+          "actual_cost": 0
+        },
+        {
+          "step_no": 3,
+          "name": "Fase 3: Pemupukan & Perawatan Vegetatif",
+          "day_range": "HST 16 - 45",
+          "duration_days": 30,
+          "status": "BELUM",
+          "target_cost": 1650000,
+          "actual_cost": 0
+        },
+        {
+          "step_no": 4,
+          "name": "Fase 4: Proteksi Hama & Generatif",
+          "day_range": "HST 46 - 80",
+          "duration_days": 35,
+          "status": "BELUM",
+          "target_cost": 950000,
+          "actual_cost": 0
+        },
+        {
+          "step_no": 5,
+          "name": "Fase 5: Pengeringan & Panen Raya",
+          "day_range": "HST 81 - 115",
+          "duration_days": 35,
+          "status": "BELUM",
+          "target_cost": 2005000,
+          "actual_cost": 0
+        }
+      ],
+      "total_budget": 5120000,
+      "planting_date": "2026-09-27",
+      "target_harvest_date": "",
+      "created_at": "2026-09-27T09:07:29.717Z"
     }
   ],
   "service_orders": [

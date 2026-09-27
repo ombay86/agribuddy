@@ -117,11 +117,17 @@ try {
   initialRegisteredUser = null;
 }
 
+// Bersihkan legacy shared state yang menyebabkan username dan avatar bocor ke semua akun
+try {
+  localStorage.removeItem('agribuddy_custom_username');
+  localStorage.removeItem('agribuddy_custom_avatar');
+} catch (e) {
+  // ignore
+}
+
 const activeRole = ref<UserRole>(savedRole);
 const registeredUser = ref<any>(initialRegisteredUser);
 const isAuthenticated = ref<boolean>(initialAuth);
-const customAvatar = ref<string | null>(localStorage.getItem('agribuddy_custom_avatar'));
-const customUsername = ref<string | null>(localStorage.getItem('agribuddy_custom_username'));
 
 export const getActiveUserId = (): string => {
   if (registeredUser.value && registeredUser.value.id) {
@@ -133,44 +139,65 @@ export const getActiveUserId = (): string => {
 export const useUserState = () => {
   const currentPersona = computed(() => {
     if (registeredUser.value) {
+      const u = registeredUser.value;
+      const userCustomAvatar = localStorage.getItem(`agribuddy_avatar_${u.id}`) || u.avatar_url || null;
+      const userCustomUsername = localStorage.getItem(`agribuddy_username_${u.id}`) || u.username || (u.full_name ? u.full_name.toLowerCase().replace(/\s+/g, '_') : 'petani');
       return {
-        id: registeredUser.value.id,
-        role: (registeredUser.value.role || 'PETANI_MANDIRI') as UserRole,
-        name: registeredUser.value.full_name || registeredUser.value.name,
-        username: customUsername.value || registeredUser.value.username || 'user',
-        badge: registeredUser.value.category_badge || registeredUser.value.role_label || 'Petani Mandiri',
-        serviceCategory: registeredUser.value.commodity || 'Budidaya Pertanian',
-        entityName: registeredUser.value.village || 'Desa Sukamaju',
-        location: registeredUser.value.village || 'Desa Sukamaju',
-        avatar: registeredUser.value.avatar || '👨‍🌾',
-        specialties: [registeredUser.value.commodity || 'Padi Inpari 32', `${registeredUser.value.land_size_ha || 1} Ha`],
-        customAvatar: customAvatar.value || registeredUser.value.avatar_url
+        id: u.id,
+        role: (u.role || 'PETANI_MANDIRI') as UserRole,
+        name: u.full_name || u.name,
+        username: userCustomUsername,
+        badge: u.category_badge || u.role_label || 'Petani Mandiri',
+        serviceCategory: u.commodity || 'Budidaya Pertanian',
+        entityName: u.village || 'Desa Sukamaju',
+        location: u.village || 'Desa Sukamaju',
+        avatar: u.avatar || '👨‍🌾',
+        specialties: [u.commodity || 'Padi Inpari 32', `${u.land_size_ha || 1} Ha`],
+        customAvatar: userCustomAvatar
       };
     }
     const base = PERSONAS[activeRole.value] || PERSONAS['PETANI_MANDIRI'];
+    const personaAvatar = localStorage.getItem(`agribuddy_avatar_${base.id}`) || null;
+    const personaUsername = localStorage.getItem(`agribuddy_username_${base.id}`) || base.username;
     return {
       ...base,
-      username: customUsername.value || base.username || 'pak_joko',
-      customAvatar: customAvatar.value
+      username: personaUsername,
+      customAvatar: personaAvatar
     };
   });
+
   const currentUserId = computed(() => currentPersona.value.id);
+  const customAvatar = computed(() => currentPersona.value.customAvatar);
+  const customUsername = computed(() => currentPersona.value.username);
   
   const setCustomAvatar = (avatarDataUrl: string | null) => {
-    customAvatar.value = avatarDataUrl;
+    const uid = currentUserId.value;
     if (avatarDataUrl) {
-      localStorage.setItem('agribuddy_custom_avatar', avatarDataUrl);
+      localStorage.setItem(`agribuddy_avatar_${uid}`, avatarDataUrl);
+      if (registeredUser.value) {
+        registeredUser.value = { ...registeredUser.value, avatar_url: avatarDataUrl };
+        localStorage.setItem('agribuddy_registered_user', JSON.stringify(registeredUser.value));
+      }
     } else {
-      localStorage.removeItem('agribuddy_custom_avatar');
+      localStorage.removeItem(`agribuddy_avatar_${uid}`);
+      if (registeredUser.value) {
+        registeredUser.value = { ...registeredUser.value, avatar_url: undefined };
+        localStorage.setItem('agribuddy_registered_user', JSON.stringify(registeredUser.value));
+      }
     }
   };
 
   const setCustomUsername = (username: string | null) => {
-    customUsername.value = username;
-    if (username) {
-      localStorage.setItem('agribuddy_custom_username', username);
+    const uid = currentUserId.value;
+    const clean = username ? username.trim().replace(/^@/, '').toLowerCase() : null;
+    if (clean) {
+      localStorage.setItem(`agribuddy_username_${uid}`, clean);
+      if (registeredUser.value) {
+        registeredUser.value = { ...registeredUser.value, username: clean };
+        localStorage.setItem('agribuddy_registered_user', JSON.stringify(registeredUser.value));
+      }
     } else {
-      localStorage.removeItem('agribuddy_custom_username');
+      localStorage.removeItem(`agribuddy_username_${uid}`);
     }
   };
 
@@ -198,7 +225,10 @@ export const useUserState = () => {
     localStorage.setItem('agribuddy_active_role', activeRole.value);
     localStorage.setItem('agribuddy_auth', 'true');
     if (userData.username) {
-      setCustomUsername(userData.username);
+      localStorage.setItem(`agribuddy_username_${userData.id}`, userData.username);
+    }
+    if (userData.avatar_url) {
+      localStorage.setItem(`agribuddy_avatar_${userData.id}`, userData.avatar_url);
     }
     // Jika akun memiliki gemini_api_key dari PostgreSQL server, otomatis sinkronkan ke perangkat ini
     if (userData.gemini_api_key) {

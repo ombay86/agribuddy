@@ -273,11 +273,28 @@ router.post('/login', (req: Request, res: Response) => {
 router.get('/profile', (req: Request, res: Response) => {
   const userId = (req.headers['x-user-id'] as string) || 'usr_petani';
   const users = db.getCollection("users");
-  const user = users.find((u: any) => u.id === userId) || users[0];
+  let user = users.find((u: any) => u.id === userId);
+
+  if (!user) {
+    const staticProf = Object.values(PUBLIC_PROFILES_DATA).find((p: any) => p.id === userId);
+    if (staticProf) {
+      return res.json(staticProf);
+    }
+    user = users[0];
+  }
 
   if (!user) {
     return res.status(404).json({ detail: "Profil pengguna tidak ditemukan" });
   }
+
+  // Lengkapi username fallback jika akun demo belum terisi
+  if (!user.username) {
+    const staticProf = Object.values(PUBLIC_PROFILES_DATA).find((p: any) => p.id === user.id);
+    if (staticProf?.username) {
+      user.username = staticProf.username;
+    }
+  }
+
   res.json(user);
 });
 
@@ -285,6 +302,17 @@ router.get('/profile', (req: Request, res: Response) => {
 router.put('/profile', (req: Request, res: Response) => {
   const userId = (req.headers['x-user-id'] as string) || 'usr_petani';
   const updates = req.body;
+
+  if (updates.username) {
+    const cleanUsername = String(updates.username).trim().replace(/^@/, '').toLowerCase();
+    const users = db.getCollection("users");
+    const existing = users.find((u: any) => u.id !== userId && u.username && u.username.toLowerCase() === cleanUsername);
+    if (existing) {
+      return res.status(400).json({ detail: `Username @${cleanUsername} sudah digunakan oleh akun lain. Silakan pilih username yang unik.` });
+    }
+    updates.username = cleanUsername;
+  }
+
   const updated = db.update("users", userId, updates);
 
   if (!updated) {
