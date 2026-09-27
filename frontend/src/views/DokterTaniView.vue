@@ -199,6 +199,88 @@
               </div>
             </button>
           </div>
+
+          <!-- Visual Guide: Cara Mendapatkan Google Gemini API Key -->
+          <div class="mt-4 p-4 sm:p-5 bg-gradient-to-br from-amber-50/70 via-white to-emerald-50/60 border border-amber-200/90 rounded-3xl text-left shadow-xs space-y-3">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center font-black shadow-xs text-sm">
+                  <Key :size="16" />
+                </div>
+                <div>
+                  <h4 class="text-xs sm:text-sm font-black text-slate-800">
+                    Panduan Cepat: Pasang Google Gemini API Key Pribadi
+                  </h4>
+                  <p class="text-[10px] sm:text-[11px] text-slate-500">
+                    Dapatkan kuota AI gratis tanpa batas antrean dari Google AI Studio (Model BYOK)
+                  </p>
+                </div>
+              </div>
+              <span
+                class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full shrink-0"
+                :class="hasCustomApiKey ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'"
+              >
+                {{ hasCustomApiKey ? 'Key Aktif ✅' : 'Opsional 💡' }}
+              </span>
+            </div>
+
+            <!-- 3 Langkah Visual -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+              <!-- Step 1 -->
+              <div class="bg-white/90 border border-slate-200/80 rounded-2xl p-2.5 space-y-1 shadow-2xs">
+                <div class="flex items-center gap-1.5 text-amber-800 font-black text-[11px]">
+                  <span class="w-5 h-5 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center text-[10px] font-black">1</span>
+                  <span>Buka AI Studio</span>
+                </div>
+                <p class="text-[10px] text-slate-500 leading-tight">
+                  Login ke Google AI Studio dengan akun Google Anda.
+                </p>
+              </div>
+
+              <!-- Step 2 -->
+              <div class="bg-white/90 border border-slate-200/80 rounded-2xl p-2.5 space-y-1 shadow-2xs">
+                <div class="flex items-center gap-1.5 text-emerald-800 font-black text-[11px]">
+                  <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-[10px] font-black">2</span>
+                  <span>Create API Key</span>
+                </div>
+                <p class="text-[10px] text-slate-500 leading-tight">
+                  Klik tombol <strong>"Create API key"</strong> dan salin kodenya.
+                </p>
+              </div>
+
+              <!-- Step 3 -->
+              <div class="bg-white/90 border border-slate-200/80 rounded-2xl p-2.5 space-y-1 shadow-2xs">
+                <div class="flex items-center gap-1.5 text-sky-800 font-black text-[11px]">
+                  <span class="w-5 h-5 rounded-full bg-sky-100 text-sky-800 flex items-center justify-center text-[10px] font-black">3</span>
+                  <span>Tempel di Sini</span>
+                </div>
+                <p class="text-[10px] text-slate-500 leading-tight">
+                  Klik tombol di bawah dan simpan kunci ke profil Anda.
+                </p>
+              </div>
+            </div>
+
+            <!-- Tombol Aksi Cepat -->
+            <div class="flex flex-wrap items-center gap-2 pt-0.5">
+              <a
+                href="https://aistudio.google.com/app/apikey"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-[11px] px-3.5 py-1.5 rounded-xl transition-all shadow-xs active:scale-95"
+              >
+                <span>🌐 Buka Google AI Studio</span>
+                <ExternalLink :size="12" />
+              </a>
+              <button
+                type="button"
+                @click="openKeyModal"
+                class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] px-3.5 py-1.5 rounded-xl transition-all shadow-xs active:scale-95 cursor-pointer"
+              >
+                <Key :size="12" />
+                <span>{{ hasCustomApiKey ? 'Ubah / Periksa API Key' : '🔑 Masukkan Kunci Sekarang' }}</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- State 2: Riwayat Pesan Aktif -->
@@ -432,20 +514,40 @@
           </button>
         </div>
 
-        <div class="space-y-3">
-          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-600 space-y-2">
-            <p class="leading-relaxed">
-              Anda dapat memasukkan API Key Google Gemini pribadi Anda. Kunci ini <strong>hanya disimpan secara lokal di browser Anda</strong> dan tidak tersimpan di server publik.
+        <div class="space-y-3.5">
+          <!-- Petunjuk Visual 3 Langkah -->
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-800 text-[11px]">3 Langkah Mudah Dapatkan API Key:</span>
+              <a
+                href="https://aistudio.google.com/app/apikey"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1 text-emerald-700 hover:text-emerald-800 font-bold hover:underline text-[11px]"
+              >
+                <span>Buka Google AI Studio</span>
+                <ExternalLink :size="11" />
+              </a>
+            </div>
+
+            <ol class="space-y-1.5 text-[11px] text-slate-600 font-medium">
+              <li class="flex items-start gap-1.5">
+                <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-[10px] shrink-0 mt-0.5">1</span>
+                <span>Buka <strong class="text-slate-800">aistudio.google.com/app/apikey</strong> lalu login akun Google.</span>
+              </li>
+              <li class="flex items-start gap-1.5">
+                <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-[10px] shrink-0 mt-0.5">2</span>
+                <span>Klik tombol biru <strong class="text-slate-800">"Create API key"</strong> dan salin kodenya.</span>
+              </li>
+              <li class="flex items-start gap-1.5">
+                <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-[10px] shrink-0 mt-0.5">3</span>
+                <span>Tempelkan pada kolom di bawah ini lalu klik <strong class="text-slate-800">Simpan Kunci</strong>.</span>
+              </li>
+            </ol>
+
+            <p class="text-[10px] text-slate-400 border-t border-slate-200/80 pt-1.5 leading-relaxed">
+              🔒 <em>Kunci Anda hanya tersimpan lokal di browser ini khusus untuk profil <strong>{{ currentPersona.name }}</strong>.</em>
             </p>
-            <a
-              href="https://aistudio.google.com/app/apikey"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-flex items-center gap-1 text-emerald-700 hover:text-emerald-800 font-bold hover:underline text-[11px]"
-            >
-              <span>🔑 Dapatkan API Key gratis di Google AI Studio</span>
-              <ExternalLink :size="12" />
-            </a>
           </div>
 
           <div class="space-y-1.5">
