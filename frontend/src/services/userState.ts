@@ -232,6 +232,7 @@ export const useUserState = () => {
 
   return {
     activeRole,
+    registeredUser,
     isAuthenticated,
     currentPersona,
     currentUserId,
@@ -241,6 +242,7 @@ export const useUserState = () => {
     setCustomUsername,
     setRole,
     loginWithPersona,
+    loginWithCustomUser,
     loginWithCredentials,
     logout,
     PERSONAS
