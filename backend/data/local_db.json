@@ -107,11 +107,12 @@
       "user_id": "usr_001",
       "name": "Pupuk NPK Phonska",
       "type": "PUPUK",
-      "quantity": 2,
+      "quantity": 10,
       "unit": "Karung (50kg)",
       "min_threshold": 2,
       "notes": "Stok menipis, segera beli",
-      "updated_at": "2026-09-21T20:35:39.139182"
+      "updated_at": "2026-09-27T05:31:32.055Z",
+      "pending_orders": []
     },
     {
       "id": "inv_003",

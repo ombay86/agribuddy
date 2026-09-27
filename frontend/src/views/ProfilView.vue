@@ -30,31 +30,31 @@
         </div>
 
         <!-- Floating Action Buttons -->
-        <div class="absolute -bottom-2 inset-x-0 flex items-center justify-center gap-1.5 z-10">
+        <div class="absolute -bottom-2 inset-x-0 flex items-center justify-center gap-1.5 z-10 pointer-events-none">
           <button
             type="button"
             @click="openCamera"
-            class="w-8 h-8 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center shadow-lg border-2 border-white transition-all active:scale-95 cursor-pointer"
+            class="pointer-events-auto w-[26px] h-[26px] min-w-[26px] min-h-[26px] max-w-[26px] max-h-[26px] rounded-full aspect-square shrink-0 p-0 flex items-center justify-center bg-emerald-600 hover:bg-emerald-500 text-white shadow-md border-[1.5px] border-white transition-all active:scale-90 cursor-pointer"
             title="Ambil Foto Kamera Langsung"
           >
-            <Camera :size="14" />
+            <Camera :size="12" />
           </button>
           <button
             type="button"
             @click="fileInputRef?.click()"
-            class="w-8 h-8 rounded-full bg-white hover:bg-slate-100 text-emerald-800 flex items-center justify-center shadow-lg border-2 border-emerald-600 transition-all active:scale-95 cursor-pointer"
+            class="pointer-events-auto w-[26px] h-[26px] min-w-[26px] min-h-[26px] max-w-[26px] max-h-[26px] rounded-full aspect-square shrink-0 p-0 flex items-center justify-center bg-white hover:bg-slate-100 text-emerald-800 shadow-md border-[1.5px] border-white transition-all active:scale-90 cursor-pointer"
             title="Unggah Foto dari File / Galeri"
           >
-            <Upload :size="14" />
+            <Upload :size="12" />
           </button>
           <button
             v-if="customAvatar || profile.avatar_url"
             type="button"
             @click="removeAvatar"
-            class="w-8 h-8 rounded-full bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center shadow-lg border-2 border-white transition-all active:scale-95 cursor-pointer"
+            class="pointer-events-auto w-[26px] h-[26px] min-w-[26px] min-h-[26px] max-w-[26px] max-h-[26px] rounded-full aspect-square shrink-0 p-0 flex items-center justify-center bg-rose-600 hover:bg-rose-500 text-white shadow-md border-[1.5px] border-white transition-all active:scale-90 cursor-pointer"
             title="Hapus Foto Profil"
           >
-            <Trash2 :size="13" />
+            <Trash2 :size="11" />
           </button>
         </div>
 
