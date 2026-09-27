@@ -10,4 +10,5 @@ export const config = {
   apiV1Str: process.env.API_V1_STR || '/api/v1',
   geminiApiKey: process.env.GEMINI_API_KEY || '',
   geminiModel: process.env.GEMINI_MODEL || 'auto',
+  databaseUrl: process.env.DATABASE_URL || process.env.POSTGRES_URL || '',
 };

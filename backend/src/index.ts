@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { config } from './config/env.js';
+import { db } from './database/db.js';
 
 import authRouter from './routes/auth.js';
 import weatherRouter from './routes/weather.js';
@@ -59,12 +60,18 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-app.listen(config.port, '0.0.0.0', () => {
-  console.log(`=======================================================`);
-  console.log(`🚀 AgriBuddy Backend (Node.js) is RUNNING on port ${config.port}`);
-  console.log(`📡 Base API URL: http://127.0.0.1:${config.port}${config.apiV1Str}`);
-  console.log(`🤖 AI Engine: Google Gemini API Multimodal Vision`);
-  console.log(`=======================================================`);
-});
+async function bootstrap() {
+  await db.initPostgres();
+
+  app.listen(config.port, '0.0.0.0', () => {
+    console.log(`=======================================================`);
+    console.log(`🚀 AgriBuddy Backend (Node.js) is RUNNING on port ${config.port}`);
+    console.log(`📡 Base API URL: http://127.0.0.1:${config.port}${config.apiV1Str}`);
+    console.log(`🤖 AI Engine: Google Gemini API Multimodal Vision`);
+    console.log(`=======================================================`);
+  });
+}
+
+bootstrap();
 
 export default app;
