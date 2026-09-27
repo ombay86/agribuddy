@@ -1,34 +1,26 @@
-# Activity Diagram & Spesifikasi Alur Aktivitas — AgriBuddy v2.0
-**Pemodelan Dinamika Perilaku Sistem UML 2.5: Partisi Swimlane, Eksekusi Paralel (Fork/Join), & Layanan AI Multimodal Terpadu**  
+# Activity Diagram & Spesifikasi Alur Aktivitas — AgriBuddy v2.5
+**Pemodelan Dinamika Perilaku Sistem UML 2.5: Partisi Swimlane, Eksekusi Paralel (Fork/Join), Kelola Lahan, & Layanan AI Multimodal Terpadu**  
 *Capstone Project STSI4440 • Tugas Akhir Sarjana Sistem Informasi 2026*
 
 ---
 
 ## 1. Pendahuluan & Standar Notasi UML 2.5
 
-Activity Diagram (*Diagram Aktivitas*) memodelkan aspek dinamis dari sistem **AgriBuddy v2.0**, yang menggambarkan aliran kontrol (*control flow*) dan aliran data antaraksi pengguna, antarmuka klien (*frontend*), server backend (*Node.js & Express API*), serta penyedia layanan eksternal (*Google Gemini Multimodal Vision & Open-Meteo Weather API*).
+Activity Diagram (*Diagram Aktivitas*) memodelkan aspek dinamis dari sistem **AgriBuddy v2.5 (Final Capstone Release)**, yang menggambarkan aliran kontrol (*control flow*) dan aliran data antaraksi pengguna, antarmuka klien (*frontend Vue 3 + SweetAlert2*), server backend (*Node.js Express TypeScript dengan Dual Persistence Engine*), serta sistem eksternal (*Google Gemini 2.5 Flash Vision & Chat, Open-Meteo Weather API, dan WhatsApp Web/App Protocol*).
 
-Sistem AgriBuddy v2.0 difokuskan sebagai **Smart Farming Decision Support System (DSS)** berbasis arsitektur modern Node.js + TypeScript dengan integrasi kecerdasan buatan Google Gemini Multimodal Vision API. Berdasarkan standar **UML 2.5 (OMG)**, diagram ini membagi tanggung jawab komputasi menggunakan **Partisi Swimlane (*Swimlanes*)**, serta mengakomodasi eksekusi tugas konkuren melalui batang sinkronisasi **Fork** dan **Join**.
-
-### Standar Notasi Elemen Diagram
-| Notasi Simbol | Bentuk Geometris | Nama Elemen UML | Definisi & Makna Operasional |
-| :---: | :---: | :--- | :--- |
-| **Initial Node** | Lingkaran Hitam Solid (`●`) | *Initial Node* | Titik awal dimulainya suatu alur aktivitas. |
-| **Activity Final** | Lingkaran Konsentris Titik Tengah (`◉`) | *Activity Final Node* | Titik akhir dari keseluruhan aliran aktivitas sistem. |
-| **Action State** | Persegi Panjang Sudut Membulat | *Action / Activity* | Langkah eksekusi atomik yang dikerjakan oleh entitas partisi bersangkutan. |
-| **Decision / Merge** | Belah Ketupat (*Diamond*) | *Decision & Merge Node* | Percabangan logika kondisi bersyarat (*Guard Condition `[kondisi]`*). |
-| **Fork Node** | Batang Garis Tebal Hitam | *Fork (Split)* | Memecah satu aliran kontrol menjadi dua atau lebih aliran yang berjalan **secara paralel / konkuren**. |
-| **Join Node** | Batang Garis Tebal Hitam | *Join (Synchronize)* | Menggabungkan beberapa aliran paralel dan menunggu semuanya tuntas sebelum melanjutkan alur. |
-| **Swimlane / Partisi** | Kolom Persegi Panjang Besar | *Activity Partition* | Mengelompokkan aksi berdasarkan aktor atau modul sistem yang bertanggung jawab menjalankannya. |
-| **Control Flow** | Garis Berpanah Padat | *Control Flow* | Menunjukkan perpindahan urutan eksekusi antar-aksi. |
+Berdasarkan standar **UML 2.5 (OMG)**, diagram ini membagi alur kerja ke dalam **4 Partisi Swimlane (*Swimlanes*)**:
+1. **Partisi 1: Petani / Pengguna (Aktor)**
+2. **Partisi 2: Frontend Client (Vue 3 SPA + SweetAlert2)**
+3. **Partisi 3: Backend Server (Node.js Express + Dual Persistence)**
+4. **Partisi 4: Sistem Eksternal (Google Gemini API, Open-Meteo, WhatsApp)**
 
 ---
 
 ## 2. Visual Activity Diagram Terpadu (*Unified Cross-Lane Diagram*)
 
-Berikut adalah hasil render visual diagram aktivitas terpadu beresolusi tinggi yang memetakan interaksi lintas 4 partisi (Petani, Frontend SPA, Backend Node.js, dan Layanan AI/Cuaca Eksternal):
+Berikut adalah hasil pemodelan diagram aktivitas terpadu beresolusi tinggi lintas 4 partisi:
 
-![Activity Diagram Terpadu AgriBuddy v2.0](ACTIVITY_DIAGRAM_AgriBuddy.jpg)
+![Activity Diagram Terpadu AgriBuddy v2.5](ACTIVITY_DIAGRAM_AgriBuddy.jpg)
 
 *(File grafis vektor murni SVG tersedia di: [`ACTIVITY_DIAGRAM_AgriBuddy.svg`](ACTIVITY_DIAGRAM_AgriBuddy.svg))*
 
@@ -39,309 +31,174 @@ Berikut adalah hasil render visual diagram aktivitas terpadu beresolusi tinggi y
 ```mermaid
 flowchart TD
     %% SWIMLANE 1: PETANI (USER / AKTOR)
-    subgraph LanePetani["PARTISI 1: PETANI (USER / AKTOR)"]
-        InitPetani((●)) --> ActLogin[Input Akun / Masuk Cepat Persona]
+    subgraph LanePetani["PARTISI 1: PETANI / PENGGUNA (AKTOR)"]
+        InitPetani((●)) --> ActLogin[Masuk Cepat Persona / Input No. HP & PIN]
         ActLogin --> WaitAuth[Menerima Tampilan Dashboard Utama]
 
         %% Skenario 1: Monitoring & Telemetri
         WaitAuth --> ActSelectPlot[Pilih Petak Sawah pada Peta Leaflet]
-        ViewCockpit[Melihat Indikator Cuaca, Suhu, & Status Irigasi Lahan] --> ActNext{Pilih Fitur Lanjutan}
+        ViewCockpit[Melihat Indikator Cuaca, Suhu, & Rekomendasi Irigasi] --> ActNext{Pilih Modul Sistem}
 
-        %% Skenario 2: Rencana Tani AI
-        ActNext -- Rencana Budidaya --> ActFormPlan[Input Komoditas, Varietas, Luas & Tanggal Tanam]
-        ActFormPlan --> ActClickAI[Tekan Tombol 'Susun Rencana AI']
-        ViewPlanResult[Menerima Jadwal 5 Fase Budidaya, Kebutuhan Pupuk & RAB Modal] --> ActExecPhase[Update Realisasi Pengerjaan Fase di Lapangan]
+        %% Skenario 2: Kelola Lahan (Rencana & Kontrol)
+        ActNext -- Kelola Lahan --> CheckFarmExist{Punya Lahan Aktif?}
+        CheckFarmExist -- Belum Ada Lahan --> ViewEmptyState["Melihat Notifikasi 'Belum Ada Lahan' & Klik 'Buat Sekarang'"]
+        ViewEmptyState --> ActWizardPlan[Isi Wizard 4 Langkah: Luas Ha, Komoditas, Tanah, Air]
+        CheckFarmExist -- Ada Lahan Aktif --> ManageFarmAction{Aksi Kelola Lahan}
 
-        %% Skenario 3: Dokter Tani AI (Vision)
-        ActNext -- Dokter Tani AI --> ActSnapLeaf[Ambil / Unggah Foto Daun Terindikasi Penyakit]
+        ManageFarmAction -- Buat Baru --> ActWizardPlan
+        ActWizardPlan --> ActClickAI[Tekan Tombol 'Kalkulasi Rencana AI']
+        ViewPlanResult[Menerima RAB 12 Item, 5 Fase HST & Proyeksi Finansial ROI] --> ActChoosePlanSave{Opsi Simpan}
+        ActChoosePlanSave -- Simpan Draf --> DoneAll
+        ActChoosePlanSave -- Mulai Garap --> ActActiveFarmCreated[Lahan Berubah Status Menjadi Aktif]
+
+        ManageFarmAction -- Edit Lahan --> ActEditFarm[Buka Modal Edit, Perbarui Data, & Simpan]
+        ManageFarmAction -- Hapus Lahan --> ActDeleteFarm[Klik Hapus & Konfirmasi pada Modal Bahaya SweetAlert2]
+        ManageFarmAction -- Set Fase Lapangan --> ActSetPhase[Pilih Fase Berjalan di Sawah & Terapkan Fast-Track]
+
+        ManageFarmAction -- Kontrol Harian --> ActDualControl{Kontrol Tanam}
+        ActDualControl -- Checklist Fase --> ActCheckTask[Centang Kegiatan Selesai / Hubungi Mitra Fase via WA]
+        ActDualControl -- Catat Kas Modal --> ActInputCost[Input Pos Pengeluaran Kas Riil Lahan]
+
+        %% Skenario 3: Dokter Tani AI (Vision & Chat)
+        ActNext -- Dokter Tani AI --> ActDoctorMode{Pilih Mode AI}
+        ActDoctorMode -- Lab Diagnosa --> ActSnapLeaf[Ambil / Unggah Foto Daun Padi Sakit]
         ActSnapLeaf --> ActSendDiagnose[Tekan Tombol 'Analisis Daun via Gemini AI']
-        ViewDiagnosis[Menerima Hasil Diagnosis: Nama Penyakit, Akurasi, & Resep Tindakan] --> ActDecisionDoc{Tanaman Sakit?}
-        ActDecisionDoc -- Ya --> ActApplyMeds[Beli Obat di Toko Mitra / Terapkan Fungisida Sesuai Dosis]
-        ActDecisionDoc -- Tidak --> ActSanitation[Terapkan Tips Pemeliharaan Preventif]
+        ViewDiagnosis[Menerima Hasil: Nama Penyakit, Keparahan, & Resep Mitigasi] --> DoneAll
 
-        %% Skenario 4: Buku Tani & Lumbung Traceability
-        ActNext -- Buku Tani & Lumbung --> ActChooseBook{Aktivitas Pembukuan}
-        ActChooseBook -- Catat Pengeluaran --> ActInputCost[Input Biaya Pupuk/Benih/Upah & Tautkan ke Sawah]
-        ActChooseBook -- Catat Panen --> ActInputHarvest[Input Tonase Kg, Kadar Air, & Wajib Pilih Sawah Asal]
-        
-        %% Skenario 5: Direktori Layanan
-        ActNext -- Direktori Layanan --> ActBrowseServ[Pilih Kategori Layanan: Traktor / Drone Sprayer]
+        ActDoctorMode -- Konsultasi Chat --> ActOpenChat[Buka Sesi Chatbot & Pasang Gemini Key Pribadi via Panduan Cepat]
+        ActOpenChat --> ActAskChat[Kirim Pertanyaan Masalah Padi / Klik Contoh Cepat]
+        ViewChatReply[Menerima Rekomendasi Agronomi Real-Time] --> DoneAll
+
+        %% Skenario 4: Buku Tani (Gudang & Lumbung Terisolasi)
+        ActNext -- Buku Tani --> ActChooseBook{Pilih Tab Buku Tani}
+        ActChooseBook -- Gudang Saprotan --> ActAdjustStock["Gunakan Tombol Cepat (+ / -) / Pesan Restock via WA Kios"]
+        ActAdjustStock --> ActConfirmArrival[Konfirmasi Barang Tiba -> Stok Otomatis Bertambah]
+        ActChooseBook -- Lumbung Panen --> ActInputHarvest[Catat Hasil Panen Tonase Kg & Pantau Harga Pasar Harian]
+
+        %% Skenario 5: Direktori Layanan Ekosistem
+        ActNext -- Direktori Layanan --> ActBrowseServ[Jelajah Kategori: Traktor, Pompa, Regu Tanam, Kios]
         ActBrowseServ --> ActClickWA[Klik Tombol 'Hubungi via WhatsApp']
-        OpenChatWA[Berkomunikasi Langsung dengan Penyedia Jasa di WhatsApp] --> DoneAll
+        OpenChatWA[Chat WhatsApp Terbuka dengan Template Pesanan Otomatis] --> DoneAll
 
-        ActExecPhase --> DoneAll[Selesai Aktivitas Tani]
-        ActApplyMeds --> DoneAll
-        ActSanitation --> DoneAll
+        ActActiveFarmCreated --> DoneAll
+        ActEditFarm --> DoneAll
+        ActDeleteFarm --> DoneAll
+        ActSetPhase --> DoneAll
+        ActCheckTask --> DoneAll
         ActInputCost --> DoneAll
+        ActConfirmArrival --> DoneAll
         ActInputHarvest --> DoneAll
-        DoneAll --> FinalPetani(((◉)))
+
+        DoneAll[Selesai Aktivitas Usahatani] --> FinalPetani(((◉)))
     end
 
-    %% SWIMLANE 2: FRONTEND CLIENT (VUE 3 SPA)
+    %% SWIMLANE 2: FRONTEND CLIENT (VUE 3 SPA + SWEETALERT2)
     subgraph LaneFrontend["PARTISI 2: FRONTEND CLIENT (VUE 3 SPA)"]
-        FE_SubmitAuth[Validasi Form & Kirim Request Autentikasi]
-        FE_RenderDash[Render Layout Utama & Peta Leaflet Interaktif]
+        FE_SubmitAuth[Validasi Form & Kirim Request Autentikasi / Persona]
+        FE_RenderDash[Render Layout Dashboard, Kartu Metrik, & Peta Leaflet]
         
-        FE_ReqFarmData[Kirim Request Data Petak & Telemetri ke Backend]
-        FE_RenderCockpit[Render Visual Cuaca, Peringatan Irigasi & Status Tanah]
+        FE_CheckFarms[Evaluasi Array activeFarmlands: Jika 0 Tampilkan Empty State]
+        FE_PostPlan[Kirim Parameter Agronomi ke /api/farm-plan/calculate]
+        FE_RenderPlan[Render RAB 12 Item, Dosis Pupuk Iklim, & Linimasa 5 Fase]
 
-        FE_PostPlan[Kirim Parameter Agronomi ke /api/plans/generate]
-        FE_RenderPlan[Render Gantt-Chart 5 Fase & Ringkasan Anggaran RAB]
+        FE_SendDeleteFarm[Kirim Request DELETE /api/farmlands/:id]
+        FE_ClearFarmCache[Bersihkan activeFarmId & Kunci LocalStorage]
+        FE_PostSetPhase[Kirim Target Step ke /api/farmlands/:id/set-active-phase]
 
-        FE_CompressImg[Preprocessing Citra Daun & Ekstraksi Base64 Data URL]
-        FE_PostDoctor[Kirim Payload Citra ke /api/doctor/diagnose]
-        FE_RenderReport[Render Kartu Diagnosis Penyakit, Bar Keparahan & Resep Dosis]
+        FE_CompressImg[Preprocessing Citra Daun & Ekstraksi Base64]
+        FE_PostDoctor[Kirim Payload Gambar & Header X-Gemini-Api-Key ke /api/ai/diagnose]
+        FE_RenderDoctor[Render Diagnosis, Indikator Keparahan, & Resep Solusi]
 
-        FE_PostExpense[Kirim Form Beban Modal ke /api/farmlands/:id/expenses]
-        FE_ValTrace[Validasi Keberadaan farmland_id Wajib untuk Traceability]
-        FE_PostHarvest[Kirim Payload Panen ke /api/harvest]
-        FE_GenWALink[Format Nomor HP & Teks Template Pesanan ke Link wa.me]
+        FE_PostChat[Kirim Pesan Konsultasi & Riwayat Sesi ke /api/ai/chat]
+        FE_ReqInv[Kirim Request Terisolasi GET /api/inventory?user_id=activeUid]
+        FE_ReqHrv[Kirim Request Terisolasi GET /api/harvest?user_id=activeUid]
+        FE_GenWALink[Format Link WhatsApp wa.me dengan Teks Pemesanan]
     end
 
-    %% SWIMLANE 3: BACKEND API (NODE.JS & EXPRESS)
-    subgraph LaneBackend["PARTISI 3: BACKEND API (NODE.JS & EXPRESS)"]
-        BE_Auth[Verifikasi JWT Token & Set Sesi User]
-        
-        BE_Fork1[====== FORK: Paralelisasi Pemuatan Lahan ======]
-        BE_GetFarm[(Query Data Fisik Sawah dari FARMLAND)]
-        BE_ReqWeather[Request Telemetri Cuaca Realtime Geospasial]
-        BE_Join1[====== JOIN: Sinkronisasi Data Lahan ======]
+    %% SWIMLANE 3: BACKEND SERVER (EXPRESS + DUAL PERSISTENCE)
+    subgraph LaneBackend["PARTISI 3: BACKEND SERVER (EXPRESS + DUAL PERSISTENCE)"]
+        BE_Auth[Verifikasi Akun, Token Sesi, & Return User Payload]
+        BE_FetchWeather[Ambil Data Mikroklimat & Olah Rekomendasi Irigasi]
+        BE_CalcPlan[Smart Agronomy Planner: Hitung Biaya 12 Item & Skala Luas Ha]
 
-        BE_AIEngine[Hitung Kebutuhan Benih, Dosis Pupuk NPK, & Proyeksi Panen]
-        BE_SavePlan[(Simpan Rencana ke FARM_PLAN & FARM_PLAN_STEP)]
+        BE_DeleteFarm[Hapus Record Lahan dari Cache, File JSON, & PostgreSQL]
+        BE_UpdatePhase[Perbarui Status Fase: Step Sebelumnya SELESAI, Step Terpilih SEDANG_BERJALAN]
 
-        BE_PrepGemini[Validasi MIME Type Gambar & Susun Prompt Agronomi Sistem]
-        BE_ReqGeminiVision[Panggil Google Gemini Multimodal Vision Multimodal API]
-        BE_ParseGemini[Parsing Respon JSON: Gejala, Patogen, & Resep Bahan Aktif]
-
-        BE_SaveExpense[(Insert Pengeluaran ke CAPITAL_EXPENSE)]
-        BE_CheckTrace{farmland_id Valid?}
-        BE_SaveHarvest[(Insert Stok ke HARVEST_STORAGE dengan Tautan Traceability)]
+        BE_ProxyAI[Validasi API Key Pribadi / Server & Format Prompt Fitopatologi]
+        BE_FilterInv[Filter Koleksi inventory: WHERE user_id = :userId Tanpa Bocor Antar-Akun]
+        BE_FilterHrv[Filter Koleksi harvests: WHERE user_id = :userId Tanpa Bocor Antar-Akun]
+        BE_SaveData[(Sinkronisasi Data ke Local JSON & PostgreSQL Database)]
     end
 
-    %% SWIMLANE 4: LAYANAN EKSTERNAL (GEMINI & OPEN-METEO)
-    subgraph LaneExternal["PARTISI 4: LAYANAN EKSTERNAL (GEMINI & OPEN-METEO)"]
-        EXT_WeatherAPI[Open-Meteo Server: Hitung Suhu, Kelembaban, & Presipitasi Hujan]
-        EXT_GeminiModel[Google Gemini Multimodal Vision: Deteksi Lesi & Patogen Visual]
+    %% SWIMLANE 4: SISTEM EKSTERNAL (GEMINI, OPEN-METEO, WHATSAPP)
+    subgraph LaneExternal["PARTISI 4: SISTEM EKSTERNAL (GEMINI, OPEN-METEO, WHATSAPP)"]
+        Ext_WeatherAPI[Open-Meteo Server: Return Suhu, Kelembaban, & Presipitasi]
+        Ext_GeminiVision[Google Gemini 2.5 Flash Vision: Ekstraksi Fitur Citra Daun Padi]
+        Ext_GeminiChat[Google Gemini 2.5 Flash Chat: Pemrosesan Bahasa Alami Agronomi]
+        Ext_WhatsAppApp[WhatsApp Application: Membuka Ruang Obrolan Pemesanan Langsung]
     end
 
-    %% ALIRAN KONTROL LINTAS PARTISI (CROSS-LANE CONTROL FLOW)
+    %% Aliran Kontrol Lintas Swimlane
     ActLogin --> FE_SubmitAuth
     FE_SubmitAuth --> BE_Auth
     BE_Auth --> FE_RenderDash
     FE_RenderDash --> WaitAuth
 
-    ActSelectPlot --> FE_ReqFarmData
-    FE_ReqFarmData --> BE_Fork1
-    BE_Fork1 --> BE_GetFarm
-    BE_Fork1 --> BE_ReqWeather
-    BE_ReqWeather --> EXT_WeatherAPI
-    EXT_WeatherAPI --> BE_Join1
-    BE_GetFarm --> BE_Join1
-    BE_Join1 --> FE_RenderCockpit
-    FE_RenderCockpit --> ViewCockpit
+    ActSelectPlot --> FE_RenderDash
+    FE_RenderDash --> BE_FetchWeather
+    BE_FetchWeather --> Ext_WeatherAPI
+    Ext_WeatherAPI --> BE_FetchWeather
+    BE_FetchWeather --> FE_RenderDash
+    FE_RenderDash --> ViewCockpit
 
+    CheckFarmExist --> FE_CheckFarms
     ActClickAI --> FE_PostPlan
-    FE_PostPlan --> BE_AIEngine
-    BE_AIEngine --> BE_SavePlan
-    BE_SavePlan --> FE_RenderPlan
+    FE_PostPlan --> BE_CalcPlan
+    BE_CalcPlan --> FE_RenderPlan
     FE_RenderPlan --> ViewPlanResult
+
+    ActDeleteFarm --> FE_SendDeleteFarm
+    FE_SendDeleteFarm --> BE_DeleteFarm
+    BE_DeleteFarm --> BE_SaveData
+    BE_SaveData --> FE_ClearFarmCache
+    FE_ClearFarmCache --> DoneAll
+
+    ActSetPhase --> FE_PostSetPhase
+    FE_PostSetPhase --> BE_UpdatePhase
+    BE_UpdatePhase --> BE_SaveData
+    BE_SaveData --> DoneAll
 
     ActSendDiagnose --> FE_CompressImg
     FE_CompressImg --> FE_PostDoctor
-    FE_PostDoctor --> BE_PrepGemini
-    BE_PrepGemini --> BE_ReqGeminiVision
-    BE_ReqGeminiVision --> EXT_GeminiModel
-    EXT_GeminiModel --> BE_ParseGemini
-    BE_ParseGemini --> FE_RenderReport
-    FE_RenderReport --> ViewDiagnosis
+    FE_PostDoctor --> BE_ProxyAI
+    BE_ProxyAI --> Ext_GeminiVision
+    Ext_GeminiVision --> BE_ProxyAI
+    BE_ProxyAI --> FE_RenderDoctor
+    FE_RenderDoctor --> ViewDiagnosis
 
-    ActInputCost --> FE_PostExpense
-    FE_PostExpense --> BE_SaveExpense
+    ActAskChat --> FE_PostChat
+    FE_PostChat --> Ext_GeminiChat
+    Ext_GeminiChat --> FE_PostChat
+    FE_PostChat --> ViewChatReply
 
-    ActInputHarvest --> FE_ValTrace
-    FE_ValTrace --> BE_CheckTrace
-    BE_CheckTrace -- Valid --> BE_SaveHarvest
-    BE_SaveHarvest --> FE_PostHarvest
+    ActChooseBook --> FE_ReqInv
+    ActChooseBook --> FE_ReqHrv
+    FE_ReqInv --> BE_FilterInv
+    FE_ReqHrv --> BE_FilterHrv
+    BE_FilterInv --> DoneAll
+    BE_FilterHrv --> DoneAll
 
     ActClickWA --> FE_GenWALink
-    FE_GenWALink --> OpenChatWA
-
-    %% Styling Visual UML
-    classDef initFinal fill:#064e3b,stroke:#059669,stroke-width:2.5px,color:#ffffff;
-    classDef actionStyle fill:#f8fafc,stroke:#334155,stroke-width:1.5px,color:#0f172a;
-    classDef decisionStyle fill:#eff6ff,stroke:#2563eb,stroke-width:1.5px,color:#1e3a8a,font-weight:600;
-    classDef storageStyle fill:#fef3c7,stroke:#d97706,stroke-width:1.5px,color:#78350f;
-    classDef syncBar fill:#0f172a,stroke:#475569,stroke-width:3px,color:#ffffff,font-weight:bold;
-    classDef externalStyle fill:#ede9fe,stroke:#7c3aed,stroke-width:1.5px,color:#4c1d95;
-
-    class InitPetani,FinalPetani initFinal;
-    class ActNext,ActDecisionDoc,ActChooseBook,BE_CheckTrace decisionStyle;
-    class BE_GetFarm,BE_SavePlan,BE_SaveExpense,BE_SaveHarvest storageStyle;
-    class BE_Fork1,BE_Join1 syncBar;
-    class EXT_WeatherAPI,EXT_GeminiModel externalStyle;
+    FE_GenWALink --> Ext_WhatsAppApp
+    Ext_WhatsAppApp --> OpenChatWA
 ```
 
 ---
 
-## 4. Diagram Aktivitas Rinci per Modul Fungsional (Bab 4 Skripsi)
-
-### 4.1. AD-01: Alur Monitoring Sawah & Telemetri Cuaca (Eksekusi Paralel Fork/Join)
-Menggambarkan proses konkuren saat petani memilih petak sawah: sistem membagi aliran eksekusi menjadi dua jalur paralel untuk mengambil profil sawah dari basis data dan telemetri cuaca dari penyedia eksternal, lalu menyinkronkannya ke dasbor.
-
-```mermaid
-flowchart TD
-    subgraph P_Petani["Petani (Aktor)"]
-        A1((●)) --> B1[Pilih Petak Sawah pada Peta]
-        G1[Pantau Suhu, Kelembaban, Curah Hujan & Status Irigasi] --> H1(((◉)))
-    end
-
-    subgraph P_Frontend["Frontend SPA (Vue 3)"]
-        B1 --> C1[Kirim Request ID Lahan & Koordinat GPS]
-        F1[Render Widget Cuaca & Visual Indikator Irigasi] --> G1
-    end
-
-    subgraph P_Backend["Backend Node.js API"]
-        C1 --> ForkBar[========== FORK: Eksekusi Konkuren ==========]
-        ForkBar --> PathA[Query Data Fisik & Histori Sawah]
-        ForkBar --> PathB[Kirim Request Cuaca ke Open-Meteo API]
-        PathA --> JoinBar[========== JOIN: Sinkronisasi ==========]
-        PathB --> JoinBar
-        JoinBar --> E1[Kompilasi Status Agroklimat Lahan]
-        E1 --> F1
-    end
-```
-
----
-
-### 4.2. AD-02: Alur Penyusunan Rencana Tani AI & Anggaran Biaya Modal (RAB)
-Menggambarkan interaksi antara formulir input agronomi, mesin penentu keputusan (*decision engine*) backend Node.js, dan penyimpanan tahapan rencana kerja budidaya.
-
-```mermaid
-flowchart TD
-    subgraph P_Petani["Petani (Aktor)"]
-        A2((●)) --> B2[Buka Rencana Tani AI]
-        B2 --> C2[Pilih Petak Sawah, Komoditas, Luas, & Tanggal Mulai]
-        C2 --> D2[Klik 'Susun Rencana AI']
-        H2[Lihat Timeline 5 Fase Budidaya & RAB Modal] --> I2[Mulai Pengerjaan Fase 1]
-        I2 --> J2(((◉)))
-    end
-
-    subgraph P_Frontend["Frontend SPA (Vue 3)"]
-        D2 --> E2[Validasi Formulir & Kirim Payload ke /api/plans/generate]
-        G2[Render Interaktif Timeline & Estimasi Kebutuhan Pupuk] --> H2
-    end
-
-    subgraph P_Backend["Backend Node.js & DSS Engine"]
-        E2 --> F2[Kalkulasi Benih, Pupuk Urea/SP-36/KCl, & Biaya Olah Tanah]
-        F2 --> K2[(Simpan ke FARM_PLAN & 5 Langkah di FARM_PLAN_STEP)]
-        K2 --> G2
-    end
-```
-
----
-
-### 4.3. AD-03: Alur Dokter Tani AI (Google Gemini Multimodal Vision (Auto-Discovery Latest))
-Menggambarkan alur klasifikasi citra penyakit daun berbasis *Generative AI Multimodal Vision* dari penangkapan gambar di kamera smartphone hingga diagnosis klinis dan anjuran penanganan.
-
-```mermaid
-flowchart TD
-    subgraph P_Petani["Petani (Aktor)"]
-        A3((●)) --> B3[Buka Modul Dokter Tani AI]
-        B3 --> C3[Ambil Foto Daun Terinfeksi Menggunakan Kamera HP]
-        C3 --> D3[Klik 'Mulai Diagnosis AI']
-        I3[Menerima Kartu Hasil: Identifikasi Penyakit, Tingkat Keparahan & Resep] --> J3(((◉)))
-    end
-
-    subgraph P_Frontend["Frontend SPA (Vue 3)"]
-        D3 --> E3[Kompresi Gambar & Konversi ke Format Base64]
-        E3 --> F3[Kirim HTTP POST ke /api/doctor/diagnose]
-        H3[Render Visual Hasil Analisis & Alert Anjuran Pengobatan] --> I3
-    end
-
-    subgraph P_Backend["Backend Node.js Server"]
-        F3 --> G3[Siapkan Prompt Agronomi Khusus Tanaman & Injeksi Image InlineData]
-        G3 --> K3[Invoke Google Gemini Multimodal Vision (Auto-Discovery Latest) API]
-        L3[Parsing Respon JSON: Gejala, Patogen, Resep Obat Kimia/Hayati] --> H3
-    end
-
-    subgraph P_Gemini["Google Gemini Cloud"]
-        K3 --> EXT_Gemini[Ekstraksi Pola Citra, Lesi Daun, & Inferensi Patogen]
-        EXT_Gemini --> L3
-    end
-```
-
----
-
-### 4.4. AD-04: Alur Keterlacakan Lumbung (*Food Traceability*) & Buku Tani
-Menggambarkan pencatatan panen yang mewajibkan penautan petak sawah asal (*farmland provenance*) guna menjamin transparansi rantai pasok pangan.
-
-```mermaid
-flowchart TD
-    subgraph P_Petani["Petani (Aktor)"]
-        A4((●)) --> B4[Buka Tab Buku Tani & Lumbung]
-        B4 --> C4[Klik 'Catat Hasil Panen Baru']
-        C4 --> D4[Input Tanggal Panen, Tonase Kg, & Kadar Air Gabah]
-        D4 --> E4[Wajib Pilih Petak Sawah Asal Panen]
-        E4 --> F4[Klik Simpan Panen]
-        J4[Melihat Stok Lumbung Bertambah dengan Sertifikat Asal Lahan] --> K4(((◉)))
-    end
-
-    subgraph P_Frontend["Frontend SPA (Vue 3)"]
-        F4 --> G4[Verifikasi Field farmland_id Tidak Boleh Kosong]
-        G4 --> H4[Kirim POST /api/harvest]
-        I4[Tampilkan Notifikasi Berhasil & Update Kartu Lumbung] --> J4
-    end
-
-    subgraph P_Backend["Backend Node.js API"]
-        H4 --> L4{Validasi Relasi farmland_id di Database?}
-        L4 -- Tidak Valid --> Err4[Kirim HTTP 400 Bad Request]
-        Err4 --> G4
-        L4 -- Valid --> M4[(Insert Data ke HARVEST_STORAGE)]
-        M4 --> I4
-    end
-```
-
----
-
-### 4.5. AD-05: Alur Direktori Layanan Alsintan & Saprotan (Direct WhatsApp Connect)
-Menggambarkan alur perolehan jasa usahatani yang praktis dan bebas biaya perantara melalui koneksi langsung WhatsApp API.
-
-```mermaid
-flowchart TD
-    subgraph P_Petani["Petani (Aktor)"]
-        A5((●)) --> B5[Buka Direktori Layanan & Alsintan]
-        B5 --> C5[Cari Layanan: Sewa Traktor Roda Empat / Drone Semprot]
-        C5 --> D5[Lihat Detail Penyedia & Klik 'Hubungi via WhatsApp']
-        G5[Aplikasi WhatsApp Terbuka dengan Template Teks Pemesanan] --> H5[Kirim Pesan & Negosiasi Jadwal Kerja]
-        H5 --> I5(((◉)))
-    end
-
-    subgraph P_Frontend["Frontend SPA (Vue 3)"]
-        D5 --> E5[Ekstraksi Nomor Telepon & Buat Pesan Pre-filled]
-        E5 --> F5[Buka URL: wa.me/nomor?text=format_pemesanan]
-        F5 --> G5
-    end
-```
-
----
-
-## 5. Analisis Sinkronisasi Paralel (*Fork & Join*)
-
-Salah satu keunggulan perancangan Activity Diagram AgriBuddy v2.0 adalah penerapan **Fork** dan **Join** pada pemuatan data petak sawah terintegrasi telemetri cuaca (`AD-01`):
-
-1. **Titik Fork (*Split Parallelism*)**:
-   Ketika petani memilih salah satu petak sawah aktif, sistem membagi aliran eksekusi menjadi dua cabang konkuren yang berjalan serentak (*non-blocking*):
-   * **Cabang A (Akses Basis Data Internal)**: Backend Node.js membaca riwayat agronomis, status kepemilikan, dan rekapitulasi biaya modal dari tabel `FARMLAND` dan `CAPITAL_EXPENSE`.
-   * **Cabang B (Pemanggilan API Eksternal)**: Backend secara asinkron memanggil API geospasial Open-Meteo menggunakan titik lintang (*latitude*) dan bujur (*longitude*) petak sawah untuk mengambil data suhu, kelembaban udara, dan prediksi curah hujan.
-2. **Titik Join (*Synchronization Barrier*)**:
-   Backend menyatukan kedua hasil data tersebut sebelum mengirimkan respon tunggal terpadu (*unified response*) ke antarmuka klien Vue 3. Pendekatan ini memangkas waktu tunggu (*latency*) hingga 50% dibandingkan jika dipanggil secara sekuensial.
-
----
-
-## 6. Kesimpulan & Relevansi Pengujian Sidang Tugas Akhir
-
-Rancangan Activity Diagram AgriBuddy v2.0 ini:
-1. **Mematuhi Standar Baku UML 2.5:** Menggunakan notasi partisi swimlane yang tegas untuk memisahkan tanggung jawab antarentitas (*Separation of Concerns*), serta menerapkan batang sinkronisasi *Fork/Join* secara akurat.
-2. **Mengintegrasikan Teknologi AI Modern:** Menunjukkan secara transparan integrasi Google Gemini Multimodal Vision (Auto-Discovery Latest) API dalam penanganan diagnosis visual penyakit tanaman.
-3. **Kesiapan Naskah Skripsi:** Menyediakan diagram terpadu (*overview*) untuk pemaparan dinamika sistem di Bab 3, serta 5 diagram modular untuk analisis perancangan rinci per modul fungsional di Bab 4.
+## 4. Keunggulan Dinamika Sistem Terkini
+1. **Pencegahan Kebocoran Data Multi-Akun:**
+   Alur pembukuan saprotan dan hasil panen diatur secara asinkron dengan menyertakan token/identitas `user_id` pada setiap panggilan API, menjamin isolasi data 100% antar-pengguna.
+2. **Fleksibilitas Petani Konvensional (*Fast-Track Set Fase*):**
+   Petani tidak diharuskan mengulang dari Fase 1 jika sawah mereka di dunia nyata sudah masuk fase bunting atau pemupukan susulan.
+3. **Ergonomi Layar & Zero-Overflow:**
+   Alur konsultasi AI dan panduan kunci API dirancang agar seluruh instrumen penting langsung terlihat di viewport perangkat tanpa memerlukan interaksi scroll tambahan.
