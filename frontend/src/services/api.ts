@@ -35,6 +35,18 @@ export interface WeatherData {
   provider?: string;
 }
 
+export interface PendingOrder {
+  id: string;
+  store_name: string;
+  store_phone: string;
+  quantity: number;
+  unit: string;
+  delivery_address: string;
+  notes?: string;
+  created_at: string;
+  status: 'PENDING' | 'ARRIVED' | 'CANCELLED';
+}
+
 export interface InventoryItem {
   id: string;
   name: string;
@@ -44,6 +56,7 @@ export interface InventoryItem {
   min_threshold: number;
   notes?: string;
   is_low_stock?: boolean;
+  pending_orders?: PendingOrder[];
 }
 
 export interface HarvestItem {
@@ -503,6 +516,40 @@ export const api = {
       method: 'DELETE',
       headers: getAuthHeaders()
     });
+  },
+
+  async createInventoryOrder(itemId: string, payload: {
+    store_name: string;
+    store_phone: string;
+    quantity: number;
+    delivery_address: string;
+    notes?: string;
+  }): Promise<any> {
+    const res = await fetch(`${BASE_URL}/inventory/${itemId}/orders`, {
+      method: 'POST',
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error('Gagal mencatat pesanan');
+    return res.json();
+  },
+
+  async confirmInventoryOrder(itemId: string, orderId: string): Promise<any> {
+    const res = await fetch(`${BASE_URL}/inventory/${itemId}/orders/${orderId}/confirm`, {
+      method: 'POST',
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Gagal konfirmasi pesanan sampai');
+    return res.json();
+  },
+
+  async cancelInventoryOrder(itemId: string, orderId: string): Promise<any> {
+    const res = await fetch(`${BASE_URL}/inventory/${itemId}/orders/${orderId}/cancel`, {
+      method: 'POST',
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Gagal membatalkan pesanan');
+    return res.json();
   },
 
   // Lumbung Panen

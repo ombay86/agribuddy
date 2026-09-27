@@ -105,33 +105,97 @@
 
             <h3 class="font-extrabold text-base text-slate-800 mt-2">{{ item.name }}</h3>
             <p v-if="item.notes" class="text-xs text-slate-500 mt-1 leading-relaxed">{{ item.notes }}</p>
+
+            <!-- STIKER PESANAN DALAM PROSES (PENDING ORDER) -->
+            <div
+              v-for="order in (item.pending_orders || [])"
+              :key="order.id"
+              class="mt-3 p-3 rounded-2xl bg-amber-50/90 border-2 border-amber-300 shadow-2xs space-y-2 animate-in fade-in"
+            >
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-start gap-2">
+                  <span class="text-base leading-none mt-0.5">🚚</span>
+                  <div>
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                      <span class="text-[9px] font-black uppercase bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded-md">
+                        Sedang Dipesan
+                      </span>
+                      <span class="text-[10px] text-slate-500 font-bold">{{ order.created_at }}</span>
+                    </div>
+                    <p class="text-xs font-black text-slate-800 mt-1">
+                      Pesan: <span class="text-emerald-700 font-black">+{{ order.quantity }} {{ order.unit }}</span>
+                    </p>
+                    <p class="text-[10px] text-slate-600 font-medium">
+                      Toko: <span class="font-bold text-slate-800">{{ order.store_name }}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Tombol Ceklis (✓) & Silang (✕) -->
+                <div class="flex items-center gap-1.5 shrink-0 pt-0.5">
+                  <!-- Ceklis: Barang Sampai -->
+                  <button
+                    @click="handleConfirmArrival(item, order)"
+                    type="button"
+                    class="w-7 h-7 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center shadow-xs transition-all active:scale-90 cursor-pointer"
+                    title="Pesanan sudah sampai! Konfirmasi & tambah ke stok"
+                  >
+                    <Check :size="15" />
+                  </button>
+                  <!-- Silang: Batalkan Pesanan -->
+                  <button
+                    @click="handleCancelOrder(item, order)"
+                    type="button"
+                    class="w-7 h-7 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-700 flex items-center justify-center transition-all active:scale-90 cursor-pointer border border-rose-200"
+                    title="Batalkan pesanan"
+                  >
+                    <X :size="15" />
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <!-- Quick Adjust Controls -->
-          <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+          <!-- Quick Adjust & Order Controls -->
+          <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
             <button
               @click="deleteInventoryItem(item.id)"
               class="text-xs text-rose-500 hover:text-rose-700 font-semibold flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-rose-50 transition-all cursor-pointer"
+              title="Hapus barang dari gudang"
             >
-              <Trash2 :size="14" /> Hapus
+              <Trash2 :size="14" />
             </button>
 
             <div class="flex items-center gap-2">
+              <!-- Tombol Pesan via WA -->
               <button
-                @click="adjustStock(item.id, -1)"
-                class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-black text-base flex items-center justify-center active:scale-95 transition-all cursor-pointer"
-                title="Kurang 1"
+                @click="openOrderModal(item)"
+                type="button"
+                class="px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-xs flex items-center gap-1 transition-all active:scale-95 shadow-2xs cursor-pointer"
+                title="Pesan restock otomatis via WhatsApp"
               >
-                -
+                <MessageCircle :size="13" class="text-emerald-600" />
+                <span>Pesan WA</span>
               </button>
-              <span class="text-xs font-bold text-slate-500 px-1">Atur</span>
-              <button
-                @click="adjustStock(item.id, 1)"
-                class="w-8 h-8 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-base flex items-center justify-center active:scale-95 transition-all shadow-xs cursor-pointer"
-                title="Tambah 1"
-              >
-                +
-              </button>
+
+              <!-- Tombol - / + Manual -->
+              <div class="flex items-center gap-1 bg-slate-100 p-0.5 rounded-xl border border-slate-200/80">
+                <button
+                  @click="adjustStock(item.id, -1)"
+                  class="w-7 h-7 rounded-lg bg-white hover:bg-slate-200 text-slate-800 font-black text-sm flex items-center justify-center active:scale-95 transition-all cursor-pointer shadow-2xs"
+                  title="Kurang 1"
+                >
+                  -
+                </button>
+                <span class="text-[10px] font-bold text-slate-500 px-1 select-none">Atur</span>
+                <button
+                  @click="adjustStock(item.id, 1)"
+                  class="w-7 h-7 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm flex items-center justify-center active:scale-95 transition-all shadow-2xs cursor-pointer"
+                  title="Tambah 1"
+                >
+                  +
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -373,17 +437,154 @@
         <div class="pt-2 flex gap-2">
           <button
             @click="showAddHarvestModal = false"
-            class="w-1/2 py-2.5 rounded-xl font-bold text-xs bg-slate-100 hover:bg-slate-200 text-slate-600"
+            class="w-1/2 py-2.5 rounded-xl font-bold text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 cursor-pointer"
           >
             Batal
           </button>
           <button
             @click="saveNewHarvest"
-            class="w-1/2 py-2.5 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
+            class="w-1/2 py-2.5 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm cursor-pointer"
           >
             Simpan Panen
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- MODAL: PESAN RESTOCK VIA WHATSAPP -->
+    <div
+      v-if="showOrderModal && selectedOrderItem"
+      class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-in fade-in"
+    >
+      <div class="bg-white w-full max-w-md rounded-3xl overflow-hidden shadow-2xl border border-slate-100 flex flex-col">
+        <!-- Header -->
+        <div class="px-5 py-4 bg-gradient-to-r from-emerald-800 to-emerald-950 text-white flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-xl bg-emerald-500/30 text-emerald-200 flex items-center justify-center font-bold">
+              <MessageCircle :size="18" />
+            </div>
+            <div>
+              <h3 class="text-sm font-black tracking-tight">Pesan Restock via WhatsApp</h3>
+              <p class="text-[10px] text-emerald-200 font-medium">Kirim pesan otomatis & pasang stiker proses</p>
+            </div>
+          </div>
+          <button
+            @click="showOrderModal = false"
+            class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all cursor-pointer"
+          >
+            <X :size="15" />
+          </button>
+        </div>
+
+        <form @submit.prevent="submitOrder" class="p-5 space-y-4 max-h-[85vh] overflow-y-auto">
+          <!-- Info Produk yang Dipesan -->
+          <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between">
+            <div>
+              <span class="text-[9px] font-black uppercase text-slate-400 tracking-wider">Produk / Saprotan</span>
+              <h4 class="text-sm font-black text-slate-800">{{ selectedOrderItem.name }}</h4>
+            </div>
+            <div class="text-right">
+              <span class="text-[9px] font-black uppercase text-slate-400 tracking-wider">Stok Saat Ini</span>
+              <p class="text-xs font-black text-slate-700">{{ selectedOrderItem.quantity }} {{ selectedOrderItem.unit }}</p>
+            </div>
+          </div>
+
+          <!-- Counter Pemesanan (+/-) -->
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1.5 flex items-center justify-between">
+              <span>Jumlah yang Ingin Dipesan</span>
+              <span class="text-[10px] text-emerald-600 font-bold">Klik tombol + untuk menambah</span>
+            </label>
+            <div class="flex items-center justify-center gap-4 p-3 bg-emerald-50/50 border border-emerald-200 rounded-2xl">
+              <button
+                type="button"
+                @click="orderForm.quantity = Math.max(1, orderForm.quantity - 1)"
+                class="w-11 h-11 rounded-xl bg-white hover:bg-slate-100 text-slate-800 font-black text-xl flex items-center justify-center active:scale-95 transition-all shadow-xs cursor-pointer border border-slate-200"
+                title="Kurangi 1"
+              >
+                -
+              </button>
+              <div class="text-center px-4">
+                <span class="text-3xl font-black text-emerald-900 leading-none">
+                  {{ orderForm.quantity }}
+                </span>
+                <span class="text-xs font-bold text-emerald-700 block mt-0.5">
+                  {{ selectedOrderItem.unit }}
+                </span>
+              </div>
+              <button
+                type="button"
+                @click="orderForm.quantity++"
+                class="w-11 h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xl flex items-center justify-center active:scale-95 transition-all shadow-md cursor-pointer"
+                title="Tambah 1"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <!-- Pilih Kios / Toko Tujuan -->
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1">Pilih Kios / Toko Saprotan Tujuan</label>
+            <select
+              v-model="orderForm.selectedStoreIndex"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500 bg-white cursor-pointer"
+            >
+              <option v-for="(s, idx) in storeList" :key="idx" :value="idx">
+                {{ s.name }} (WA: {{ s.phone }})
+              </option>
+            </select>
+          </div>
+
+          <!-- Alamat Pengiriman -->
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1">Alamat Tujuan Pengiriman</label>
+            <input
+              v-model="orderForm.delivery_address"
+              type="text"
+              required
+              placeholder="Contoh: Desa Sukamaju, Jawa Timur"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <!-- Catatan Tambahan -->
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1">Catatan Tambahan (Opsional)</label>
+            <input
+              v-model="orderForm.notes"
+              type="text"
+              placeholder="Contoh: Tolong kirim pagi ini sebelum jam 11"
+              class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <!-- Pratinjau Pesan WA Otomatis -->
+          <div>
+            <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Pratinjau Pesan WhatsApp Otomatis</label>
+            <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl text-[11px] leading-relaxed text-slate-800 space-y-1">
+              <p class="font-black text-emerald-800">💬 Pesan yang Terkirim ke Kios:</p>
+              <p class="whitespace-pre-line italic text-slate-700">{{ waPreviewText }}</p>
+            </div>
+          </div>
+
+          <!-- Tombol Kirim WA & Pasang Stiker -->
+          <div class="flex items-center gap-2 pt-2">
+            <button
+              type="button"
+              @click="showOrderModal = false"
+              class="w-1/3 py-2.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-600 hover:bg-slate-100 cursor-pointer"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              class="w-2/3 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer"
+            >
+              <MessageCircle :size="16" /> Kirim WA & Pasang Stiker
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -392,12 +593,144 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { api, InventoryItem, HarvestItem, MarketPrice } from '@/services/api';
+import { useUserState } from '@/services/userState';
 import { 
   Package, Warehouse, Plus, AlertTriangle, 
-  Trash2, X, TrendingUp, ArrowUpRight, Calendar 
+  Trash2, X, TrendingUp, ArrowUpRight, Calendar,
+  MessageCircle, Check
 } from 'lucide-vue-next';
 
+const { currentPersona } = useUserState();
 const activeTab = ref<'stok' | 'lumbung'>('stok');
+
+// Daftar Kios / Toko Saprotan Mitra Ekosistem
+const storeList = [
+  {
+    name: 'Ibu Ratna (Kios Saprotan & KPL Resmi Sukamaju)',
+    owner: 'Ibu Ratna',
+    phone: '085712345678',
+    location: 'Pasar Tradisional Sukamaju Kios B-04'
+  },
+  {
+    name: 'Kios Tani Subur Makmur',
+    owner: 'Ibu Ratna / Tim Toko',
+    phone: '085712345678',
+    location: 'Pasar Tradisional Sukamaju'
+  },
+  {
+    name: 'Toko Perlengkapan Tani Mas Bambang',
+    owner: 'Mas Bambang',
+    phone: '081298765432',
+    location: 'Desa Sukamaju Krajan'
+  },
+  {
+    name: 'KUD Makmur Sejahtera Sukamaju',
+    owner: 'Admin KUD',
+    phone: '081234567890',
+    location: 'Kantor Balai Desa Sukamaju'
+  }
+];
+
+// State Pemesanan Restock via WA
+const showOrderModal = ref(false);
+const selectedOrderItem = ref<InventoryItem | null>(null);
+const orderForm = ref({
+  quantity: 6,
+  selectedStoreIndex: 0,
+  delivery_address: 'Desa Sukamaju, Jawa Timur',
+  notes: ''
+});
+
+const openOrderModal = (item: InventoryItem) => {
+  selectedOrderItem.value = item;
+  orderForm.value.quantity = 6; // Nilai default 6 sak / unit
+  orderForm.value.selectedStoreIndex = 0;
+  orderForm.value.delivery_address = currentPersona.value.location || 'Desa Sukamaju, Jawa Timur';
+  orderForm.value.notes = '';
+  showOrderModal.value = true;
+};
+
+const waPreviewText = computed(() => {
+  if (!selectedOrderItem.value) return '';
+  const store = storeList[orderForm.value.selectedStoreIndex] || storeList[0];
+  const buyerName = currentPersona.value.name || 'Pak Joko';
+  const itemName = selectedOrderItem.value.name;
+  const qty = orderForm.value.quantity;
+  const unit = selectedOrderItem.value.unit;
+  const address = orderForm.value.delivery_address || 'Desa Sukamaju';
+  const notesText = orderForm.value.notes ? `\n📝 Catatan: ${orderForm.value.notes}` : '';
+
+  return `Halo ${store.owner}, saya ${buyerName} dari AgriBuddy ingin memesan:\n` +
+    `📦 ${qty} ${unit} ${itemName}\n` +
+    `📍 Mohon untuk dikirimkan ke alamat: ${address}${notesText}\n\n` +
+    `Mohon info ketersediaan barang dan total biayanya. Terima kasih! 🙏`;
+});
+
+const submitOrder = async () => {
+  if (!selectedOrderItem.value) return;
+  const store = storeList[orderForm.value.selectedStoreIndex] || storeList[0];
+  const item = selectedOrderItem.value;
+
+  try {
+    const res = await api.createInventoryOrder(item.id, {
+      store_name: store.name,
+      store_phone: store.phone,
+      quantity: orderForm.value.quantity,
+      delivery_address: orderForm.value.delivery_address,
+      notes: orderForm.value.notes
+    });
+
+    // Update item di inventaris lokal agar stiker langsung muncul
+    const idx = inventory.value.findIndex(i => i.id === item.id);
+    if (idx !== -1) {
+      inventory.value[idx] = res.item;
+    }
+
+    // Buka WhatsApp
+    const phone = store.phone.replace(/\D/g, '');
+    const cleanPhone = phone.startsWith('0') ? '62' + phone.substring(1) : phone;
+    const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waPreviewText.value)}`;
+    window.open(waUrl, '_blank');
+
+    showOrderModal.value = false;
+  } catch (err: any) {
+    alert(err.message || 'Gagal mencatat pesanan');
+  }
+};
+
+const handleConfirmArrival = async (item: InventoryItem, order: any) => {
+  const confirmed = confirm(
+    `Konfirmasi bahwa pesanan ${order.quantity} ${order.unit} dari ${order.store_name} sudah sampai?\n\n` +
+    `Stok ${item.name} akan otomatis bertambah +${order.quantity} ${order.unit}.`
+  );
+  if (!confirmed) return;
+
+  try {
+    const res = await api.confirmInventoryOrder(item.id, order.id);
+    const idx = inventory.value.findIndex(i => i.id === item.id);
+    if (idx !== -1) {
+      inventory.value[idx] = res.item;
+    }
+    alert(res.message || 'Stok berhasil ditambahkan!');
+  } catch (err: any) {
+    alert(err.message || 'Gagal mengonfirmasi pesanan');
+  }
+};
+
+const handleCancelOrder = async (item: InventoryItem, order: any) => {
+  const confirmed = confirm(`Batalkan pesanan ${order.quantity} ${order.unit} dari ${order.store_name}?`);
+  if (!confirmed) return;
+
+  try {
+    const res = await api.cancelInventoryOrder(item.id, order.id);
+    const idx = inventory.value.findIndex(i => i.id === item.id);
+    if (idx !== -1) {
+      inventory.value[idx] = res.item;
+    }
+  } catch (err: any) {
+    alert(err.message || 'Gagal membatalkan pesanan');
+  }
+};
 
 // Inventaris Saprotan
 const inventory = ref<InventoryItem[]>([]);
