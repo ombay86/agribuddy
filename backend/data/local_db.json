@@ -763,7 +763,7 @@
       "coordinates_label": "-7.2504, 112.7512 (Desa Sukamaju Krajan)"
     },
     {
-      "plan_id": "plan_muj7bp70",
+      "plan_id": "plan_muj7sdm6",
       "user_id": "usr_petani",
       "land_size_ha": 1,
       "commodity": "Padi Sawah Inpari 32",
@@ -1044,7 +1044,7 @@
       ],
       "id": "far_3d4b8a3b",
       "created_at": "2026-09-23T15:21:32.822Z",
-      "updated_at": "2026-09-27T02:30:40.718Z"
+      "updated_at": "2026-09-27T02:43:38.864Z"
     }
   ],
   "ecosystem_services": [
@@ -1483,6 +1483,13 @@
           "role": "Penggarap Lapangan",
           "share_percentage": 40,
           "phone": "087811223344"
+        },
+        {
+          "id": "collab_4cdf3f",
+          "name": "Bu Mitro",
+          "role": "Investor",
+          "share_percentage": 25,
+          "phone": ""
         }
       ],
       "capital_expenses": [
@@ -1498,7 +1505,7 @@
         }
       ],
       "created_at": "2026-09-21T09:38:35.919571",
-      "updated_at": "2026-09-21T09:38:35.963388",
+      "updated_at": "2026-09-27T02:34:41.330Z",
       "planting_date": "2026-07-14",
       "target_harvest_date": "2026-11-06"
     }

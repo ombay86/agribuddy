@@ -784,208 +784,367 @@
           </div>
         </div>
 
-        <!-- SELURUH 5 FASE BUDIDAYA (DUAL CONTROL: PROSES DI KIRI, MODAL DI KANAN) -->
-        <div class="space-y-4">
-          <div class="flex items-center justify-between px-1">
-            <div>
-              <h3 class="text-sm font-black text-slate-800 flex items-center gap-2">
-                <CalendarCheck :size="16" class="text-emerald-600" />
-                Lembar Kendali 5 Fase Budidaya Lapangan
-              </h3>
-              <p class="text-[11px] text-slate-500">Kendalikan aksi lapangan harian dan realisasi pengeluaran modal di setiap tahap</p>
-            </div>
-            <span class="text-xs font-black text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-              {{ progressPercentage }}% Tuntas
-            </span>
+        <!-- TAB SWITCHER: FASE & KAS -->
+        <div class="bg-white border border-slate-200/90 rounded-3xl shadow-xs overflow-hidden">
+
+          <!-- Tab Pills -->
+          <div class="flex border-b border-slate-100 bg-slate-50/60">
+            <button
+              @click="leftPanelTab = 'fase'"
+              type="button"
+              class="flex-1 py-3 px-4 text-xs font-black flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+              :class="leftPanelTab === 'fase'
+                ? 'text-emerald-700 border-b-2 border-emerald-500 bg-white'
+                : 'text-slate-500 hover:text-slate-700'"
+            >
+              <CalendarCheck :size="13" /> Fase Budidaya
+            </button>
+            <button
+              @click="leftPanelTab = 'kas'"
+              type="button"
+              class="flex-1 py-3 px-4 text-xs font-black flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+              :class="leftPanelTab === 'kas'
+                ? 'text-emerald-700 border-b-2 border-emerald-500 bg-white'
+                : 'text-slate-500 hover:text-slate-700'"
+            >
+              <Receipt :size="13" /> Arus Kas
+            </button>
           </div>
 
-          <!-- Loop 5 Phases -->
-          <div
-            v-for="phase in (activeFarmPlan?.timeline_phases || plan?.timeline_phases || [])"
-            :key="phase.step_no"
-            class="bg-white border rounded-3xl shadow-xs transition-all overflow-hidden"
-            :class="phase.status === 'SELESAI' 
-              ? 'border-emerald-300 bg-emerald-50/15' 
-              : phase.status === 'SEDANG_BERJALAN' 
-                ? 'border-amber-300 ring-2 ring-amber-100 shadow-sm' 
-                : 'border-slate-200'"
-          >
-            <!-- Phase Header (always visible, acts as toggle) -->
-            <button
-              @click="togglePhaseExpand(phase.step_no)"
-              type="button"
-              class="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-5 text-left cursor-pointer hover:bg-slate-50/60 transition-colors"
+          <!-- ========== TAB: FASE BUDIDAYA ========== -->
+          <div v-if="leftPanelTab === 'fase'" class="p-5 space-y-4">
+            <div class="flex items-center justify-between px-1">
+              <div>
+                <h3 class="text-sm font-black text-slate-800 flex items-center gap-2">
+                  <CalendarCheck :size="16" class="text-emerald-600" />
+                  Lembar Kendali 5 Fase Budidaya Lapangan
+                </h3>
+                <p class="text-[11px] text-slate-500">Kendalikan aksi lapangan harian dan realisasi pengeluaran modal di setiap tahap</p>
+              </div>
+              <span class="text-xs font-black text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                {{ progressPercentage }}% Tuntas
+              </span>
+            </div>
+
+            <!-- Loop 5 Phases -->
+            <div
+              v-for="phase in (activeFarmPlan?.timeline_phases || plan?.timeline_phases || [])"
+              :key="phase.step_no"
+              class="bg-white border rounded-3xl shadow-xs transition-all overflow-hidden"
+              :class="phase.status === 'SELESAI'
+                ? 'border-emerald-300 bg-emerald-50/15'
+                : phase.status === 'SEDANG_BERJALAN'
+                  ? 'border-amber-300 ring-2 ring-amber-100 shadow-sm'
+                  : 'border-slate-200'"
             >
-              <div class="flex items-center gap-3">
-                <span
-                  class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black shrink-0"
-                  :class="phase.status === 'SELESAI' 
-                    ? 'bg-emerald-600 text-white' 
-                    : phase.status === 'SEDANG_BERJALAN' 
-                      ? 'bg-amber-500 text-white animate-pulse' 
-                      : 'bg-slate-200 text-slate-600'"
-                >
-                  {{ phase.status === 'SELESAI' ? '✓' : phase.step_no }}
-                </span>
-                <div class="text-left">
-                  <h4 class="text-sm font-black text-slate-800">{{ phase.name }}</h4>
-                  <div class="text-[10px] font-bold text-slate-500 flex items-center gap-1.5 mt-0.5">
-                    <Clock :size="11" /> {{ phase.day_range }} • Durasi {{ phase.duration_days }} hari
-                  </div>
-                </div>
-              </div>
-
-              <div class="flex items-center gap-2.5 shrink-0">
-                <!-- Status Dropdown Selector -->
-                <div class="flex items-center gap-1.5" @click.stop>
-                  <select
-                    v-model="phase.status"
-                    @change="saveStepUpdate(phase)"
-                    class="text-xs font-black px-3 py-1.5 rounded-xl border focus:outline-none transition-all cursor-pointer"
-                    :class="phase.status === 'SELESAI' 
-                      ? 'bg-emerald-100 text-emerald-800 border-emerald-300' 
-                      : phase.status === 'SEDANG_BERJALAN' 
-                        ? 'bg-amber-100 text-amber-800 border-amber-300' 
-                        : 'bg-slate-100 text-slate-600 border-slate-200'"
+              <!-- Phase Header Toggle -->
+              <button
+                @click="togglePhaseExpand(phase.step_no)"
+                type="button"
+                class="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-5 text-left cursor-pointer hover:bg-slate-50/60 transition-colors"
+              >
+                <div class="flex items-center gap-3">
+                  <span
+                    class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black shrink-0"
+                    :class="phase.status === 'SELESAI'
+                      ? 'bg-emerald-600 text-white'
+                      : phase.status === 'SEDANG_BERJALAN'
+                        ? 'bg-amber-500 text-white animate-pulse'
+                        : 'bg-slate-200 text-slate-600'"
                   >
-                    <option value="BELUM">Belum Mulai</option>
-                    <option value="SEDANG_BERJALAN">Sedang Berjalan</option>
-                    <option value="SELESAI">Selesai ✓</option>
-                  </select>
-                </div>
-
-                <!-- Expand/Collapse Chevron -->
-                <div
-                  class="w-7 h-7 rounded-xl flex items-center justify-center transition-all shrink-0"
-                  :class="isPhaseExpanded(phase.step_no) 
-                    ? 'bg-emerald-100 text-emerald-700 rotate-180' 
-                    : 'bg-slate-100 text-slate-500'"
-                >
-                  <ChevronDown :size="15" />
-                </div>
-              </div>
-            </button>
-
-            <!-- Phase Body (collapsible) -->
-            <div v-if="isPhaseExpanded(phase.step_no)" class="px-5 pb-5 space-y-4 border-t border-slate-100">
-              <!-- DUAL CONTROL GRID: PROSES (KIRI) vs MODAL (KANAN) -->
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start pt-4">
-              
-                <!-- KOLOM KIRI: KONTROL PROSES & CHECKLIST -->
-                <div class="space-y-3 bg-slate-50/80 p-4 rounded-2xl border border-slate-100">
-                  <div class="flex items-center justify-between pb-1 border-b border-slate-200/60">
-                    <span class="text-xs font-black text-slate-700 flex items-center gap-1.5">
-                      <CheckSquare :size="14" class="text-emerald-600" /> Kontrol Proses Lapangan
-                    </span>
-                    <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-full">
-                      {{ getPhaseDoneTasksCount(phase.step_no) }} / {{ phase.tasks.length }} Selesai
-                    </span>
+                    {{ phase.status === 'SELESAI' ? '✓' : phase.step_no }}
+                  </span>
+                  <div class="text-left">
+                    <h4 class="text-sm font-black text-slate-800">{{ phase.name }}</h4>
+                    <div class="text-[10px] font-bold text-slate-500 flex items-center gap-1.5 mt-0.5">
+                      <Clock :size="11" /> {{ phase.day_range }} • Durasi {{ phase.duration_days }} hari
+                    </div>
                   </div>
+                </div>
 
-                  <!-- Checklist Items -->
-                  <div class="space-y-2">
-                    <div
-                      v-for="(task, tIdx) in phase.tasks"
-                      :key="tIdx"
-                      @click="togglePhaseTask(phase.step_no, tIdx)"
-                      class="p-2.5 rounded-xl border transition-all cursor-pointer flex items-start gap-2.5 select-none"
-                      :class="isPhaseTaskDone(phase.step_no, tIdx) 
-                        ? 'bg-emerald-50/80 border-emerald-200 text-slate-500 line-through' 
-                        : 'bg-white hover:border-emerald-300 border-slate-200 text-slate-800 shadow-2xs'"
+                <div class="flex items-center gap-2.5 shrink-0">
+                  <div class="flex items-center gap-1.5" @click.stop>
+                    <select
+                      v-model="phase.status"
+                      @change="saveStepUpdate(phase)"
+                      class="text-xs font-black px-3 py-1.5 rounded-xl border focus:outline-none transition-all cursor-pointer"
+                      :class="phase.status === 'SELESAI'
+                        ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                        : phase.status === 'SEDANG_BERJALAN'
+                          ? 'bg-amber-100 text-amber-800 border-amber-300'
+                          : 'bg-slate-100 text-slate-600 border-slate-200'"
                     >
-                      <div
-                        class="w-4 h-4 rounded-md border mt-0.5 flex items-center justify-center shrink-0 transition-colors"
-                        :class="isPhaseTaskDone(phase.step_no, tIdx) ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 bg-white'"
-                      >
-                        <Check v-if="isPhaseTaskDone(phase.step_no, tIdx)" :size="10" />
-                      </div>
-                      <span class="text-xs font-semibold leading-tight flex-1">{{ task }}</span>
-                    </div>
+                      <option value="BELUM">Belum Mulai</option>
+                      <option value="SEDANG_BERJALAN">Sedang Berjalan</option>
+                      <option value="SELESAI">Selesai ✓</option>
+                    </select>
                   </div>
-
-                  <!-- Tips Cerdas AI Agronomis -->
-                  <div class="bg-amber-50/80 border border-amber-200/70 rounded-xl p-2.5 text-[11px] text-amber-950 flex items-start gap-2 mt-2 leading-relaxed">
-                    <Sparkles :size="14" class="text-amber-600 shrink-0 mt-0.5" />
-                    <div>
-                      <strong class="font-extrabold text-amber-900">Tips AI: </strong>
-                      <span>{{ phase.ai_tips }}</span>
-                    </div>
+                  <div
+                    class="w-7 h-7 rounded-xl flex items-center justify-center transition-all shrink-0"
+                    :class="isPhaseExpanded(phase.step_no)
+                      ? 'bg-emerald-100 text-emerald-700 rotate-180'
+                      : 'bg-slate-100 text-slate-500'"
+                  >
+                    <ChevronDown :size="15" />
                   </div>
                 </div>
+              </button>
 
-                <!-- KOLOM KANAN: KONTROL MODAL & REALISASI KEUANGAN -->
-                <div class="space-y-3 bg-slate-50/80 p-4 rounded-2xl border border-slate-100">
-                  <div class="flex items-center justify-between pb-1 border-b border-slate-200/60">
-                    <span class="text-xs font-black text-slate-700 flex items-center gap-1.5">
-                      <Receipt :size="14" class="text-emerald-600" /> Kontrol Modal Fase Ini
-                    </span>
-                    <button
-                      @click="openAddExpenseModal(getPhaseCategory(phase.step_no), `Biaya ${phase.name}`)"
-                      class="text-[10px] font-black text-emerald-800 bg-emerald-100 hover:bg-emerald-200 px-2.5 py-0.5 rounded-full transition-all flex items-center gap-1 cursor-pointer"
-                    >
-                      <PlusCircle :size="11" /> Catat Biaya
-                    </button>
-                  </div>
+              <!-- Phase Body -->
+              <div v-if="isPhaseExpanded(phase.step_no)" class="px-5 pb-5 space-y-4 border-t border-slate-100">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start pt-4">
 
-                  <!-- Plafon vs Realisasi Aktual -->
-                  <div class="grid grid-cols-2 gap-2 text-xs">
-                    <div class="p-2.5 rounded-xl bg-white border border-slate-200">
-                      <span class="text-[9px] font-bold text-slate-400 uppercase block">Plafon RAB AI</span>
-                      <span class="font-black text-slate-800 text-sm">Rp {{ phase.allocated_budget.toLocaleString('id-ID') }}</span>
+                  <!-- KOLOM KIRI: KONTROL PROSES -->
+                  <div class="space-y-3 bg-slate-50/80 p-4 rounded-2xl border border-slate-100">
+                    <div class="flex items-center justify-between pb-1 border-b border-slate-200/60">
+                      <span class="text-xs font-black text-slate-700 flex items-center gap-1.5">
+                        <CheckSquare :size="14" class="text-emerald-600" /> Kontrol Proses Lapangan
+                      </span>
+                      <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-full">
+                        {{ getPhaseDoneTasksCount(phase.step_no) }} / {{ phase.tasks.length }} Selesai
+                      </span>
                     </div>
-                    <div class="p-2.5 rounded-xl bg-white border border-slate-200">
-                      <span class="text-[9px] font-bold text-slate-400 uppercase block">Realisasi Aktual</span>
-                      <span class="font-black text-emerald-700 text-sm">Rp {{ getActualCostForPhase(phase).toLocaleString('id-ID') }}</span>
-                    </div>
-                  </div>
-
-                  <!-- Transaksi Riil Tercatat untuk Fase Ini -->
-                  <div class="space-y-1.5 pt-1">
-                    <span class="text-[10px] font-extrabold uppercase text-slate-400 block">Riwayat Transaksi Fase:</span>
-                    <div v-if="getExpensesForPhase(phase.step_no).length > 0" class="space-y-1 max-h-32 overflow-y-auto pr-1">
+                    <div class="space-y-2">
                       <div
-                        v-for="exp in getExpensesForPhase(phase.step_no)"
-                        :key="exp.id"
-                        class="flex items-center justify-between text-[11px] p-2 rounded-xl bg-white border border-slate-100"
+                        v-for="(task, tIdx) in phase.tasks"
+                        :key="tIdx"
+                        @click="togglePhaseTask(phase.step_no, tIdx)"
+                        class="p-2.5 rounded-xl border transition-all cursor-pointer flex items-start gap-2.5 select-none"
+                        :class="isPhaseTaskDone(phase.step_no, tIdx)
+                          ? 'bg-emerald-50/80 border-emerald-200 text-slate-500 line-through'
+                          : 'bg-white hover:border-emerald-300 border-slate-200 text-slate-800 shadow-2xs'"
                       >
-                        <div class="truncate pr-2">
-                          <p class="font-bold text-slate-800 truncate">{{ exp.item_name }}</p>
-                          <p class="text-[9px] text-slate-400">{{ exp.date }}</p>
+                        <div
+                          class="w-4 h-4 rounded-md border mt-0.5 flex items-center justify-center shrink-0 transition-colors"
+                          :class="isPhaseTaskDone(phase.step_no, tIdx) ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 bg-white'"
+                        >
+                          <Check v-if="isPhaseTaskDone(phase.step_no, tIdx)" :size="10" />
                         </div>
-                        <span class="font-black text-slate-800 shrink-0">Rp {{ (exp.amount || 0).toLocaleString('id-ID') }}</span>
+                        <span class="text-xs font-semibold leading-tight flex-1">{{ task }}</span>
                       </div>
                     </div>
-                    <div v-else class="text-center py-2.5 bg-white rounded-xl border border-dashed border-slate-200 text-[10px] text-slate-400">
-                      Belum ada transaksi khusus fase ini.
+                    <div class="bg-amber-50/80 border border-amber-200/70 rounded-xl p-2.5 text-[11px] text-amber-950 flex items-start gap-2 mt-2 leading-relaxed">
+                      <Sparkles :size="14" class="text-amber-600 shrink-0 mt-0.5" />
+                      <div>
+                        <strong class="font-extrabold text-amber-900">Tips AI: </strong>
+                        <span>{{ phase.ai_tips }}</span>
+                      </div>
                     </div>
                   </div>
 
-                  <!-- Rekomendasi Jasa Ekosistem untuk Fase ini -->
-                  <div v-if="getPhasePartner(phase.step_no)" class="pt-1">
-                    <div class="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200/60 flex items-center justify-between text-xs">
-                      <div class="truncate pr-2">
-                        <span class="text-[9px] font-extrabold text-emerald-800 uppercase block">Mitra Terkait Fase:</span>
-                        <p class="font-black text-slate-800 text-[11px] truncate">{{ getPhasePartner(phase.step_no).name }}</p>
-                      </div>
+                  <!-- KOLOM KANAN: KONTROL MODAL -->
+                  <div class="space-y-3 bg-slate-50/80 p-4 rounded-2xl border border-slate-100">
+                    <div class="flex items-center justify-between pb-1 border-b border-slate-200/60">
+                      <span class="text-xs font-black text-slate-700 flex items-center gap-1.5">
+                        <Receipt :size="14" class="text-emerald-600" /> Kontrol Modal Fase Ini
+                      </span>
                       <button
-                        @click="openWhatsApp(getPhasePartner(phase.step_no).phone, getPhasePartner(phase.step_no).name)"
-                        class="text-[10px] font-black bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg shrink-0 flex items-center gap-1 active:scale-95 transition-all cursor-pointer"
+                        @click="openAddExpenseModal(getPhaseCategory(phase.step_no), `Biaya ${phase.name}`)"
+                        class="text-[10px] font-black text-emerald-800 bg-emerald-100 hover:bg-emerald-200 px-2.5 py-0.5 rounded-full transition-all flex items-center gap-1 cursor-pointer"
                       >
-                        <Phone :size="11" /> Hubungi
+                        <PlusCircle :size="11" /> Catat Biaya
                       </button>
                     </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                      <div class="p-2.5 rounded-xl bg-white border border-slate-200">
+                        <span class="text-[9px] font-bold text-slate-400 uppercase block">Plafon RAB AI</span>
+                        <span class="font-black text-slate-800 text-sm">Rp {{ phase.allocated_budget.toLocaleString('id-ID') }}</span>
+                      </div>
+                      <div class="p-2.5 rounded-xl bg-white border border-slate-200">
+                        <span class="text-[9px] font-bold text-slate-400 uppercase block">Realisasi Aktual</span>
+                        <span class="font-black text-emerald-700 text-sm">Rp {{ getActualCostForPhase(phase).toLocaleString('id-ID') }}</span>
+                      </div>
+                    </div>
+                    <div class="space-y-1.5 pt-1">
+                      <span class="text-[10px] font-extrabold uppercase text-slate-400 block">Riwayat Transaksi Fase:</span>
+                      <div v-if="getExpensesForPhase(phase.step_no).length > 0" class="space-y-1 max-h-32 overflow-y-auto pr-1">
+                        <div
+                          v-for="exp in getExpensesForPhase(phase.step_no)"
+                          :key="exp.id"
+                          class="flex items-center justify-between text-[11px] p-2 rounded-xl bg-white border border-slate-100"
+                        >
+                          <div class="truncate pr-2">
+                            <p class="font-bold text-slate-800 truncate">{{ exp.item_name }}</p>
+                            <p class="text-[9px] text-slate-400">{{ exp.date }}</p>
+                          </div>
+                          <span class="font-black text-slate-800 shrink-0">Rp {{ (exp.amount || 0).toLocaleString('id-ID') }}</span>
+                        </div>
+                      </div>
+                      <div v-else class="text-center py-2.5 bg-white rounded-xl border border-dashed border-slate-200 text-[10px] text-slate-400">
+                        Belum ada transaksi khusus fase ini.
+                      </div>
+                    </div>
+                    <div v-if="getPhasePartner(phase.step_no)" class="pt-1">
+                      <div class="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200/60 flex items-center justify-between text-xs">
+                        <div class="truncate pr-2">
+                          <span class="text-[9px] font-extrabold text-emerald-800 uppercase block">Mitra Terkait Fase:</span>
+                          <p class="font-black text-slate-800 text-[11px] truncate">{{ getPhasePartner(phase.step_no).name }}</p>
+                        </div>
+                        <button
+                          @click="openWhatsApp(getPhasePartner(phase.step_no).phone, getPhasePartner(phase.step_no).name)"
+                          class="text-[10px] font-black bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg shrink-0 flex items-center gap-1 active:scale-95 transition-all cursor-pointer"
+                        >
+                          <Phone :size="11" /> Hubungi
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
                 </div>
-
               </div>
             </div>
+          </div>
+
+          <!-- ========== TAB: ARUS KAS ========== -->
+          <div v-else-if="leftPanelTab === 'kas'" class="p-5 space-y-5">
+
+            <!-- Header & CTA -->
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-sm font-black text-slate-800 flex items-center gap-2">
+                  <Receipt :size="16" class="text-emerald-600" /> Monitoring Arus Kas Modal
+                </h3>
+                <p class="text-[11px] text-slate-500">Pantau sumber modal, realisasi, dan sisa anggaran per kategori fase</p>
+              </div>
+              <button
+                @click="openAddExpenseModal()"
+                class="text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-xl active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+              >
+                <PlusCircle :size="13" /> Catat Pengeluaran
+              </button>
+            </div>
+
+            <!-- Ringkasan Sumber & Penggunaan Modal -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="bg-slate-50 rounded-2xl p-3.5 border border-slate-200 space-y-1">
+                <span class="text-[10px] font-black text-slate-500 uppercase tracking-wider block">Plafon RAB (AI)</span>
+                <span class="text-base font-black text-slate-800 block">Rp {{ totalBudgetFormatted }}</span>
+                <span class="text-[10px] text-slate-400 font-semibold">{{ activeFarm?.land_size_ha }} Ha · {{ activeFarm?.commodity }}</span>
+              </div>
+              <div class="bg-emerald-50 rounded-2xl p-3.5 border border-emerald-200 space-y-1">
+                <span class="text-[10px] font-black text-emerald-700 uppercase tracking-wider block">Modal Terpakai</span>
+                <span class="text-base font-black text-emerald-800 block">Rp {{ totalSpentFormatted }}</span>
+                <span class="text-[10px] text-emerald-600 font-semibold">{{ activeFarm?.capital_expenses?.length || 0 }} transaksi tercatat</span>
+              </div>
+              <div class="rounded-2xl p-3.5 border space-y-1"
+                :class="budgetSpentPercent > 90 ? 'bg-amber-50 border-amber-200' : 'bg-teal-50 border-teal-200'">
+                <span class="text-[10px] font-black uppercase tracking-wider block"
+                  :class="budgetSpentPercent > 90 ? 'text-amber-700' : 'text-teal-700'">Sisa Modal</span>
+                <span class="text-base font-black block"
+                  :class="budgetSpentPercent > 90 ? 'text-amber-800' : 'text-teal-800'">Rp {{ remainingBudgetFormatted }}</span>
+                <span class="text-[10px] font-semibold"
+                  :class="budgetSpentPercent > 90 ? 'text-amber-600' : 'text-teal-600'">{{ budgetSpentPercent }}% serapan anggaran</span>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="space-y-1.5">
+              <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden border border-slate-200">
+                <div
+                  class="h-full rounded-full transition-all duration-700"
+                  :class="budgetSpentPercent > 90 ? 'bg-amber-400' : 'bg-emerald-500'"
+                  :style="{ width: `${budgetSpentPercent}%` }"
+                ></div>
+              </div>
+              <div class="flex justify-between text-[10px] font-semibold text-slate-500">
+                <span>Status: <strong :class="budgetSpentPercent > 90 ? 'text-amber-600' : 'text-emerald-600'">{{ budgetStatusLabel }}</strong></span>
+                <span>{{ completedPhasesCount }} dari 5 Fase Selesai</span>
+              </div>
+            </div>
+
+            <!-- Realisasi per Fase (Budget vs Aktual) -->
+            <div class="space-y-2">
+              <h4 class="text-xs font-black text-slate-700">Realisasi Modal per Fase</h4>
+              <div
+                v-for="phase in (activeFarmPlan?.timeline_phases || plan?.timeline_phases || [])"
+                :key="'kas-' + phase.step_no"
+                class="bg-white border border-slate-200 rounded-2xl p-3.5 space-y-2"
+              >
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="w-6 h-6 rounded-lg text-[10px] font-black flex items-center justify-center shrink-0"
+                      :class="phase.status === 'SELESAI' ? 'bg-emerald-600 text-white' : phase.status === 'SEDANG_BERJALAN' ? 'bg-amber-500 text-white' : 'bg-slate-200 text-slate-600'"
+                    >
+                      {{ phase.status === 'SELESAI' ? '✓' : phase.step_no }}
+                    </span>
+                    <span class="text-xs font-black text-slate-800">{{ phase.name }}</span>
+                  </div>
+                  <span class="text-[10px] font-black px-2 py-0.5 rounded-full"
+                    :class="phase.status === 'SELESAI' ? 'bg-emerald-100 text-emerald-800' : phase.status === 'SEDANG_BERJALAN' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600'"
+                  >
+                    {{ phase.status === 'SELESAI' ? 'Selesai' : phase.status === 'SEDANG_BERJALAN' ? 'Berjalan' : 'Belum' }}
+                  </span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <span class="text-[9px] text-slate-400 font-bold block">Plafon RAB</span>
+                    <span class="font-black text-slate-700">Rp {{ phase.allocated_budget.toLocaleString('id-ID') }}</span>
+                  </div>
+                  <div>
+                    <span class="text-[9px] text-slate-400 font-bold block">Realisasi</span>
+                    <span class="font-black" :class="getActualCostForPhase(phase) > phase.allocated_budget ? 'text-rose-600' : 'text-emerald-700'">
+                      Rp {{ getActualCostForPhase(phase).toLocaleString('id-ID') }}
+                    </span>
+                  </div>
+                </div>
+                <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                  <div
+                    class="h-full rounded-full transition-all"
+                    :class="getActualCostForPhase(phase) > phase.allocated_budget ? 'bg-rose-400' : 'bg-emerald-400'"
+                    :style="{ width: `${Math.min(100, phase.allocated_budget > 0 ? (getActualCostForPhase(phase) / phase.allocated_budget) * 100 : 0)}%` }"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Riwayat Semua Transaksi -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <h4 class="text-xs font-black text-slate-700">Riwayat Transaksi Lengkap</h4>
+                <span class="text-[10px] text-slate-400">{{ activeFarm?.capital_expenses?.length || 0 }} entri</span>
+              </div>
+
+              <div v-if="!activeFarm?.capital_expenses || activeFarm.capital_expenses.length === 0"
+                class="text-center py-8 bg-slate-50 rounded-2xl border border-dashed border-slate-200 space-y-1">
+                <span class="text-2xl block">📒</span>
+                <p class="text-xs font-bold text-slate-700">Belum Ada Transaksi</p>
+                <p class="text-[10px] text-slate-400">Catat pengeluaran lapangan menggunakan tombol di atas.</p>
+              </div>
+
+              <div v-else class="space-y-2">
+                <div
+                  v-for="exp in activeFarm.capital_expenses"
+                  :key="exp.id"
+                  class="bg-slate-50 border border-slate-200/80 rounded-2xl p-3 hover:border-emerald-300 transition-all"
+                >
+                  <div class="flex items-start justify-between gap-2">
+                    <div class="truncate">
+                      <div class="flex items-center gap-1.5 mb-1">
+                        <span class="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-md"
+                          :class="exp.source === 'MARKETPLACE' ? 'bg-indigo-100 text-indigo-800' : 'bg-slate-200 text-slate-700'"
+                        >
+                          {{ exp.source === 'MARKETPLACE' ? '🛒 Katalog' : '📝 Manual' }}
+                        </span>
+                        <span class="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md">{{ exp.category }}</span>
+                      </div>
+                      <h4 class="text-xs font-bold text-slate-800 truncate">{{ exp.item_name }}</h4>
+                    </div>
+                    <div class="text-right shrink-0">
+                      <span class="text-xs font-black text-emerald-700">Rp {{ (exp.amount || 0).toLocaleString('id-ID') }}</span>
+                      <span class="text-[9px] text-slate-400 block">{{ exp.date }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
       </div>
 
-      <!-- Right Column (4 cols): Multi-Lahan, Buku Modal Riwayat Lengkap, Kolaborator -->
+      <!-- Right Column (4 cols) -->
       <div class="lg:col-span-4 space-y-6">
         <!-- SELECTOR PETAK SAWAH (dropdown) -->
         <div class="bg-white border border-slate-200/90 rounded-3xl p-4 shadow-xs">
@@ -1001,128 +1160,49 @@
           </select>
         </div>
 
-
-        <!-- PANEL KEMITRAAN + BUKU KAS (Tabbed) -->
-        <div v-if="activeFarm" class="bg-white border border-slate-200/90 rounded-3xl shadow-xs overflow-hidden">
-
-          <!-- Tab Header -->
-          <div class="flex border-b border-slate-100">
+        <!-- PANEL KEMITRAAN -->
+        <div v-if="activeFarm" class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs space-y-3.5">
+          <div class="flex items-center justify-between pb-1 border-b border-slate-100">
+            <div>
+              <div class="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
+                <Users2 :size="12" /> Kemitraan Usahatani
+              </div>
+              <h3 class="text-xs font-black text-slate-800 mt-1">Pengelola Lahan</h3>
+            </div>
             <button
-              @click="rightPanelTab = 'kemitraan'"
-              type="button"
-              class="flex-1 py-3 px-4 text-xs font-black flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-              :class="rightPanelTab === 'kemitraan'
-                ? 'text-emerald-700 border-b-2 border-emerald-500 bg-emerald-50/60'
-                : 'text-slate-500 hover:bg-slate-50'"
+              @click="openManageCollabModal"
+              class="text-xs font-black text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-xl border border-emerald-200 active:scale-95 transition-all flex items-center gap-1 cursor-pointer"
             >
-              <Users2 :size="13" /> Kemitraan
-            </button>
-            <button
-              @click="rightPanelTab = 'bukukas'"
-              type="button"
-              class="flex-1 py-3 px-4 text-xs font-black flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-              :class="rightPanelTab === 'bukukas'
-                ? 'text-emerald-700 border-b-2 border-emerald-500 bg-emerald-50/60'
-                : 'text-slate-500 hover:bg-slate-50'"
-            >
-              <Receipt :size="13" /> Buku Kas
+              <UserPlus :size="12" /> Kelola
             </button>
           </div>
 
-          <!-- Tab Body -->
-          <div class="p-4 space-y-3">
+          <div v-if="!activeFarm.collaborators || activeFarm.collaborators.length === 0"
+            class="text-center py-6 bg-slate-50 rounded-2xl border border-dashed border-slate-200 space-y-1">
+            <span class="text-xl">🤝</span>
+            <p class="text-xs font-bold text-slate-700">Belum Ada Mitra Terdaftar</p>
+            <p class="text-[10px] text-slate-400">Tambahkan mitra melalui tombol Kelola.</p>
+          </div>
 
-            <!-- TAB: KEMITRAAN -->
-            <template v-if="rightPanelTab === 'kemitraan'">
-              <div class="flex items-center justify-between">
-                <div>
-                  <span class="text-[10px] font-black uppercase text-slate-400 block tracking-wider">Pengelola Lahan</span>
-                  <p class="text-xs font-bold text-slate-700 mt-0.5">{{ activeFarm.name }}</p>
+          <div v-else class="space-y-2 pt-1">
+            <div
+              v-for="(collab, cIdx) in activeFarm.collaborators"
+              :key="collab.id"
+              class="p-2.5 rounded-2xl border flex items-start justify-between gap-2"
+              :class="getCollabCardClass(cIdx)"
+            >
+              <div class="space-y-0.5">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full shrink-0" :class="getCollabColorDot(cIdx)"></span>
+                  <h4 class="text-xs font-black text-slate-800">{{ collab.name }}</h4>
                 </div>
-                <button
-                  @click="openManageCollabModal"
-                  class="text-xs font-black text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-xl border border-emerald-200 active:scale-95 transition-all flex items-center gap-1 cursor-pointer"
-                >
-                  <UserPlus :size="12" /> Kelola
-                </button>
+                <p class="text-[10px] font-semibold text-slate-500">{{ collab.role }}</p>
               </div>
-
-              <div v-if="!activeFarm.collaborators || activeFarm.collaborators.length === 0"
-                class="text-center py-6 bg-slate-50 rounded-2xl border border-dashed border-slate-200 space-y-1">
-                <span class="text-xl">🤝</span>
-                <p class="text-xs font-bold text-slate-700">Belum Ada Mitra Terdaftar</p>
-                <p class="text-[10px] text-slate-400">Tambahkan mitra atau penggarap lahan melalui tombol Kelola.</p>
+              <div class="text-right shrink-0">
+                <span class="text-xs font-black text-slate-800">{{ collab.share_percentage }}%</span>
+                <span class="text-[9px] text-slate-400 font-bold block">Bagi Hasil</span>
               </div>
-
-              <div v-else class="space-y-2">
-                <div
-                  v-for="(collab, cIdx) in activeFarm.collaborators"
-                  :key="collab.id"
-                  class="p-2.5 rounded-2xl border flex items-start justify-between gap-2"
-                  :class="getCollabCardClass(cIdx)"
-                >
-                  <div class="space-y-0.5">
-                    <div class="flex items-center gap-1.5">
-                      <span class="w-2.5 h-2.5 rounded-full shrink-0" :class="getCollabColorDot(cIdx)"></span>
-                      <h4 class="text-xs font-black text-slate-800">{{ collab.name }}</h4>
-                    </div>
-                    <p class="text-[10px] font-semibold text-slate-500">{{ collab.role }}</p>
-                  </div>
-                  <div class="text-right shrink-0">
-                    <span class="text-xs font-black text-slate-800">{{ collab.share_percentage }}%</span>
-                    <span class="text-[9px] text-slate-400 font-bold block">Bagi Hasil</span>
-                  </div>
-                </div>
-              </div>
-            </template>
-
-            <!-- TAB: BUKU KAS -->
-            <template v-else-if="rightPanelTab === 'bukukas'">
-              <div class="flex items-center justify-between">
-                <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
-                  Riwayat Modal: {{ activeFarm.name }}
-                </span>
-                <span class="text-[10px] font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
-                  {{ activeFarm.capital_expenses?.length || 0 }} transaksi
-                </span>
-              </div>
-
-              <div v-if="!activeFarm.capital_expenses || activeFarm.capital_expenses.length === 0"
-                class="text-center py-6 bg-slate-50 rounded-2xl border border-dashed border-slate-200 space-y-1">
-                <span class="text-2xl">📒</span>
-                <p class="text-xs font-bold text-slate-700">Belum Ada Transaksi Tercatat</p>
-                <p class="text-[10px] text-slate-400">Pengeluaran lapangan atau katalog akan tampil di sini.</p>
-              </div>
-
-              <div v-else class="space-y-2 max-h-72 overflow-y-auto pr-1">
-                <div
-                  v-for="exp in activeFarm.capital_expenses"
-                  :key="exp.id"
-                  class="bg-slate-50 border border-slate-200/80 rounded-2xl p-3 shadow-2xs space-y-1 hover:border-emerald-300 transition-all"
-                >
-                  <div class="flex items-start justify-between gap-2">
-                    <div class="truncate">
-                      <div class="flex items-center gap-1.5">
-                        <span class="text-[9px] font-extrabold uppercase px-1.5 rounded-md"
-                          :class="exp.source === 'MARKETPLACE' ? 'bg-indigo-100 text-indigo-800' : 'bg-slate-200 text-slate-700'"
-                        >
-                          {{ exp.source === 'MARKETPLACE' ? '🛒 Katalog' : '📝 Manual' }}
-                        </span>
-                        <span class="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1.5 rounded-md">
-                          {{ exp.category }}
-                        </span>
-                      </div>
-                      <h4 class="text-xs font-bold text-slate-800 mt-1 truncate">{{ exp.item_name }}</h4>
-                    </div>
-                    <div class="text-right shrink-0">
-                      <span class="text-xs font-black text-emerald-700">Rp {{ (exp.amount || 0).toLocaleString('id-ID') }}</span>
-                      <span class="text-[9px] text-slate-400 block">{{ exp.date }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </template>
-
+            </div>
           </div>
         </div>
 
@@ -1671,6 +1751,7 @@ const savePlanToActiveFarmland = async () => {
 const farmlands = ref<Farmland[]>([]);
 const activeFarmId = ref<string>('');
 const activeFarmPlan = ref<FarmPlan | null>(null);
+const leftPanelTab = ref<'fase' | 'kas'>('fase');
 const rightPanelTab = ref<'kemitraan' | 'bukukas'>('kemitraan');
 
 const draftFarmlands = computed(() => {
