@@ -2,33 +2,41 @@ import { getActiveUserId } from './userState';
 
 const BASE_URL = (import.meta as any).env?.VITE_API_URL || 'http://127.0.0.1:8000/api/v1';
 
-export const GEMINI_KEY_STORAGE = 'agribuddy_custom_gemini_api_key';
-
-export function getCustomGeminiApiKey(): string {
+export function getCustomGeminiApiKey(userId?: string): string {
   try {
-    return localStorage.getItem(GEMINI_KEY_STORAGE) || '';
+    const uid = userId || getActiveUserId();
+    if (!uid) return '';
+    return localStorage.getItem(`agribuddy_gemini_key_${uid}`) || '';
   } catch {
     return '';
   }
 }
 
-export function setCustomGeminiApiKey(key: string): void {
+export function setCustomGeminiApiKey(key: string, userId?: string): void {
   try {
+    const uid = userId || getActiveUserId();
+    if (!uid) return;
     const trimmed = key.trim();
     if (trimmed) {
-      localStorage.setItem(GEMINI_KEY_STORAGE, trimmed);
+      localStorage.setItem(`agribuddy_gemini_key_${uid}`, trimmed);
     } else {
-      localStorage.removeItem(GEMINI_KEY_STORAGE);
+      localStorage.removeItem(`agribuddy_gemini_key_${uid}`);
     }
+    // Hapus legacy global key jika ada agar tidak bocor antar pengguna
+    localStorage.removeItem('agribuddy_custom_gemini_api_key');
     window.dispatchEvent(new CustomEvent('agribuddy:gemini-key-updated'));
   } catch (e) {
     console.error('Failed to store Gemini API key:', e);
   }
 }
 
-export function clearCustomGeminiApiKey(): void {
+export function clearCustomGeminiApiKey(userId?: string): void {
   try {
-    localStorage.removeItem(GEMINI_KEY_STORAGE);
+    const uid = userId || getActiveUserId();
+    if (uid) {
+      localStorage.removeItem(`agribuddy_gemini_key_${uid}`);
+    }
+    localStorage.removeItem('agribuddy_custom_gemini_api_key');
     window.dispatchEvent(new CustomEvent('agribuddy:gemini-key-updated'));
   } catch (e) {
     console.error('Failed to clear Gemini API key:', e);
@@ -36,11 +44,12 @@ export function clearCustomGeminiApiKey(): void {
 }
 
 function getAuthHeaders(extra: Record<string, string> = {}): HeadersInit {
+  const activeUid = getActiveUserId();
   const headers: Record<string, string> = {
-    'X-User-Id': getActiveUserId(),
+    'X-User-Id': activeUid,
     ...extra
   };
-  const customKey = getCustomGeminiApiKey();
+  const customKey = getCustomGeminiApiKey(activeUid);
   if (customKey) {
     headers['X-Gemini-Api-Key'] = customKey;
   }

@@ -135,7 +135,7 @@
         <div class="flex items-center gap-2">
           <!-- Tombol Setting API Key Gemini -->
           <button
-            @click="isKeyModalOpen = true"
+            @click="openKeyModal"
             class="p-2 sm:px-3 sm:py-1.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-2xs"
             :class="hasCustomApiKey ? 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300' : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'"
             :title="hasCustomApiKey ? 'API Key Gemini Pribadi Aktif' : 'Atur API Key Gemini Pribadi'"
@@ -512,7 +512,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted, nextTick, computed, watch } from 'vue';
 import { useUserState } from '@/services/userState';
 import { 
   api, 
@@ -530,26 +530,41 @@ import {
 
 const { currentPersona, customAvatar } = useUserState();
 
-// State API Key Management (BYOK)
+// State API Key Management (BYOK) - Terisolasi ketat per profil pengguna
 const isKeyModalOpen = ref(false);
 const showApiKey = ref(false);
-const tempApiKey = ref(getCustomGeminiApiKey());
-const hasCustomApiKey = ref(Boolean(getCustomGeminiApiKey()));
+const tempApiKey = ref('');
+
+const hasCustomApiKey = computed(() => {
+  return Boolean(getCustomGeminiApiKey(currentPersona.value.id));
+});
+
+const openKeyModal = () => {
+  tempApiKey.value = getCustomGeminiApiKey(currentPersona.value.id);
+  showApiKey.value = false;
+  isKeyModalOpen.value = true;
+};
 
 const handleSaveKey = () => {
-  setCustomGeminiApiKey(tempApiKey.value);
-  hasCustomApiKey.value = Boolean(tempApiKey.value.trim());
+  setCustomGeminiApiKey(tempApiKey.value, currentPersona.value.id);
   isKeyModalOpen.value = false;
-  alert(tempApiKey.value.trim() ? '✅ API Key Gemini pribadi berhasil disimpan!' : 'ℹ️ Menggunakan default API Key server.');
+  alert(tempApiKey.value.trim() 
+    ? `✅ API Key Gemini pribadi berhasil disimpan khusus untuk akun ${currentPersona.value.name}!` 
+    : 'ℹ️ Menggunakan default API Key server.');
 };
 
 const handleClearKey = () => {
-  clearCustomGeminiApiKey();
+  clearCustomGeminiApiKey(currentPersona.value.id);
   tempApiKey.value = '';
-  hasCustomApiKey.value = false;
   isKeyModalOpen.value = false;
-  alert('🗑️ API Key pribadi telah dihapus. Sistem akan menggunakan default server.');
+  alert(`🗑️ API Key pribadi akun ${currentPersona.value.name} telah dihapus. Sistem akan menggunakan default server.`);
 };
+
+// Pantau perubahan akun agar sesi dan key langsung menyesuaikan
+watch(() => currentPersona.value.id, (newId) => {
+  tempApiKey.value = getCustomGeminiApiKey(newId);
+  loadSessions();
+});
 
 // State Riwayat Sesi Chat
 const isHistoryOpen = ref(false);

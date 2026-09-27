@@ -227,7 +227,10 @@ export const useUserState = () => {
 
   const logout = () => {
     isAuthenticated.value = false;
+    registeredUser.value = null;
     localStorage.setItem('agribuddy_auth', 'false');
+    localStorage.removeItem('agribuddy_registered_user');
+    localStorage.removeItem('agribuddy_custom_gemini_api_key');
   };
 
   return {
