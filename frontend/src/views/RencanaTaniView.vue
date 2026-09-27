@@ -62,10 +62,10 @@
           <button 
             @click="wizardStep = 1"
             type="button"
-            class="relative z-10 flex flex-col items-center gap-1.5 cursor-pointer group"
+            class="relative z-10 flex flex-col items-center gap-1 cursor-pointer group"
           >
             <div 
-              class="w-10 h-10 md:w-11 md:h-11 rounded-2xl flex items-center justify-center font-black text-xs md:text-sm transition-all shadow-sm"
+              class="w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center font-bold text-xs transition-all shadow-2xs"
               :class="wizardStep === 1 
                 ? 'bg-emerald-600 text-white ring-4 ring-emerald-100 scale-105' 
                 : wizardStep > 1 
@@ -73,10 +73,10 @@
                   : 'bg-white border-2 border-slate-300 text-slate-500'"
             >
               <span v-if="wizardStep > 1">✓</span>
-              <MapPin v-else :size="17" />
+              <MapPin v-else :size="15" />
             </div>
             <span 
-              class="text-[11px] md:text-xs font-black transition-colors"
+              class="text-[11px] font-bold transition-colors"
               :class="wizardStep >= 1 ? 'text-emerald-900' : 'text-slate-400'"
             >
               1. Lokasi & Lahan
@@ -88,11 +88,11 @@
             @click="plan ? wizardStep = 2 : null"
             :disabled="!plan"
             type="button"
-            class="relative z-10 flex flex-col items-center gap-1.5 transition-all"
+            class="relative z-10 flex flex-col items-center gap-1 transition-all"
             :class="plan ? 'cursor-pointer group' : 'cursor-not-allowed opacity-50'"
           >
             <div 
-              class="w-10 h-10 md:w-11 md:h-11 rounded-2xl flex items-center justify-center font-black text-xs md:text-sm transition-all shadow-sm"
+              class="w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center font-bold text-xs transition-all shadow-2xs"
               :class="wizardStep === 2 
                 ? 'bg-emerald-600 text-white ring-4 ring-emerald-100 scale-105' 
                 : wizardStep > 2 
@@ -100,10 +100,10 @@
                   : 'bg-white border-2 border-slate-300 text-slate-500'"
             >
               <span v-if="wizardStep > 2">✓</span>
-              <Coins v-else :size="17" />
+              <Coins v-else :size="15" />
             </div>
             <span 
-              class="text-[11px] md:text-xs font-black transition-colors"
+              class="text-[11px] font-bold transition-colors"
               :class="wizardStep >= 2 ? 'text-emerald-900' : 'text-slate-400'"
             >
               2. Rincian RAB AI
@@ -115,19 +115,19 @@
             @click="plan ? wizardStep = 3 : null"
             :disabled="!plan"
             type="button"
-            class="relative z-10 flex flex-col items-center gap-1.5 transition-all"
+            class="relative z-10 flex flex-col items-center gap-1 transition-all"
             :class="plan ? 'cursor-pointer group' : 'cursor-not-allowed opacity-50'"
           >
             <div 
-              class="w-10 h-10 md:w-11 md:h-11 rounded-2xl flex items-center justify-center font-black text-xs md:text-sm transition-all shadow-sm"
+              class="w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center font-bold text-xs transition-all shadow-2xs"
               :class="wizardStep === 3 
                 ? 'bg-emerald-600 text-white ring-4 ring-emerald-100 scale-105' 
                 : 'bg-white border-2 border-slate-300 text-slate-500'"
             >
-              <Sparkles :size="17" />
+              <Sparkles :size="15" />
             </div>
             <span 
-              class="text-[11px] md:text-xs font-black transition-colors"
+              class="text-[11px] font-bold transition-colors"
               :class="wizardStep === 3 ? 'text-emerald-900' : 'text-slate-400'"
             >
               3. Finansial & Mitra
@@ -137,78 +137,81 @@
       </div>
 
       <!-- ==================== WIZARD STEP 1: FORM PARAMETER & LOKASI DI ATAS ==================== -->
-      <div v-if="wizardStep === 1" class="bg-white border border-slate-200/90 rounded-3xl p-5 md:p-7 shadow-xs space-y-5 max-w-3xl mx-auto">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+      <div v-if="wizardStep === 1" class="bg-white border border-slate-200/90 rounded-3xl p-5 md:p-6 shadow-xs space-y-4 max-w-3xl mx-auto">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
           <div>
-            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
               Langkah 1: Perencanaan Pra-Tanam
             </span>
-            <h3 class="text-base font-black text-slate-800 mt-1 flex items-center gap-2">
-              <Calculator :size="18" class="text-emerald-600" /> Rencana Petak Lahan Baru
+            <h3 class="text-sm md:text-base font-black text-slate-800 mt-1 flex items-center gap-2">
+              <Calculator :size="17" class="text-emerald-600" /> Rencana Petak Lahan Baru
             </h3>
           </div>
-          <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+          <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
             AI Assistant
           </span>
         </div>
 
         <!-- 1. FIELD NAMA LAHAN -->
-        <div class="space-y-1.5">
+        <div class="space-y-1">
           <label class="text-xs font-bold text-slate-700 flex justify-between">
             <span>Nama Rencana / Petak Lahan:</span>
-            <span class="text-slate-400 text-[11px] font-semibold">Beri nama untuk membedakan lahan garapan</span>
+            <span class="text-slate-400 text-[11px] font-normal">Identitas lahan garapan</span>
           </label>
           <input
             v-model="form.name"
             type="text"
             placeholder="Contoh: Sawah Blok Cempaka 1, Lahan Sukamaju Baru"
-            class="w-full px-4 py-2.5 rounded-2xl border border-slate-300 font-bold text-sm text-slate-800 focus:outline-none focus:border-emerald-500 bg-slate-50/50"
+            class="w-full px-3.5 py-2 rounded-xl border border-slate-300 font-semibold text-xs text-slate-800 focus:outline-none focus:border-emerald-500 bg-slate-50/50"
           />
         </div>
 
-        <!-- 2. LOKASI SAYA & DETEKSI OTOMATIS AI (DI ATAS) -->
-        <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-4 space-y-3">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <!-- 2. LOKASI SAYA & DETEKSI OTOMATIS AI (TUNGGAL & PROPORSIONAL) -->
+        <div class="bg-slate-50/80 border border-slate-200/90 rounded-2xl p-3.5 space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
             <div>
-              <div class="flex items-center gap-1.5 text-xs font-black text-emerald-950">
-                <Navigation :size="15" class="text-emerald-700" />
+              <div class="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+                <Navigation :size="14" class="text-emerald-600" />
                 <span>Titik Lokasi & Deteksi Cerdas Lahan</span>
               </div>
-              <p class="text-[11px] text-emerald-800/80 font-medium mt-0.5">
-                Gunakan lokasi saat ini agar AI otomatis memilihkan komoditas, jenis tanah, & sumber air terbaik.
+              <p class="text-[11px] text-slate-500 mt-0.5">
+                Gunakan lokasi saat ini agar AI otomatis menentukan komoditas, jenis tanah, & sumber air.
               </p>
             </div>
 
+            <!-- Single, proportional GPS Button (No redundancy) -->
             <button
               @click="detectMyLocationAndAutoFillAI"
               :disabled="isDetectingLocation"
               type="button"
-              class="btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-2.5 px-4 rounded-xl active:scale-95 transition-all flex items-center justify-center gap-2 shadow-xs shrink-0 cursor-pointer disabled:opacity-60"
+              class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-1.5 px-3 rounded-lg active:scale-95 transition-all flex items-center justify-center gap-1.5 shadow-2xs shrink-0 cursor-pointer disabled:opacity-60"
             >
-              <Navigation v-if="!isDetectingLocation" :size="14" class="animate-pulse" />
-              <Loader2 v-else :size="14" class="animate-spin" />
-              <span>{{ isDetectingLocation ? 'Menganalisis Titik...' : '📍 Gunakan Lokasi Saya' }}</span>
+              <Navigation v-if="!isDetectingLocation" :size="12" class="animate-pulse" />
+              <Loader2 v-else :size="12" class="animate-spin" />
+              <span>{{ isDetectingLocation ? 'Menganalisis...' : '📍 Gunakan Lokasi Saya' }}</span>
             </button>
           </div>
 
           <!-- Banner Notifikasi Rekomendasi AI -->
           <div 
             v-if="aiLocationRecommendationNote"
-            class="p-3 bg-white/95 border border-emerald-300 rounded-xl text-xs text-emerald-900 flex items-start gap-2 shadow-2xs animate-in fade-in"
+            class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-900 flex items-start gap-2 animate-in fade-in"
           >
-            <Sparkles :size="16" class="text-emerald-600 shrink-0 mt-0.5" />
-            <div>
-              <strong class="font-black text-emerald-950">Rekomendasi AI Otomatis Diterapkan: </strong>
+            <Sparkles :size="15" class="text-emerald-600 shrink-0 mt-0.5" />
+            <div class="text-[11px]">
+              <strong class="font-extrabold text-emerald-950">Rekomendasi AI Otomatis Diterapkan: </strong>
               <span>{{ aiLocationRecommendationNote }}</span>
             </div>
           </div>
 
-          <!-- Komponen Peta Interaktif & Koordinat -->
-          <div class="pt-1">
+          <!-- Komponen Peta Interaktif (Embedded tanpa header & button dobel) -->
+          <div class="pt-0.5">
             <FarmlandMapPicker
               :initialLat="form.latitude"
               :initialLon="form.longitude"
               :initialLabel="form.location"
+              :embedded="true"
+              :showHeader="false"
               @update:coordinates="onCoordinatesUpdated"
             />
           </div>
@@ -305,11 +308,11 @@
           <button
             @click="runCalculation"
             :disabled="isLoading"
-            class="w-full sm:w-auto btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm py-3 px-6 rounded-2xl shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
+            class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 px-4 rounded-xl shadow-xs active:scale-95 transition-all flex items-center justify-center gap-1.5 disabled:opacity-60 cursor-pointer"
           >
-            <Sparkles v-if="!isLoading" :size="16" />
-            <Loader2 v-else :size="16" class="animate-spin" />
-            <span>{{ isLoading ? 'AI Sedang Mengalkulasi Rencana...' : 'Kalkulasi Sekarang (Lanjut ke RAB) ➔' }}</span>
+            <Sparkles v-if="!isLoading" :size="14" />
+            <Loader2 v-else :size="14" class="animate-spin" />
+            <span>{{ isLoading ? 'AI Mengalkulasi...' : 'Kalkulasi Sekarang (Lanjut ke RAB) ➔' }}</span>
           </button>
         </div>
       </div>
@@ -397,15 +400,15 @@
             <button
               @click="wizardStep = 1"
               type="button"
-              class="py-2.5 px-4 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-50 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
+              class="py-1.5 px-3 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
             >
-              <span>⬅ Ubah Parameter Lahan</span>
+              <span>⬅ Ubah Parameter</span>
             </button>
 
             <button
               @click="wizardStep = 3"
               type="button"
-              class="btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-2.5 px-5 rounded-xl shadow-md active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
+              class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-1.5 px-3.5 rounded-lg shadow-2xs active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <span>Lanjut ke Analisis Finansial & Mitra ➔</span>
             </button>
@@ -542,7 +545,7 @@
           <button
             @click="wizardStep = 2"
             type="button"
-            class="py-3 px-4 rounded-2xl border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-50 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+            class="py-1.5 px-3.5 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <span>⬅ Kembali ke Rincian RAB</span>
           </button>
@@ -551,11 +554,11 @@
             @click="savePlanToActiveFarmland"
             :disabled="isSavingToActive"
             type="button"
-            class="btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-black py-3 px-6 rounded-2xl shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+            class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-4 rounded-xl shadow-xs active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-60"
           >
-            <Loader2 v-if="isSavingToActive" :size="16" class="animate-spin" />
+            <Loader2 v-if="isSavingToActive" :size="14" class="animate-spin" />
             <span v-else>🚀</span>
-            <span>{{ isSavingToActive ? 'Menyimpan & Membuka Lahan...' : 'Simpan & Mulai Garap Lahan Ini (Pindahkan ke Kontrol Tanam)' }}</span>
+            <span>{{ isSavingToActive ? 'Menyimpan...' : 'Simpan & Mulai Garap (Pindah ke Kontrol Tanam)' }}</span>
           </button>
         </div>
       </div>

@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-white border border-slate-200 rounded-3xl p-4 shadow-sm space-y-3">
-    <!-- Header: GPS Status & Auto-Detect Button -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
+  <div :class="embedded ? 'space-y-3' : 'bg-white border border-slate-200 rounded-3xl p-4 shadow-sm space-y-3'">
+    <!-- Header: GPS Status & Auto-Detect Button (Hidden if embedded or showHeader is false) -->
+    <div v-if="showHeader && !embedded" class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
       <div>
         <div class="flex items-center gap-1.5">
           <MapPin :size="16" class="text-emerald-600" />
@@ -17,11 +17,11 @@
         @click="detectGPSLocation"
         :disabled="isLocating"
         type="button"
-        class="btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-black py-2 px-3 rounded-xl active:scale-95 transition-all flex items-center justify-center gap-1.5 shadow-sm disabled:opacity-60"
+        class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-1.5 px-3 rounded-xl active:scale-95 transition-all flex items-center justify-center gap-1.5 shadow-2xs disabled:opacity-60 cursor-pointer"
       >
         <Navigation v-if="!isLocating" :size="13" class="animate-pulse" />
         <Loader2 v-else :size="13" class="animate-spin" />
-        <span>{{ isLocating ? 'Mencari GPS...' : '📍 Deteksi GPS Saya' }}</span>
+        <span>{{ isLocating ? 'Mencari...' : '📍 Deteksi GPS Saya' }}</span>
       </button>
     </div>
 
@@ -110,6 +110,14 @@ const props = defineProps({
   initialLabel: {
     type: String,
     default: 'Desa Sukamaju, Jawa Timur'
+  },
+  showHeader: {
+    type: Boolean,
+    default: true
+  },
+  embedded: {
+    type: Boolean,
+    default: false
   }
 });
 
