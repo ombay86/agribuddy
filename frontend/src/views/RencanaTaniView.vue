@@ -731,41 +731,7 @@
       <!-- Left Column (8 cols): Cockpit Modal, 5 Fase Interaktif (Dual Control) -->
       <div class="lg:col-span-8 space-y-6">
         
-        <!-- Header Identitas Petak yang Sedang Dikontrol: Unified Selector -->
-        <div class="bg-white border border-slate-200/90 rounded-3xl p-4 shadow-xs">
-          <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-            <!-- Icon -->
-            <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center p-2.5 shrink-0 shadow-xs border border-emerald-400/30">
-              <img src="/logo/logo-white-icon.svg" class="w-full h-full object-contain" alt="Farmland" />
-            </div>
-            <!-- Info + Selector (unified) -->
-            <div class="flex-1 min-w-0">
-              <span class="text-[9px] font-extrabold uppercase text-slate-400 block tracking-wider">Petak Aktif yang Sedang Dikontrol</span>
-              <!-- Name as dropdown trigger: styled as a bold title, tapi tetap fungsional -->
-              <div class="flex items-center gap-1.5 mt-0.5">
-                <select
-                  v-model="activeFarmId"
-                  @change="onActiveFarmChanged"
-                  class="bg-transparent font-black text-slate-800 text-base leading-tight focus:outline-none cursor-pointer border-0 p-0 w-full"
-                >
-                  <option v-for="f in activeFarmlands" :key="f.id" :value="f.id">
-                    {{ f.name }}
-                  </option>
-                </select>
-              </div>
-              <div class="flex items-center gap-2 flex-wrap mt-1">
-                <span class="text-[10px] font-black bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full uppercase border border-emerald-200">
-                  {{ activeFarm?.commodity }}
-                </span>
-                <span class="text-[10px] text-slate-400 font-semibold">📍 {{ activeFarm?.location }} • 📐 {{ activeFarm?.land_size_ha }} Ha</span>
-              </div>
-            </div>
-            <!-- Badge status aktif -->
-            <span class="shrink-0 text-[10px] font-black bg-emerald-600 text-white px-3 py-1 rounded-full shadow-xs">
-              🟢 Aktif
-            </span>
-          </div>
-        </div>
+
 
         <!-- Financial & Progress Cockpit (Neraca Kendali Modal & Siklus Budidaya) -->
         <div class="bg-gradient-to-br from-emerald-900 to-teal-950 text-white rounded-3xl p-6 shadow-sm space-y-4">
@@ -1016,41 +982,20 @@
 
       <!-- Right Column (4 cols): Multi-Lahan, Buku Modal Riwayat Lengkap, Kolaborator -->
       <div class="lg:col-span-4 space-y-6">
-        <!-- KELOLA PETAK SAWAH SAYA -->
-        <div class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs space-y-3.5">
-          <div class="flex items-center gap-2">
-            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
-              Multi-Lahan Usahatani
-            </span>
-            <h3 class="text-sm font-black text-slate-800 flex items-center gap-1.5">
-              <Layers :size="16" class="text-emerald-600" /> Sawah yang Dikerjakan
-            </h3>
-          </div>
-
-          <!-- List Sawah Cards Vertikal -->
-          <div class="space-y-2">
-            <button
-              v-for="farm in activeFarmlands"
-              :key="farm.id"
-              @click="selectFarmland(farm)"
-              class="w-full p-3 rounded-2xl transition-all flex items-center justify-between border active:scale-98 text-left cursor-pointer"
-              :class="activeFarmId === farm.id
-                ? 'bg-emerald-50/70 border-emerald-500 shadow-xs ring-2 ring-emerald-400/30'
-                : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'"
-            >
-              <div class="flex items-center gap-2.5">
-                <span class="text-2xl p-1 bg-white rounded-xl shadow-2xs border border-slate-200/60">🌾</span>
-                <div>
-                  <div class="font-extrabold text-xs text-slate-800 leading-snug">{{ farm.name }}</div>
-                  <div class="text-[10px] text-slate-500 font-semibold mt-0.5">{{ farm.land_size_ha }} Ha • {{ farm.commodity }}</div>
-                </div>
-              </div>
-              <span v-if="activeFarmId === farm.id" class="text-[10px] font-black text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
-                Aktif
-              </span>
-            </button>
-          </div>
+        <!-- SELECTOR PETAK SAWAH (dropdown) -->
+        <div class="bg-white border border-slate-200/90 rounded-3xl p-4 shadow-xs">
+          <label class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1.5">Petak Sawah Aktif</label>
+          <select
+            v-model="activeFarmId"
+            @change="onActiveFarmChanged"
+            class="w-full text-sm font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2 focus:outline-none focus:border-emerald-400 cursor-pointer"
+          >
+            <option v-for="f in activeFarmlands" :key="f.id" :value="f.id">
+              {{ f.name }} — {{ f.land_size_ha }} Ha · {{ f.commodity }}
+            </option>
+          </select>
         </div>
+
 
         <!-- BUKU MODAL LAHAN (RIWAYAT TRANSAKSI LENGKAP DARI DATABASE) -->
         <div class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs space-y-3.5">
