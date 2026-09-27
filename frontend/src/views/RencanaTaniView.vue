@@ -1454,17 +1454,6 @@
             </div>
           </div>
 
-          <div>
-            <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Nama Lengkap Mitra</label>
-            <input
-              v-model="newCollabForm.name"
-              type="text"
-              required
-              placeholder="Nama Lengkap Mitra"
-              class="w-full px-3 py-1.5 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500"
-            />
-          </div>
-
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Peran</label>
@@ -2268,6 +2257,10 @@ const openManageCollabModal = () => {
 
 const handleAddCollaborator = async () => {
   if (!activeFarm.value) return;
+  if (!newCollabForm.value.name || !newCollabForm.value.name.trim()) {
+    alert('Silakan cari dan pilih pengguna mitra terlebih dahulu.');
+    return;
+  }
   if (newCollabForm.value.share_percentage > ownerSharePercentage.value) {
     alert(`Persentase tidak boleh melebihi sisa porsi pemilik (${ownerSharePercentage.value}%).`);
     return;
