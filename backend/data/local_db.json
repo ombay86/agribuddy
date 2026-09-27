@@ -1987,5 +1987,71 @@
       "created_at": "21 Sep 2026, 09:57 WIB",
       "updated_at": "2026-09-21T09:57:26.725282"
     }
+  ],
+  "ai_chat_sessions": [
+    {
+      "id": "session_1790491928400",
+      "title": "halo. sudah bisakah kamu merespon sa...",
+      "created_at": "27 Sep, 13.52 WIB",
+      "updated_at": "2026-09-27T06:53:46.438Z",
+      "messages": [
+        {
+          "id": "msg_1790491928402_u",
+          "role": "user",
+          "content": "halo. sudah bisakah kamu merespon saya?",
+          "image": null,
+          "timestamp": "27 Sep, 13.52 WIB"
+        },
+        {
+          "id": "msg_1790491928402_m",
+          "role": "model",
+          "content": "Halo Pak Tani! Saya **Agri AI**, asisten pertanian cerdas Anda di AgriBuddy. 🌾\n\nSaya siap membantu menjawab seputar:\n• Deteksi dan solusi penyakit daun padi & hama tanaman\n• Rekomendasi dosis pemupukan berimbang & jadwal aplikasi\n• Pengelolaan air sawah, bibit unggul, serta pasca panen\n\nSilakan ketik pertanyaan Anda atau lampirkan foto tanaman/daun melalui tombol kamera di bawah!",
+          "detected_diagnosis": null,
+          "timestamp": "27 Sep, 13.52 WIB"
+        },
+        {
+          "id": "msg_1790491984321_u",
+          "role": "user",
+          "content": "berapa lama waktu ideal yang dibutuhkan untuk menanam padi dari persiapan hingga panen?",
+          "image": null,
+          "timestamp": "27 Sep, 13.53 WIB"
+        },
+        {
+          "id": "msg_1790491984321_m",
+          "role": "model",
+          "content": "Halo Pak Tani! Saya **Agri AI**, asisten pertanian cerdas Anda di AgriBuddy. 🌾\n\nSaya siap membantu menjawab seputar:\n• Deteksi dan solusi penyakit daun padi & hama tanaman\n• Rekomendasi dosis pemupukan berimbang & jadwal aplikasi\n• Pengelolaan air sawah, bibit unggul, serta pasca panen\n\nSilakan ketik pertanyaan Anda atau lampirkan foto tanaman/daun melalui tombol kamera di bawah!",
+          "detected_diagnosis": null,
+          "timestamp": "27 Sep, 13.53 WIB"
+        },
+        {
+          "id": "msg_1790492007821_u",
+          "role": "user",
+          "content": "halo",
+          "image": null,
+          "timestamp": "27 Sep, 13.53 WIB"
+        },
+        {
+          "id": "msg_1790492007821_m",
+          "role": "model",
+          "content": "Halo Pak/Bu Tani! 👋 Senang sekali bisa terhubung kembali dengan Anda. \n\nAda yang bisa Agri AI bantu hari ini seputar kebun atau sawah Bapak/Ibu? Mau tanya soal jadwal pemupukan, cara mengatasi hama, atau persiapan tanam padi dan palawija? Silakan tulis pertanyaannya ya! 🌾🚜",
+          "detected_diagnosis": null,
+          "timestamp": "27 Sep, 13.53 WIB"
+        },
+        {
+          "id": "msg_1790492026438_u",
+          "role": "user",
+          "content": "berapa lama waktu ideal yang dibutuhkan untuk menanam padi dari persiapan hingga panen?",
+          "image": null,
+          "timestamp": "27 Sep, 13.53 WIB"
+        },
+        {
+          "id": "msg_1790492026438_m",
+          "role": "model",
+          "content": "Halo Pak/Bu Tani! Pertanyaan yang sangat bagus. \n\nSecara umum, waktu ideal yang dibutuhkan untuk budidaya padi dari tahap persiapan lahan hingga panen adalah sekitar **100 hingga 120 hari (kurang lebih 3,5 - 4 bulan)**. \n\nNamun, durasi pastinya sangat tergantung pada varietas benih yang Bapak/Ibu tanam. Berikut adalah rincian tahapan waktunya:\n\n**1. Persiapan Lahan & Persemaian (Hari ke-1 s.d. 21 / ± 3 Minggu)**\n*   **Pengolahan tanah (bajak dan garu):** 7–10 hari.\n*   **Persemaian benih:** Benih disebar dan dirawat di persemaian selama 15–21 hari sebelum siap dipindah tanam (pindah tanam/tandur).\n\n**2. Masa Vegetatif / Pertumbuhan (Hari ke-22 s.d. 60)**\n*   Tanaman beradaptasi setelah pindah tanam, mulai beranak (anakan aktif), dan membentuk rumpun.\n*   Pada fase ini, pemupukan pertama dan kedua sangat penting untuk pertumbuhan batang dan daun.\n\n**3. Masa Generatif / Pembungaan & Pengisian Bulir (Hari ke-61 s.d. 100)**\n*   Tanaman mulai bunting, keluar malai (bunga padi), hingga penyerbukan dan pengisian bulir padi (fase jerami mulai menguning).\n*   Pengairan harus dijaga dengan baik (tidak boleh terlalu kering, tapi juga jangan tergenang terlalu dalam saat menjelang panen).\n\n**4. Pematangan & Panen (Hari ke-100 s.d. 120)**\n*   Bulir padi sudah terisi penuh, keras, dan warna malai berubah menjadi kuning kecokelatan (sekitar 85-90% gabah menguning).\n*   Air di sawah dikeringkan 7–10 hari sebelum panen agar tanahnya keras dan memudahkan proses pemanenan.\n\n---\n\n**💡 Tips Tambahan dari Agri AI:**\n*   **Varietas Genjah (Umur Pendek):** Seperti varietas Inpari 32, Ciherang, atau Mekongga, biasanya siap panen dalam waktu **100–115 hari**.\n*   **Varietas Berumur Panjang:** Padi lokal tertentu atau padi hibrida tertentu bisa memakan waktu hingga **120–130 hari**.\n\nPastikan memilih benih bersertifikat dan sesuaikan dengan ketersediaan air di irigasi Bapak/Ibu ya! Ada hal lain seputar persiapan tanam yang ingin ditanyakan, Pak/Bu? 🌾🚜",
+          "detected_diagnosis": null,
+          "timestamp": "27 Sep, 13.53 WIB"
+        }
+      ]
+    }
   ]
 }

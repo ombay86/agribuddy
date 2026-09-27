@@ -1191,6 +1191,47 @@ export const api = {
     });
     if (!res.ok) throw new Error('Gagal membalas pertanyaan produk');
     return res.json();
+  },
+
+  // --- AUTHENTICATION & REGISTRASI AKUN BARU ---
+  async register(payload: {
+    full_name: string;
+    username?: string;
+    phone_number: string;
+    pin?: string;
+    role?: string;
+    village?: string;
+    commodity?: string;
+    land_size_ha?: number;
+    bio?: string;
+  }): Promise<{ success: boolean; message: string; user: any }> {
+    const res = await fetch(`${BASE_URL}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || 'Gagal mendaftarkan akun baru');
+    }
+    return res.json();
+  },
+
+  async login(payload: {
+    phone_number?: string;
+    username?: string;
+    pin?: string;
+  }): Promise<any> {
+    const res = await fetch(`${BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || 'Gagal masuk. Periksa nomor HP/Username dan PIN Anda.');
+    }
+    return res.json();
   }
 };
 

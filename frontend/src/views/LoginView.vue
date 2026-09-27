@@ -110,27 +110,43 @@
             </div>
           </div>
 
-          <!-- Tab Opsi: Masuk Cepat Demo Persona vs Nomor HP/PIN -->
+          <!-- Tab Opsi: Masuk Cepat Demo vs Masuk Manual vs Buat Akun Baru -->
           <div class="flex p-1 bg-slate-100 rounded-2xl gap-1 mt-4 text-xs font-black">
             <button
               @click="authTab = 'demo'"
-              class="flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5"
+              class="flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
               :class="authTab === 'demo' ? 'bg-white text-emerald-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'"
             >
-              <span>⚡ Masuk Cepat Persona</span>
-              <span class="text-[9px] bg-amber-500 text-slate-900 px-1.5 py-0.2 rounded-full uppercase">Demo</span>
+              <span>⚡ Demo</span>
+              <span class="text-[9px] bg-amber-500 text-slate-900 px-1.5 py-0.2 rounded-full uppercase">Cepat</span>
             </button>
             <button
               @click="authTab = 'manual'"
-              class="flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5"
+              class="flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
               :class="authTab === 'manual' ? 'bg-white text-emerald-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'"
             >
-              <span>📱 Nomor HP & PIN</span>
+              <span>🔑 Masuk</span>
+            </button>
+            <button
+              @click="authTab = 'register'"
+              class="flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              :class="authTab === 'register' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'"
+            >
+              <span>✨ Buat Akun</span>
             </button>
           </div>
 
+          <!-- Alert Error Notification -->
+          <div
+            v-if="errorMessage"
+            class="mt-3 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2 animate-in fade-in"
+          >
+            <span>⚠️</span>
+            <span class="flex-1 leading-snug">{{ errorMessage }}</span>
+          </div>
+
           <!-- OPSI 1: 1-CLICK QUICK DEMO PERSONAS (DEMO SIDANG) -->
-          <div v-if="authTab === 'demo'" class="space-y-3 pt-4">
+          <div v-if="authTab === 'demo'" class="space-y-3 pt-3">
             <div class="flex items-center justify-between px-1">
               <span class="text-[11px] font-black uppercase tracking-wider text-slate-400">
                 Pilih Peran Warga Ekosistem:
@@ -142,7 +158,7 @@
               <!-- 1. Pak Joko -->
               <button
                 @click="quickLogin('PETANI_MANDIRI')"
-                class="p-3 rounded-2xl border border-emerald-200 bg-emerald-50/50 hover:bg-emerald-100 hover:border-emerald-300 text-left flex items-center justify-between transition-all active:scale-95 group shadow-2xs"
+                class="p-3 rounded-2xl border border-emerald-200 bg-emerald-50/50 hover:bg-emerald-100 hover:border-emerald-300 text-left flex items-center justify-between transition-all active:scale-95 group shadow-2xs cursor-pointer"
               >
                 <div class="flex items-center gap-2.5">
                   <span class="text-2xl group-hover:scale-110 transition-transform">👨‍🌾</span>
@@ -161,7 +177,7 @@
               <!-- 2. Mas Bambang -->
               <button
                 @click="quickLogin('JASA_TRAKTOR')"
-                class="p-3 rounded-2xl border border-amber-200 bg-amber-50/50 hover:bg-amber-100 hover:border-amber-300 text-left flex items-center justify-between transition-all active:scale-95 group shadow-2xs"
+                class="p-3 rounded-2xl border border-amber-200 bg-amber-50/50 hover:bg-amber-100 hover:border-amber-300 text-left flex items-center justify-between transition-all active:scale-95 group shadow-2xs cursor-pointer"
               >
                 <div class="flex items-center gap-2.5">
                   <span class="text-2xl group-hover:scale-110 transition-transform">🚜</span>
@@ -177,7 +193,7 @@
               <!-- 3. Pak Slamet -->
               <button
                 @click="quickLogin('JASA_PENGAIRAN')"
-                class="p-3 rounded-2xl border border-sky-200 bg-sky-50/50 hover:bg-sky-100 hover:border-sky-300 text-left flex items-center justify-between transition-all active:scale-95 group shadow-2xs"
+                class="p-3 rounded-2xl border border-sky-200 bg-sky-50/50 hover:bg-sky-100 hover:border-sky-300 text-left flex items-center justify-between transition-all active:scale-95 group shadow-2xs cursor-pointer"
               >
                 <div class="flex items-center gap-2.5">
                   <span class="text-2xl group-hover:scale-110 transition-transform">💧</span>
@@ -193,7 +209,7 @@
               <!-- 4. Mang Udin -->
               <button
                 @click="quickLogin('JASA_CANGKUL')"
-                class="p-3 rounded-2xl border border-lime-200 bg-lime-50/50 hover:bg-lime-100 hover:border-lime-300 text-left flex items-center justify-between transition-all active:scale-95 group shadow-2xs"
+                class="p-3 rounded-2xl border border-lime-200 bg-lime-50/50 hover:bg-lime-100 hover:border-lime-300 text-left flex items-center justify-between transition-all active:scale-95 group shadow-2xs cursor-pointer"
               >
                 <div class="flex items-center gap-2.5">
                   <span class="text-2xl group-hover:scale-110 transition-transform">🌾</span>
@@ -209,7 +225,7 @@
               <!-- 5. Ibu Ratna -->
               <button
                 @click="quickLogin('KIOS_SAPROTAN')"
-                class="p-3 rounded-2xl border border-teal-200 bg-teal-50/50 hover:bg-teal-100 hover:border-teal-300 text-left flex items-center justify-between transition-all active:scale-95 group shadow-2xs"
+                class="p-3 rounded-2xl border border-teal-200 bg-teal-50/50 hover:bg-teal-100 hover:border-teal-300 text-left flex items-center justify-between transition-all active:scale-95 group shadow-2xs cursor-pointer"
               >
                 <div class="flex items-center gap-2.5">
                   <span class="text-2xl group-hover:scale-110 transition-transform">🏪</span>
@@ -225,7 +241,7 @@
               <!-- 6. Bpk. Hendra Jaya -->
               <button
                 @click="quickLogin('PENGGILINGAN_PADI')"
-                class="p-3 rounded-2xl border border-indigo-200 bg-indigo-50/50 hover:bg-indigo-100 hover:border-indigo-300 text-left flex items-center justify-between transition-all active:scale-95 group shadow-2xs"
+                class="p-3 rounded-2xl border border-indigo-200 bg-indigo-50/50 hover:bg-indigo-100 hover:border-indigo-300 text-left flex items-center justify-between transition-all active:scale-95 group shadow-2xs cursor-pointer"
               >
                 <div class="flex items-center gap-2.5">
                   <span class="text-2xl group-hover:scale-110 transition-transform">🚚</span>
@@ -238,34 +254,39 @@
                 <ChevronRight :size="16" class="text-indigo-600 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
+
+            <div class="pt-2 text-center">
+              <button
+                @click="authTab = 'register'"
+                class="text-xs font-bold text-emerald-700 hover:underline cursor-pointer"
+              >
+                Ingin mencoba dengan akun & profil pribadi? <strong>Daftar di sini &rarr;</strong>
+              </button>
+            </div>
           </div>
 
-          <!-- OPSI 2: FORM MANUAL NO HANDPHONE & PIN -->
-          <div v-else class="space-y-4 pt-4">
+          <!-- OPSI 2: FORM MASUK MANUAL (NO HP / USERNAME & PIN) -->
+          <div v-else-if="authTab === 'manual'" class="space-y-4 pt-3">
             <div>
-              <label class="text-xs font-bold text-slate-700 block mb-1">Nomor Handphone / WhatsApp</label>
-              <div class="relative">
-                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 text-xs font-bold">
-                  +62
-                </span>
-                <input
-                  v-model="phoneNumber"
-                  type="tel"
-                  placeholder="812 3456 7890"
-                  class="w-full pl-12 pr-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
-                />
-              </div>
+              <label class="text-xs font-bold text-slate-700 block mb-1">Nomor Handphone / Username Akun</label>
+              <input
+                v-model="loginIdentifier"
+                type="text"
+                placeholder="Contoh: 08123456789 atau @nama_anda"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-semibold focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+                @keyup.enter="handleLogin"
+              />
             </div>
 
             <div>
               <div class="flex items-center justify-between mb-1">
-                <label class="text-xs font-bold text-slate-700">Kode PIN Keamanan (6 Digit)</label>
-                <span class="text-[10px] text-emerald-700 font-bold">Default: 1234</span>
+                <label class="text-xs font-bold text-slate-700">Kode PIN Keamanan</label>
+                <span class="text-[10px] text-slate-400">Default: 1234</span>
               </div>
               <input
                 v-model="pin"
                 type="password"
-                maxlength="6"
+                maxlength="8"
                 placeholder="••••"
                 class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-bold tracking-widest text-center focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
                 @keyup.enter="handleLogin"
@@ -274,17 +295,151 @@
 
             <button
               @click="handleLogin"
-              class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs py-3 rounded-2xl shadow-sm hover:shadow-md active:scale-95 transition-all flex items-center justify-center gap-2"
+              :disabled="isLoading"
+              class="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white font-black text-xs py-3 rounded-2xl shadow-sm hover:shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <img src="/logo/logo-white-icon.svg" alt="icon" class="w-4 h-4 object-contain" />
+              <Loader2 v-if="isLoading" :size="16" class="animate-spin" />
+              <img v-else src="/logo/logo-white-icon.svg" alt="icon" class="w-4 h-4 object-contain" />
               <span>Masuk ke Dashboard AgriBuddy</span>
             </button>
+
+            <div class="text-center pt-1">
+              <button
+                @click="authTab = 'register'"
+                class="text-xs font-bold text-emerald-700 hover:underline cursor-pointer"
+              >
+                Belum memiliki akun terdaftar? <strong>Buat akun baru sekarang &rarr;</strong>
+              </button>
+            </div>
+          </div>
+
+          <!-- OPSI 3: FORM BUAT AKUN BARU (REGISTRASI PENGUJI / PENGGUNA) -->
+          <div v-else-if="authTab === 'register'" class="space-y-3 pt-2 max-h-[380px] overflow-y-auto pr-1">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <!-- Nama Lengkap -->
+              <div>
+                <label class="text-xs font-bold text-slate-700 block mb-1">
+                  Nama Lengkap <span class="text-rose-500">*</span>
+                </label>
+                <input
+                  v-model="regFullName"
+                  type="text"
+                  placeholder="Contoh: Dr. Budi Santoso"
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <!-- Username Unik -->
+              <div>
+                <label class="text-xs font-bold text-slate-700 block mb-1">
+                  Username Unik <span class="text-rose-500">*</span>
+                </label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-xs font-bold">@</span>
+                  <input
+                    v-model="regUsername"
+                    type="text"
+                    placeholder="budi_santoso"
+                    class="w-full pl-7 pr-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <!-- No Handphone / WhatsApp -->
+              <div>
+                <label class="text-xs font-bold text-slate-700 block mb-1">
+                  Nomor HP / WhatsApp <span class="text-rose-500">*</span>
+                </label>
+                <input
+                  v-model="regPhone"
+                  type="tel"
+                  placeholder="081234567890"
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <!-- PIN Keamanan -->
+              <div>
+                <label class="text-xs font-bold text-slate-700 block mb-1">
+                  Kode PIN Masuk <span class="text-rose-500">*</span>
+                </label>
+                <input
+                  v-model="regPin"
+                  type="password"
+                  maxlength="6"
+                  placeholder="1234"
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold tracking-widest text-center focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+            </div>
+
+            <!-- Peran di Ekosistem Usahatani -->
+            <div>
+              <label class="text-xs font-bold text-slate-700 block mb-1">
+                Peran Anda di Ekosistem <span class="text-rose-500">*</span>
+              </label>
+              <select
+                v-model="regRole"
+                class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500 bg-white"
+              >
+                <option value="PETANI_MANDIRI">👨‍🌾 Petani Mandiri (Pemilik/Penggarap Sawah)</option>
+                <option value="JASA_TRAKTOR">🚜 Penyedia Jasa Traktor & Olah Tanah</option>
+                <option value="JASA_PENGAIRAN">💧 Penyedia Jasa Pompa & Irigasi</option>
+                <option value="JASA_CANGKUL">🌾 Regu Buruh Tanam & Cangkul</option>
+                <option value="KIOS_SAPROTAN">🏪 Kios Saprotan KPL (Pupuk & Obat)</option>
+                <option value="PENGGILINGAN_PADI">🚚 Penggilingan & Pengepul Gabah</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <!-- Desa / Lokasi -->
+              <div>
+                <label class="text-xs font-bold text-slate-700 block mb-1">Desa / Domisili</label>
+                <input
+                  v-model="regVillage"
+                  type="text"
+                  placeholder="Desa Sukamaju, Jawa Timur"
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <!-- Komoditas Utama -->
+              <div>
+                <label class="text-xs font-bold text-slate-700 block mb-1">Komoditas Utama</label>
+                <input
+                  v-model="regCommodity"
+                  type="text"
+                  placeholder="Padi Inpari 32 / Jagung"
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+            </div>
+
+            <button
+              @click="handleRegister"
+              :disabled="isLoading"
+              class="w-full mt-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white font-black text-xs py-3 rounded-2xl shadow-sm hover:shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Loader2 v-if="isLoading" :size="16" class="animate-spin" />
+              <span v-else>✨ Daftarkan Akun & Masuk Sekarang</span>
+            </button>
+
+            <div class="text-center pt-1">
+              <button
+                @click="authTab = 'manual'"
+                class="text-xs font-bold text-slate-500 hover:text-emerald-700 hover:underline cursor-pointer"
+              >
+                Sudah memiliki akun? <strong>Masuk di sini</strong>
+              </button>
+            </div>
           </div>
         </div>
 
         <!-- Privacy & System Info -->
         <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
-          <span>🔒 Akses Terenkripsi & Terverifikasi</span>
+          <span>🔒 Penyimpanan Terpusat PostgreSQL</span>
           <span>Versi Sistem: 2.0.4-Prod</span>
         </div>
       </div>
@@ -296,21 +451,95 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserState, UserRole } from '@/services/userState';
-import { LogIn, ChevronRight } from 'lucide-vue-next';
+import { api } from '@/services/api';
+import { ChevronRight, Loader2 } from 'lucide-vue-next';
 
 const router = useRouter();
-const { loginWithPersona, loginWithCredentials } = useUserState();
+const { loginWithPersona, loginWithCustomUser } = useUserState();
 
-const authTab = ref<'demo' | 'manual'>('demo');
-const phoneNumber = ref('08123456789');
+const authTab = ref<'demo' | 'manual' | 'register'>('demo');
+const isLoading = ref(false);
+const errorMessage = ref<string | null>(null);
+
+// Form Login Manual
+const loginIdentifier = ref('08123456789');
 const pin = ref('1234');
 
-const handleLogin = () => {
-  loginWithCredentials(phoneNumber.value, pin.value);
-  router.replace('/');
+// Form Registrasi Baru
+const regFullName = ref('');
+const regUsername = ref('');
+const regPhone = ref('');
+const regPin = ref('1234');
+const regRole = ref('PETANI_MANDIRI');
+const regVillage = ref('Desa Sukamaju, Jawa Timur');
+const regCommodity = ref('Padi Inpari 32');
+const regLandSize = ref(1.0);
+
+const handleLogin = async () => {
+  errorMessage.value = null;
+  const idStr = loginIdentifier.value.trim();
+  if (!idStr) {
+    errorMessage.value = 'Silakan masukkan nomor handphone atau username Anda.';
+    return;
+  }
+
+  try {
+    isLoading.value = true;
+    const isPhone = /^[0-9+]+$/.test(idStr);
+    const payload = isPhone
+      ? { phone_number: idStr, pin: pin.value }
+      : { username: idStr.replace(/^@/, ''), pin: pin.value };
+
+    const res = await api.login(payload);
+    const user = res.user || res;
+
+    // Login dan simpan sesi pengguna
+    loginWithCustomUser(user);
+    router.replace('/');
+  } catch (err: any) {
+    errorMessage.value = err.message || 'Gagal masuk. Periksa kembali data login Anda.';
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const handleRegister = async () => {
+  errorMessage.value = null;
+  if (!regFullName.value.trim()) {
+    errorMessage.value = 'Nama lengkap wajib diisi.';
+    return;
+  }
+  if (!regPhone.value.trim()) {
+    errorMessage.value = 'Nomor handphone / WhatsApp wajib diisi.';
+    return;
+  }
+
+  try {
+    isLoading.value = true;
+    const res = await api.register({
+      full_name: regFullName.value.trim(),
+      username: regUsername.value.trim() || undefined,
+      phone_number: regPhone.value.trim(),
+      pin: regPin.value || '1234',
+      role: regRole.value,
+      village: regVillage.value.trim(),
+      commodity: regCommodity.value.trim(),
+      land_size_ha: Number(regLandSize.value) || 1.0
+    });
+
+    // Otomatis login dengan akun yang baru didaftarkan
+    loginWithCustomUser(res.user);
+    alert(`🎉 Selamat datang di AgriBuddy, ${res.user.full_name}! Akun Anda telah berhasil dibuat.`);
+    router.replace('/');
+  } catch (err: any) {
+    errorMessage.value = err.message || 'Gagal membuat akun baru. Silakan coba lagi.';
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 const quickLogin = (role: UserRole) => {
+  errorMessage.value = null;
   loginWithPersona(role);
   router.replace('/');
 };

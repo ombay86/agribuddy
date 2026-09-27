@@ -109,17 +109,44 @@ const savedAuth = localStorage.getItem('agribuddy_auth');
 // Default auth: false jika pernah logout ('false'), true jika baru pertama kali atau sudah login
 const initialAuth = savedAuth === 'false' ? false : true;
 
+const savedUserJson = localStorage.getItem('agribuddy_registered_user');
+let initialRegisteredUser: any = null;
+try {
+  initialRegisteredUser = savedUserJson ? JSON.parse(savedUserJson) : null;
+} catch {
+  initialRegisteredUser = null;
+}
+
 const activeRole = ref<UserRole>(savedRole);
+const registeredUser = ref<any>(initialRegisteredUser);
 const isAuthenticated = ref<boolean>(initialAuth);
 const customAvatar = ref<string | null>(localStorage.getItem('agribuddy_custom_avatar'));
 const customUsername = ref<string | null>(localStorage.getItem('agribuddy_custom_username'));
 
 export const getActiveUserId = (): string => {
+  if (registeredUser.value && registeredUser.value.id) {
+    return registeredUser.value.id;
+  }
   return PERSONAS[activeRole.value]?.id || 'usr_petani';
 };
 
 export const useUserState = () => {
   const currentPersona = computed(() => {
+    if (registeredUser.value) {
+      return {
+        id: registeredUser.value.id,
+        role: (registeredUser.value.role || 'PETANI_MANDIRI') as UserRole,
+        name: registeredUser.value.full_name || registeredUser.value.name,
+        username: customUsername.value || registeredUser.value.username || 'user',
+        badge: registeredUser.value.category_badge || registeredUser.value.role_label || 'Petani Mandiri',
+        serviceCategory: registeredUser.value.commodity || 'Budidaya Pertanian',
+        entityName: registeredUser.value.village || 'Desa Sukamaju',
+        location: registeredUser.value.village || 'Desa Sukamaju',
+        avatar: registeredUser.value.avatar || '👨‍🌾',
+        specialties: [registeredUser.value.commodity || 'Padi Inpari 32', `${registeredUser.value.land_size_ha || 1} Ha`],
+        customAvatar: customAvatar.value || registeredUser.value.avatar_url
+      };
+    }
     const base = PERSONAS[activeRole.value] || PERSONAS['PETANI_MANDIRI'];
     return {
       ...base,
@@ -155,10 +182,24 @@ export const useUserState = () => {
   };
 
   const loginWithPersona = (role: UserRole) => {
+    registeredUser.value = null;
+    localStorage.removeItem('agribuddy_registered_user');
     activeRole.value = role;
     isAuthenticated.value = true;
     localStorage.setItem('agribuddy_active_role', role);
     localStorage.setItem('agribuddy_auth', 'true');
+  };
+
+  const loginWithCustomUser = (userData: any) => {
+    registeredUser.value = userData;
+    activeRole.value = (userData.role || 'PETANI_MANDIRI') as UserRole;
+    isAuthenticated.value = true;
+    localStorage.setItem('agribuddy_registered_user', JSON.stringify(userData));
+    localStorage.setItem('agribuddy_active_role', activeRole.value);
+    localStorage.setItem('agribuddy_auth', 'true');
+    if (userData.username) {
+      setCustomUsername(userData.username);
+    }
   };
 
   const loginWithCredentials = (phoneNumber: string, pin: string) => {
@@ -176,6 +217,8 @@ export const useUserState = () => {
     } else {
       activeRole.value = 'PETANI_MANDIRI';
     }
+    registeredUser.value = null;
+    localStorage.removeItem('agribuddy_registered_user');
     isAuthenticated.value = true;
     localStorage.setItem('agribuddy_active_role', activeRole.value);
     localStorage.setItem('agribuddy_auth', 'true');

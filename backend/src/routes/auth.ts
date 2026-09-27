@@ -134,24 +134,136 @@ const PUBLIC_PROFILES_DATA: Record<string, any> = {
 
 const FOLLOWED_USERS: Set<string> = new Set(["usr_traktor", "usr_distributor"]);
 
+// POST /register
+router.post('/register', (req: Request, res: Response) => {
+  try {
+    const { 
+      full_name, 
+      username, 
+      phone_number, 
+      pin, 
+      role = 'PETANI_MANDIRI', 
+      village, 
+      commodity = 'Padi Inpari 32', 
+      land_size_ha = 1.0, 
+      bio 
+    } = req.body;
+
+    if (!full_name || !full_name.trim()) {
+      return res.status(400).json({ detail: "Nama lengkap wajib diisi." });
+    }
+    if (!phone_number || !phone_number.trim()) {
+      return res.status(400).json({ detail: "Nomor handphone/WhatsApp wajib diisi." });
+    }
+
+    const cleanUsername = (username || full_name.toLowerCase().replace(/\s+/g, '_')).trim().replace(/^@/, '');
+    const cleanPhone = phone_number.trim();
+
+    const users = db.getCollection("users");
+    const existingPhone = users.find((u: any) => u.phone_number === cleanPhone);
+    if (existingPhone) {
+      return res.status(400).json({ detail: "Nomor handphone sudah terdaftar. Silakan langsung masuk." });
+    }
+
+    const existingUser = users.find((u: any) => u.username && u.username.toLowerCase() === cleanUsername.toLowerCase());
+    if (existingUser) {
+      return res.status(400).json({ detail: `Username @${cleanUsername} sudah digunakan. Silakan pilih username lain.` });
+    }
+
+    const roleBadges: Record<string, { label: string; badge: string; avatar: string }> = {
+      PETANI_MANDIRI: { label: "Petani Mandiri", badge: "Petani Mandiri", avatar: "👨‍🌾" },
+      JASA_TRAKTOR: { label: "Jasa Olah Tanah & Traktor", badge: "Sewa Traktor", avatar: "🚜" },
+      JASA_PENGAIRAN: { label: "Jasa Pompa Irigasi", badge: "Jasa Pengairan", avatar: "💧" },
+      JASA_CANGKUL: { label: "Regu Buruh Tanam", badge: "Jasa Cangkul", avatar: "🌾" },
+      KIOS_SAPROTAN: { label: "Kios Saprotan KPL", badge: "Kios Saprotan", avatar: "🏪" },
+      PENGGILINGAN_PADI: { label: "Penggilingan & Pengepul", badge: "Penggilingan", avatar: "🚚" },
+    };
+
+    const roleInfo = roleBadges[role] || roleBadges.PETANI_MANDIRI;
+    const newUserId = `usr_${Date.now()}`;
+
+    const newUser = {
+      id: newUserId,
+      full_name: full_name.trim(),
+      username: cleanUsername,
+      phone_number: cleanPhone,
+      pin: pin ? String(pin).trim() : "1234",
+      role,
+      role_label: roleInfo.label,
+      category_badge: roleInfo.badge,
+      avatar: roleInfo.avatar,
+      village: (village && village.trim()) || "Desa Sukamaju, Jawa Timur",
+      commodity: (commodity && commodity.trim()) || "Padi Inpari 32",
+      land_size_ha: Number(land_size_ha) || 1.0,
+      whatsapp_number: cleanPhone,
+      bio: (bio && bio.trim()) || `Akun ${roleInfo.label} terdaftar di AgriBuddy.`,
+      created_at: new Date().toISOString()
+    };
+
+    const insertedUser = db.insert("users", newUser);
+
+    // Otomatis buatkan 1 petak sawah perdana untuk user jika berperan Petani Mandiri
+    if (role === 'PETANI_MANDIRI') {
+      db.insert("farmlands", {
+        id: `farm_${Date.now()}`,
+        user_id: newUserId,
+        owner_name: full_name.trim(),
+        name: `Petak Sawah ${full_name.trim()}`,
+        ownership_type: "MILIK_SENDIRI",
+        land_size_ha: Number(land_size_ha) || 1.0,
+        status: "Aktif Garap",
+        commodity: (commodity && commodity.trim()) || "Padi Sawah Inpari 32",
+        soil_type: "Lempung Berliat (Subur)",
+        water_source: "Irigasi Teknis Desa",
+        location: (village && village.trim()) || "Desa Sukamaju, Jawa Timur",
+        latitude: -7.2504,
+        longitude: 112.7512,
+        collaborators: [],
+        capital_expenses: [],
+        planting_date: new Date().toISOString().split('T')[0],
+        target_harvest_date: "",
+        created_at: new Date().toISOString()
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Akun baru berhasil didaftarkan!",
+      user: insertedUser
+    });
+  } catch (err: any) {
+    res.status(500).json({ detail: "Gagal mendaftarkan akun baru: " + (err.message || err) });
+  }
+});
+
 // POST /login
 router.post('/login', (req: Request, res: Response) => {
-  const { phone_number } = req.body;
+  const { phone_number, username, pin } = req.body;
   const users = db.getCollection("users");
-  let user = users.find((u: any) => u.phone_number === phone_number);
 
+  const cleanPhone = phone_number ? String(phone_number).trim() : '';
+  const cleanUsername = username ? String(username).trim().replace(/^@/, '').toLowerCase() : '';
+
+  let user = users.find((u: any) => 
+    (cleanPhone && u.phone_number && u.phone_number.trim() === cleanPhone) ||
+    (cleanUsername && u.username && u.username.toLowerCase() === cleanUsername)
+  );
+
+  // Jika akun tidak ditemukan
   if (!user) {
-    user = db.insert("users", {
-      phone_number: phone_number || "08123456789",
-      full_name: "Pak Joko",
-      role: "PETANI_MANDIRI",
-      role_label: "Petani Mandiri",
-      village: "Desa Sukamaju, Jawa Timur",
-      commodity: "Padi Inpari 32",
-      land_size_ha: 1.2,
-      whatsapp_number: phone_number || "08123456789",
-      bio: "Petani Padi Binaan Kelompok Tani Makmur"
+    // Jika nomor telepon adalah demo default, buat user default
+    if (cleanPhone === '08123456789') {
+      user = users.find((u: any) => u.id === 'usr_petani') || users[0];
+      return res.json(user);
+    }
+    return res.status(404).json({ 
+      detail: "Nomor HP atau Username belum terdaftar. Silakan buat akun baru terlebih dahulu." 
     });
+  }
+
+  // Cek validasi PIN jika tersedia
+  if (user.pin && pin && String(pin).trim() !== String(user.pin).trim()) {
+    return res.status(401).json({ detail: "Kode PIN yang Anda masukkan tidak sesuai." });
   }
 
   res.json(user);
