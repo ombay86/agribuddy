@@ -998,60 +998,6 @@
           <!-- ========== TAB: ARUS KAS ========== -->
           <div v-else-if="leftPanelTab === 'kas'" class="p-5 space-y-5">
 
-            <!-- Header & CTA -->
-            <div class="flex items-center justify-between">
-              <div>
-                <h3 class="text-sm font-black text-slate-800 flex items-center gap-2">
-                  <Receipt :size="16" class="text-emerald-600" /> Monitoring Arus Kas Modal
-                </h3>
-                <p class="text-[11px] text-slate-500">Pantau sumber modal, realisasi, dan sisa anggaran per kategori fase</p>
-              </div>
-              <button
-                @click="openAddExpenseModal()"
-                class="text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-xl active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
-              >
-                <PlusCircle :size="13" /> Catat Pengeluaran
-              </button>
-            </div>
-
-            <!-- Ringkasan Sumber & Penggunaan Modal -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div class="bg-slate-50 rounded-2xl p-3.5 border border-slate-200 space-y-1">
-                <span class="text-[10px] font-black text-slate-500 uppercase tracking-wider block">Plafon RAB (AI)</span>
-                <span class="text-base font-black text-slate-800 block">Rp {{ totalBudgetFormatted }}</span>
-                <span class="text-[10px] text-slate-400 font-semibold">{{ activeFarm?.land_size_ha }} Ha · {{ activeFarm?.commodity }}</span>
-              </div>
-              <div class="bg-emerald-50 rounded-2xl p-3.5 border border-emerald-200 space-y-1">
-                <span class="text-[10px] font-black text-emerald-700 uppercase tracking-wider block">Modal Terpakai</span>
-                <span class="text-base font-black text-emerald-800 block">Rp {{ totalSpentFormatted }}</span>
-                <span class="text-[10px] text-emerald-600 font-semibold">{{ activeFarm?.capital_expenses?.length || 0 }} transaksi tercatat</span>
-              </div>
-              <div class="rounded-2xl p-3.5 border space-y-1"
-                :class="budgetSpentPercent > 90 ? 'bg-amber-50 border-amber-200' : 'bg-teal-50 border-teal-200'">
-                <span class="text-[10px] font-black uppercase tracking-wider block"
-                  :class="budgetSpentPercent > 90 ? 'text-amber-700' : 'text-teal-700'">Sisa Modal</span>
-                <span class="text-base font-black block"
-                  :class="budgetSpentPercent > 90 ? 'text-amber-800' : 'text-teal-800'">Rp {{ remainingBudgetFormatted }}</span>
-                <span class="text-[10px] font-semibold"
-                  :class="budgetSpentPercent > 90 ? 'text-amber-600' : 'text-teal-600'">{{ budgetSpentPercent }}% serapan anggaran</span>
-              </div>
-            </div>
-
-            <!-- Progress Bar -->
-            <div class="space-y-1.5">
-              <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden border border-slate-200">
-                <div
-                  class="h-full rounded-full transition-all duration-700"
-                  :class="budgetSpentPercent > 90 ? 'bg-amber-400' : 'bg-emerald-500'"
-                  :style="{ width: `${budgetSpentPercent}%` }"
-                ></div>
-              </div>
-              <div class="flex justify-between text-[10px] font-semibold text-slate-500">
-                <span>Status: <strong :class="budgetSpentPercent > 90 ? 'text-amber-600' : 'text-emerald-600'">{{ budgetStatusLabel }}</strong></span>
-                <span>{{ completedPhasesCount }} dari 5 Fase Selesai</span>
-              </div>
-            </div>
-
             <!-- Realisasi per Fase (Budget vs Aktual) -->
             <div class="space-y-2">
               <h4 class="text-xs font-black text-slate-700">Realisasi Modal per Fase</h4>
