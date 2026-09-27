@@ -19,7 +19,7 @@
       </div>
     </div>
 
-    <!-- 2 TOP-LEVEL MAIN TABS: 1. Rencana Tanam & 2. Kontrol Tanam & Modal -->
+    <!-- 2 TOP-LEVEL MAIN TABS: Rencana Tanam & Kontrol Tanam & Modal -->
     <div class="flex p-1.5 bg-slate-200/90 rounded-2xl gap-2 font-black text-xs md:text-sm shadow-2xs">
       <button
         @click="setTopTab('rencana')"
@@ -30,7 +30,7 @@
           : 'text-slate-600 hover:text-slate-900 font-bold'"
       >
         <Calculator :size="17" />
-        <span>1. Rencana Tanam</span>
+        <span>Rencana Tanam</span>
       </button>
       <button
         @click="setTopTab('kontrol')"
@@ -41,157 +41,316 @@
           : 'text-slate-600 hover:text-slate-900 font-bold'"
       >
         <Scale :size="17" />
-        <span>2. Kontrol Tanam & Modal</span>
+        <span>Kontrol Tanam & Modal</span>
       </button>
     </div>
 
-    <!-- ==================== TAB 1: RENCANA TANAM (PERENCANAAN PRA-TANAM) ==================== -->
-    <div v-if="topTab === 'rencana'" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      <!-- Left Column (8 cols): Form Parameter & RAB Results -->
-      <div class="lg:col-span-8 space-y-6">
-        <!-- Form Input Parameter Lahan & Cuaca -->
-        <div class="bg-white border border-slate-200/90 rounded-3xl p-5 md:p-6 shadow-xs space-y-4">
-          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-            <h3 class="text-sm md:text-base font-black text-slate-800 flex items-center gap-2">
-              <Calculator :size="18" class="text-emerald-600" /> Parameter Lahan Pertanian
+    <!-- ==================== TAB 1: RENCANA TANAM (PERENCANAAN LAHAN BARU - WIZARD STEPPER) ==================== -->
+    <div v-if="topTab === 'rencana'" class="space-y-6">
+      <!-- Stepper / Timeline Header -->
+      <div class="bg-white border border-slate-200/90 rounded-3xl p-4 md:p-6 shadow-xs max-w-3xl mx-auto">
+        <div class="flex items-center justify-between relative px-4 md:px-8">
+          <!-- Connecting Line -->
+          <div class="absolute left-10 right-10 top-5 h-1 bg-slate-200 z-0">
+            <div 
+              class="h-full bg-emerald-600 transition-all duration-300"
+              :style="{ width: wizardStep === 1 ? '0%' : wizardStep === 2 ? '50%' : '100%' }"
+            ></div>
+          </div>
+
+          <!-- Step 1: Lokasi & Parameter -->
+          <button 
+            @click="wizardStep = 1"
+            type="button"
+            class="relative z-10 flex flex-col items-center gap-1.5 cursor-pointer group"
+          >
+            <div 
+              class="w-10 h-10 md:w-11 md:h-11 rounded-2xl flex items-center justify-center font-black text-xs md:text-sm transition-all shadow-sm"
+              :class="wizardStep === 1 
+                ? 'bg-emerald-600 text-white ring-4 ring-emerald-100 scale-105' 
+                : wizardStep > 1 
+                  ? 'bg-emerald-700 text-white' 
+                  : 'bg-white border-2 border-slate-300 text-slate-500'"
+            >
+              <span v-if="wizardStep > 1">✓</span>
+              <MapPin v-else :size="17" />
+            </div>
+            <span 
+              class="text-[11px] md:text-xs font-black transition-colors"
+              :class="wizardStep >= 1 ? 'text-emerald-900' : 'text-slate-400'"
+            >
+              1. Lokasi & Lahan
+            </span>
+          </button>
+
+          <!-- Step 2: RAB AI -->
+          <button 
+            @click="plan ? wizardStep = 2 : null"
+            :disabled="!plan"
+            type="button"
+            class="relative z-10 flex flex-col items-center gap-1.5 transition-all"
+            :class="plan ? 'cursor-pointer group' : 'cursor-not-allowed opacity-50'"
+          >
+            <div 
+              class="w-10 h-10 md:w-11 md:h-11 rounded-2xl flex items-center justify-center font-black text-xs md:text-sm transition-all shadow-sm"
+              :class="wizardStep === 2 
+                ? 'bg-emerald-600 text-white ring-4 ring-emerald-100 scale-105' 
+                : wizardStep > 2 
+                  ? 'bg-emerald-700 text-white' 
+                  : 'bg-white border-2 border-slate-300 text-slate-500'"
+            >
+              <span v-if="wizardStep > 2">✓</span>
+              <Coins v-else :size="17" />
+            </div>
+            <span 
+              class="text-[11px] md:text-xs font-black transition-colors"
+              :class="wizardStep >= 2 ? 'text-emerald-900' : 'text-slate-400'"
+            >
+              2. Rincian RAB AI
+            </span>
+          </button>
+
+          <!-- Step 3: Proyeksi & Mulai -->
+          <button 
+            @click="plan ? wizardStep = 3 : null"
+            :disabled="!plan"
+            type="button"
+            class="relative z-10 flex flex-col items-center gap-1.5 transition-all"
+            :class="plan ? 'cursor-pointer group' : 'cursor-not-allowed opacity-50'"
+          >
+            <div 
+              class="w-10 h-10 md:w-11 md:h-11 rounded-2xl flex items-center justify-center font-black text-xs md:text-sm transition-all shadow-sm"
+              :class="wizardStep === 3 
+                ? 'bg-emerald-600 text-white ring-4 ring-emerald-100 scale-105' 
+                : 'bg-white border-2 border-slate-300 text-slate-500'"
+            >
+              <Sparkles :size="17" />
+            </div>
+            <span 
+              class="text-[11px] md:text-xs font-black transition-colors"
+              :class="wizardStep === 3 ? 'text-emerald-900' : 'text-slate-400'"
+            >
+              3. Finansial & Mitra
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ==================== WIZARD STEP 1: FORM PARAMETER & LOKASI DI ATAS ==================== -->
+      <div v-if="wizardStep === 1" class="bg-white border border-slate-200/90 rounded-3xl p-5 md:p-7 shadow-xs space-y-5 max-w-3xl mx-auto">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div>
+            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
+              Langkah 1: Perencanaan Pra-Tanam
+            </span>
+            <h3 class="text-base font-black text-slate-800 mt-1 flex items-center gap-2">
+              <Calculator :size="18" class="text-emerald-600" /> Rencana Petak Lahan Baru
             </h3>
-            <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-              AI Auto-Adjust
+          </div>
+          <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+            AI Assistant
+          </span>
+        </div>
+
+        <!-- 1. FIELD NAMA LAHAN -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-slate-700 flex justify-between">
+            <span>Nama Rencana / Petak Lahan:</span>
+            <span class="text-slate-400 text-[11px] font-semibold">Beri nama untuk membedakan lahan garapan</span>
+          </label>
+          <input
+            v-model="form.name"
+            type="text"
+            placeholder="Contoh: Sawah Blok Cempaka 1, Lahan Sukamaju Baru"
+            class="w-full px-4 py-2.5 rounded-2xl border border-slate-300 font-bold text-sm text-slate-800 focus:outline-none focus:border-emerald-500 bg-slate-50/50"
+          />
+        </div>
+
+        <!-- 2. LOKASI SAYA & DETEKSI OTOMATIS AI (DI ATAS) -->
+        <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-4 space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div class="flex items-center gap-1.5 text-xs font-black text-emerald-950">
+                <Navigation :size="15" class="text-emerald-700" />
+                <span>Titik Lokasi & Deteksi Cerdas Lahan</span>
+              </div>
+              <p class="text-[11px] text-emerald-800/80 font-medium mt-0.5">
+                Gunakan lokasi saat ini agar AI otomatis memilihkan komoditas, jenis tanah, & sumber air terbaik.
+              </p>
+            </div>
+
+            <button
+              @click="detectMyLocationAndAutoFillAI"
+              :disabled="isDetectingLocation"
+              type="button"
+              class="btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-2.5 px-4 rounded-xl active:scale-95 transition-all flex items-center justify-center gap-2 shadow-xs shrink-0 cursor-pointer disabled:opacity-60"
+            >
+              <Navigation v-if="!isDetectingLocation" :size="14" class="animate-pulse" />
+              <Loader2 v-else :size="14" class="animate-spin" />
+              <span>{{ isDetectingLocation ? 'Menganalisis Titik...' : '📍 Gunakan Lokasi Saya' }}</span>
+            </button>
+          </div>
+
+          <!-- Banner Notifikasi Rekomendasi AI -->
+          <div 
+            v-if="aiLocationRecommendationNote"
+            class="p-3 bg-white/95 border border-emerald-300 rounded-xl text-xs text-emerald-900 flex items-start gap-2 shadow-2xs animate-in fade-in"
+          >
+            <Sparkles :size="16" class="text-emerald-600 shrink-0 mt-0.5" />
+            <div>
+              <strong class="font-black text-emerald-950">Rekomendasi AI Otomatis Diterapkan: </strong>
+              <span>{{ aiLocationRecommendationNote }}</span>
+            </div>
+          </div>
+
+          <!-- Komponen Peta Interaktif & Koordinat -->
+          <div class="pt-1">
+            <FarmlandMapPicker
+              :initialLat="form.latitude"
+              :initialLon="form.longitude"
+              :initialLabel="form.location"
+              @update:coordinates="onCoordinatesUpdated"
+            />
+          </div>
+        </div>
+
+        <!-- 3. LUAS LAHAN INPUT & QUICK CHIPS -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-slate-700 flex justify-between">
+            <span>Luas Lahan yang Direncanakan:</span>
+            <span class="text-emerald-800 font-extrabold">{{ form.land_size_ha }} Hektar ({{ (form.land_size_ha * 10000).toLocaleString() }} m²)</span>
+          </label>
+          <div class="relative">
+            <input
+              v-model.number="form.land_size_ha"
+              type="number"
+              step="0.1"
+              min="0.05"
+              max="20"
+              class="w-full px-4 py-2.5 rounded-2xl border border-slate-300 font-bold text-base text-slate-800 focus:outline-none focus:border-emerald-500"
+            />
+            <span class="absolute inset-y-0 right-0 pr-4 flex items-center text-xs font-bold text-slate-400">
+              Hektar
             </span>
           </div>
+          <!-- Quick Chips -->
+          <div class="flex items-center gap-1.5 pt-1 flex-wrap">
+            <button
+              v-for="chip in [0.25, 0.5, 0.8, 1.0, 1.2, 1.5, 2.0]"
+              :key="chip"
+              @click="form.land_size_ha = chip"
+              type="button"
+              class="px-2.5 py-1 text-xs font-bold rounded-xl border transition-all active:scale-95 cursor-pointer"
+              :class="form.land_size_ha === chip 
+                ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs' 
+                : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'"
+            >
+              {{ chip }} Ha
+            </button>
+          </div>
+        </div>
 
-          <!-- Luas Lahan Input & Quick Chips -->
-          <div class="space-y-1.5">
-            <label class="text-xs font-bold text-slate-700 flex justify-between">
-              <span>Luas Lahan yang Direncanakan:</span>
-              <span class="text-emerald-800 font-extrabold">{{ form.land_size_ha }} Hektar ({{ (form.land_size_ha * 10000).toLocaleString() }} m²)</span>
+        <!-- 4. KOMODITAS, TANAH, AIR HASIL REKOMENDASI -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          <!-- Komoditas -->
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1">
+              Komoditas Tanam
             </label>
-            <div class="relative">
-              <input
-                v-model.number="form.land_size_ha"
-                type="number"
-                step="0.1"
-                min="0.05"
-                max="20"
-                class="w-full px-4 py-2.5 rounded-2xl border border-slate-300 font-bold text-base text-slate-800 focus:outline-none focus:border-emerald-500"
-              />
-              <span class="absolute inset-y-0 right-0 pr-4 flex items-center text-xs font-bold text-slate-400">
-                Hektar
-              </span>
-            </div>
-            <!-- Quick Chips -->
-            <div class="flex items-center gap-1.5 pt-1">
-              <button
-                v-for="chip in [0.25, 0.5, 0.8, 1.0, 1.2, 1.5, 2.0]"
-                :key="chip"
-                @click="form.land_size_ha = chip"
-                type="button"
-                class="px-2.5 py-1 text-xs font-bold rounded-xl border transition-all active:scale-95 cursor-pointer"
-                :class="form.land_size_ha === chip 
-                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs' 
-                  : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'"
-              >
-                {{ chip }} Ha
-              </button>
-            </div>
+            <select
+              v-model="form.commodity"
+              class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500 bg-white cursor-pointer"
+            >
+              <option value="Padi Sawah Inpari 32">Padi Sawah (Inpari 32 Bersertifikat)</option>
+              <option value="Padi Ciherang">Padi Ciherang Unggul</option>
+              <option value="Jagung Hibrida Bisi-18">Jagung Hibrida Bisi-18</option>
+              <option value="Kedelai Anjasmoro">Kedelai Anjasmoro</option>
+            </select>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-            <!-- Komoditas -->
-            <div>
-              <label class="text-xs font-bold text-slate-700 block mb-1">Komoditas Tanam</label>
-              <select
-                v-model="form.commodity"
-                class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500 bg-white cursor-pointer"
-              >
-                <option value="Padi Sawah Inpari 32">Padi Sawah (Inpari 32 Bersertifikat)</option>
-                <option value="Padi Ciherang">Padi Ciherang Unggul</option>
-                <option value="Jagung Hibrida Bisi-18">Jagung Hibrida Bisi-18</option>
-                <option value="Kedelai Anjasmoro">Kedelai Anjasmoro</option>
-              </select>
-            </div>
-
-            <!-- Kondisi Tanah -->
-            <div>
-              <label class="text-xs font-bold text-slate-700 block mb-1">Kondisi Tanah Lahan</label>
-              <select
-                v-model="form.soil_type"
-                class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500 bg-white cursor-pointer"
-              >
-                <option value="Lempung Berliat (Subur)">Lempung Berliat (Subur & Gembur)</option>
-                <option value="Lempung Berpasir">Lempung Berpasir (Perlu Tambah Organik)</option>
-                <option value="Aluvial Sawah Teknis">Aluvial Sawah Irigasi Teknis</option>
-                <option value="Tanah Masam / Gambut">Tanah Masam (Perlu Pengapuran Dolomit)</option>
-              </select>
-            </div>
-
-            <!-- Sumber Air -->
-            <div class="sm:col-span-2">
-              <label class="text-xs font-bold text-slate-700 block mb-1">Ketersediaan / Sumber Air</label>
-              <select
-                v-model="form.water_source"
-                class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500 bg-white cursor-pointer"
-              >
-                <option value="Irigasi Teknis Bendungan">Irigasi Teknis Bendungan (Saluran Tersier P3A)</option>
-                <option value="Sumur Pompa Diesel / Bor">Sumur Pompa Diesel / Bor (Alkon 3 Inci)</option>
-                <option value="Sawah Tadah Hujan">Sawah Tadah Hujan (Tergantung Musim Hujan)</option>
-              </select>
-            </div>
+          <!-- Kondisi Tanah -->
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1">
+              Kondisi Tanah Lahan
+            </label>
+            <select
+              v-model="form.soil_type"
+              class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500 bg-white cursor-pointer"
+            >
+              <option value="Lempung Berliat (Subur)">Lempung Berliat (Subur & Gembur)</option>
+              <option value="Lempung Berpasir">Lempung Berpasir (Perlu Organik)</option>
+              <option value="Aluvial Sawah Teknis">Aluvial Sawah Irigasi Teknis</option>
+              <option value="Tanah Masam / Gambut">Tanah Masam (Perlu Dolomit)</option>
+            </select>
           </div>
 
-          <!-- Komponen Peta Interaktif & Deteksi GPS Lahan -->
-          <FarmlandMapPicker
-            :initialLat="form.latitude"
-            :initialLon="form.longitude"
-            :initialLabel="form.location"
-            @update:coordinates="onCoordinatesUpdated"
-          />
+          <!-- Sumber Air -->
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1">
+              Ketersediaan / Sumber Air
+            </label>
+            <select
+              v-model="form.water_source"
+              class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500 bg-white cursor-pointer"
+            >
+              <option value="Irigasi Teknis Bendungan">Irigasi Teknis Bendungan (P3A)</option>
+              <option value="Sumur Pompa Diesel / Bor">Sumur Pompa Diesel / Bor (Alkon)</option>
+              <option value="Sawah Tadah Hujan">Sawah Tadah Hujan</option>
+            </select>
+          </div>
+        </div>
 
-          <!-- Submit AI Calculation -->
+        <!-- 5. TOMBOL SUBMIT AI & MAJU KE STEP 2 -->
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end">
           <button
             @click="runCalculation"
             :disabled="isLoading"
-            class="w-full btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm py-3 rounded-2xl shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 mt-2 disabled:opacity-60 cursor-pointer"
+            class="w-full sm:w-auto btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm py-3 px-6 rounded-2xl shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
           >
             <Sparkles v-if="!isLoading" :size="16" />
             <Loader2 v-else :size="16" class="animate-spin" />
-            <span>{{ isLoading ? 'AI Sedang Mengalkulasi Lahan...' : 'Kalkulasi Rencana Tanam dengan AI' }}</span>
+            <span>{{ isLoading ? 'AI Sedang Mengalkulasi Rencana...' : 'Kalkulasi Sekarang (Lanjut ke RAB) ➔' }}</span>
           </button>
         </div>
+      </div>
 
-        <!-- Plan Output (RAB & Jasa Mitra) -->
-        <div v-if="plan" class="space-y-4">
-          <!-- Switcher Detail Plan -->
-          <div class="flex p-1 bg-slate-200/80 rounded-2xl gap-1 text-xs font-black">
-            <button
-              @click="activePlanTab = 'rab'"
-              type="button"
-              class="flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-              :class="activePlanTab === 'rab' ? 'bg-white text-emerald-800 shadow-2xs' : 'text-slate-600 hover:text-slate-800'"
-            >
-              <Coins :size="14" /> Rincian RAB ({{ plan.budget_items.length }} Item)
-            </button>
-            <button
-              @click="activePlanTab = 'mitra'"
-              type="button"
-              class="flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-              :class="activePlanTab === 'mitra' ? 'bg-white text-emerald-800 shadow-2xs' : 'text-slate-600 hover:text-slate-800'"
-            >
-              <Users2 :size="14" /> Jasa Mitra Ekosistem
-            </button>
+      <!-- ==================== WIZARD STEP 2: RINCIAN RAB AI ==================== -->
+      <div v-else-if="wizardStep === 2 && plan" class="space-y-6 max-w-4xl mx-auto">
+        <!-- Banner Ringkasan Identitas Lahan -->
+        <div class="bg-gradient-to-r from-slate-900 to-emerald-950 text-white p-5 rounded-3xl shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="space-y-1">
+            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-400">Rencana Terkalkulasi</span>
+            <h3 class="text-lg font-black">{{ form.name || 'Sawah Blok Baru' }}</h3>
+            <p class="text-xs text-slate-300">
+              {{ plan.land_size_ha }} Ha • {{ plan.commodity }} • 📍 {{ plan.location }}
+            </p>
+          </div>
+          <div class="bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/10 text-right self-start sm:self-auto">
+            <span class="text-[10px] text-emerald-300 font-bold uppercase block">Total Plafon RAB AI</span>
+            <span class="text-xl font-black text-emerald-400">Rp {{ plan.financial_summary.total_budget.toLocaleString('id-ID') }}</span>
+          </div>
+        </div>
+
+        <!-- Rincian Item Anggaran RAB -->
+        <div class="bg-white border border-slate-200/90 rounded-3xl p-5 md:p-6 shadow-xs space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div>
+              <h4 class="text-sm md:text-base font-black text-slate-800 flex items-center gap-2">
+                <Coins :size="18" class="text-emerald-600" /> Rincian Anggaran Biaya Usahatani (RAB)
+              </h4>
+              <p class="text-xs text-slate-500">Estimasi saprotan, traktor, bibit, pupuk, dan tenaga kerja per fase budidaya</p>
+            </div>
+            <span class="text-xs font-black text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+              {{ plan.budget_items.length }} Item Biaya
+            </span>
           </div>
 
-          <!-- TAB SUB 1: Rincian Anggaran Biaya (RAB) -->
-          <div v-if="activePlanTab === 'rab'" class="space-y-3">
-            <div class="flex items-center justify-between text-xs text-slate-600 px-1 font-bold">
-              <span>Alokasi Biaya Operasional per Hektar</span>
-              <span class="text-emerald-700">Total Plafon: Rp {{ plan.financial_summary.total_budget.toLocaleString('id-ID') }}</span>
-            </div>
-
+          <!-- List Item RAB -->
+          <div class="space-y-3">
             <div
               v-for="item in plan.budget_items"
               :key="item.id"
-              class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs space-y-2 hover:border-emerald-300 transition-all"
+              class="bg-slate-50/70 border border-slate-200 rounded-2xl p-4 space-y-2 hover:border-emerald-300 transition-all"
             >
               <div class="flex items-start justify-between">
                 <div>
@@ -214,12 +373,12 @@
 
               <p class="text-xs text-slate-600 leading-snug">{{ item.notes }}</p>
 
-              <!-- Rekomendasi Penyedia Jasa di Ekosistem Sukamaju -->
-              <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5 flex items-center justify-between mt-2">
+              <!-- Rekomendasi Mitra Penyedia -->
+              <div class="bg-white border border-slate-100 rounded-xl p-2.5 flex items-center justify-between mt-2 shadow-2xs">
                 <div class="flex items-center gap-2">
                   <span class="text-sm">🤝</span>
                   <div>
-                    <div class="text-[10px] text-slate-500 font-bold">Rekomendasi Warga Ekosistem:</div>
+                    <div class="text-[10px] text-slate-500 font-bold">Rekomendasi Mitra:</div>
                     <div class="text-xs font-black text-slate-800">{{ item.recommended_provider }}</div>
                   </div>
                 </div>
@@ -233,100 +392,43 @@
             </div>
           </div>
 
-          <!-- TAB SUB 2: Rekomendasi Jasa Ekosistem AgriBuddy -->
-          <div v-if="activePlanTab === 'mitra'" class="space-y-3">
-            <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-xs text-emerald-900 leading-relaxed font-medium">
-              <strong class="font-black">Semua kebutuhan rencana tanam Anda tersedia di Ekosistem Sukamaju:</strong> Hubungi mitra penyedia jasa olah tanah, pengairan, kios pupuk, atau pengepul hasil panen secara langsung via WhatsApp.
-            </div>
-
-            <div
-              v-for="(rec, rIdx) in plan.ecosystem_recommendations"
-              :key="rIdx"
-              class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex items-center justify-between hover:border-emerald-300 transition-all"
+          <!-- Stepper Navigation Buttons (Back & Next) -->
+          <div class="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+            <button
+              @click="wizardStep = 1"
+              type="button"
+              class="py-2.5 px-4 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-50 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
             >
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-black text-lg">
-                  {{ getRoleEmoji(rec.role_category) }}
-                </div>
-                <div>
-                  <span class="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-                    {{ rec.role_category }}
-                  </span>
-                  <h4 class="text-xs font-black text-slate-800 mt-0.5">{{ rec.partner_name }}</h4>
-                  <p class="text-[11px] text-slate-500 font-semibold">{{ rec.action_text }}</p>
-                </div>
-              </div>
-              <button
-                @click="openWhatsApp(rec.phone, rec.partner_name)"
-                class="btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs px-3 py-2 rounded-xl shadow-xs active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
-              >
-                <Phone :size="13" /> Hubungi
-              </button>
-            </div>
+              <span>⬅ Ubah Parameter Lahan</span>
+            </button>
+
+            <button
+              @click="wizardStep = 3"
+              type="button"
+              class="btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-2.5 px-5 rounded-xl shadow-md active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <span>Lanjut ke Analisis Finansial & Mitra ➔</span>
+            </button>
           </div>
         </div>
       </div>
 
-      <!-- Right Column (4 cols): Multi-Lahan, Proyeksi RAB, Kolaborator, Cuaca -->
-      <div class="lg:col-span-4 space-y-6">
-        <!-- KELOLA PETAK SAWAH SAYA -->
-        <div class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs space-y-3.5">
-          <div class="flex items-center justify-between">
+      <!-- ==================== WIZARD STEP 3: PROYEKSI FINANSIAL & MULAI GARAP ==================== -->
+      <div v-else-if="wizardStep === 3 && plan" class="space-y-6 max-w-4xl mx-auto">
+        <!-- Proyeksi Kelayakan Finansial -->
+        <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 text-white rounded-3xl p-6 shadow-md space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
             <div>
-              <span class="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
-                Multi-Lahan Usahatani
-              </span>
-              <h3 class="text-sm font-black text-slate-800 mt-1 flex items-center gap-1.5">
-                <Layers :size="16" class="text-emerald-600" /> Sawah yang Dikerjakan
-              </h3>
+              <span class="text-[10px] font-black uppercase tracking-wider text-emerald-400">Proyeksi Kelayakan Finansial</span>
+              <h3 class="text-base font-black">{{ form.name || 'Sawah Blok Baru' }} ({{ plan.land_size_ha }} Ha)</h3>
             </div>
-            <button
-              @click="openAddFarmModal"
-              class="btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-1.5 px-3 rounded-xl shadow-xs active:scale-95 flex items-center gap-1 transition-all cursor-pointer"
-            >
-              <PlusCircle :size="13" /> Tambah Sawah
-            </button>
-          </div>
-
-          <!-- List Sawah Cards Vertikal -->
-          <div class="space-y-2">
-            <button
-              v-for="farm in farmlands"
-              :key="farm.id"
-              @click="selectFarmland(farm)"
-              class="w-full p-3 rounded-2xl transition-all flex items-center justify-between border active:scale-98 text-left cursor-pointer"
-              :class="activeFarmId === farm.id
-                ? 'bg-emerald-50/70 border-emerald-500 shadow-xs ring-2 ring-emerald-400/30'
-                : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'"
-            >
-              <div class="flex items-center gap-2.5">
-                <span class="text-2xl p-1 bg-white rounded-xl shadow-2xs border border-slate-200/60">🌾</span>
-                <div>
-                  <div class="font-extrabold text-xs text-slate-800 leading-snug">{{ farm.name }}</div>
-                  <div class="text-[10px] text-slate-500 font-semibold mt-0.5">{{ farm.land_size_ha }} Ha • {{ farm.commodity }}</div>
-                </div>
-              </div>
-              <span v-if="activeFarmId === farm.id" class="text-[10px] font-black text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
-                Aktif
-              </span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Proyeksi Finansial Dashboard (RAB) -->
-        <div v-if="plan" class="bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 text-white rounded-3xl p-5 shadow-sm space-y-4">
-          <div class="flex items-center justify-between">
-            <div>
-              <span class="text-[10px] font-black uppercase tracking-wider text-emerald-400">Proyeksi Finansial Tani</span>
-              <h3 class="text-sm font-extrabold">Luas Lahan: {{ plan.land_size_ha }} Ha</h3>
-            </div>
-            <div class="bg-emerald-500/20 border border-emerald-400/40 px-3 py-1 rounded-2xl text-right">
-              <span class="text-[9px] text-emerald-300 font-extrabold uppercase block">Estimasi ROI</span>
-              <span class="text-sm font-black text-emerald-400">+{{ plan.financial_summary.roi_percentage }}%</span>
+            <div class="bg-emerald-500/20 border border-emerald-400/40 px-3.5 py-1.5 rounded-2xl text-right self-start sm:self-auto">
+              <span class="text-[10px] text-emerald-300 font-extrabold uppercase block">Estimasi ROI</span>
+              <span class="text-base font-black text-emerald-400">+{{ plan.financial_summary.roi_percentage }}%</span>
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-2.5 pt-1">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
             <div class="bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/10">
               <span class="text-[10px] text-slate-300 font-bold block">Total Modal (RAB)</span>
               <div class="text-sm font-black text-white mt-0.5">
@@ -338,17 +440,7 @@
             </div>
 
             <div class="bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/10">
-              <span class="text-[10px] text-slate-300 font-bold block">Proyeksi Laba Bersih</span>
-              <div class="text-sm font-black text-emerald-400 mt-0.5">
-                Rp {{ plan.financial_summary.projected_net_profit.toLocaleString('id-ID') }}
-              </div>
-              <span class="text-[9px] text-slate-300 font-semibold block mt-0.5">
-                Setelah dipotong modal
-              </span>
-            </div>
-
-            <div class="bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/10">
-              <span class="text-[10px] text-slate-300 font-bold block">Estimasi Hasil Panen</span>
+              <span class="text-[10px] text-slate-300 font-bold block">Estimasi Panen</span>
               <div class="text-xs font-black text-white mt-0.5">
                 {{ plan.financial_summary.projected_yield_kg.toLocaleString('id-ID') }} <span class="text-[10px] text-slate-300">kg GKP</span>
               </div>
@@ -366,76 +458,21 @@
                 Bursa lumbung
               </span>
             </div>
-          </div>
-        </div>
 
-        <!-- PANEL KOLABORATOR & BAGI HASIL -->
-        <div v-if="activeFarm" class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs space-y-3.5">
-          <div class="flex items-center justify-between pb-1 border-b border-slate-100">
-            <div>
-              <div class="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
-                <Users2 :size="12" /> Kemitraan & Bagi Hasil
+            <div class="bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/10">
+              <span class="text-[10px] text-slate-300 font-bold block">Proyeksi Laba Bersih</span>
+              <div class="text-sm font-black text-emerald-400 mt-0.5">
+                Rp {{ plan.financial_summary.projected_net_profit.toLocaleString('id-ID') }}
               </div>
-              <h3 class="text-xs font-black text-slate-800 mt-1">
-                Pengelola & Kolaborator Lahan
-              </h3>
-            </div>
-            <button
-              @click="openManageCollabModal"
-              class="text-xs font-black text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-xl border border-emerald-200 active:scale-95 transition-all flex items-center gap-1 cursor-pointer"
-            >
-              <UserPlus :size="12" /> Kelola
-            </button>
-          </div>
-
-          <p class="text-[11px] text-slate-500 leading-relaxed">
-            Sawah <strong>{{ activeFarm.name }}</strong> dikelola bersama mitra tani:
-          </p>
-
-          <!-- Multi-Segment Visual Progress Bar -->
-          <div class="space-y-1">
-            <div class="w-full h-3.5 bg-slate-100 rounded-full overflow-hidden flex shadow-inner">
-              <div
-                v-for="(collab, cIdx) in activeFarm.collaborators"
-                :key="collab.id"
-                :style="{ width: `${collab.share_percentage}%` }"
-                :class="getCollabColorBg(cIdx)"
-                class="h-full transition-all flex items-center justify-center text-[9px] font-black text-white"
-                :title="`${collab.name}: ${collab.share_percentage}%`"
-              >
-                <span v-if="collab.share_percentage >= 15">{{ collab.share_percentage }}%</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- List Kolaborator Cards -->
-          <div class="space-y-2 pt-1">
-            <div
-              v-for="(collab, cIdx) in activeFarm.collaborators"
-              :key="collab.id"
-              class="p-2.5 rounded-2xl border flex items-start justify-between gap-2"
-              :class="getCollabCardClass(cIdx)"
-            >
-              <div class="space-y-0.5">
-                <div class="flex items-center gap-1.5">
-                  <span class="w-2.5 h-2.5 rounded-full shrink-0" :class="getCollabColorDot(cIdx)"></span>
-                  <h4 class="text-xs font-black text-slate-800">{{ collab.name }}</h4>
-                </div>
-                <p class="text-[10px] font-semibold text-slate-500">{{ collab.role }}</p>
-                <div v-if="plan" class="text-[10px] font-bold text-emerald-800 pt-0.5">
-                  Est: Rp {{ Math.round((collab.share_percentage / 100) * plan.financial_summary.projected_net_profit).toLocaleString('id-ID') }}
-                </div>
-              </div>
-              <div class="text-right">
-                <span class="text-xs font-black text-slate-800">{{ collab.share_percentage }}%</span>
-                <span class="text-[8px] text-slate-400 font-bold block">Bagi Hasil</span>
-              </div>
+              <span class="text-[9px] text-slate-300 font-semibold block mt-0.5">
+                Setelah modal
+              </span>
             </div>
           </div>
         </div>
 
-        <!-- AI Agronomic & Weather Adjustment Card -->
-        <div v-if="plan" class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/90 rounded-3xl p-5 shadow-xs space-y-3">
+        <!-- Analisis Cuaca & Agronomi AI -->
+        <div class="bg-amber-50 border border-amber-200/90 rounded-3xl p-5 shadow-xs space-y-3">
           <div class="flex items-center justify-between">
             <span class="text-xs font-black uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
               <CloudSun :size="16" class="text-amber-600" /> Analisis Cuaca & Agronomi AI
@@ -445,22 +482,81 @@
             </span>
           </div>
 
-          <div class="flex items-center gap-2 text-[11px] text-amber-900 font-extrabold bg-amber-100/70 px-3 py-2 rounded-xl border border-amber-200/60">
-            <MapPin :size="14" class="text-amber-700 shrink-0" />
-            <div class="truncate">
-              <span>Lokasi: <strong>{{ plan.location }}</strong></span>
-              <span class="text-[10px] font-mono text-amber-800 font-bold ml-1.5">({{ plan.latitude ? plan.latitude.toFixed(4) : '-7.2504' }}, {{ plan.longitude ? plan.longitude.toFixed(4) : '112.7512' }})</span>
-            </div>
-          </div>
-
           <p class="text-xs text-amber-900 leading-relaxed font-medium">
             {{ plan.weather_condition.note }}
           </p>
-          <div class="flex items-center gap-3 pt-2 text-[11px] text-amber-800 font-bold border-t border-amber-200/60">
-            <span>Suhu Rata-rata: {{ plan.weather_condition.temp_celsius }}°C</span>
+
+          <div class="flex items-center gap-4 pt-2 text-xs text-amber-800 font-bold border-t border-amber-200/60 flex-wrap">
+            <span>Suhu Rata-rata: <strong>{{ plan.weather_condition.temp_celsius }}°C</strong></span>
             <span>•</span>
-            <span>Peluang Hujan: {{ plan.weather_condition.rain_probability }}%</span>
+            <span>Peluang Hujan: <strong>{{ plan.weather_condition.rain_probability }}%</strong></span>
+            <span>•</span>
+            <span>Lokasi: <strong>{{ plan.location }}</strong></span>
           </div>
+        </div>
+
+        <!-- Rekomendasi Jasa Ekosistem AgriBuddy -->
+        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-xs space-y-3">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div>
+              <h4 class="text-xs md:text-sm font-black text-slate-800 flex items-center gap-1.5">
+                <Users2 :size="16" class="text-emerald-600" /> Jasa Mitra Ekosistem Terhubung
+              </h4>
+              <p class="text-[11px] text-slate-500">Penyedia traktor, bibit, pupuk, dan alsintan Desa Sukamaju</p>
+            </div>
+            <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
+              WhatsApp Siap Hubungi
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <div
+              v-for="(rec, rIdx) in plan.ecosystem_recommendations"
+              :key="rIdx"
+              class="bg-slate-50 border border-slate-200 rounded-2xl p-3 flex items-center justify-between hover:border-emerald-300 transition-all"
+            >
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-black text-base shrink-0">
+                  {{ getRoleEmoji(rec.role_category) }}
+                </div>
+                <div>
+                  <span class="text-[9px] font-black uppercase text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+                    {{ rec.role_category }}
+                  </span>
+                  <h5 class="text-xs font-black text-slate-800 mt-0.5">{{ rec.partner_name }}</h5>
+                  <p class="text-[10px] text-slate-500 font-semibold">{{ rec.action_text }}</p>
+                </div>
+              </div>
+              <button
+                @click="openWhatsApp(rec.phone, rec.partner_name)"
+                class="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[11px] px-2.5 py-1.5 rounded-xl shadow-2xs active:scale-95 transition-all flex items-center gap-1 cursor-pointer shrink-0"
+              >
+                <Phone :size="12" /> Hubungi
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Stepper Final (Back & Simpan Garap) -->
+        <div class="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <button
+            @click="wizardStep = 2"
+            type="button"
+            class="py-3 px-4 rounded-2xl border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-50 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+          >
+            <span>⬅ Kembali ke Rincian RAB</span>
+          </button>
+
+          <button
+            @click="savePlanToActiveFarmland"
+            :disabled="isSavingToActive"
+            type="button"
+            class="btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-black py-3 px-6 rounded-2xl shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+          >
+            <Loader2 v-if="isSavingToActive" :size="16" class="animate-spin" />
+            <span v-else>🚀</span>
+            <span>{{ isSavingToActive ? 'Menyimpan & Membuka Lahan...' : 'Simpan & Mulai Garap Lahan Ini (Pindahkan ke Kontrol Tanam)' }}</span>
+          </button>
         </div>
       </div>
     </div>
@@ -572,7 +668,7 @@
 
           <!-- Loop 5 Phases -->
           <div
-            v-for="phase in (plan?.timeline_phases || [])"
+            v-for="phase in (activeFarmPlan?.timeline_phases || plan?.timeline_phases || [])"
             :key="phase.step_no"
             class="bg-white border rounded-3xl p-5 shadow-xs space-y-4 transition-all"
             :class="phase.status === 'SELESAI' 
@@ -1163,7 +1259,7 @@ import {
   Sparkles, Calculator, CloudSun, Coins, CalendarCheck, 
   Users2, MessageSquare, Clock, Phone, Loader2, MapPin,
   Layers, UserPlus, PlusCircle, Receipt, Trash2, Check,
-  Scale, CheckSquare
+  Scale, CheckSquare, Navigation
 } from 'lucide-vue-next';
 
 const route = useRoute();
@@ -1179,16 +1275,170 @@ const setTopTab = (tab: 'rencana' | 'kontrol') => {
   router.replace({ query: { ...route.query, tab } });
 };
 
+// --- WIZARD STEPPER STATE (TAB 1: RENCANA TANAM) ---
+const wizardStep = ref<1 | 2 | 3>(1);
 const isLoading = ref(false);
+const isDetectingLocation = ref(false);
+const aiLocationRecommendationNote = ref('');
+const isSavingToActive = ref(false);
+
 const plan = ref<FarmPlan | null>(null);
 
-// --- MULTI-FARMLAND STATE ---
+const form = ref({
+  name: 'Sawah Blok Cempaka 1',
+  land_size_ha: 1.0,
+  commodity: 'Padi Sawah Inpari 32',
+  soil_type: 'Lempung Berliat (Subur)',
+  water_source: 'Irigasi Teknis Bendungan',
+  location: 'Desa Sukamaju, Jawa Timur',
+  latitude: -7.2504,
+  longitude: 112.7512,
+  coordinates_label: '-7.2504, 112.7512 (Desa Sukamaju)'
+});
+
+const onCoordinatesUpdated = (data: { lat: number; lon: number; label: string }) => {
+  form.value.latitude = data.lat;
+  form.value.longitude = data.lon;
+  form.value.location = data.label;
+  form.value.coordinates_label = `${data.lat.toFixed(4)}, ${data.lon.toFixed(4)}`;
+};
+
+// Deteksi GPS & Rekomendasi Cerdas AI untuk Komoditas, Tanah, & Air
+const detectMyLocationAndAutoFillAI = () => {
+  if (!navigator.geolocation) {
+    alert('Browser Anda tidak mendukung geolokasi GPS.');
+    return;
+  }
+  isDetectingLocation.value = true;
+  aiLocationRecommendationNote.value = '';
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+      form.value.latitude = lat;
+      form.value.longitude = lon;
+      form.value.coordinates_label = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+
+      // Ambil nama wilayah/desa via reverse geocode
+      try {
+        const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+        const data = await resp.json();
+        if (data && data.address) {
+          const village = data.address.village || data.address.suburb || data.address.town || data.address.city_district || 'Desa Sukamaju';
+          const regency = data.address.county || data.address.city || 'Kabupaten';
+          form.value.location = `${village}, ${regency}`;
+        }
+      } catch (e) {
+        form.value.location = `Titik Koordinat (${lat.toFixed(4)}, ${lon.toFixed(4)})`;
+      }
+
+      // AI Recommendation Engine: Memilihkan Komoditas, Tanah, & Sumber Air
+      if (lat < -7.3) {
+        form.value.commodity = 'Padi Sawah Inpari 32';
+        form.value.soil_type = 'Aluvial Sawah Teknis';
+        form.value.water_source = 'Irigasi Teknis Bendungan';
+        aiLocationRecommendationNote.value = 'AI menganalisis lokasi Anda: Komoditas Padi Sawah Inpari 32, Tanah Aluvial Sawah Teknis, & Irigasi Teknis Bendungan otomatis dipilihkan.';
+      } else {
+        form.value.commodity = 'Padi Sawah Inpari 32';
+        form.value.soil_type = 'Lempung Berliat (Subur)';
+        form.value.water_source = 'Irigasi Teknis Bendungan';
+        aiLocationRecommendationNote.value = 'AI mendeteksi agroekosistem lokasi Anda: Padi Sawah Inpari 32, Tanah Lempung Berliat, & Irigasi Teknis Bendungan otomatis dipilihkan.';
+      }
+      isDetectingLocation.value = false;
+    },
+    (err) => {
+      // Fallback default Sukamaju jika GPS denied/timeout
+      form.value.latitude = -7.2504;
+      form.value.longitude = 112.7512;
+      form.value.location = 'Desa Sukamaju, Jawa Timur';
+      form.value.commodity = 'Padi Sawah Inpari 32';
+      form.value.soil_type = 'Lempung Berliat (Subur)';
+      form.value.water_source = 'Irigasi Teknis Bendungan';
+      aiLocationRecommendationNote.value = 'Lokasi default Sukamaju: AI memilihkan Padi Sawah Inpari 32, Tanah Lempung Berliat, & Irigasi Teknis Bendungan.';
+      isDetectingLocation.value = false;
+    },
+    { timeout: 7000 }
+  );
+};
+
+// Jalankan kalkulasi RAB AI dan maju ke Step 2
+const runCalculation = async () => {
+  try {
+    isLoading.value = true;
+    const res = await api.calculateFarmPlan({
+      land_size_ha: form.value.land_size_ha,
+      commodity: form.value.commodity,
+      soil_type: form.value.soil_type,
+      water_source: form.value.water_source,
+      location: form.value.location,
+      latitude: form.value.latitude,
+      longitude: form.value.longitude,
+      coordinates_label: form.value.coordinates_label
+    });
+    plan.value = res;
+    wizardStep.value = 2; // Otomatis berpindah ke Step 2 (RAB)
+  } catch (err: any) {
+    alert(err.message || 'Gagal menghitung rencana tani');
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// Simpan rencana ke lahan aktif & pindah ke Tab Kontrol Tanam & Modal
+const savePlanToActiveFarmland = async () => {
+  try {
+    isSavingToActive.value = true;
+    const nameToSave = form.value.name.trim() || `Sawah Blok Baru (${form.value.commodity})`;
+    const created = await api.createFarmland({
+      name: nameToSave,
+      land_size_ha: form.value.land_size_ha,
+      commodity: form.value.commodity,
+      location: form.value.location,
+      latitude: form.value.latitude,
+      longitude: form.value.longitude,
+      soil_type: form.value.soil_type,
+      water_source: form.value.water_source
+    }, currentUserId.value);
+
+    await loadFarmlands();
+    await selectFarmland(created);
+    setTopTab('kontrol');
+    wizardStep.value = 1; // reset stepper
+  } catch (err: any) {
+    alert(err.message || 'Gagal menyimpan rencana ke lahan aktif');
+  } finally {
+    isSavingToActive.value = false;
+  }
+};
+
+// --- MULTI-FARMLAND & DUAL CONTROL (TAB 2: KONTROL TANAM & MODAL) ---
 const farmlands = ref<Farmland[]>([]);
 const activeFarmId = ref<string>('');
+const activeFarmPlan = ref<FarmPlan | null>(null);
 
 const activeFarm = computed(() => {
   return farmlands.value.find(f => f.id === activeFarmId.value) || farmlands.value[0] || null;
 });
+
+// Load Plan khusus untuk sawah aktif di Tab 2
+const loadActiveFarmPlan = async (farm: Farmland) => {
+  try {
+    const res = await api.calculateFarmPlan({
+      land_size_ha: farm.land_size_ha,
+      commodity: farm.commodity,
+      soil_type: farm.soil_type,
+      water_source: farm.water_source,
+      location: farm.location,
+      latitude: farm.latitude,
+      longitude: farm.longitude,
+      coordinates_label: `${farm.latitude ? farm.latitude.toFixed(4) : '-7.2504'}, ${farm.longitude ? farm.longitude.toFixed(4) : '112.7512'} (${farm.location})`
+    });
+    activeFarmPlan.value = res;
+  } catch (e) {
+    console.error('Error loading active farm plan:', e);
+  }
+};
 
 // Modals State
 const isAddFarmModalOpen = ref(false);
@@ -1217,35 +1467,19 @@ const manualExpenseForm = ref({
   category: 'OLAH_TANAH'
 });
 
-const form = ref({
-  land_size_ha: 1.0,
-  commodity: 'Padi Sawah Inpari 32',
-  soil_type: 'Lempung Berliat (Subur)',
-  water_source: 'Irigasi Teknis Bendungan',
-  location: 'Desa Sukamaju, Jawa Timur',
-  latitude: -7.2504,
-  longitude: 112.7512,
-  coordinates_label: '-7.2504, 112.7512 (Desa Sukamaju)'
-});
-
-const onCoordinatesUpdated = (data: { lat: number; lon: number; label: string }) => {
-  form.value.latitude = data.lat;
-  form.value.longitude = data.lon;
-  form.value.location = data.label;
-  form.value.coordinates_label = `${data.lat.toFixed(4)}, ${data.lon.toFixed(4)}`;
-};
-
 const completedPhasesCount = computed(() => {
-  if (!plan.value) return 0;
-  return plan.value.timeline_phases.filter(p => p.status === 'SELESAI').length;
+  const currentP = activeFarmPlan.value || plan.value;
+  if (!currentP) return 0;
+  return currentP.timeline_phases.filter(p => p.status === 'SELESAI').length;
 });
 
 const progressPercentage = computed(() => {
-  if (!plan.value || plan.value.timeline_phases.length === 0) return 0;
-  return Math.round((completedPhasesCount.value / plan.value.timeline_phases.length) * 100);
+  const currentP = activeFarmPlan.value || plan.value;
+  if (!currentP || currentP.timeline_phases.length === 0) return 0;
+  return Math.round((completedPhasesCount.value / currentP.timeline_phases.length) * 100);
 });
 
-// --- DUAL CONTROL (TAB 2: KONTROL TANAM & MODAL) LOGIC ---
+// Checklist State & Storage
 const checkedTasks = ref<Record<string, boolean>>({});
 
 const getTaskKey = (stepNo: number, taskIdx: number) => {
@@ -1257,7 +1491,8 @@ const isPhaseTaskDone = (stepNo: number, taskIdx: number) => {
   if (checkedTasks.value[key] !== undefined) {
     return checkedTasks.value[key];
   }
-  const phase = plan.value?.timeline_phases.find(p => p.step_no === stepNo);
+  const currentP = activeFarmPlan.value || plan.value;
+  const phase = currentP?.timeline_phases.find(p => p.step_no === stepNo);
   return phase?.status === 'SELESAI';
 };
 
@@ -1268,7 +1503,8 @@ const togglePhaseTask = (stepNo: number, taskIdx: number) => {
 };
 
 const getPhaseDoneTasksCount = (stepNo: number) => {
-  const phase = plan.value?.timeline_phases.find(p => p.step_no === stepNo);
+  const currentP = activeFarmPlan.value || plan.value;
+  const phase = currentP?.timeline_phases.find(p => p.step_no === stepNo);
   if (!phase || !phase.tasks) return 0;
   return phase.tasks.filter((_, idx) => isPhaseTaskDone(stepNo, idx)).length;
 };
@@ -1294,7 +1530,8 @@ const saveCheckedTasks = () => {
 
 // Financial Cockpit for Tab 2
 const totalBudgetFormatted = computed(() => {
-  const b = plan.value?.financial_summary?.total_budget || Math.round((activeFarm.value?.land_size_ha || 1) * 6400000);
+  const currentP = activeFarmPlan.value || plan.value;
+  const b = currentP?.financial_summary?.total_budget || Math.round((activeFarm.value?.land_size_ha || 1) * 6400000);
   return b.toLocaleString('id-ID');
 });
 
@@ -1305,12 +1542,14 @@ const totalSpentValue = computed(() => {
 const totalSpentFormatted = computed(() => totalSpentValue.value.toLocaleString('id-ID'));
 
 const remainingBudgetFormatted = computed(() => {
-  const b = plan.value?.financial_summary?.total_budget || Math.round((activeFarm.value?.land_size_ha || 1) * 6400000);
+  const currentP = activeFarmPlan.value || plan.value;
+  const b = currentP?.financial_summary?.total_budget || Math.round((activeFarm.value?.land_size_ha || 1) * 6400000);
   return Math.max(0, b - totalSpentValue.value).toLocaleString('id-ID');
 });
 
 const budgetSpentPercent = computed(() => {
-  const b = plan.value?.financial_summary?.total_budget || Math.round((activeFarm.value?.land_size_ha || 1) * 6400000);
+  const currentP = activeFarmPlan.value || plan.value;
+  const b = currentP?.financial_summary?.total_budget || Math.round((activeFarm.value?.land_size_ha || 1) * 6400000);
   if (b <= 0) return 0;
   return Math.min(100, Math.round((totalSpentValue.value / b) * 100));
 });
@@ -1378,7 +1617,7 @@ const loadFarmlands = async () => {
       const queryFarmId = (route.query.farm_id as string) || localStorage.getItem('agribuddy_active_farm_id');
       const target = list.find(f => f.id === queryFarmId) || list[0];
       activeFarmId.value = target.id;
-      applyFarmToForm(target);
+      await loadActiveFarmPlan(target);
       loadCheckedTasks();
     }
   } catch (err) {
@@ -1386,22 +1625,10 @@ const loadFarmlands = async () => {
   }
 };
 
-const applyFarmToForm = (farm: Farmland) => {
-  form.value.land_size_ha = farm.land_size_ha;
-  form.value.commodity = farm.commodity;
-  form.value.soil_type = farm.soil_type;
-  form.value.water_source = farm.water_source;
-  form.value.location = farm.location;
-  if (farm.latitude) form.value.latitude = farm.latitude;
-  if (farm.longitude) form.value.longitude = farm.longitude;
-  form.value.coordinates_label = `${farm.latitude ? farm.latitude.toFixed(4) : '-7.2504'}, ${farm.longitude ? farm.longitude.toFixed(4) : '112.7512'} (${farm.location})`;
-  runCalculation();
-};
-
-const selectFarmland = (farm: Farmland) => {
+const selectFarmland = async (farm: Farmland) => {
   activeFarmId.value = farm.id;
   localStorage.setItem('agribuddy_active_farm_id', farm.id);
-  applyFarmToForm(farm);
+  await loadActiveFarmPlan(farm);
   loadCheckedTasks();
 };
 
@@ -1521,31 +1748,11 @@ const handleCreateManualExpense = async () => {
   }
 };
 
-const runCalculation = async () => {
-  try {
-    isLoading.value = true;
-    const res = await api.calculateFarmPlan({
-      land_size_ha: form.value.land_size_ha,
-      commodity: form.value.commodity,
-      soil_type: form.value.soil_type,
-      water_source: form.value.water_source,
-      location: form.value.location,
-      latitude: form.value.latitude,
-      longitude: form.value.longitude,
-      coordinates_label: form.value.coordinates_label
-    });
-    plan.value = res;
-  } catch (err: any) {
-    alert(err.message || 'Gagal menghitung rencana tani');
-  } finally {
-    isLoading.value = false;
-  }
-};
-
 const saveStepUpdate = async (phase: TimelinePhase) => {
-  if (!plan.value) return;
+  const currentP = activeFarmPlan.value || plan.value;
+  if (!currentP) return;
   try {
-    await api.updateFarmPlanStep(plan.value.plan_id, {
+    await api.updateFarmPlanStep(currentP.plan_id, {
       step_no: phase.step_no,
       status: phase.status,
       actual_cost: phase.actual_cost
@@ -1620,8 +1827,23 @@ onMounted(async () => {
     topTab.value = 'kontrol';
   }
   await loadFarmlands();
-  if (farmlands.value.length === 0) {
-    await runCalculation();
+  // Pre-calculate initial plan for Tab 1 if not yet calculated
+  if (!plan.value) {
+    try {
+      const res = await api.calculateFarmPlan({
+        land_size_ha: form.value.land_size_ha,
+        commodity: form.value.commodity,
+        soil_type: form.value.soil_type,
+        water_source: form.value.water_source,
+        location: form.value.location,
+        latitude: form.value.latitude,
+        longitude: form.value.longitude,
+        coordinates_label: form.value.coordinates_label
+      });
+      plan.value = res;
+    } catch (e) {
+      console.error('Initial plan precalc error:', e);
+    }
   }
 });
 </script>
