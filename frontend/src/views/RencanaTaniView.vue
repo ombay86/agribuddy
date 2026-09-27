@@ -1263,17 +1263,17 @@
             <button
               type="button"
               @click="isAddFarmModalOpen = false"
-              class="flex-1 py-2.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-600 hover:bg-slate-50 active:scale-95 transition-all cursor-pointer"
+              class="flex-1 py-2 px-3 rounded-xl border border-slate-300 text-xs font-bold text-slate-600 hover:bg-slate-50 active:scale-95 transition-all cursor-pointer"
             >
               Batal
             </button>
             <button
               type="submit"
               :disabled="isSubmittingFarm"
-              class="flex-1 btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-2.5 rounded-xl shadow-md active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-60 cursor-pointer"
+              class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-3 rounded-xl shadow-2xs active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-60 cursor-pointer"
             >
-              <Loader2 v-if="isSubmittingFarm" :size="15" class="animate-spin" />
-              <Check v-else :size="15" />
+              <Loader2 v-if="isSubmittingFarm" :size="14" class="animate-spin" />
+              <Check v-else :size="14" />
               <span>{{ isSubmittingFarm ? 'Menyimpan...' : 'Simpan Lahan' }}</span>
             </button>
           </div>
@@ -1429,7 +1429,7 @@
           <button
             type="submit"
             :disabled="isSubmittingCollab || ownerSharePercentage <= 0"
-            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-2 rounded-xl active:scale-95 transition-all flex items-center justify-center gap-1 cursor-pointer disabled:opacity-60"
+            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-3 rounded-xl shadow-2xs active:scale-95 transition-all flex items-center justify-center gap-1 cursor-pointer disabled:opacity-60"
           >
             <Loader2 v-if="isSubmittingCollab" :size="13" class="animate-spin" />
             <span v-else>+ Kirim Undangan Kolaborasi</span>
@@ -1504,17 +1504,17 @@
             <button
               type="button"
               @click="isAddExpenseModalOpen = false"
-              class="flex-1 py-2.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-600 hover:bg-slate-50 active:scale-95 transition-all cursor-pointer"
+              class="flex-1 py-2 px-3 rounded-xl border border-slate-300 text-xs font-bold text-slate-600 hover:bg-slate-50 active:scale-95 transition-all cursor-pointer"
             >
               Batal
             </button>
             <button
               type="submit"
               :disabled="isSubmittingExpense"
-              class="flex-1 btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-2.5 rounded-xl shadow-md active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-60 cursor-pointer"
+              class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-3 rounded-xl shadow-2xs active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-60 cursor-pointer"
             >
-              <Loader2 v-if="isSubmittingExpense" :size="15" class="animate-spin" />
-              <Check v-else :size="15" />
+              <Loader2 v-if="isSubmittingExpense" :size="14" class="animate-spin" />
+              <Check v-else :size="14" />
               <span>{{ isSubmittingExpense ? 'Menyimpan...' : 'Simpan ke Modal' }}</span>
             </button>
           </div>
