@@ -10,8 +10,8 @@
       <!-- Brand Logo & Header with Minimize Toggle -->
       <div v-if="!isCollapsed" class="flex items-center justify-between pb-1">
         <router-link to="/" class="flex items-center gap-3 group overflow-hidden">
-          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-xl shadow-md group-hover:scale-105 transition-transform shrink-0">
-            🌾
+          <div class="w-10 h-10 rounded-2xl bg-white/10 p-1 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform shrink-0 border border-white/10">
+            <img src="/logo/logo-color-icon.svg" alt="AgriBuddy Icon" class="w-full h-full object-contain" />
           </div>
           <div class="truncate">
             <div class="flex items-center gap-1.5">
@@ -22,7 +22,7 @@
                 v2.0
               </span>
             </div>
-            <p class="text-[10px] text-slate-400 font-semibold whitespace-nowrap">Smart Farming DSS</p>
+            <p class="text-[10px] text-emerald-300/80 font-bold whitespace-nowrap">Sahabat Petani</p>
           </div>
         </router-link>
 
@@ -46,9 +46,9 @@
           <PanelLeftOpen :size="18" class="text-emerald-400" />
         </button>
 
-        <router-link to="/" class="group mt-1" title="AgriBuddy - Smart Farming DSS">
-          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-xl shadow-md group-hover:scale-105 transition-transform">
-            🌾
+        <router-link to="/" class="group mt-1" title="AgriBuddy - Sahabat Petani">
+          <div class="w-10 h-10 rounded-2xl bg-white/10 p-1 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform border border-white/10">
+            <img src="/logo/logo-color-icon.svg" alt="AgriBuddy Icon" class="w-full h-full object-contain" />
           </div>
         </router-link>
       </div>

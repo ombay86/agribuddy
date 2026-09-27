@@ -11,15 +11,15 @@
       <!-- ==================== LEFT HERO PANEL (DESKTOP) ==================== -->
       <div class="lg:col-span-5 bg-gradient-to-br from-emerald-800 to-teal-900 text-white p-6 sm:p-8 lg:p-10 flex flex-col justify-between relative overflow-hidden">
         <!-- Subtle Pattern Background -->
-        <div class="absolute -right-8 -bottom-10 text-white/5 select-none pointer-events-none text-9xl font-black">
-          🌾
+        <div class="absolute -right-12 -bottom-12 w-64 h-64 select-none pointer-events-none opacity-10">
+          <img src="/logo/logo-white-icon.svg" alt="watermark" class="w-full h-full object-contain" />
         </div>
 
         <!-- Top Header & Logo -->
         <div class="space-y-4 relative z-10">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-2xl bg-white/15 border border-white/30 flex items-center justify-center text-2xl shadow-md">
-              🌾
+          <div class="flex items-center gap-3.5">
+            <div class="w-14 h-14 rounded-2xl bg-white p-1.5 shadow-lg border border-white/40 flex items-center justify-center shrink-0">
+              <img src="/logo/logo-color-icon.svg" alt="AgriBuddy Logo" class="w-full h-full object-contain" />
             </div>
             <div>
               <div class="flex items-center gap-1.5">
@@ -30,16 +30,16 @@
                   v2.0
                 </span>
               </div>
-              <p class="text-xs text-emerald-200 font-bold">Ekosistem Tani Cerdas</p>
+              <p class="text-xs text-emerald-200 font-bold">Sahabat Petani Cerdas</p>
             </div>
           </div>
 
           <div class="space-y-2 pt-2">
             <h2 class="text-xl sm:text-2xl font-black text-white leading-snug">
-              Platform Kolaborasi & Agribisnis Usahatani Desa
+              Platform Smart Farming & Agribisnis Usahatani Desa
             </h2>
             <p class="text-xs text-emerald-100/80 leading-relaxed font-medium">
-              Satu ekosistem terpadu yang mempertemukan petani mandiri, penyedia sewa traktor, jasa pengairan, kios saprotan resmi, hingga bursa panen gabah.
+              Satu ekosistem terpadu yang mendampingi petani mandiri dengan telemetri sawah, perencanaan modal AI, dokter tanaman vision, hingga keterlacakan lumbung panen.
             </p>
           </div>
         </div>
@@ -81,6 +81,20 @@
       <!-- ==================== RIGHT LOGIN FORM PANEL ==================== -->
       <div class="lg:col-span-7 p-6 sm:p-8 lg:p-10 flex flex-col justify-between bg-white space-y-6">
         <div>
+          <!-- Mobile Brand Banner (Hanya di layar mobile < lg) -->
+          <div class="flex lg:hidden items-center gap-3 p-3 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/90 rounded-2xl mb-4 shadow-2xs">
+            <div class="w-10 h-10 rounded-xl bg-white p-1 border border-emerald-200 shadow-2xs flex items-center justify-center shrink-0">
+              <img src="/logo/logo-color-icon.svg" alt="AgriBuddy Logo" class="w-full h-full object-contain" />
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-base font-black text-slate-800">AgriBuddy</span>
+                <span class="text-[9px] font-black bg-emerald-600 text-white px-1.5 py-0.2 rounded-full uppercase">v2.0</span>
+              </div>
+              <p class="text-[10px] text-emerald-700 font-bold">Sahabat Petani Cerdas</p>
+            </div>
+          </div>
+
           <!-- Header Form -->
           <div class="flex items-center justify-between border-b border-slate-100 pb-4">
             <div>
@@ -262,7 +276,7 @@
               @click="handleLogin"
               class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs py-3 rounded-2xl shadow-sm hover:shadow-md active:scale-95 transition-all flex items-center justify-center gap-2"
             >
-              <LogIn :size="16" />
+              <img src="/logo/logo-white-icon.svg" alt="icon" class="w-4 h-4 object-contain" />
               <span>Masuk ke Dashboard AgriBuddy</span>
             </button>
           </div>

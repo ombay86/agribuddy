@@ -3,8 +3,8 @@
     <!-- Left: Contextual Title & Breadcrumbs -->
     <div class="flex items-center gap-3">
       <!-- Mobile Logo Icon -->
-      <router-link to="/" class="md:hidden w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-lg shrink-0">
-        🌾
+      <router-link to="/" class="md:hidden w-9 h-9 rounded-xl bg-emerald-50 text-white flex items-center justify-center p-1 shrink-0 border border-emerald-200 shadow-2xs" title="AgriBuddy">
+        <img src="/logo/logo-color-icon.svg" alt="AgriBuddy Logo" class="w-full h-full object-contain" />
       </router-link>
 
       <!-- Contextual Title & Breadcrumbs -->
@@ -24,7 +24,7 @@
     <div class="flex items-center gap-2.5">
       <!-- Quick Farmland Plot Switcher -->
       <div v-if="farmlands.length > 0" class="hidden lg:flex items-center gap-1.5 bg-slate-100/90 hover:bg-slate-200/80 px-3 py-1.5 rounded-xl border border-slate-200 transition-all text-xs">
-        <span class="text-sm">🌾</span>
+        <img src="/logo/logo-color-icon.svg" alt="Lahan" class="w-4 h-4 object-contain" />
         <span class="text-[11px] font-bold text-slate-500">Lahan Aktif:</span>
         <select
           v-model="selectedFarmId"

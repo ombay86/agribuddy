@@ -153,6 +153,19 @@
       </div>
     </div>
 
+    <!-- Kartu Branding Resmi AgriBuddy -->
+    <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-xs flex flex-col items-center text-center space-y-2.5">
+      <img src="/logo/logo-color-rect.svg" alt="AgriBuddy - Sahabat Petani" class="h-12 w-auto object-contain" />
+      <p class="text-xs text-slate-500 font-medium max-w-sm leading-relaxed">
+        Platform Smart Farming Decision Support System (DSS) untuk pendampingan usahatani mandiri, AI fitopatologi, dan ketertelusuran lumbung desa.
+      </p>
+      <div class="flex items-center gap-2 pt-1 text-[11px] font-bold text-slate-400">
+        <span>STSI4440 Capstone Project</span>
+        <span>•</span>
+        <span class="text-emerald-700 font-extrabold">v2.0.4</span>
+      </div>
+    </div>
+
     <!-- Tombol Keluar / Ganti Akun -->
     <button
       @click="handleLogout"

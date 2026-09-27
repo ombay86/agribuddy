@@ -2,11 +2,13 @@
   <header class="bg-gradient-to-r from-tani-700 to-tani-800 text-white px-4 pt-4 pb-5 rounded-b-3xl shadow-md space-y-3">
     <!-- Baris Atas: Logo Aplikasi & Menu Pengguna (Akun yang Sedang Login) -->
     <div class="flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <span class="text-2xl">🌾</span>
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-white/10 p-0.5 flex items-center justify-center border border-white/20 shadow-xs">
+          <img src="/logo/logo-color-icon.svg" alt="AgriBuddy Logo" class="w-full h-full object-contain" />
+        </div>
         <h1 class="text-xl font-extrabold tracking-tight">AgriBuddy</h1>
         <span class="bg-emerald-500/30 text-emerald-200 text-[10px] px-2 py-0.5 rounded-full font-bold border border-emerald-400/30">
-          Ekosistem
+          v2.0
         </span>
       </div>
 

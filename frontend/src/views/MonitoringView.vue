@@ -13,8 +13,8 @@
           Pantau kondisi iklim lahan sawah real-time, rekomendasi irigasi, Rencana Anggaran Biaya (RAB) AI, status tahapan budidaya (HST), dan buku modal pengeluaran dalam satu dasbor cerdas.
         </p>
       </div>
-      <div class="absolute -right-4 -bottom-6 text-emerald-700/20 select-none pointer-events-none text-9xl md:text-[140px] font-black">
-        📊
+      <div class="absolute -right-6 -bottom-8 select-none pointer-events-none opacity-15">
+        <img src="/logo/logo-white-icon.svg" alt="watermark" class="w-48 h-48 md:w-64 md:h-64 object-contain" />
       </div>
     </div>
 

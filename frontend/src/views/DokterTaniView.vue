@@ -4,7 +4,8 @@
     <div class="flex items-center justify-between">
       <div>
         <h2 class="text-xl font-extrabold text-slate-800 tracking-tight flex items-center gap-2">
-          <Sparkles class="text-emerald-600" :size="24" /> Dokter Tani AI
+          <img src="/logo/logo-color-icon.svg" alt="Dokter Tani" class="w-6 h-6 object-contain" />
+          <span>Dokter Tani AI</span>
         </h2>
         <p class="text-xs text-slate-500 mt-0.5">Deteksi dini penyakit daun padi & solusi takaran obat</p>
       </div>
