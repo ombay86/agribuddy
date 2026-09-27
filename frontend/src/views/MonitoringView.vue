@@ -608,6 +608,7 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { api, WeatherData, Farmland, InventoryItem, HarvestItem, DiagnosisResult } from '@/services/api';
 import { useFarmlandState } from '@/composables/useFarmlandState';
+import { useUserState } from '@/services/userState';
 import { 
   Activity, Navigation, Droplets, CloudRain, 
   CheckCircle2, AlertTriangle, Sparkles, Calendar,
@@ -616,17 +617,29 @@ import {
 } from 'lucide-vue-next';
 
 // State & Shared Farmland State
+const { currentUserId, currentPersona } = useUserState();
 const { globalFarmlands, activeFarmId, loadGlobalFarmlands, setActiveFarmId } = useFarmlandState();
 const weather = ref<WeatherData | null>(null);
 const isLocatingWeather = ref(false);
 const farmlands = globalFarmlands;
-const selectedFarmId = ref<string>(activeFarmId.value || 'farm_001');
+const selectedFarmId = ref<string>(activeFarmId.value || '');
 
 watch(activeFarmId, (newId) => {
   if (newId && newId !== selectedFarmId.value) {
     selectedFarmId.value = newId;
     loadTasks();
     fetchWeatherData();
+  }
+});
+
+watch(currentUserId, async (newUserId) => {
+  if (newUserId) {
+    await loadGlobalFarmlands(newUserId);
+    if (activeFarmId.value) {
+      selectedFarmId.value = activeFarmId.value;
+      loadTasks();
+      fetchWeatherData();
+    }
   }
 });
 
@@ -674,15 +687,16 @@ const lastDiagnosis = ref<DiagnosisResult>({
 const activeFarmland = computed<Farmland>(() => {
   const found = farmlands.value.find(f => f.id === selectedFarmId.value);
   if (found) return found;
+  if (farmlands.value.length > 0) return farmlands.value[0];
   return {
-    id: 'farm_001',
-    user_id: 'usr_petani',
-    name: 'Sawah Blok Krajan (Padi Inpari 32)',
-    land_size_ha: 0.8,
-    commodity: 'Padi Sawah Inpari 32',
+    id: `farm_${currentUserId.value}`,
+    user_id: currentUserId.value,
+    name: `Petak Sawah ${currentPersona.value.name}`,
+    land_size_ha: currentPersona.value.specialties?.[1] ? parseFloat(currentPersona.value.specialties[1]) || 0.8 : 0.8,
+    commodity: currentPersona.value.serviceCategory || 'Padi Sawah Inpari 32',
     soil_type: 'Lempung Berliat (Subur)',
     water_source: 'Irigasi Teknis Bendungan',
-    location: 'Desa Sukamaju Krajan',
+    location: currentPersona.value.location || 'Desa Sukamaju Krajan',
     latitude: -7.2504,
     longitude: 112.7512,
     collaborators: [],
@@ -970,7 +984,7 @@ const detectGPSWeather = () => {
 onMounted(async () => {
   // Load Farmlands via Shared State
   try {
-    await loadGlobalFarmlands();
+    await loadGlobalFarmlands(currentUserId.value);
     if (activeFarmId.value) {
       selectedFarmId.value = activeFarmId.value;
     }

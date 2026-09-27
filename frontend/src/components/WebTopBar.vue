@@ -220,6 +220,12 @@ onMounted(() => {
   window.addEventListener('agribuddy:refresh-farmlands', onRefreshFarmlands);
 });
 
+watch(currentUserId, (newId) => {
+  if (newId) {
+    loadGlobalFarmlands(newId);
+  }
+});
+
 const onRefreshFarmlands = () => {
   loadGlobalFarmlands(currentUserId.value);
 };

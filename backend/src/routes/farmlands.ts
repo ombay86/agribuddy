@@ -17,18 +17,82 @@ function formatTimeIndo(): string {
   return `${now.toLocaleDateString('id-ID', options)} WIB`;
 }
 
+const getDefaultPhases = (landSizeHa: number = 0.8) => [
+  { step_no: 1, name: "Fase 1: Olah Tanah & Bajak Garu", day_range: "H-14 s/d H-1", duration_days: 14, status: "SELESAI", target_cost: Math.round(960000 * (landSizeHa / 0.8)), actual_cost: 0 },
+  { step_no: 2, name: "Fase 2: Tanam Padi & Persemaian", day_range: "HST 1 - 15", duration_days: 15, status: "SEDANG_BERJALAN", target_cost: Math.round(850000 * (landSizeHa / 0.8)), actual_cost: 0 },
+  { step_no: 3, name: "Fase 3: Pemupukan & Perawatan Vegetatif", day_range: "HST 16 - 45", duration_days: 30, status: "BELUM", target_cost: Math.round(1650000 * (landSizeHa / 0.8)), actual_cost: 0 },
+  { step_no: 4, name: "Fase 4: Proteksi Hama & Generatif", day_range: "HST 46 - 80", duration_days: 35, status: "BELUM", target_cost: Math.round(950000 * (landSizeHa / 0.8)), actual_cost: 0 },
+  { step_no: 5, name: "Fase 5: Pengeringan & Panen Raya", day_range: "HST 81 - 115", duration_days: 35, status: "BELUM", target_cost: Math.round(2005000 * (landSizeHa / 0.8)), actual_cost: 0 }
+];
+
 // GET /farmlands
 router.get('/', (req: Request, res: Response) => {
-  const userId = req.query.user_id as string;
+  const userId = (req.query.user_id as string) || (req.headers['x-user-id'] as string);
   const farms = db.getCollection("farmlands");
 
   if (userId) {
-    return res.json(farms.filter((f: any) => 
+    let userFarms = farms.filter((f: any) => 
       f.user_id === userId || 
       (f.collaborators && f.collaborators.some((c: any) => c.user_id === userId && c.status === 'ACTIVE'))
-    ));
+    );
+
+    // Auto-provision initial farmland if user doesn't have any
+    if (userFarms.length === 0) {
+      const users = db.getCollection("users");
+      const user = users.find((u: any) => u.id === userId);
+      if (user) {
+        const ownerName = user.full_name || user.username || "Petani";
+        const landHa = Number(user.land_size_ha) || 0.8;
+        const newFarm = {
+          id: `farm_${crypto.randomBytes(3).toString('hex')}`,
+          user_id: userId,
+          owner_name: ownerName,
+          name: `Petak Sawah ${ownerName}`,
+          ownership_type: "MILIK_SENDIRI",
+          land_size_ha: landHa,
+          status: "ACTIVE",
+          commodity: user.commodity || "Padi Sawah Inpari 32",
+          soil_type: "Lempung Berliat (Subur)",
+          water_source: "Irigasi Teknis Bendungan",
+          location: user.village || "Desa Sukamaju Krajan",
+          latitude: -7.2504,
+          longitude: 112.7512,
+          collaborators: [
+            {
+              id: `collab_${crypto.randomBytes(3).toString('hex')}`,
+              user_id: userId,
+              name: ownerName,
+              role: "Pemilik Lahan & Pengelola Utama",
+              share_percentage: 100.0,
+              phone: user.phone_number || user.whatsapp_number || ""
+            }
+          ],
+          capital_expenses: [],
+          timeline_phases: getDefaultPhases(landHa),
+          total_budget: Math.round(landHa * 6400000),
+          planting_date: new Date().toISOString().split('T')[0],
+          target_harvest_date: "",
+          created_at: new Date().toISOString()
+        };
+        const inserted = db.insert("farmlands", newFarm);
+        userFarms = [inserted];
+      }
+    }
+
+    const enriched = userFarms.map((f: any) => ({
+      ...f,
+      timeline_phases: (f.timeline_phases && f.timeline_phases.length > 0) ? f.timeline_phases : getDefaultPhases(f.land_size_ha || 0.8),
+      total_budget: f.total_budget || Math.round((f.land_size_ha || 0.8) * 6400000)
+    }));
+    return res.json(enriched);
   }
-  res.json(farms);
+
+  const enrichedAll = farms.map((f: any) => ({
+    ...f,
+    timeline_phases: (f.timeline_phases && f.timeline_phases.length > 0) ? f.timeline_phases : getDefaultPhases(f.land_size_ha || 0.8),
+    total_budget: f.total_budget || Math.round((f.land_size_ha || 0.8) * 6400000)
+  }));
+  res.json(enrichedAll);
 });
 
 // GET /farmlands/:farmId
@@ -40,12 +104,17 @@ router.get('/:farmId', (req: Request, res: Response) => {
   if (!farm) {
     return res.status(404).json({ detail: "Data lahan sawah tidak ditemukan" });
   }
-  res.json(farm);
+  const enriched = {
+    ...farm,
+    timeline_phases: (farm.timeline_phases && farm.timeline_phases.length > 0) ? farm.timeline_phases : getDefaultPhases(farm.land_size_ha || 0.8),
+    total_budget: farm.total_budget || Math.round((farm.land_size_ha || 0.8) * 6400000)
+  };
+  res.json(enriched);
 });
 
 // POST /farmlands
 router.post('/', (req: Request, res: Response) => {
-  const userId = (req.query.user_id as string) || "usr_petani";
+  const userId = (req.query.user_id as string) || (req.headers['x-user-id'] as string) || "usr_petani";
   const payload = req.body;
 
   if (!payload.land_size_ha || payload.land_size_ha <= 0) {
@@ -55,6 +124,7 @@ router.post('/', (req: Request, res: Response) => {
   const users = db.getCollection("users");
   const user = users.find((u: any) => u.id === userId);
   const ownerName = user?.full_name || "Petani";
+  const landHa = Number(payload.land_size_ha);
 
   let collaborators = [];
   if (payload.collaborators && Array.isArray(payload.collaborators) && payload.collaborators.length > 0) {
@@ -63,6 +133,7 @@ router.post('/', (req: Request, res: Response) => {
     collaborators = [
       {
         id: `collab_${crypto.randomBytes(3).toString('hex')}`,
+        user_id: userId,
         name: ownerName,
         role: "Pemilik Lahan & Pengelola Utama",
         share_percentage: 100.0,
@@ -74,9 +145,10 @@ router.post('/', (req: Request, res: Response) => {
   const newFarm = {
     id: `farm_${crypto.randomBytes(3).toString('hex')}`,
     user_id: userId,
+    owner_name: ownerName,
     name: payload.name,
     status: payload.status || "ACTIVE",
-    land_size_ha: Number(payload.land_size_ha),
+    land_size_ha: landHa,
     commodity: payload.commodity || "Padi Sawah Inpari 32",
     soil_type: payload.soil_type || "Lempung Berliat (Subur)",
     water_source: payload.water_source || "Irigasi Teknis Bendungan",
@@ -85,6 +157,8 @@ router.post('/', (req: Request, res: Response) => {
     longitude: payload.longitude !== undefined ? Number(payload.longitude) : 112.7512,
     collaborators,
     capital_expenses: [],
+    timeline_phases: payload.timeline_phases || getDefaultPhases(landHa),
+    total_budget: payload.total_budget || Math.round(landHa * 6400000),
     planting_date: payload.planting_date || new Date().toISOString().split('T')[0],
     target_harvest_date: payload.target_harvest_date || "",
     created_at: new Date().toISOString()
@@ -121,6 +195,8 @@ router.put('/:farmId', (req: Request, res: Response) => {
   if (payload.latitude !== undefined) updates.latitude = Number(payload.latitude);
   if (payload.longitude !== undefined) updates.longitude = Number(payload.longitude);
   if (payload.collaborators !== undefined) updates.collaborators = payload.collaborators;
+  if (payload.timeline_phases !== undefined) updates.timeline_phases = payload.timeline_phases;
+  if (payload.total_budget !== undefined) updates.total_budget = payload.total_budget;
   if (payload.planting_date !== undefined) updates.planting_date = payload.planting_date;
   if (payload.target_harvest_date !== undefined) updates.target_harvest_date = payload.target_harvest_date;
 
@@ -243,6 +319,43 @@ router.post('/:farmId/expenses', (req: Request, res: Response) => {
   });
 });
 
+// PUT /farmlands/:farmId/phases/:stepNo
+router.put('/:farmId/phases/:stepNo', (req: Request, res: Response) => {
+  const { farmId, stepNo } = req.params;
+  const { status, actual_cost } = req.body;
+  const farms = db.getCollection("farmlands");
+  const farm = farms.find((f: any) => f.id === farmId);
+
+  if (!farm) {
+    return res.status(404).json({ detail: "Lahan tidak ditemukan" });
+  }
+
+  let phases = farm.timeline_phases;
+  if (!phases || !Array.isArray(phases) || phases.length === 0) {
+    phases = getDefaultPhases(farm.land_size_ha || 0.8);
+  }
+
+  const stepNumber = Number(stepNo);
+  const targetPhase = phases.find((p: any) => p.step_no === stepNumber);
+  if (targetPhase) {
+    if (status !== undefined) targetPhase.status = status;
+    if (actual_cost !== undefined) targetPhase.actual_cost = Number(actual_cost);
+  } else {
+    phases.push({
+      step_no: stepNumber,
+      name: `Fase ${stepNumber}`,
+      day_range: `HST`,
+      duration_days: 15,
+      status: status || 'BELUM',
+      actual_cost: actual_cost ? Number(actual_cost) : 0,
+      target_cost: 0
+    });
+  }
+
+  const updated = db.update("farmlands", farmId, { timeline_phases: phases });
+  res.json(updated);
+});
+
 // GET /farmlands/:farmId/expenses
 router.get('/:farmId/expenses', (req: Request, res: Response) => {
   const { farmId } = req.params;
@@ -253,6 +366,21 @@ router.get('/:farmId/expenses', (req: Request, res: Response) => {
     return res.status(404).json({ detail: "Lahan tidak ditemukan" });
   }
   res.json(farm.capital_expenses || []);
+});
+
+// DELETE /farmlands/:farmId/expenses/:expenseId
+router.delete('/:farmId/expenses/:expenseId', (req: Request, res: Response) => {
+  const { farmId, expenseId } = req.params;
+  const farms = db.getCollection("farmlands");
+  const farm = farms.find((f: any) => f.id === farmId);
+
+  if (!farm) {
+    return res.status(404).json({ detail: "Lahan tidak ditemukan" });
+  }
+
+  const expenses = (farm.capital_expenses || []).filter((e: any) => e.id !== expenseId);
+  const updated = db.update("farmlands", farmId, { capital_expenses: expenses });
+  res.json({ message: "Pengeluaran berhasil dihapus", farm: updated });
 });
 
 export default router;

@@ -828,7 +828,7 @@
 
             <!-- Loop 5 Phases -->
             <div
-              v-for="phase in (activeFarmPlan?.timeline_phases || plan?.timeline_phases || [])"
+              v-for="phase in (activeFarm?.timeline_phases || activeFarmPlan?.timeline_phases || plan?.timeline_phases || [])"
               :key="phase.step_no"
               class="bg-white border rounded-3xl shadow-xs transition-all overflow-hidden"
               :class="phase.status === 'SELESAI'
@@ -1020,7 +1020,7 @@
             <div class="space-y-2">
               <h4 class="text-xs font-black text-slate-700">Realisasi Modal per Fase</h4>
               <div
-                v-for="phase in (activeFarmPlan?.timeline_phases || plan?.timeline_phases || [])"
+                v-for="phase in (activeFarm?.timeline_phases || activeFarmPlan?.timeline_phases || plan?.timeline_phases || [])"
                 :key="'kas-' + phase.step_no"
                 class="bg-white border border-slate-200 rounded-2xl p-3.5 space-y-2"
               >
@@ -1907,6 +1907,9 @@ const isPhaseExpanded = (stepNo: number) => expandedPhases.value.has(stepNo);
 // Load Plan khusus untuk sawah aktif di Tab 2
 const loadActiveFarmPlan = async (farm: Farmland) => {
   try {
+    if (farm.timeline_phases && farm.timeline_phases.length > 0) {
+      initPhaseExpansion(farm.timeline_phases);
+    }
     const res = await api.calculateFarmPlan({
       land_size_ha: farm.land_size_ha,
       commodity: farm.commodity,
@@ -1917,6 +1920,9 @@ const loadActiveFarmPlan = async (farm: Farmland) => {
       longitude: farm.longitude,
       coordinates_label: `${farm.latitude ? farm.latitude.toFixed(4) : '-7.2504'}, ${farm.longitude ? farm.longitude.toFixed(4) : '112.7512'} (${farm.location})`
     });
+    if (farm.timeline_phases && farm.timeline_phases.length > 0) {
+      res.timeline_phases = farm.timeline_phases;
+    }
     activeFarmPlan.value = res;
     // Init expand/collapse: SELESAI → collapsed, lainnya → expanded
     if (res?.timeline_phases) {
@@ -1955,15 +1961,15 @@ const manualExpenseForm = ref({
 });
 
 const completedPhasesCount = computed(() => {
-  const currentP = activeFarmPlan.value || plan.value;
-  if (!currentP) return 0;
-  return currentP.timeline_phases.filter(p => p.status === 'SELESAI').length;
+  const currentPhases = activeFarm.value?.timeline_phases || activeFarmPlan.value?.timeline_phases || plan.value?.timeline_phases;
+  if (!currentPhases) return 0;
+  return currentPhases.filter(p => p.status === 'SELESAI').length;
 });
 
 const progressPercentage = computed(() => {
-  const currentP = activeFarmPlan.value || plan.value;
-  if (!currentP || currentP.timeline_phases.length === 0) return 0;
-  return Math.round((completedPhasesCount.value / currentP.timeline_phases.length) * 100);
+  const currentPhases = activeFarm.value?.timeline_phases || activeFarmPlan.value?.timeline_phases || plan.value?.timeline_phases;
+  if (!currentPhases || currentPhases.length === 0) return 0;
+  return Math.round((completedPhasesCount.value / currentPhases.length) * 100);
 });
 
 // Checklist State & Storage
@@ -1978,8 +1984,8 @@ const isPhaseTaskDone = (stepNo: number, taskIdx: number) => {
   if (checkedTasks.value[key] !== undefined) {
     return checkedTasks.value[key];
   }
-  const currentP = activeFarmPlan.value || plan.value;
-  const phase = currentP?.timeline_phases.find(p => p.step_no === stepNo);
+  const currentPhases = activeFarm.value?.timeline_phases || activeFarmPlan.value?.timeline_phases || plan.value?.timeline_phases;
+  const phase = currentPhases?.find(p => p.step_no === stepNo);
   return phase?.status === 'SELESAI';
 };
 
@@ -1990,8 +1996,8 @@ const togglePhaseTask = (stepNo: number, taskIdx: number) => {
 };
 
 const getPhaseDoneTasksCount = (stepNo: number) => {
-  const currentP = activeFarmPlan.value || plan.value;
-  const phase = currentP?.timeline_phases.find(p => p.step_no === stepNo);
+  const currentPhases = activeFarm.value?.timeline_phases || activeFarmPlan.value?.timeline_phases || plan.value?.timeline_phases;
+  const phase = currentPhases?.find(p => p.step_no === stepNo);
   if (!phase || !phase.tasks) return 0;
   return phase.tasks.filter((_, idx) => isPhaseTaskDone(stepNo, idx)).length;
 };
@@ -2017,8 +2023,7 @@ const saveCheckedTasks = () => {
 
 // Financial Cockpit for Tab 2
 const totalBudgetFormatted = computed(() => {
-  const currentP = activeFarmPlan.value || plan.value;
-  const b = currentP?.financial_summary?.total_budget || Math.round((activeFarm.value?.land_size_ha || 1) * 6400000);
+  const b = activeFarm.value?.total_budget || (activeFarmPlan.value || plan.value)?.financial_summary?.total_budget || Math.round((activeFarm.value?.land_size_ha || 0.8) * 6400000);
   return b.toLocaleString('id-ID');
 });
 
@@ -2029,14 +2034,12 @@ const totalSpentValue = computed(() => {
 const totalSpentFormatted = computed(() => totalSpentValue.value.toLocaleString('id-ID'));
 
 const remainingBudgetFormatted = computed(() => {
-  const currentP = activeFarmPlan.value || plan.value;
-  const b = currentP?.financial_summary?.total_budget || Math.round((activeFarm.value?.land_size_ha || 1) * 6400000);
+  const b = activeFarm.value?.total_budget || (activeFarmPlan.value || plan.value)?.financial_summary?.total_budget || Math.round((activeFarm.value?.land_size_ha || 0.8) * 6400000);
   return Math.max(0, b - totalSpentValue.value).toLocaleString('id-ID');
 });
 
 const budgetSpentPercent = computed(() => {
-  const currentP = activeFarmPlan.value || plan.value;
-  const b = currentP?.financial_summary?.total_budget || Math.round((activeFarm.value?.land_size_ha || 1) * 6400000);
+  const b = activeFarm.value?.total_budget || (activeFarmPlan.value || plan.value)?.financial_summary?.total_budget || Math.round((activeFarm.value?.land_size_ha || 0.8) * 6400000);
   if (b <= 0) return 0;
   return Math.min(100, Math.round((totalSpentValue.value / b) * 100));
 });
@@ -2102,11 +2105,14 @@ const loadFarmlands = async () => {
     farmlands.value = list;
     const activeList = list.filter(f => f.status !== 'DRAFT');
     if (activeList.length > 0) {
-      const queryFarmId = (route.query.farm_id as string) || localStorage.getItem('agribuddy_active_farm_id');
+      const savedFarmId = localStorage.getItem(`agribuddy_active_farm_${currentUserId.value}`) || localStorage.getItem('agribuddy_active_farm_id');
+      const queryFarmId = (route.query.farm_id as string) || savedFarmId;
       const target = activeList.find(f => f.id === queryFarmId) || activeList[0];
       activeFarmId.value = target.id;
       await loadActiveFarmPlan(target);
       loadCheckedTasks();
+    } else {
+      activeFarmId.value = '';
     }
   } catch (err) {
     console.error('Error loading farmlands:', err);
@@ -2115,6 +2121,7 @@ const loadFarmlands = async () => {
 
 const selectFarmland = async (farm: Farmland) => {
   activeFarmId.value = farm.id;
+  localStorage.setItem(`agribuddy_active_farm_${currentUserId.value}`, farm.id);
   localStorage.setItem('agribuddy_active_farm_id', farm.id);
   await loadActiveFarmPlan(farm);
   loadCheckedTasks();
@@ -2343,16 +2350,28 @@ const handleCreateManualExpense = async () => {
 };
 
 const saveStepUpdate = async (phase: TimelinePhase) => {
+  if (activeFarm.value) {
+    try {
+      const updated = await api.updateFarmlandPhase(activeFarm.value.id, phase.step_no, phase.status, phase.actual_cost);
+      if (updated && updated.timeline_phases) {
+        activeFarm.value.timeline_phases = updated.timeline_phases;
+      }
+      window.dispatchEvent(new CustomEvent('agribuddy:refresh-farmlands'));
+    } catch (err) {
+      console.error('Error updating farmland phase in database:', err);
+    }
+  }
   const currentP = activeFarmPlan.value || plan.value;
-  if (!currentP) return;
-  try {
-    await api.updateFarmPlanStep(currentP.plan_id, {
-      step_no: phase.step_no,
-      status: phase.status,
-      actual_cost: phase.actual_cost
-    });
-  } catch (err) {
-    console.error('Error saving step update:', err);
+  if (currentP) {
+    try {
+      await api.updateFarmPlanStep(currentP.plan_id, {
+        step_no: phase.step_no,
+        status: phase.status,
+        actual_cost: phase.actual_cost
+      });
+    } catch {
+      // ignore
+    }
   }
 };
 

@@ -409,6 +409,8 @@ export interface Farmland {
   longitude: number;
   collaborators: Collaborator[];
   capital_expenses: CapitalExpense[];
+  timeline_phases?: TimelinePhase[];
+  total_budget?: number;
   planting_date?: string;
   target_harvest_date?: string;
   created_at?: string;
@@ -1067,6 +1069,24 @@ export const api = {
   async getFarmExpenses(farmId: string): Promise<CapitalExpense[]> {
     const res = await fetch(`${BASE_URL}/farmlands/${farmId}/expenses`);
     if (!res.ok) throw new Error('Gagal memuat buku modal lahan');
+    return res.json();
+  },
+
+  async updateFarmlandPhase(farmId: string, stepNo: number, status: string, actualCost?: number): Promise<Farmland> {
+    const res = await fetch(`${BASE_URL}/farmlands/${farmId}/phases/${stepNo}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status, actual_cost: actualCost }),
+    });
+    if (!res.ok) throw new Error('Gagal memperbarui status tahapan budidaya');
+    return res.json();
+  },
+
+  async deleteFarmExpense(farmId: string, expenseId: string): Promise<any> {
+    const res = await fetch(`${BASE_URL}/farmlands/${farmId}/expenses/${expenseId}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) throw new Error('Gagal menghapus catatan pengeluaran modal');
     return res.json();
   },
 
