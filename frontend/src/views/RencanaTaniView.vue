@@ -1932,6 +1932,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { api, FarmPlan, TimelinePhase, Farmland, Collaborator, CapitalExpense } from '@/services/api';
 import { useUserState, PERSONAS } from '@/services/userState';
 import FarmlandMapPicker from '@/components/FarmlandMapPicker.vue';
+import { showConfirm, showSuccess, showError, showWarning } from '@/utils/swal';
 import { 
   Sparkles, Calculator, CloudSun, Coins, CalendarCheck, 
   Users2, MessageSquare, Clock, Phone, Loader2, MapPin,
@@ -2141,29 +2142,44 @@ const editDraftFarm = async (draft: Farmland) => {
 
 // Eksekusi / aktivasi draft menjadi lahan garap aktif
 const activateDraftFarm = async (draft: Farmland) => {
-  if (!confirm(`Mulai pengerjaan lahan untuk "${draft.name}" sekarang? Status akan aktif dan lahan masuk ke Kontrol Tanam & Modal.`)) {
-    return;
-  }
+  const confirmed = await showConfirm({
+    title: `Mulai Garap "${draft.name}"?`,
+    text: 'Status akan berubah menjadi aktif dan lahan akan masuk ke modul Kontrol Tanam & Modal Usahatani.',
+    confirmButtonText: 'Ya, Mulai Garap',
+    cancelButtonText: 'Nanti',
+    isDanger: false,
+    icon: 'question'
+  });
+  if (!confirmed) return;
+
   try {
     const updated = await api.updateFarmland(draft.id, { status: 'ACTIVE' });
     await loadFarmlands();
     await selectFarmland(updated);
     setTopTab('kontrol');
+    showSuccess('Lahan Diaktifkan', `Petak sawah "${draft.name}" berhasil diaktifkan.`);
   } catch (err: any) {
-    alert(err.message || 'Gagal mengaktifkan lahan garap');
+    showError('Gagal Mengaktifkan', err.message || 'Gagal mengaktifkan lahan garap');
   }
 };
 
 // Hapus draft rencana
 const deleteDraftFarm = async (draft: Farmland) => {
-  if (!confirm(`Hapus draft rencana usahatani "${draft.name}"?`)) {
-    return;
-  }
+  const confirmed = await showConfirm({
+    title: `Hapus Draft "${draft.name}"?`,
+    text: 'Draft rencana usahatani ini akan dihapus permanen.',
+    confirmButtonText: 'Ya, Hapus Draft',
+    cancelButtonText: 'Batal',
+    isDanger: true
+  });
+  if (!confirmed) return;
+
   try {
     await api.deleteFarmland(draft.id);
     await loadFarmlands();
+    showSuccess('Draft Dihapus', `Draft rencana "${draft.name}" telah dihapus.`);
   } catch (err: any) {
-    alert(err.message || 'Gagal menghapus draft rencana');
+    showError('Gagal Menghapus Draft', err.message || 'Gagal menghapus draft rencana');
   }
 };
 
@@ -2188,8 +2204,9 @@ const savePlanToActiveFarmland = async () => {
     await selectFarmland(created);
     setTopTab('kontrol');
     wizardStep.value = 1; // reset stepper
+    showSuccess('Rencana Siap!', `Petak "${nameToSave}" berhasil didaftarkan dan siap dipantau.`);
   } catch (err: any) {
-    alert(err.message || 'Gagal menyimpan rencana ke lahan aktif');
+    showError('Gagal Menyimpan', err.message || 'Gagal menyimpan rencana ke lahan aktif');
   } finally {
     isSavingToActive.value = false;
   }
@@ -2558,8 +2575,9 @@ const handleUpdateFarmland = async () => {
       selectFarmland(updated);
     }
     window.dispatchEvent(new CustomEvent('agribuddy:refresh-farmlands'));
+    showSuccess('Perubahan Tersimpan', `Data lahan "${editFarmForm.value.name}" berhasil diperbarui.`);
   } catch (err: any) {
-    alert(err.message || 'Gagal memperbarui data lahan');
+    showError('Gagal Memperbarui', err.message || 'Gagal memperbarui data lahan');
   } finally {
     isSubmittingEditFarm.value = false;
   }
@@ -2568,18 +2586,22 @@ const handleUpdateFarmland = async () => {
 const handleDeleteFarm = async () => {
   if (!activeFarm.value) return;
   const farmName = activeFarm.value.name;
-  const confirmed = confirm(
-    `Apakah Anda yakin ingin menghapus lahan "${farmName}"?\n\n` +
-    `Semua data tahapan siklus, pengelola kemitraan, dan pengeluaran modal lahan ini akan dihapus permanen.`
-  );
+  const confirmed = await showConfirm({
+    title: `Hapus Lahan "${farmName}"?`,
+    text: 'Semua data tahapan siklus, pengelola kemitraan, dan pengeluaran modal lahan ini akan dihapus permanen.',
+    confirmButtonText: 'Ya, Hapus Lahan',
+    cancelButtonText: 'Batal',
+    isDanger: true
+  });
   if (!confirmed) return;
 
   try {
     await api.deleteFarmland(activeFarm.value.id);
     await loadFarmlands();
     window.dispatchEvent(new CustomEvent('agribuddy:refresh-farmlands'));
+    showSuccess('Lahan Dihapus', `Lahan "${farmName}" berhasil dihapus.`);
   } catch (err: any) {
-    alert(err.message || 'Gagal menghapus lahan');
+    showError('Gagal Menghapus', err.message || 'Gagal menghapus lahan');
   }
 };
 
@@ -2622,9 +2644,9 @@ const handleFastTrackSubmit = async () => {
     isFastTrackModalOpen.value = false;
     await loadFarmlands();
     window.dispatchEvent(new CustomEvent('agribuddy:refresh-farmlands'));
-    alert(res.message || 'Status siklus budidaya berhasil disesuaikan!');
+    showSuccess('Fase Lapangan Diterapkan', res.message || 'Status siklus budidaya berhasil disesuaikan!');
   } catch (err: any) {
-    alert(err.message || 'Gagal mengatur fase berjalan');
+    showError('Gagal Mengatur Fase', err.message || 'Gagal mengatur fase berjalan');
   } finally {
     isSubmittingFastTrack.value = false;
   }
@@ -2727,15 +2749,15 @@ const openManageCollabModal = () => {
 const handleAddCollaborator = async () => {
   if (!activeFarm.value) return;
   if (!newCollabForm.value.name || !newCollabForm.value.name.trim()) {
-    alert('Silakan cari dan pilih pengguna mitra terlebih dahulu.');
+    showWarning('Pilih Pengguna Mitra', 'Silakan cari dan pilih pengguna mitra terlebih dahulu.');
     return;
   }
   if (newCollabForm.value.share_percentage > ownerSharePercentage.value) {
-    alert(`Persentase tidak boleh melebihi sisa porsi pemilik (${ownerSharePercentage.value}%).`);
+    showWarning('Melebihi Sisa Porsi', `Persentase tidak boleh melebihi sisa porsi pemilik (${ownerSharePercentage.value}%).`);
     return;
   }
   if (newCollabForm.value.share_percentage <= 0) {
-    alert('Persentase bagi hasil harus lebih besar dari 0%.');
+    showWarning('Persentase Tidak Valid', 'Persentase bagi hasil harus lebih besar dari 0%.');
     return;
   }
   try {
@@ -2763,8 +2785,9 @@ const handleAddCollaborator = async () => {
       share_percentage: Math.min(20, ownerSharePercentage.value),
       phone: ''
     };
+    showSuccess('Kolaborator Ditambahkan', 'Undangan kolaborasi usahatani berhasil dikirim!');
   } catch (err: any) {
-    alert(err.message || 'Gagal menambahkan kolaborator');
+    showError('Gagal Menambahkan', err.message || 'Gagal menambahkan kolaborator');
   } finally {
     isSubmittingCollab.value = false;
   }
@@ -2772,13 +2795,22 @@ const handleAddCollaborator = async () => {
 
 const handleRemoveCollaborator = async (collabId: string) => {
   if (!activeFarm.value) return;
-  if (!confirm('Hapus kolaborator ini dari usahatani?')) return;
+  const confirmed = await showConfirm({
+    title: 'Hapus Kolaborator?',
+    text: 'Mitra ini tidak akan lagi terdaftar sebagai pengelola bersama pada petak lahan ini.',
+    confirmButtonText: 'Ya, Hapus',
+    cancelButtonText: 'Batal',
+    isDanger: true
+  });
+  if (!confirmed) return;
+
   try {
     const updated = await api.removeCollaborator(activeFarm.value.id, collabId);
     const fIdx = farmlands.value.findIndex(f => f.id === activeFarm.value?.id);
     if (fIdx !== -1) farmlands.value[fIdx] = updated;
+    showSuccess('Kolaborator Dihapus', 'Kolaborator berhasil dihapus dari usahatani.');
   } catch (err: any) {
-    alert(err.message || 'Gagal menghapus kolaborator');
+    showError('Gagal Menghapus', err.message || 'Gagal menghapus kolaborator');
   }
 };
 
@@ -2804,8 +2836,9 @@ const handleCreateManualExpense = async () => {
 
     await loadFarmlands();
     isAddExpenseModalOpen.value = false;
+    showSuccess('Pengeluaran Dicatat', `Transaksi "${manualExpenseForm.value.item_name}" berhasil dicatat ke buku kas modal.`);
   } catch (err: any) {
-    alert(err.message || 'Gagal mencatat pengeluaran modal');
+    showError('Gagal Mencatat', err.message || 'Gagal mencatat pengeluaran modal');
   } finally {
     isSubmittingExpense.value = false;
   }

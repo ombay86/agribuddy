@@ -623,6 +623,7 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import { api, InventoryItem, HarvestItem, MarketPrice } from '@/services/api';
 import { useUserState } from '@/services/userState';
+import { showConfirm, showSuccess, showError, showWarning } from '@/utils/swal';
 import { 
   Package, Warehouse, Plus, AlertTriangle, 
   Trash2, X, TrendingUp, ArrowUpRight, Calendar,
@@ -723,15 +724,19 @@ const submitOrder = async () => {
 
     showOrderModal.value = false;
   } catch (err: any) {
-    alert(err.message || 'Gagal mencatat pesanan');
+    showError('Gagal Mencatat', err.message || 'Gagal mencatat pesanan');
   }
 };
 
 const handleConfirmArrival = async (item: InventoryItem, order: any) => {
-  const confirmed = confirm(
-    `Konfirmasi bahwa pesanan ${order.quantity} ${order.unit} dari ${order.store_name} sudah sampai?\n\n` +
-    `Stok ${item.name} akan otomatis bertambah +${order.quantity} ${order.unit}.`
-  );
+  const confirmed = await showConfirm({
+    title: 'Konfirmasi Barang Sampai?',
+    text: `Pesanan ${order.quantity} ${order.unit} dari ${order.store_name} telah sampai? Stok ${item.name} akan otomatis bertambah +${order.quantity} ${order.unit}.`,
+    confirmButtonText: 'Ya, Sudah Sampai',
+    cancelButtonText: 'Belum',
+    isDanger: false,
+    icon: 'question'
+  });
   if (!confirmed) return;
 
   try {
@@ -740,14 +745,20 @@ const handleConfirmArrival = async (item: InventoryItem, order: any) => {
     if (idx !== -1) {
       inventory.value[idx] = res.item;
     }
-    alert(res.message || 'Stok berhasil ditambahkan!');
+    showSuccess('Stok Bertambah', res.message || 'Stok berhasil ditambahkan!');
   } catch (err: any) {
-    alert(err.message || 'Gagal mengonfirmasi pesanan');
+    showError('Gagal Konfirmasi', err.message || 'Gagal mengonfirmasi pesanan');
   }
 };
 
 const handleCancelOrder = async (item: InventoryItem, order: any) => {
-  const confirmed = confirm(`Batalkan pesanan ${order.quantity} ${order.unit} dari ${order.store_name}?`);
+  const confirmed = await showConfirm({
+    title: 'Batalkan Pesanan?',
+    text: `Batalkan pesanan ${order.quantity} ${order.unit} dari ${order.store_name}?`,
+    confirmButtonText: 'Ya, Batalkan',
+    cancelButtonText: 'Kembali',
+    isDanger: true
+  });
   if (!confirmed) return;
 
   try {
@@ -756,8 +767,9 @@ const handleCancelOrder = async (item: InventoryItem, order: any) => {
     if (idx !== -1) {
       inventory.value[idx] = res.item;
     }
+    showSuccess('Pesanan Dibatalkan', 'Pesanan berhasil dibatalkan.');
   } catch (err: any) {
-    alert(err.message || 'Gagal membatalkan pesanan');
+    showError('Gagal Membatalkan', err.message || 'Gagal membatalkan pesanan');
   }
 };
 
@@ -824,19 +836,27 @@ const adjustStock = async (itemId: string, delta: number) => {
 };
 
 const deleteInventoryItem = async (itemId: string) => {
-  if (confirm('Yakin ingin menghapus item ini dari inventaris?')) {
-    try {
-      await api.deleteInventory(itemId);
-      inventory.value = inventory.value.filter(i => i.id !== itemId);
-    } catch (err) {
-      console.error(err);
-    }
+  const confirmed = await showConfirm({
+    title: 'Hapus Item Inventaris?',
+    text: 'Item saprotan ini akan dihapus dari gudang usahatani milikmu.',
+    confirmButtonText: 'Ya, Hapus',
+    cancelButtonText: 'Batal',
+    isDanger: true
+  });
+  if (!confirmed) return;
+
+  try {
+    await api.deleteInventory(itemId);
+    inventory.value = inventory.value.filter(i => i.id !== itemId);
+    showSuccess('Item Dihapus', 'Item berhasil dihapus dari inventaris.');
+  } catch (err: any) {
+    showError('Gagal Menghapus', err.message || 'Gagal menghapus item inventaris');
   }
 };
 
 const saveNewInventory = async () => {
   if (!newInventory.value.name) {
-    alert('Nama barang wajib diisi');
+    showWarning('Nama Barang Wajib Diisi', 'Silakan masukkan nama produk saprotan.');
     return;
   }
   try {
@@ -851,14 +871,15 @@ const saveNewInventory = async () => {
       min_threshold: 2,
       notes: ''
     };
-  } catch (err) {
-    console.error(err);
+    showSuccess('Saprotan Ditambahkan', 'Item berhasil disimpan ke gudang usahatani.');
+  } catch (err: any) {
+    showError('Gagal Menyimpan', err.message || 'Gagal menyimpan item saprotan');
   }
 };
 
 const saveNewHarvest = async () => {
   if (!newHarvest.value.commodity || !newHarvest.value.total_weight_kg) {
-    alert('Komoditas dan berat panen wajib diisi');
+    showWarning('Data Belum Lengkap', 'Komoditas dan berat panen wajib diisi.');
     return;
   }
   try {
@@ -872,8 +893,9 @@ const saveNewHarvest = async () => {
       status: 'TERSIMPAN',
       notes: 'Disimpan di lumbung utama'
     };
-  } catch (err) {
-    console.error(err);
+    showSuccess('Panen Dicatat', 'Hasil panen berhasil ditambahkan ke lumbung simpan.');
+  } catch (err: any) {
+    showError('Gagal Mencatat', err.message || 'Gagal mencatat panen');
   }
 };
 
