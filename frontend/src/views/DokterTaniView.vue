@@ -131,15 +131,30 @@
           </div>
         </div>
 
-        <!-- Tombol Aksi Cepat: Obrolan Baru -->
-        <button
-          @click="startNewChat"
-          class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-2xs"
-          title="Mulai Percakapan Baru"
-        >
-          <Plus :size="14" />
-          <span class="hidden sm:inline">Obrolan Baru</span>
-        </button>
+        <!-- Tombol Aksi Kanan: API Key & Obrolan Baru -->
+        <div class="flex items-center gap-2">
+          <!-- Tombol Setting API Key Gemini -->
+          <button
+            @click="isKeyModalOpen = true"
+            class="p-2 sm:px-3 sm:py-1.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-2xs"
+            :class="hasCustomApiKey ? 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300' : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'"
+            :title="hasCustomApiKey ? 'API Key Gemini Pribadi Aktif' : 'Atur API Key Gemini Pribadi'"
+          >
+            <Key :size="14" :class="hasCustomApiKey ? 'text-amber-600' : 'text-slate-500'" />
+            <span class="hidden sm:inline">{{ hasCustomApiKey ? 'Key Aktif' : 'API Key' }}</span>
+            <span v-if="hasCustomApiKey" class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+          </button>
+
+          <!-- Tombol Aksi Cepat: Obrolan Baru -->
+          <button
+            @click="startNewChat"
+            class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-2xs"
+            title="Mulai Percakapan Baru"
+          >
+            <Plus :size="14" />
+            <span class="hidden sm:inline">Obrolan Baru</span>
+          </button>
+        </div>
       </header>
 
       <!-- Area Percakapan (Scrollable Message List) -->
@@ -392,19 +407,149 @@
         </div>
       </footer>
     </main>
+
+    <!-- MODAL POPUP PENGATURAN API KEY GEMINI -->
+    <div
+      v-if="isKeyModalOpen"
+      class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in"
+    >
+      <div class="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-150">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center">
+              <Key :size="18" />
+            </div>
+            <div>
+              <h4 class="text-sm font-black text-slate-800">Pengaturan Gemini API Key</h4>
+              <p class="text-[10px] text-slate-400">Model Bring-Your-Own-Key (BYOK)</p>
+            </div>
+          </div>
+          <button
+            @click="isKeyModalOpen = false"
+            class="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-all cursor-pointer"
+          >
+            <X :size="18" />
+          </button>
+        </div>
+
+        <div class="space-y-3">
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-600 space-y-2">
+            <p class="leading-relaxed">
+              Anda dapat memasukkan API Key Google Gemini pribadi Anda. Kunci ini <strong>hanya disimpan secara lokal di browser Anda</strong> dan tidak tersimpan di server publik.
+            </p>
+            <a
+              href="https://aistudio.google.com/app/apikey"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 text-emerald-700 hover:text-emerald-800 font-bold hover:underline text-[11px]"
+            >
+              <span>🔑 Dapatkan API Key gratis di Google AI Studio</span>
+              <ExternalLink :size="12" />
+            </a>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-slate-700 flex items-center justify-between">
+              <span>Google Gemini API Key:</span>
+              <span v-if="hasCustomApiKey" class="text-[10px] text-amber-700 font-bold bg-amber-100 px-2 py-0.2 rounded-full">
+                Kunci Pribadi Aktif
+              </span>
+              <span v-else class="text-[10px] text-slate-400">
+                Memakai Default Server
+              </span>
+            </label>
+            <div class="relative">
+              <input
+                :type="showApiKey ? 'text' : 'password'"
+                v-model="tempApiKey"
+                placeholder="AIzaSy..."
+                class="w-full bg-slate-50 border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-2xl px-3.5 py-2.5 text-xs text-slate-800 placeholder-slate-400 font-mono pr-10"
+              />
+              <button
+                type="button"
+                @click="showApiKey = !showApiKey"
+                class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700 rounded-lg cursor-pointer"
+                title="Lihat / Sembunyikan Kunci"
+              >
+                <EyeOff v-if="showApiKey" :size="14" />
+                <Eye v-else :size="14" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-2 border-t border-slate-100 gap-2">
+          <button
+            v-if="hasCustomApiKey"
+            type="button"
+            @click="handleClearKey"
+            class="px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-all cursor-pointer"
+          >
+            Hapus Kunci
+          </button>
+          <div v-else></div>
+
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              @click="isKeyModalOpen = false"
+              class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition-all cursor-pointer"
+            >
+              Batal
+            </button>
+            <button
+              type="button"
+              @click="handleSaveKey"
+              class="px-4 py-2 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all active:scale-95 cursor-pointer"
+            >
+              Simpan Kunci
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue';
 import { useUserState } from '@/services/userState';
-import { api, AIChatMessage, AIChatSession } from '@/services/api';
+import { 
+  api, 
+  AIChatMessage, 
+  AIChatSession,
+  getCustomGeminiApiKey,
+  setCustomGeminiApiKey,
+  clearCustomGeminiApiKey
+} from '@/services/api';
 import { 
   Sparkles, Camera, Send, X, Loader2, Plus, 
-  Trash2, History, PanelLeft, CheckCircle2, AlertTriangle
+  Trash2, History, PanelLeft, CheckCircle2, AlertTriangle,
+  Key, Eye, EyeOff, ExternalLink
 } from 'lucide-vue-next';
 
 const { currentPersona, customAvatar } = useUserState();
+
+// State API Key Management (BYOK)
+const isKeyModalOpen = ref(false);
+const showApiKey = ref(false);
+const tempApiKey = ref(getCustomGeminiApiKey());
+const hasCustomApiKey = ref(Boolean(getCustomGeminiApiKey()));
+
+const handleSaveKey = () => {
+  setCustomGeminiApiKey(tempApiKey.value);
+  hasCustomApiKey.value = Boolean(tempApiKey.value.trim());
+  isKeyModalOpen.value = false;
+  alert(tempApiKey.value.trim() ? '✅ API Key Gemini pribadi berhasil disimpan!' : 'ℹ️ Menggunakan default API Key server.');
+};
+
+const handleClearKey = () => {
+  clearCustomGeminiApiKey();
+  tempApiKey.value = '';
+  hasCustomApiKey.value = false;
+  isKeyModalOpen.value = false;
+  alert('🗑️ API Key pribadi telah dihapus. Sistem akan menggunakan default server.');
+};
 
 // State Riwayat Sesi Chat
 const isHistoryOpen = ref(false);

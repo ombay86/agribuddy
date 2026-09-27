@@ -11,6 +11,7 @@ router.post('/diagnose', upload.single('file'), async (req: Request, res: Respon
   try {
     const file = req.file;
     const sampleKey = req.body.sample_key;
+    const customApiKey = req.headers['x-gemini-api-key'] as string | undefined;
 
     let result;
     if (sampleKey && DISEASE_KNOWLEDGE_BASE[sampleKey]) {
@@ -19,7 +20,8 @@ router.post('/diagnose', upload.single('file'), async (req: Request, res: Respon
       result = await geminiService.diagnoseLeafImage(
         file.buffer,
         file.mimetype,
-        file.originalname
+        file.originalname,
+        customApiKey
       );
     } else {
       return res.status(400).json({ detail: "Silakan unggah foto daun atau pilih sampel foto" });
@@ -109,11 +111,14 @@ router.post('/chat', async (req: Request, res: Response) => {
       });
     }
 
-    // Panggil engine percakapan AgriAI (Gemini / Agronomy Fallback)
+    // Panggil engine percakapan Agri AI (Gemini / Agronomy Fallback)
+    const customApiKey = req.headers['x-gemini-api-key'] as string | undefined;
     const result = await geminiService.chatAgriAI(
       history,
       message,
-      image_base64
+      image_base64,
+      'image/jpeg',
+      customApiKey
     );
 
     // Simpan pesan User ke sesi

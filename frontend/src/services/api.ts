@@ -1,12 +1,50 @@
 import { getActiveUserId } from './userState';
 
-const BASE_URL = 'http://127.0.0.1:8000/api/v1';
+const BASE_URL = (import.meta as any).env?.VITE_API_URL || 'http://127.0.0.1:8000/api/v1';
+
+export const GEMINI_KEY_STORAGE = 'agribuddy_custom_gemini_api_key';
+
+export function getCustomGeminiApiKey(): string {
+  try {
+    return localStorage.getItem(GEMINI_KEY_STORAGE) || '';
+  } catch {
+    return '';
+  }
+}
+
+export function setCustomGeminiApiKey(key: string): void {
+  try {
+    const trimmed = key.trim();
+    if (trimmed) {
+      localStorage.setItem(GEMINI_KEY_STORAGE, trimmed);
+    } else {
+      localStorage.removeItem(GEMINI_KEY_STORAGE);
+    }
+    window.dispatchEvent(new CustomEvent('agribuddy:gemini-key-updated'));
+  } catch (e) {
+    console.error('Failed to store Gemini API key:', e);
+  }
+}
+
+export function clearCustomGeminiApiKey(): void {
+  try {
+    localStorage.removeItem(GEMINI_KEY_STORAGE);
+    window.dispatchEvent(new CustomEvent('agribuddy:gemini-key-updated'));
+  } catch (e) {
+    console.error('Failed to clear Gemini API key:', e);
+  }
+}
 
 function getAuthHeaders(extra: Record<string, string> = {}): HeadersInit {
-  return {
+  const headers: Record<string, string> = {
     'X-User-Id': getActiveUserId(),
     ...extra
   };
+  const customKey = getCustomGeminiApiKey();
+  if (customKey) {
+    headers['X-Gemini-Api-Key'] = customKey;
+  }
+  return headers;
 }
 
 export interface UserProfile {
@@ -609,6 +647,7 @@ export const api = {
 
     const res = await fetch(`${BASE_URL}/ai/diagnose`, {
       method: 'POST',
+      headers: getAuthHeaders(),
       body: formData,
     });
     if (!res.ok) throw new Error('Gagal memproses diagnosis');

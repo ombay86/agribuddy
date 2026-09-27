@@ -113,12 +113,22 @@ export class GeminiService {
     }
   }
 
+  private getClient(customApiKey?: string): GoogleGenAI | null {
+    const key = customApiKey?.trim() || config.geminiApiKey;
+    if (!key) return null;
+    if (customApiKey && customApiKey.trim()) {
+      return new GoogleGenAI({ apiKey: customApiKey.trim() });
+    }
+    return this.ai;
+  }
+
   /**
    * Menemukan daftar kandidat model Gemini aktif secara otomatis (Auto-Discovery).
    * Prioritas: model eksplisit di .env -> model live Google API terbaru -> moving alias 'gemini-flash-latest' -> fallback standar.
    */
-  private async getCandidateModels(): Promise<string[]> {
+  private async getCandidateModels(client?: GoogleGenAI | null): Promise<string[]> {
     const list: string[] = [];
+    const targetClient = client || this.ai;
 
     // 1. Jika pengguna menetapkan model spesifik di .env dan bukan 'auto' / 'latest'
     if (config.geminiModel && config.geminiModel !== 'auto' && config.geminiModel !== 'latest') {
@@ -131,9 +141,9 @@ export class GeminiService {
     }
 
     // 3. Live discovery dari Google AI API
-    if (this.ai && config.geminiApiKey) {
+    if (targetClient) {
       try {
-        const liveList = await this.ai.models.list();
+        const liveList = await targetClient.models.list();
         const flashModels: string[] = [];
         for await (const m of liveList) {
           const rawName = (m.name || '').replace(/^models\//, '');
@@ -172,12 +182,14 @@ export class GeminiService {
   public async diagnoseLeafImage(
     imageBuffer: Buffer,
     mimeType: string = 'image/jpeg',
-    filename: string = ''
+    filename: string = '',
+    customApiKey?: string
   ): Promise<DiagnosisResult> {
     const detectedAt = formatCurrentTimestamp();
+    const client = this.getClient(customApiKey);
 
-    if (this.ai && config.geminiApiKey) {
-      const candidates = await this.getCandidateModels();
+    if (client) {
+      const candidates = await this.getCandidateModels(client);
       console.log(`📡 Auto-detecting active Gemini model (candidates: ${candidates.slice(0, 3).join(', ')})...`);
 
       const prompt = `Anda adalah pakar agronomi dan fitopatologi tanaman padi (Agri AI).
@@ -207,7 +219,7 @@ Kembalikan jawaban HANYA dalam format JSON valid (tanpa markdown backtick ataupu
       for (const selectedModel of candidates) {
         try {
           console.log(`🤖 Invoking Google Gemini Vision using model: "${selectedModel}"...`);
-          const response = await this.ai.models.generateContent({
+          const response = await client.models.generateContent({
             model: selectedModel,
             contents: [
               {
@@ -308,7 +320,8 @@ Kembalikan jawaban HANYA dalam format JSON valid (tanpa markdown backtick ataupu
     history: { role: 'user' | 'model', content: string }[],
     newMessage: string,
     imageBase64?: string,
-    mimeType: string = 'image/jpeg'
+    mimeType: string = 'image/jpeg',
+    customApiKey?: string
   ): Promise<{ reply: string, detectedDiagnosis?: DiagnosisResult }> {
     const detectedAt = formatCurrentTimestamp();
     let detectedDiagnosis: DiagnosisResult | undefined = undefined;
@@ -318,14 +331,16 @@ Kembalikan jawaban HANYA dalam format JSON valid (tanpa markdown backtick ataupu
       try {
         const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, '');
         const buf = Buffer.from(cleanBase64, 'base64');
-        detectedDiagnosis = await this.diagnoseLeafImage(buf, mimeType, 'daun_chat.jpg');
+        detectedDiagnosis = await this.diagnoseLeafImage(buf, mimeType, 'daun_chat.jpg', customApiKey);
       } catch (e) {
         console.warn('Gagal analisis gambar:', e);
       }
     }
 
-    if (this.ai && config.geminiApiKey) {
-      const candidates = await this.getCandidateModels();
+    const client = this.getClient(customApiKey);
+
+    if (client) {
+      const candidates = await this.getCandidateModels(client);
       const systemInstruction = `Anda adalah Agri AI, asisten kecerdasan buatan cerdas untuk petani usahatani di platform AgriBuddy Indonesia.
 Peran Anda:
 1. Memberikan konsultasi budidaya tanaman padi dan palawija, pengendalian hama & penyakit, pemupukan berimbang, irigasi, serta analisa cuaca.
@@ -359,7 +374,7 @@ ${detectedDiagnosis ? `Info tambahan dari foto daun yang diunggah pengguna: Terd
             parts: currentParts
           });
 
-          const response = await this.ai.models.generateContent({
+          const response = await client.models.generateContent({
             model: selectedModel,
             contents,
             config: {
