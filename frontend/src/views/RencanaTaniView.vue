@@ -895,12 +895,17 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start pt-4">
 
                   <!-- KOLOM KIRI: KONTROL PROSES -->
-                  <div class="space-y-3 bg-slate-50/80 p-4 rounded-2xl border border-slate-100">
+                  <div class="space-y-3 bg-slate-50/80 p-4 rounded-2xl border border-slate-100"
+                    :class="phase.status === 'SELESAI' ? 'bg-emerald-50/20 border-emerald-100' : ''"
+                  >
                     <div class="flex items-center justify-between pb-1 border-b border-slate-200/60">
                       <span class="text-xs font-black text-slate-700 flex items-center gap-1.5">
                         <CheckSquare :size="14" class="text-emerald-600" /> Kontrol Proses Lapangan
                       </span>
-                      <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-full">
+                      <span v-if="phase.status === 'SELESAI'" class="text-[10px] font-black text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full flex items-center gap-1 border border-emerald-200">
+                        🔒 Selesai & Terkunci
+                      </span>
+                      <span v-else class="text-[10px] font-bold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-full">
                         {{ getPhaseDoneTasksCount(phase.step_no) }} / {{ phase.tasks.length }} Selesai
                       </span>
                     </div>
@@ -908,11 +913,14 @@
                       <div
                         v-for="(task, tIdx) in phase.tasks"
                         :key="tIdx"
-                        @click="togglePhaseTask(phase.step_no, tIdx)"
-                        class="p-2.5 rounded-xl border transition-all cursor-pointer flex items-start gap-2.5 select-none"
-                        :class="isPhaseTaskDone(phase.step_no, tIdx)
-                          ? 'bg-emerald-50/80 border-emerald-200 text-slate-500 line-through'
-                          : 'bg-white hover:border-emerald-300 border-slate-200 text-slate-800 shadow-2xs'"
+                        @click="phase.status !== 'SELESAI' && togglePhaseTask(phase.step_no, tIdx)"
+                        class="p-2.5 rounded-xl border transition-all select-none flex items-start gap-2.5"
+                        :class="[
+                          phase.status === 'SELESAI' ? 'cursor-not-allowed opacity-85' : 'cursor-pointer',
+                          isPhaseTaskDone(phase.step_no, tIdx)
+                            ? 'bg-emerald-50/80 border-emerald-200 text-slate-500 line-through'
+                            : 'bg-white hover:border-emerald-300 border-slate-200 text-slate-800 shadow-2xs'
+                        ]"
                       >
                         <div
                           class="w-4 h-4 rounded-md border mt-0.5 flex items-center justify-center shrink-0 transition-colors"
@@ -921,6 +929,7 @@
                           <Check v-if="isPhaseTaskDone(phase.step_no, tIdx)" :size="10" />
                         </div>
                         <span class="text-xs font-semibold leading-tight flex-1">{{ task }}</span>
+                        <span v-if="phase.status === 'SELESAI'" class="text-[10px] text-emerald-600 font-bold shrink-0">🔒</span>
                       </div>
                     </div>
                     <div class="bg-amber-50/80 border border-amber-200/70 rounded-xl p-2.5 text-[11px] text-amber-950 flex items-start gap-2 mt-2 leading-relaxed">
@@ -933,16 +942,25 @@
                   </div>
 
                   <!-- KOLOM KANAN: KONTROL MODAL -->
-                  <div class="space-y-3 bg-slate-50/80 p-4 rounded-2xl border border-slate-100">
+                  <div class="space-y-3 bg-slate-50/80 p-4 rounded-2xl border border-slate-100"
+                    :class="phase.status === 'SELESAI' ? 'bg-emerald-50/20 border-emerald-100' : ''"
+                  >
                     <div class="flex items-center justify-between pb-1 border-b border-slate-200/60">
                       <span class="text-xs font-black text-slate-700 flex items-center gap-1.5">
                         <Receipt :size="14" class="text-emerald-600" /> Kontrol Modal Fase Ini
                       </span>
                       <button
+                        :disabled="phase.status === 'SELESAI'"
                         @click="openAddExpenseModal(getPhaseCategory(phase.step_no), `Biaya ${phase.name}`)"
-                        class="text-[10px] font-black text-emerald-800 bg-emerald-100 hover:bg-emerald-200 px-2.5 py-0.5 rounded-full transition-all flex items-center gap-1 cursor-pointer"
+                        class="text-[10px] font-black px-2.5 py-0.5 rounded-full transition-all flex items-center gap-1"
+                        :class="phase.status === 'SELESAI'
+                          ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed'
+                          : 'text-emerald-800 bg-emerald-100 hover:bg-emerald-200 cursor-pointer active:scale-95'"
                       >
-                        <PlusCircle :size="11" /> Catat Biaya
+                        <span v-if="phase.status === 'SELESAI'">🔒 Biaya Ditutup</span>
+                        <template v-else>
+                          <PlusCircle :size="11" /> Catat Biaya
+                        </template>
                       </button>
                     </div>
                     <div class="grid grid-cols-2 gap-2 text-xs">
@@ -1467,18 +1485,18 @@
           </div>
 
           <div>
-            <label class="text-xs font-bold text-slate-700 block mb-1">Kategori Pos Modal</label>
+            <label class="text-xs font-bold text-slate-700 block mb-1">Alokasi ke Fase / Pos Modal</label>
             <select
               v-model="manualExpenseForm.category"
               class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500 bg-white cursor-pointer"
             >
-              <option value="OLAH_TANAH">🚜 Olah Tanah & Lahan</option>
-              <option value="PENGAIRAN">💧 Operasional Pompa & Pengairan</option>
-              <option value="BENIH_BIBIT">🌱 Benih / Bibit Semai</option>
-              <option value="PUPUK_NUTRISI">🌿 Pupuk Organik & Kimia</option>
-              <option value="TENAGA_KERJA">👥 Upah Tenaga Tanam / Buruh</option>
-              <option value="OBAT_HAMA">🛡️ Perlindungan Hama / Pestisida</option>
-              <option value="LAINNYA">📦 Operasional Panen / Lainnya</option>
+              <option value="OLAH_TANAH">Fase 1: Olah Tanah & Persemaian (Traktor, Bajak Singkal)</option>
+              <option value="BENIH_BIBIT">Fase 2: Penanaman Bibit (Benih Bersertifikat, Dapog)</option>
+              <option value="PUPUK_NUTRISI">Fase 3: Fase Vegetatif (Pupuk Urea, NPK, Organik)</option>
+              <option value="OBAT_HAMA">Fase 4: Fase Generatif & Bunting (Insektisida, Fungisida)</option>
+              <option value="PENGAIRAN">Operasional Pompa & Pengairan Irigasi Darurat</option>
+              <option value="TENAGA_KERJA">Upah Tenaga Kerja Borongan / Buruh Tani</option>
+              <option value="LAINNYA">Fase 5: Pematangan Bulir & Panen Raya (Logistik, Karung)</option>
             </select>
           </div>
 
