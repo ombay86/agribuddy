@@ -617,6 +617,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick, computed, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { useUserState } from '@/services/userState';
 import { 
   api, 
@@ -693,10 +694,21 @@ const handleClearKey = async () => {
   alert(`🗑️ API Key pribadi akun ${currentPersona.value.name} telah dihapus. Sistem akan menggunakan default server.`);
 };
 
+const route = useRoute();
+
 // Pantau perubahan akun agar sesi dan key langsung menyesuaikan
 watch(() => currentPersona.value.id, (newId) => {
   tempApiKey.value = getCustomGeminiApiKey(newId);
-  loadSessions();
+  startNewChat();
+  loadSessions(false);
+});
+
+// Pantau route: selalu default ke chat baru saat masuk atau kembali ke /dokter
+watch(() => route.path, (newPath) => {
+  if (newPath === '/dokter') {
+    startNewChat();
+    loadSessions(false);
+  }
 });
 
 // State Riwayat Sesi Chat
@@ -746,20 +758,16 @@ const scrollToBottom = async () => {
   }
 };
 
-const loadSessions = async () => {
+const loadSessions = async (autoSwitch: boolean = false) => {
   try {
     const list = await api.getChatSessions();
     chatSessions.value = list;
-    if (list.length > 0) {
-      // Buka sesi terakhir jika ada
+    if (autoSwitch && list.length > 0) {
+      // Hanya buka sesi tertentu jika autoSwitch eksplisit true
       await switchSession(list[0].id);
-    } else {
-      // Pengguna baru / belum memiliki riwayat obrolan: tampilkan layar awal bersih
-      startNewChat();
     }
   } catch (err) {
     console.error('Gagal memuat sesi chat:', err);
-    startNewChat();
   }
 };
 
@@ -889,8 +897,8 @@ const sendMessage = async () => {
     };
     messages.value.push(aiMessage);
 
-    // Segarkan daftar sesi riwayat
-    await loadSessions();
+    // Segarkan daftar sesi riwayat tanpa beralih sesi
+    await loadSessions(false);
   } catch (err: any) {
     messages.value.push({
       id: `err_${Date.now()}`,
@@ -904,7 +912,9 @@ const sendMessage = async () => {
   }
 };
 
-onMounted(() => {
-  loadSessions();
+onMounted(async () => {
+  // Selalu default ke chat baru saat pertama kali halaman Agri AI dibuka
+  startNewChat();
+  await loadSessions(false);
 });
 </script>
