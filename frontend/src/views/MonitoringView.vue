@@ -1,5 +1,58 @@
 <template>
   <div class="space-y-6 pb-20 md:pb-8">
+
+    <!-- ==================== LOADING SKELETON ==================== -->
+    <div v-if="isLoadingFarms" class="space-y-6 animate-pulse">
+      <div class="bg-emerald-900/20 rounded-3xl h-36 w-full"></div>
+      <div class="bg-slate-200 rounded-3xl h-48 w-full"></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-slate-100 rounded-3xl h-32"></div>
+        <div class="bg-slate-100 rounded-3xl h-32"></div>
+      </div>
+      <div class="flex justify-center pt-2">
+        <div class="flex items-center gap-2 text-slate-400 text-sm font-semibold">
+          <Loader2 :size="16" class="animate-spin" />
+          <span>Memuat data usahatani...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== EMPTY STATE: BELUM ADA LAHAN ==================== -->
+    <div v-else-if="hasNoFarmlands" class="flex flex-col items-center justify-center min-h-[60vh] text-center px-6 py-12 space-y-6">
+      <!-- Ilustrasi -->
+      <div class="w-24 h-24 rounded-3xl bg-emerald-50 border-2 border-emerald-100 flex items-center justify-center shadow-xs">
+        <Sprout :size="44" class="text-emerald-400" />
+      </div>
+
+      <!-- Teks -->
+      <div class="space-y-2 max-w-sm">
+        <h3 class="text-xl font-black text-slate-800 leading-tight">
+          Kamu belum membuat lahan untuk diolah
+        </h3>
+        <p class="text-sm text-slate-500 font-medium leading-relaxed">
+          Mulai dengan membuat rencana tanam pertama kamu. AgriBuddy akan bantu hitung estimasi anggaran dan jadwal budidaya secara otomatis.
+        </p>
+      </div>
+
+      <!-- CTA Button -->
+      <button
+        type="button"
+        @click="router.push('/rencana')"
+        class="inline-flex items-center gap-2.5 bg-emerald-700 hover:bg-emerald-600 active:scale-95 text-white text-sm font-black px-6 py-3 rounded-2xl shadow-sm transition-all cursor-pointer"
+      >
+        <Sprout :size="16" />
+        Buat Sekarang
+      </button>
+
+      <!-- Hint tambahan -->
+      <p class="text-xs text-slate-400 font-medium">
+        💡 Cukup 3 langkah untuk membuat rencana tanam pertamamu
+      </p>
+    </div>
+
+    <!-- ==================== KONTEN UTAMA (ada lahan) ==================== -->
+    <template v-else>
+
     <!-- ==================== TOP BANNER / COCKPIT HEADER ==================== -->
     <div class="bg-gradient-to-r from-emerald-800 via-teal-900 to-slate-900 text-white p-6 md:p-8 rounded-3xl shadow-md relative overflow-hidden">
       <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -601,11 +654,14 @@
         </div>
       </router-link>
     </div>
+
+    </template><!-- end v-else (ada lahan) -->
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import { api, WeatherData, Farmland, InventoryItem, HarvestItem, DiagnosisResult } from '@/services/api';
 import { useFarmlandState } from '@/composables/useFarmlandState';
 import { useUserState } from '@/services/userState';
@@ -613,16 +669,21 @@ import {
   Activity, Navigation, Droplets, CloudRain, 
   CheckCircle2, AlertTriangle, Sparkles, Calendar,
   CalendarDays, CheckSquare, Check, ArrowRight, Camera,
-  Wallet, Package, Store, TrendingUp, CloudSun, Warehouse
+  Wallet, Package, Store, TrendingUp, CloudSun, Warehouse,
+  Loader2, Sprout
 } from 'lucide-vue-next';
 
 // State & Shared Farmland State
+const router = useRouter();
 const { currentUserId, currentPersona } = useUserState();
 const { globalFarmlands, activeFarmId, loadGlobalFarmlands, setActiveFarmId } = useFarmlandState();
 const weather = ref<WeatherData | null>(null);
 const isLocatingWeather = ref(false);
+const isLoadingFarms = ref(false);
 const farmlands = globalFarmlands;
 const selectedFarmId = ref<string>(activeFarmId.value || '');
+
+const hasNoFarmlands = computed(() => !isLoadingFarms.value && farmlands.value.length === 0);
 
 watch(activeFarmId, (newId) => {
   if (newId && newId !== selectedFarmId.value) {
@@ -983,6 +1044,7 @@ const detectGPSWeather = () => {
 
 onMounted(async () => {
   // Load Farmlands via Shared State
+  isLoadingFarms.value = true;
   try {
     await loadGlobalFarmlands(currentUserId.value);
     if (activeFarmId.value) {
@@ -990,6 +1052,8 @@ onMounted(async () => {
     }
   } catch (err) {
     console.error('Error fetching farmlands:', err);
+  } finally {
+    isLoadingFarms.value = false;
   }
 
   // Load Last Diagnosis from localStorage
