@@ -20,59 +20,61 @@
     </div>
 
     <!-- 2 TOP-LEVEL MAIN TABS: Rencana Tanam & Kontrol Tanam & Modal -->
-    <div class="flex p-1.5 bg-slate-200/90 rounded-2xl gap-2 font-black text-xs md:text-sm shadow-2xs">
-      <button
-        @click="setTopTab('rencana')"
-        type="button"
-        class="flex-1 py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer select-none"
-        :class="topTab === 'rencana' 
-          ? 'bg-white text-emerald-800 shadow-sm border border-slate-200 font-black' 
-          : 'text-slate-600 hover:text-slate-900 font-bold'"
-      >
-        <Calculator :size="17" />
-        <span>Rencana Tanam</span>
-      </button>
-      <button
-        @click="setTopTab('kontrol')"
-        type="button"
-        class="flex-1 py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer select-none"
-        :class="topTab === 'kontrol' 
-          ? 'bg-white text-emerald-800 shadow-sm border border-slate-200 font-black' 
-          : 'text-slate-600 hover:text-slate-900 font-bold'"
-      >
-        <Scale :size="17" />
-        <span>Kontrol Tanam & Modal</span>
-      </button>
+    <div class="flex justify-center">
+      <div class="inline-flex p-1 bg-slate-100 rounded-xl gap-1 font-bold text-xs border border-slate-200/80 shadow-2xs w-full sm:w-auto sm:min-w-[420px]">
+        <button
+          @click="setTopTab('rencana')"
+          type="button"
+          class="flex-1 py-1.5 px-4 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none text-xs"
+          :class="topTab === 'rencana' 
+            ? 'bg-white text-emerald-800 shadow-2xs border border-slate-200/80 font-black' 
+            : 'text-slate-500 hover:text-slate-800 font-semibold'"
+        >
+          <Calculator :size="14" />
+          <span>Rencana Tanam</span>
+        </button>
+        <button
+          @click="setTopTab('kontrol')"
+          type="button"
+          class="flex-1 py-1.5 px-4 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none text-xs"
+          :class="topTab === 'kontrol' 
+            ? 'bg-white text-emerald-800 shadow-2xs border border-slate-200/80 font-black' 
+            : 'text-slate-500 hover:text-slate-800 font-semibold'"
+        >
+          <Scale :size="14" />
+          <span>Kontrol Tanam & Modal</span>
+        </button>
+      </div>
     </div>
 
     <!-- ==================== TAB 1: RENCANA TANAM (PERENCANAAN LAHAN BARU - WIZARD STEPPER) ==================== -->
     <div v-if="topTab === 'rencana'" class="space-y-6">
       <!-- Sub-mode Switcher: Rancang Lahan Baru vs Daftar Rencana Tersimpan -->
-      <div class="flex items-center justify-between bg-slate-100/90 p-1.5 rounded-2xl max-w-3xl mx-auto border border-slate-200/90 shadow-2xs">
-        <div class="flex items-center gap-1.5 w-full">
+      <div class="flex justify-center">
+        <div class="inline-flex p-1 bg-slate-100/90 rounded-xl gap-1 border border-slate-200/80 shadow-2xs w-full sm:w-auto sm:min-w-[380px]">
           <button
             @click="rencanaSubMode = 'wizard'"
             type="button"
-            class="flex-1 py-2 px-3 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none"
+            class="flex-1 py-1.5 px-3.5 rounded-lg text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none"
             :class="rencanaSubMode === 'wizard' 
-              ? 'bg-white text-emerald-800 shadow-xs font-black border border-slate-200/60' 
-              : 'text-slate-600 hover:text-slate-900 font-bold'"
+              ? 'bg-white text-emerald-800 shadow-2xs font-black border border-slate-200/60' 
+              : 'text-slate-500 hover:text-slate-800 font-semibold'"
           >
-            <PlusCircle :size="14" />
+            <PlusCircle :size="13" />
             <span>+ Rancang Lahan Baru</span>
           </button>
           <button
             @click="rencanaSubMode = 'saved'"
             type="button"
-            class="flex-1 py-2 px-3 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none"
+            class="flex-1 py-1.5 px-3.5 rounded-lg text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none"
             :class="rencanaSubMode === 'saved' 
-              ? 'bg-white text-emerald-800 shadow-xs font-black border border-slate-200/60' 
-              : 'text-slate-600 hover:text-slate-900 font-bold'"
+              ? 'bg-white text-emerald-800 shadow-2xs font-black border border-slate-200/60' 
+              : 'text-slate-500 hover:text-slate-800 font-semibold'"
           >
-            <FolderKanban :size="14" />
+            <FolderKanban :size="13" />
             <span>Daftar Rencana Tersimpan</span>
             <span 
-              class="text-[10px] font-black px-2 py-0.5 rounded-full"
+              class="text-[10px] font-black px-1.5 py-0.2 rounded-full"
               :class="rencanaSubMode === 'saved' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700'"
             >
               {{ draftFarmlands.length }}
