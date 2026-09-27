@@ -22,6 +22,27 @@
 
     <!-- Right: Notifications & User Profile -->
     <div class="flex items-center gap-2.5">
+      <!-- Dropdown Selector Petak Sawah (Khusus Halaman Dashboard & Selalu Sticky) -->
+      <div
+        v-if="isDashboardPage && globalFarmlands.length > 0"
+        class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200/90 border border-slate-200/90 rounded-2xl px-2.5 py-1.5 transition-all shadow-2xs"
+        title="Pilih petak sawah yang sedang dipantau di dashboard"
+      >
+        <span class="text-sm shrink-0">🌾</span>
+        <div class="flex flex-col text-left pr-0.5">
+          <span class="text-[9px] font-black uppercase text-emerald-800 leading-none">Petak Sawah:</span>
+          <select
+            v-model="activeFarmId"
+            @change="setActiveFarmId(activeFarmId)"
+            class="bg-transparent text-xs font-black text-slate-800 focus:outline-none cursor-pointer pr-1 py-0.5 truncate max-w-[130px] sm:max-w-[210px]"
+          >
+            <option v-for="f in globalFarmlands" :key="f.id" :value="f.id">
+              {{ f.name }} ({{ f.land_size_ha }} Ha)
+            </option>
+          </select>
+        </div>
+      </div>
+
       <!-- Notification Bell -->
       <div class="relative">
         <button
@@ -138,11 +159,17 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useUserState } from '@/services/userState';
+import { useFarmlandState } from '@/composables/useFarmlandState';
 import { api, CollabNotification } from '@/services/api';
 import { Bell, Loader2 } from 'lucide-vue-next';
 
 const route = useRoute();
 const { currentUserId, currentPersona } = useUserState();
+const { globalFarmlands, activeFarmId, loadGlobalFarmlands, setActiveFarmId } = useFarmlandState();
+
+const isDashboardPage = computed(() => {
+  return route.path === '/' || route.path === '/monitoring';
+});
 
 const isNotifOpen = ref(false);
 const notifications = ref<CollabNotification[]>([]);
@@ -180,12 +207,19 @@ let pollInterval: any = null;
 
 onMounted(() => {
   loadNotifications();
+  loadGlobalFarmlands(currentUserId.value);
   // Poll notifikasi setiap 8 detik
   pollInterval = setInterval(loadNotifications, 8000);
+  window.addEventListener('agribuddy:refresh-farmlands', onRefreshFarmlands);
 });
+
+const onRefreshFarmlands = () => {
+  loadGlobalFarmlands(currentUserId.value);
+};
 
 onUnmounted(() => {
   if (pollInterval) clearInterval(pollInterval);
+  window.removeEventListener('agribuddy:refresh-farmlands', onRefreshFarmlands);
 });
 
 const currentSectionName = computed(() => {

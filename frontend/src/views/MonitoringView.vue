@@ -605,8 +605,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { api, WeatherData, Farmland, InventoryItem, HarvestItem, DiagnosisResult } from '@/services/api';
+import { useFarmlandState } from '@/composables/useFarmlandState';
 import { 
   Activity, Navigation, Droplets, CloudRain, 
   CheckCircle2, AlertTriangle, Sparkles, Calendar,
@@ -614,11 +615,20 @@ import {
   Wallet, Package, Store, TrendingUp, CloudSun, Warehouse
 } from 'lucide-vue-next';
 
-// State
+// State & Shared Farmland State
+const { globalFarmlands, activeFarmId, loadGlobalFarmlands, setActiveFarmId } = useFarmlandState();
 const weather = ref<WeatherData | null>(null);
 const isLocatingWeather = ref(false);
-const farmlands = ref<Farmland[]>([]);
-const selectedFarmId = ref<string>('farm_001');
+const farmlands = globalFarmlands;
+const selectedFarmId = ref<string>(activeFarmId.value || 'farm_001');
+
+watch(activeFarmId, (newId) => {
+  if (newId && newId !== selectedFarmId.value) {
+    selectedFarmId.value = newId;
+    loadTasks();
+    fetchWeatherData();
+  }
+});
 
 // Logistik Ringkas (Gudang vs Lumbung)
 const logisticsTab = ref<'gudang' | 'lumbung'>('gudang');
@@ -920,7 +930,7 @@ const getPhaseBadgeClass = (status: string) => {
 
 // Farm change
 const handleFarmChange = () => {
-  localStorage.setItem('agribuddy_active_farm_id', selectedFarmId.value);
+  setActiveFarmId(selectedFarmId.value);
   loadTasks();
   fetchWeatherData();
 };
@@ -958,17 +968,11 @@ const detectGPSWeather = () => {
 };
 
 onMounted(async () => {
-  // Load Farmlands
+  // Load Farmlands via Shared State
   try {
-    const farms = await api.getFarmlands();
-    if (farms && farms.length > 0) {
-      farmlands.value = farms;
-      const savedFarmId = localStorage.getItem('agribuddy_active_farm_id');
-      if (savedFarmId && farms.some(f => f.id === savedFarmId)) {
-        selectedFarmId.value = savedFarmId;
-      } else {
-        selectedFarmId.value = farms[0].id;
-      }
+    await loadGlobalFarmlands();
+    if (activeFarmId.value) {
+      selectedFarmId.value = activeFarmId.value;
     }
   } catch (err) {
     console.error('Error fetching farmlands:', err);
