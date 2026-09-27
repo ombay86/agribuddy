@@ -324,6 +324,8 @@ export interface Farmland {
   longitude: number;
   collaborators: Collaborator[];
   capital_expenses: CapitalExpense[];
+  planting_date?: string;
+  target_harvest_date?: string;
   created_at?: string;
 }
 

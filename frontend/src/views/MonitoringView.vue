@@ -137,11 +137,11 @@
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 border-t border-slate-100">
           <div class="p-2.5 bg-slate-50 rounded-2xl border border-slate-100">
             <span class="text-[10px] font-bold text-slate-400 uppercase block">Tanggal Mulai</span>
-            <span class="text-xs font-black text-slate-700">16 Agustus 2026</span>
+            <span class="text-xs font-black text-slate-700">{{ startDateFormatted }}</span>
           </div>
           <div class="p-2.5 bg-slate-50 rounded-2xl border border-slate-100">
             <span class="text-[10px] font-bold text-slate-400 uppercase block">Estimasi Panen</span>
-            <span class="text-xs font-black text-emerald-800">15 November 2026</span>
+            <span class="text-xs font-black text-emerald-800">{{ targetHarvestDateFormatted }}</span>
           </div>
           <div class="p-2.5 bg-slate-50 rounded-2xl border border-slate-100">
             <span class="text-[10px] font-bold text-slate-400 uppercase block">Proyeksi Hasil</span>
@@ -384,9 +384,33 @@
             <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between text-xs">
               <div class="flex items-center gap-2">
                 <TrendingUp :size="16" class="text-emerald-600" />
-                <span class="font-bold text-slate-700">HPP / Kg Sementara:</span>
+                <span class="font-bold text-slate-700">HPP / Kg Berjalan:</span>
               </div>
-              <span class="font-black text-emerald-800">Rp 3.850 / kg</span>
+              <span class="font-black text-emerald-800">{{ hppPerKgFormatted }}</span>
+            </div>
+
+            <!-- Riwayat Pengeluaran Petak Sawah Ini (Database) -->
+            <div class="pt-2 border-t border-slate-100 space-y-2">
+              <div class="flex items-center justify-between text-[11px] font-bold text-slate-500">
+                <span>Riwayat Pengeluaran (Buku Modal):</span>
+                <span class="text-emerald-700 font-black">{{ activeFarmland.capital_expenses?.length || 0 }} Item</span>
+              </div>
+              <div v-if="activeFarmland.capital_expenses && activeFarmland.capital_expenses.length > 0" class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                <div
+                  v-for="exp in activeFarmland.capital_expenses"
+                  :key="exp.id"
+                  class="flex items-center justify-between text-[11px] p-2 rounded-xl bg-slate-50 border border-slate-100 hover:bg-slate-100/80 transition-colors"
+                >
+                  <div class="truncate pr-2">
+                    <p class="font-bold text-slate-800 truncate">{{ exp.item_name }}</p>
+                    <p class="text-[9px] text-slate-400">{{ exp.date }}</p>
+                  </div>
+                  <span class="font-black text-slate-800 shrink-0">Rp {{ (exp.amount || 0).toLocaleString('id-ID') }}</span>
+                </div>
+              </div>
+              <div v-else class="text-center py-2.5 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                <p class="text-[11px] text-slate-400 font-medium">Belum ada pengeluaran dicatat untuk petak ini.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -536,15 +560,6 @@ const lastDiagnosis = ref<DiagnosisResult>({
   detected_at: "24 Sep 2026, 08:30 WIB"
 });
 
-// Siklus Budidaya 5 Fase
-const phases = ref([
-  { step_no: 1, short_name: "Olah Tanah", name: "Fase 1: Persiapan & Olah Tanah", day_range: "HST -15 s/d 0", status: "SELESAI", budget: 1200000, actual: 1200000 },
-  { step_no: 2, short_name: "Tanam", name: "Fase 2: Penanaman Bibit & Pupuk Dasar", day_range: "HST 1 s/d 15", status: "SELESAI", budget: 1600000, actual: 1550000 },
-  { step_no: 3, short_name: "Vegetatif", name: "Fase 3: Pembentukan Anakan & Pupuk Susulan", day_range: "HST 16 s/d 45", status: "SEDANG_BERJALAN", budget: 1400000, actual: 450000, ai_tips: "Jaga genangan air 3-5 cm untuk anakan produktif dan semprot fungisida jika cuaca lembab ekstrem." },
-  { step_no: 4, short_name: "Generatif", name: "Fase 4: Primordia & Pengisian Bulir", day_range: "HST 46 s/d 85", status: "BELUM", budget: 1100000, actual: 0 },
-  { step_no: 5, short_name: "Panen", name: "Fase 5: Pematangan Bulir & Panen Raya", day_range: "HST 86 s/d 115", status: "BELUM", budget: 1100000, actual: 0 },
-]);
-
 // Dynamic Farm Data
 const activeFarmland = computed<Farmland>(() => {
   const found = farmlands.value.find(f => f.id === selectedFarmId.value);
@@ -552,41 +567,179 @@ const activeFarmland = computed<Farmland>(() => {
   return {
     id: 'farm_001',
     user_id: 'usr_petani',
-    name: 'Sawah Blok Krajan',
+    name: 'Sawah Blok Krajan (Padi Inpari 32)',
     land_size_ha: 0.8,
-    commodity: 'Padi Inpari 32',
+    commodity: 'Padi Sawah Inpari 32',
     soil_type: 'Lempung Berliat (Subur)',
     water_source: 'Irigasi Teknis Bendungan',
     location: 'Desa Sukamaju Krajan',
     latitude: -7.2504,
     longitude: 112.7512,
     collaborators: [],
-    capital_expenses: []
+    capital_expenses: [],
+    planting_date: '2026-08-16',
+    target_harvest_date: '2026-12-09'
   };
+});
+
+// Dynamic HST based on selected farm's planting_date or created_at
+const currentHST = computed(() => {
+  const farm = activeFarmland.value;
+  if (farm.planting_date) {
+    const plantTime = new Date(farm.planting_date).getTime();
+    const now = new Date().getTime();
+    const diffDays = Math.floor((now - plantTime) / (1000 * 60 * 60 * 24));
+    return Math.max(0, Math.min(115, diffDays));
+  }
+  // Deterministic fallback by farm ID
+  if (farm.id === 'farm_001') return 42;
+  if (farm.id === 'farm_002') return 14;
+  if (farm.id === 'farm_dc651c') return 75;
+  return 30;
+});
+
+const totalDays = 115;
+const daysUntilHarvest = computed(() => Math.max(0, totalDays - currentHST.value));
+const lifecycleProgress = computed(() => Math.min(100, Math.round((currentHST.value / totalDays) * 100)));
+
+// Dynamic Dates per Farm
+const startDateFormatted = computed(() => {
+  const farm = activeFarmland.value;
+  const dStr = farm.planting_date || farm.created_at || '2026-08-16';
+  const d = new Date(dStr);
+  return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+});
+
+const targetHarvestDateFormatted = computed(() => {
+  const farm = activeFarmland.value;
+  if (farm.target_harvest_date) {
+    return new Date(farm.target_harvest_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  const dStr = farm.planting_date || farm.created_at || '2026-08-16';
+  const d = new Date(dStr);
+  d.setDate(d.getDate() + 115);
+  return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+});
+
+// Dynamic 5 Phases linked to Farm HST, Size, and Real Expenses
+const phases = computed(() => {
+  const hst = currentHST.value;
+  const ha = activeFarmland.value.land_size_ha || 1.0;
+  const expenses = activeFarmland.value.capital_expenses || [];
+
+  const sumCat = (cat: string) => expenses.filter(e => e.category === cat).reduce((s, e) => s + (e.amount || 0), 0);
+  const olahTanahActual = sumCat('OLAH_TANAH');
+  const benihActual = sumCat('BENIH_BIBIT');
+  const pupukActual = sumCat('PUPUK_NUTRISI');
+  const rawatActual = sumCat('PESTISIDA') + sumCat('TENAGA_KERJA');
+  const panenActual = sumCat('PANEN');
+
+  const p1Status = hst >= 1 ? 'SELESAI' : 'SEDANG_BERJALAN';
+  const p2Status = hst > 15 ? 'SELESAI' : (hst >= 1 ? 'SEDANG_BERJALAN' : 'BELUM');
+  const p3Status = hst > 45 ? 'SELESAI' : (hst >= 16 ? 'SEDANG_BERJALAN' : 'BELUM');
+  const p4Status = hst > 85 ? 'SELESAI' : (hst >= 46 ? 'SEDANG_BERJALAN' : 'BELUM');
+  const p5Status = hst >= 115 ? 'SELESAI' : (hst >= 86 ? 'SEDANG_BERJALAN' : 'BELUM');
+
+  return [
+    {
+      step_no: 1,
+      short_name: "Olah Tanah",
+      name: "Fase 1: Persiapan & Olah Tanah",
+      day_range: "HST -15 s/d 0",
+      status: p1Status,
+      budget: Math.round(ha * 1500000),
+      actual: olahTanahActual || (p1Status === 'SELESAI' ? Math.round(ha * 1450000) : 0),
+      ai_tips: "Lakukan pembajakan tanah sedalam 20-25 cm, genangi air tipis 2-3 hari untuk melunakkan bongkahan tanah dan mensterilkan bibit gulma."
+    },
+    {
+      step_no: 2,
+      short_name: "Tanam",
+      name: "Fase 2: Penanaman Bibit & Pupuk Dasar",
+      day_range: "HST 1 s/d 15",
+      status: p2Status,
+      budget: Math.round(ha * 2000000),
+      actual: benihActual || (p2Status === 'SELESAI' ? Math.round(ha * 1900000) : 0),
+      ai_tips: "Tanam bibit umur 15-20 hari dengan sistem jajar legowo 2:1 (25x12.5x50 cm). Berikan pupuk dasar SP-36 dan 1/3 Urea, serta atur macak-macak air sawah."
+    },
+    {
+      step_no: 3,
+      short_name: "Vegetatif",
+      name: "Fase 3: Pembentukan Anakan & Pupuk Susulan",
+      day_range: "HST 16 s/d 45",
+      status: p3Status,
+      budget: Math.round(ha * 1750000),
+      actual: pupukActual || (p3Status === 'SELESAI' ? Math.round(ha * 1650000) : 0),
+      ai_tips: "Jaga genangan air 3-5 cm untuk merangsang anakan produktif maksimal. Aplikasikan pupuk susulan NPK Phonska dan semprot fungisida jika cuaca lembab ekstrem."
+    },
+    {
+      step_no: 4,
+      short_name: "Generatif",
+      name: "Fase 4: Primordia & Pengisian Bulir",
+      day_range: "HST 46 s/d 85",
+      status: p4Status,
+      budget: Math.round(ha * 1400000),
+      actual: rawatActual || (p4Status === 'SELESAI' ? Math.round(ha * 1350000) : 0),
+      ai_tips: "Masuk fase bunting! Naikkan air 5-7 cm saat pengisian bulir. Semprot pupuk daun kalium tinggi (MKP/KNO3) untuk bobot bulir gabah padat bernas."
+    },
+    {
+      step_no: 5,
+      short_name: "Panen",
+      name: "Fase 5: Pematangan Bulir & Panen Raya",
+      day_range: "HST 86 s/d 115",
+      status: p5Status,
+      budget: Math.round(ha * 1400000),
+      actual: panenActual || (p5Status === 'SELESAI' ? Math.round(ha * 1400000) : 0),
+      ai_tips: "Keringkan petak sawah 7-10 hari sebelum panen untuk menyeragamkan kematangan gabah dan memudahkan traktor combine harvester masuk."
+    }
+  ];
 });
 
 // Current Phase
 const currentPhase = computed(() => {
-  return phases.value.find(p => p.status === 'SEDANG_BERJALAN') || phases.value[2];
+  return phases.value.find(p => p.status === 'SEDANG_BERJALAN') || phases.value[phases.value.length - 1];
 });
-
-// Current HST
-const currentHST = ref(42);
-const totalDays = 115;
-const daysUntilHarvest = computed(() => Math.max(0, totalDays - currentHST.value));
-const lifecycleProgress = computed(() => Math.min(100, Math.round((currentHST.value / totalDays) * 100)));
 
 // Proyeksi
 const projectedYieldTon = computed(() => {
   const baseYield = activeFarmland.value.land_size_ha * 6.5;
   return baseYield.toFixed(1);
 });
+
+// Budget & Expenses
+const totalBudget = computed(() => {
+  return Math.round(activeFarmland.value.land_size_ha * 6400000);
+});
+
+const totalSpent = computed(() => {
+  const expenses = activeFarmland.value.capital_expenses;
+  if (expenses && expenses.length > 0) {
+    return expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+  }
+  return 0;
+});
+
 const projectedProfit = computed(() => {
   const rev = activeFarmland.value.land_size_ha * 6500 * 6800;
-  const cost = activeFarmland.value.land_size_ha * 7200000;
+  const cost = totalBudget.value;
   const prof = rev - cost;
   return `Rp ${(prof / 1000000).toFixed(1)} Juta`;
 });
+
+const budgetSpentPercent = computed(() => {
+  if (totalBudget.value <= 0) return 0;
+  return Math.min(100, Math.round((totalSpent.value / totalBudget.value) * 100));
+});
+
+const hppPerKgFormatted = computed(() => {
+  const yieldKg = activeFarmland.value.land_size_ha * 6500;
+  if (yieldKg <= 0 || totalSpent.value <= 0) return 'Rp 3.850 / kg';
+  const hpp = Math.round(totalSpent.value / yieldKg);
+  return `Rp ${hpp.toLocaleString('id-ID')} / kg`;
+});
+
+const totalBudgetFormatted = computed(() => totalBudget.value.toLocaleString('id-ID'));
+const totalSpentFormatted = computed(() => totalSpent.value.toLocaleString('id-ID'));
+const remainingBudgetFormatted = computed(() => Math.max(0, totalBudget.value - totalSpent.value).toLocaleString('id-ID'));
 
 // To-Do Tasks for current phase
 interface LocalTask {
@@ -594,12 +747,40 @@ interface LocalTask {
   done: boolean;
 }
 
-const activeTasks = ref<LocalTask[]>([
-  { text: "Pembersihan gulma liar dan cek pematang dari lubang tikus", done: true },
-  { text: "Aplikasi pemupukan susulan II: NPK Phonska (75 kg) & Urea (40 kg)", done: false },
-  { text: "Pengamatan embun pagi pada daun padi terhadap bercak blas/kresek", done: false },
-  { text: "Pengaturan sirkulasi debit pintu air irigasi setinggi 3-5 cm", done: true },
-]);
+const defaultTasksByPhase: Record<number, LocalTask[]> = {
+  1: [
+    { text: "Pembajakan singkal pertama dan pembalikan tanah sawah", done: true },
+    { text: "Penggenangan air tipis 2-3 hari untuk melunakkan bongkahan tanah", done: true },
+    { text: "Penggaruan dan perataan permukaan petak sawah siap tanam", done: false },
+    { text: "Aplikasi pembenah tanah dolomit dan pupuk kandang matang", done: false }
+  ],
+  2: [
+    { text: "Persiapan bibit siap pindah tanam umur 15-18 hari dari persemaian", done: true },
+    { text: "Pengaplikasian pupuk dasar SP-36 merata sebelum tanam", done: true },
+    { text: "Pemasangan patok jajar legowo 2:1 jarak 25 x 12.5 x 50 cm", done: false },
+    { text: "Pengecekan keong mas pada 3 hari pertama genangan air", done: false }
+  ],
+  3: [
+    { text: "Pembersihan gulma liar dan cek pematang dari lubang tikus", done: true },
+    { text: "Aplikasi pemupukan susulan II: NPK Phonska & Urea berimbang", done: false },
+    { text: "Pengamatan embun pagi pada daun padi terhadap bercak blas/kresek", done: false },
+    { text: "Pengaturan sirkulasi debit pintu air irigasi setinggi 3-5 cm", done: true }
+  ],
+  4: [
+    { text: "Pengecekan serangan penggerek batang (sundep/beluk) saat fase bunting", done: true },
+    { text: "Pemberian nutrisi pengisi bulir: Pupuk Kalium tinggi (KNO3 / MKP)", done: false },
+    { text: "Penaikan level air irigasi sawah menjadi 5-7 cm saat bulir keluar", done: true },
+    { text: "Pemasangan tali kresek/orang-orangan sawah antisipasi hama burung", done: false }
+  ],
+  5: [
+    { text: "Pengeringan lahan sawah 10 hari menjelang panen raya", done: true },
+    { text: "Pengecekan kadar air bulir gabah (target < 22% GKP)", done: false },
+    { text: "Koordinasi sewa mesin combine harvester atau buruh panen lokal", done: false },
+    { text: "Persiapan karung goni dan terpal jemur di area lumbung", done: true }
+  ]
+};
+
+const activeTasks = ref<LocalTask[]>([]);
 
 const completedTasksCount = computed(() => activeTasks.value.filter(t => t.done).length);
 
@@ -621,28 +802,14 @@ const loadTasks = () => {
     const raw = localStorage.getItem(`agribuddy_tasks_${selectedFarmId.value}`);
     if (raw) {
       activeTasks.value = JSON.parse(raw);
+    } else {
+      const stepNo = currentPhase.value.step_no;
+      activeTasks.value = JSON.parse(JSON.stringify(defaultTasksByPhase[stepNo] || defaultTasksByPhase[3]));
     }
   } catch (e) {
-    // ignore
+    activeTasks.value = JSON.parse(JSON.stringify(defaultTasksByPhase[3]));
   }
 };
-
-// Budget & Expenses
-const totalBudget = computed(() => {
-  return activeFarmland.value.land_size_ha * 6400000;
-});
-const totalSpent = computed(() => {
-  if (activeFarmland.value.capital_expenses && activeFarmland.value.capital_expenses.length > 0) {
-    return activeFarmland.value.capital_expenses.reduce((acc, curr) => acc + (curr.amount || 0), 0);
-  }
-  return 1880000; // baseline default
-});
-const budgetSpentPercent = computed(() => {
-  return Math.min(100, Math.round((totalSpent.value / totalBudget.value) * 100));
-});
-const totalBudgetFormatted = computed(() => totalBudget.value.toLocaleString('id-ID'));
-const totalSpentFormatted = computed(() => totalSpent.value.toLocaleString('id-ID'));
-const remainingBudgetFormatted = computed(() => Math.max(0, totalBudget.value - totalSpent.value).toLocaleString('id-ID'));
 
 // Phase badge styling
 const getPhaseBadgeClass = (status: string) => {

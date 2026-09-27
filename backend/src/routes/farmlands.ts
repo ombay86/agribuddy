@@ -81,6 +81,8 @@ router.post('/', (req: Request, res: Response) => {
     longitude: payload.longitude !== undefined ? Number(payload.longitude) : 112.7512,
     collaborators,
     capital_expenses: [],
+    planting_date: payload.planting_date || new Date().toISOString().split('T')[0],
+    target_harvest_date: payload.target_harvest_date || "",
     created_at: new Date().toISOString()
   };
 
@@ -114,6 +116,8 @@ router.put('/:farmId', (req: Request, res: Response) => {
   if (payload.latitude !== undefined) updates.latitude = Number(payload.latitude);
   if (payload.longitude !== undefined) updates.longitude = Number(payload.longitude);
   if (payload.collaborators !== undefined) updates.collaborators = payload.collaborators;
+  if (payload.planting_date !== undefined) updates.planting_date = payload.planting_date;
+  if (payload.target_harvest_date !== undefined) updates.target_harvest_date = payload.target_harvest_date;
 
   const updated = db.update("farmlands", farmId, updates);
   res.json(updated);

@@ -20,23 +20,8 @@
       </div>
     </div>
 
-    <!-- Right: Quick Farmland Selector & User Profile -->
+    <!-- Right: User Profile -->
     <div class="flex items-center gap-2.5">
-      <!-- Quick Farmland Plot Switcher -->
-      <div v-if="farmlands.length > 0" class="hidden lg:flex items-center gap-1.5 bg-slate-100/90 hover:bg-slate-200/80 px-3 py-1.5 rounded-xl border border-slate-200 transition-all text-xs">
-        <img src="/logo/logo-color-icon.svg" alt="Lahan" class="w-4 h-4 object-contain" />
-        <span class="text-[11px] font-bold text-slate-500">Lahan Aktif:</span>
-        <select
-          v-model="selectedFarmId"
-          @change="handleFarmChange"
-          class="bg-transparent font-black text-slate-800 text-xs focus:outline-none cursor-pointer"
-        >
-          <option v-for="f in farmlands" :key="f.id" :value="f.id">
-            {{ f.name }} ({{ f.land_size_ha }} Ha)
-          </option>
-        </select>
-      </div>
-
       <!-- Quick User Info Badge -->
       <router-link
         to="/profil"
@@ -54,15 +39,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { api, Farmland } from '@/services/api';
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 
 const route = useRoute();
-const router = useRouter();
-
-const farmlands = ref<Farmland[]>([]);
-const selectedFarmId = ref('');
 
 const currentSectionName = computed(() => {
   const p = route.path;
@@ -84,27 +64,5 @@ const currentPageTitle = computed(() => {
   if (p === '/layanan' || p === '/katalog') return 'Direktori Layanan Mekanisasi & Saprotan Tani';
   if (p === '/profil') return 'Identitas Petani & Pengaturan Usahatani';
   return 'AgriBuddy Smart Farming';
-});
-
-const fetchTopBarData = async () => {
-  try {
-    const farms = await api.getFarmlands('usr_petani').catch(() => []);
-    farmlands.value = farms;
-    if (farms.length > 0 && !selectedFarmId.value) {
-      selectedFarmId.value = farms[0].id;
-    }
-  } catch (err) {
-    console.error('Error fetching topbar farmlands:', err);
-  }
-};
-
-const handleFarmChange = () => {
-  if (route.path !== '/') {
-    router.push({ path: '/', query: { farm_id: selectedFarmId.value } });
-  }
-};
-
-onMounted(() => {
-  fetchTopBarData();
 });
 </script>
