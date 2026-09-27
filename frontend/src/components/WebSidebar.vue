@@ -74,7 +74,7 @@
           <span v-if="!isCollapsed" class="truncate">Monitoring Sawah</span>
         </router-link>
 
-        <!-- 2. Subgroup: Rencana & Kontrol Tanam -->
+        <!-- 2. Subgroup: Kelola Lahan (Rencana & Kontrol) -->
         <div class="space-y-1">
           <!-- Minimized Mode Link -->
           <router-link
@@ -84,7 +84,7 @@
             :class="[
               $route.path === '/rencana' ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
             ]"
-            title="Rencana & Kontrol Tanam"
+            title="Kelola Lahan"
           >
             <CalendarDays :size="18" class="shrink-0 text-emerald-400" />
           </router-link>
@@ -103,7 +103,7 @@
           >
             <div class="flex items-center gap-3 truncate">
               <CalendarDays :size="18" class="shrink-0 text-emerald-400" />
-              <span class="truncate text-xs font-bold">Rencana & Kontrol</span>
+              <span class="truncate text-xs font-bold">Kelola Lahan</span>
             </div>
             <div class="text-slate-400 group-hover:text-white transition-transform">
               <ChevronDown v-if="isRencanaOpen" :size="14" />

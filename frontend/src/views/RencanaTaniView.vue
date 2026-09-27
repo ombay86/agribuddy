@@ -1113,7 +1113,7 @@
                 <span class="text-[10px] text-slate-400">{{ activeFarm?.capital_expenses?.length || 0 }} entri</span>
               </div>
 
-              <div v-if="!activeFarm?.capital_expenses || activeFarm.capital_expenses.length === 0"
+              <div v-if="!activeFarm?.capital_expenses || activeFarm?.capital_expenses?.length === 0"
                 class="text-center py-8 bg-slate-50 rounded-2xl border border-dashed border-slate-200 space-y-1">
                 <span class="text-2xl block">📒</span>
                 <p class="text-xs font-bold text-slate-700">Belum Ada Transaksi</p>
@@ -1122,7 +1122,7 @@
 
               <div v-else class="space-y-2">
                 <div
-                  v-for="exp in activeFarm.capital_expenses"
+                  v-for="exp in (activeFarm?.capital_expenses || [])"
                   :key="exp.id"
                   class="bg-slate-50 border border-slate-200/80 rounded-2xl p-3 hover:border-emerald-300 transition-all"
                 >
@@ -1344,7 +1344,7 @@
             Kelola Kolaborator & Bagi Hasil
           </h3>
           <p class="text-xs text-slate-500">
-            Atur pihak yang mengelola sawah <strong>{{ activeFarm.name }}</strong> beserta persentase bagi hasil panen.
+            Atur pihak yang mengelola sawah <strong>{{ activeFarm?.name || 'Petak Sawah' }}</strong> beserta persentase bagi hasil panen.
           </p>
         </div>
 
@@ -1370,7 +1370,7 @@
 
           <!-- Kolaborator Lainnya -->
           <div
-            v-for="collab in activeFarm.collaborators"
+            v-for="collab in (activeFarm?.collaborators || [])"
             :key="collab.id"
             class="p-2.5 rounded-2xl border border-slate-200 bg-slate-50 flex items-center justify-between text-xs"
           >
@@ -1572,7 +1572,7 @@
             Catat Pengeluaran Usahatani
           </h3>
           <p class="text-xs text-slate-500">
-            Catat pengeluaran tunai di lapangan ke dalam buku modal <strong>{{ activeFarm.name }}</strong>.
+            Catat pengeluaran tunai di lapangan ke dalam buku modal <strong>{{ activeFarm?.name || 'Petak Sawah' }}</strong>.
           </p>
         </div>
 
@@ -1651,7 +1651,7 @@ import {
   Users2, MessageSquare, Clock, Phone, Loader2, MapPin,
   Layers, UserPlus, PlusCircle, Receipt, Trash2, Check,
   Scale, CheckSquare, Navigation, FolderKanban, Bookmark,
-  Play, Pencil, Search, X
+  Play, Pencil, Search, X, ChevronDown
 } from 'lucide-vue-next';
 
 const route = useRoute();
@@ -1991,6 +1991,7 @@ const newFarmForm = ref({
 const isManageCollabModalOpen = ref(false);
 const isSubmittingCollab = ref(false);
 const newCollabForm = ref({
+  user_id: '',
   name: '',
   role: 'Penggarap & Perawatan Lahan',
   share_percentage: 30,

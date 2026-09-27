@@ -282,11 +282,7 @@ onUnmounted(() => {
 const currentSectionName = computed(() => {
   const p = route.path;
   if (p === '/' || p.startsWith('/monitoring')) return 'Monitoring Usahatani';
-  if (p === '/rencana') {
-    return (route.query.tab === 'kontrol' || route.query.tab === 'ceklis')
-      ? 'Kontrol Tanam & Modal'
-      : 'Rencana Tanam';
-  }
+  if (p === '/rencana') return 'Kelola Lahan';
   if (p === '/dokter') return 'Agri AI';
   if (p === '/buku-tani' || p === '/inventaris' || p === '/lumbung') return 'Buku Tani';
   if (p === '/layanan' || p === '/katalog') return 'Direktori Layanan';
