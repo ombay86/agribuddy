@@ -50,6 +50,26 @@
     <div class="relative w-full h-56 rounded-2xl overflow-hidden border border-slate-200 shadow-inner z-10">
       <div ref="mapContainer" class="w-full h-full"></div>
 
+      <!-- Layer Toggle (Peta / Citra Satelit Lahan) -->
+      <div class="absolute top-2 right-2 bg-white/95 backdrop-blur-md p-1 rounded-xl border border-slate-200/80 shadow-md flex items-center gap-1 z-[400] text-[10px] font-bold">
+        <button
+          type="button"
+          @click="setMapType('street')"
+          :class="mapType === 'street' ? 'bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 hover:bg-slate-100'"
+          class="px-2 py-0.5 rounded-lg transition-all cursor-pointer"
+        >
+          🗺️ Peta
+        </button>
+        <button
+          type="button"
+          @click="setMapType('satellite')"
+          :class="mapType === 'satellite' ? 'bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 hover:bg-slate-100'"
+          class="px-2 py-0.5 rounded-lg transition-all cursor-pointer"
+        >
+          🛰️ Satelit
+        </button>
+      </div>
+
       <!-- Floating Coordinate Pill on Map -->
       <div class="absolute bottom-2 left-2 right-2 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-200/80 shadow-md flex items-center justify-between text-[11px] z-[400]">
         <div class="truncate pr-2">
@@ -157,6 +177,31 @@ const pinIcon = L.divIcon({
   iconAnchor: [18, 42]
 });
 
+const mapType = ref<'street' | 'satellite'>('street');
+let tileLayer: L.TileLayer | null = null;
+
+const streetTileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+const satelliteTileUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+
+const setMapType = (type: 'street' | 'satellite') => {
+  mapType.value = type;
+  if (!map) return;
+  if (tileLayer) {
+    map.removeLayer(tileLayer);
+  }
+  if (type === 'satellite') {
+    tileLayer = L.tileLayer(satelliteTileUrl, {
+      maxZoom: 19,
+      attribution: '© Esri Satellite, Earthstar Geographics'
+    }).addTo(map);
+  } else {
+    tileLayer = L.tileLayer(streetTileUrl, {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+  }
+};
+
 const initMap = () => {
   if (!mapContainer.value) return;
 
@@ -166,10 +211,10 @@ const initMap = () => {
     zoomControl: true
   });
 
-  // OpenStreetMap Tile Layer
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}.png', {
+  // OpenStreetMap Tile Layer (Standar)
+  tileLayer = L.tileLayer(streetTileUrl, {
     maxZoom: 19,
-    attribution: '© OpenStreetMap'
+    attribution: '© OpenStreetMap contributors'
   }).addTo(map);
 
   // Marker Draggable
