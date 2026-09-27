@@ -855,8 +855,13 @@
                 </div>
 
                 <!-- Expand/Collapse Chevron -->
-                <div class="text-slate-400 transition-transform" :class="isPhaseExpanded(phase.step_no) ? 'rotate-180' : ''">
-                  <ChevronDown :size="16" />
+                <div
+                  class="w-7 h-7 rounded-xl flex items-center justify-center transition-all shrink-0"
+                  :class="isPhaseExpanded(phase.step_no) 
+                    ? 'bg-emerald-100 text-emerald-700 rotate-180' 
+                    : 'bg-slate-100 text-slate-500'"
+                >
+                  <ChevronDown :size="15" />
                 </div>
               </div>
             </button>
@@ -997,92 +1002,127 @@
         </div>
 
 
-        <!-- BUKU MODAL LAHAN (RIWAYAT TRANSAKSI LENGKAP DARI DATABASE) -->
-        <div class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs space-y-3.5">
-          <div class="pb-1 border-b border-slate-100">
-            <div class="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
-              <Receipt :size="12" /> Buku Kas Lahan
-            </div>
-            <h3 class="text-xs font-black text-slate-800 mt-1">
-              Riwayat Modal: {{ activeFarm?.name }}
-            </h3>
-          </div>
+        <!-- PANEL KEMITRAAN + BUKU KAS (Tabbed) -->
+        <div v-if="activeFarm" class="bg-white border border-slate-200/90 rounded-3xl shadow-xs overflow-hidden">
 
-          <div v-if="!activeFarm?.capital_expenses || activeFarm.capital_expenses.length === 0" class="text-center py-6 bg-slate-50 rounded-2xl border border-dashed border-slate-200 space-y-1">
-            <span class="text-2xl">📒</span>
-            <p class="text-xs font-bold text-slate-700">Belum Ada Transaksi Tercatat</p>
-            <p class="text-[10px] text-slate-400">Pengeluaran lapangan atau belanja katalog akan tampil di sini.</p>
-          </div>
-
-          <div v-else class="space-y-2 max-h-80 overflow-y-auto pr-1">
-            <div
-              v-for="exp in activeFarm.capital_expenses"
-              :key="exp.id"
-              class="bg-slate-50 border border-slate-200/80 rounded-2xl p-3 shadow-2xs space-y-1 hover:border-emerald-300 transition-all"
-            >
-              <div class="flex items-start justify-between gap-2">
-                <div class="truncate">
-                  <div class="flex items-center gap-1.5">
-                    <span class="text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded-md"
-                      :class="exp.source === 'MARKETPLACE' ? 'bg-indigo-100 text-indigo-800' : 'bg-slate-200 text-slate-700'"
-                    >
-                      {{ exp.source === 'MARKETPLACE' ? '🛒 Katalog' : '📝 Manual' }}
-                    </span>
-                    <span class="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded-md">
-                      {{ exp.category }}
-                    </span>
-                  </div>
-                  <h4 class="text-xs font-bold text-slate-800 mt-1 truncate">{{ exp.item_name }}</h4>
-                </div>
-                <div class="text-right shrink-0">
-                  <span class="text-xs font-black text-emerald-700">
-                    Rp {{ (exp.amount || 0).toLocaleString('id-ID') }}
-                  </span>
-                  <span class="text-[9px] text-slate-400 block">{{ exp.date }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- PANEL KOLABORATOR & BAGI HASIL -->
-        <div v-if="activeFarm" class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs space-y-3.5">
-          <div class="flex items-center justify-between pb-1 border-b border-slate-100">
-            <div>
-              <div class="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
-                <Users2 :size="12" /> Kemitraan Usahatani
-              </div>
-              <h3 class="text-xs font-black text-slate-800 mt-1">
-                Pengelola Lahan
-              </h3>
-            </div>
+          <!-- Tab Header -->
+          <div class="flex border-b border-slate-100">
             <button
-              @click="openManageCollabModal"
-              class="text-xs font-black text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-xl border border-emerald-200 active:scale-95 transition-all flex items-center gap-1 cursor-pointer"
+              @click="rightPanelTab = 'kemitraan'"
+              type="button"
+              class="flex-1 py-3 px-4 text-xs font-black flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+              :class="rightPanelTab === 'kemitraan'
+                ? 'text-emerald-700 border-b-2 border-emerald-500 bg-emerald-50/60'
+                : 'text-slate-500 hover:bg-slate-50'"
             >
-              <UserPlus :size="12" /> Kelola
+              <Users2 :size="13" /> Kemitraan
+            </button>
+            <button
+              @click="rightPanelTab = 'bukukas'"
+              type="button"
+              class="flex-1 py-3 px-4 text-xs font-black flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+              :class="rightPanelTab === 'bukukas'
+                ? 'text-emerald-700 border-b-2 border-emerald-500 bg-emerald-50/60'
+                : 'text-slate-500 hover:bg-slate-50'"
+            >
+              <Receipt :size="13" /> Buku Kas
             </button>
           </div>
 
-          <div class="space-y-2 pt-1">
-            <div
-              v-for="(collab, cIdx) in activeFarm.collaborators"
-              :key="collab.id"
-              class="p-2.5 rounded-2xl border flex items-start justify-between gap-2"
-              :class="getCollabCardClass(cIdx)"
-            >
-              <div class="space-y-0.5">
-                <div class="flex items-center gap-1.5">
-                  <span class="w-2.5 h-2.5 rounded-full shrink-0" :class="getCollabColorDot(cIdx)"></span>
-                  <h4 class="text-xs font-black text-slate-800">{{ collab.name }}</h4>
+          <!-- Tab Body -->
+          <div class="p-4 space-y-3">
+
+            <!-- TAB: KEMITRAAN -->
+            <template v-if="rightPanelTab === 'kemitraan'">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="text-[10px] font-black uppercase text-slate-400 block tracking-wider">Pengelola Lahan</span>
+                  <p class="text-xs font-bold text-slate-700 mt-0.5">{{ activeFarm.name }}</p>
                 </div>
-                <p class="text-[10px] font-semibold text-slate-500">{{ collab.role }}</p>
+                <button
+                  @click="openManageCollabModal"
+                  class="text-xs font-black text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-xl border border-emerald-200 active:scale-95 transition-all flex items-center gap-1 cursor-pointer"
+                >
+                  <UserPlus :size="12" /> Kelola
+                </button>
               </div>
-              <div class="text-right">
-                <span class="text-xs font-black text-slate-800">{{ collab.share_percentage }}%</span>
-                <span class="text-[8px] text-slate-400 font-bold block">Bagi Hasil</span>
+
+              <div v-if="!activeFarm.collaborators || activeFarm.collaborators.length === 0"
+                class="text-center py-6 bg-slate-50 rounded-2xl border border-dashed border-slate-200 space-y-1">
+                <span class="text-xl">🤝</span>
+                <p class="text-xs font-bold text-slate-700">Belum Ada Mitra Terdaftar</p>
+                <p class="text-[10px] text-slate-400">Tambahkan mitra atau penggarap lahan melalui tombol Kelola.</p>
               </div>
-            </div>
+
+              <div v-else class="space-y-2">
+                <div
+                  v-for="(collab, cIdx) in activeFarm.collaborators"
+                  :key="collab.id"
+                  class="p-2.5 rounded-2xl border flex items-start justify-between gap-2"
+                  :class="getCollabCardClass(cIdx)"
+                >
+                  <div class="space-y-0.5">
+                    <div class="flex items-center gap-1.5">
+                      <span class="w-2.5 h-2.5 rounded-full shrink-0" :class="getCollabColorDot(cIdx)"></span>
+                      <h4 class="text-xs font-black text-slate-800">{{ collab.name }}</h4>
+                    </div>
+                    <p class="text-[10px] font-semibold text-slate-500">{{ collab.role }}</p>
+                  </div>
+                  <div class="text-right shrink-0">
+                    <span class="text-xs font-black text-slate-800">{{ collab.share_percentage }}%</span>
+                    <span class="text-[9px] text-slate-400 font-bold block">Bagi Hasil</span>
+                  </div>
+                </div>
+              </div>
+            </template>
+
+            <!-- TAB: BUKU KAS -->
+            <template v-else-if="rightPanelTab === 'bukukas'">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+                  Riwayat Modal: {{ activeFarm.name }}
+                </span>
+                <span class="text-[10px] font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                  {{ activeFarm.capital_expenses?.length || 0 }} transaksi
+                </span>
+              </div>
+
+              <div v-if="!activeFarm.capital_expenses || activeFarm.capital_expenses.length === 0"
+                class="text-center py-6 bg-slate-50 rounded-2xl border border-dashed border-slate-200 space-y-1">
+                <span class="text-2xl">📒</span>
+                <p class="text-xs font-bold text-slate-700">Belum Ada Transaksi Tercatat</p>
+                <p class="text-[10px] text-slate-400">Pengeluaran lapangan atau katalog akan tampil di sini.</p>
+              </div>
+
+              <div v-else class="space-y-2 max-h-72 overflow-y-auto pr-1">
+                <div
+                  v-for="exp in activeFarm.capital_expenses"
+                  :key="exp.id"
+                  class="bg-slate-50 border border-slate-200/80 rounded-2xl p-3 shadow-2xs space-y-1 hover:border-emerald-300 transition-all"
+                >
+                  <div class="flex items-start justify-between gap-2">
+                    <div class="truncate">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-[9px] font-extrabold uppercase px-1.5 rounded-md"
+                          :class="exp.source === 'MARKETPLACE' ? 'bg-indigo-100 text-indigo-800' : 'bg-slate-200 text-slate-700'"
+                        >
+                          {{ exp.source === 'MARKETPLACE' ? '🛒 Katalog' : '📝 Manual' }}
+                        </span>
+                        <span class="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1.5 rounded-md">
+                          {{ exp.category }}
+                        </span>
+                      </div>
+                      <h4 class="text-xs font-bold text-slate-800 mt-1 truncate">{{ exp.item_name }}</h4>
+                    </div>
+                    <div class="text-right shrink-0">
+                      <span class="text-xs font-black text-emerald-700">Rp {{ (exp.amount || 0).toLocaleString('id-ID') }}</span>
+                      <span class="text-[9px] text-slate-400 block">{{ exp.date }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
+
           </div>
         </div>
 
@@ -1631,6 +1671,7 @@ const savePlanToActiveFarmland = async () => {
 const farmlands = ref<Farmland[]>([]);
 const activeFarmId = ref<string>('');
 const activeFarmPlan = ref<FarmPlan | null>(null);
+const rightPanelTab = ref<'kemitraan' | 'bukukas'>('kemitraan');
 
 const draftFarmlands = computed(() => {
   return farmlands.value.filter(f => f.status === 'DRAFT');
