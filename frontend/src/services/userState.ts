@@ -106,8 +106,8 @@ PERSONAS['AGEN_PEMBELI'] = PERSONAS['PENGGILINGAN_PADI'];
 
 const savedRole = (localStorage.getItem('agribuddy_active_role') as UserRole) || 'PETANI_MANDIRI';
 const savedAuth = localStorage.getItem('agribuddy_auth');
-// Default auth: false jika pernah logout ('false'), true jika baru pertama kali atau sudah login
-const initialAuth = savedAuth === 'false' ? false : true;
+// Default auth: Hanya bernilai true jika pengguna sudah pernah login di perangkat ini
+const initialAuth = savedAuth === 'true';
 
 const savedUserJson = localStorage.getItem('agribuddy_registered_user');
 let initialRegisteredUser: any = null;

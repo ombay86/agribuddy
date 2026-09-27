@@ -296,7 +296,39 @@ router.put('/profile', (req: Request, res: Response) => {
 // GET /users-search
 router.get('/users-search', (req: Request, res: Response) => {
   const query = (req.query.q as string || '').trim().replace(/^@/, '').toLowerCase();
-  const allProfiles = Object.values(PUBLIC_PROFILES_DATA);
+  const dbUsers = db.getCollection("users");
+  const staticProfiles = Object.values(PUBLIC_PROFILES_DATA);
+
+  // Gabungkan database users dan static profiles secara unik
+  const userMap = new Map();
+  for (const p of staticProfiles) {
+    userMap.set(p.username || p.id, {
+      id: p.id,
+      username: p.username || p.name?.toLowerCase().replace(/\s+/g, '_'),
+      name: p.name,
+      role_label: p.role_label,
+      category_badge: p.category_badge,
+      avatar: p.avatar || '👨‍🌾',
+      village: p.village || 'Desa Sukamaju',
+      commodity: p.commodity || 'Padi Inpari 32',
+      whatsapp_number: p.whatsapp_number
+    });
+  }
+  for (const u of dbUsers) {
+    userMap.set(u.username || u.id, {
+      id: u.id,
+      username: u.username || u.full_name?.toLowerCase().replace(/\s+/g, '_'),
+      name: u.full_name || u.name,
+      role_label: u.role_label || u.role,
+      category_badge: u.category_badge || u.role,
+      avatar: u.avatar || '👨‍🌾',
+      village: u.village || 'Desa Sukamaju',
+      commodity: u.commodity || 'Padi Inpari 32',
+      whatsapp_number: u.phone_number || u.whatsapp_number
+    });
+  }
+
+  const allProfiles = Array.from(userMap.values());
   if (!query) {
     return res.json(allProfiles);
   }

@@ -1357,19 +1357,101 @@
         <form @submit.prevent="handleAddCollaborator" class="space-y-2.5 pt-2 border-t border-slate-100">
           <span class="text-[10px] font-black text-slate-500 uppercase tracking-wider block">+ Tag & Undang Mitra Baru</span>
           
-          <!-- Dropdown Tag Akun Pengguna Terdaftar -->
-          <div>
-            <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Pilih Pengguna AgriBuddy</label>
-            <select
-              v-model="newCollabForm.user_id"
-              @change="onUserTagSelected"
-              class="w-full px-3 py-1.5 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500 bg-white cursor-pointer"
+          <!-- Typeahead / Pilih Mitra Berdasarkan Pencarian Teks (Select by Typing) -->
+          <div class="relative">
+            <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">
+              Cari & Pilih Pengguna AgriBuddy (Ketik Nama / @Username)
+            </label>
+
+            <!-- State 1: Mitra Telah Dipilih -->
+            <div
+              v-if="selectedUserToTag"
+              class="flex items-center justify-between p-2.5 rounded-xl border border-emerald-300 bg-emerald-50/80 shadow-2xs"
             >
-              <option value="">-- Ketik / Pilih Mitra Terdaftar --</option>
-              <option v-for="p in availableUsersToTag" :key="p.id" :value="p.id">
-                {{ p.avatar }} @{{ p.username }} • {{ p.name }} — {{ p.badge }} ({{ p.location }})
-              </option>
-            </select>
+              <div class="flex items-center gap-2">
+                <span class="text-xl">{{ selectedUserToTag.avatar || '👨‍🌾' }}</span>
+                <div>
+                  <div class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                    <span>{{ selectedUserToTag.name || selectedUserToTag.full_name }}</span>
+                    <span class="text-[10px] text-emerald-700 font-bold bg-emerald-100 px-1.5 py-0.2 rounded-md">
+                      @{{ selectedUserToTag.username }}
+                    </span>
+                  </div>
+                  <div class="text-[10px] text-slate-500">
+                    {{ selectedUserToTag.badge || selectedUserToTag.category_badge || selectedUserToTag.role_label }} • {{ selectedUserToTag.location || selectedUserToTag.village }}
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                @click="clearSelectedUser"
+                class="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-white transition-all cursor-pointer"
+                title="Ganti Mitra"
+              >
+                <X :size="14" />
+              </button>
+            </div>
+
+            <!-- State 2: Kolom Pencarian Teks Dinamis -->
+            <div v-else class="relative">
+              <div class="relative flex items-center">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <Search :size="14" />
+                </span>
+                <input
+                  v-model="searchCollabQuery"
+                  type="text"
+                  placeholder="Ketik untuk mencari mitra (@pak_joko, bambang, slamet...)"
+                  class="w-full pl-9 pr-8 py-2 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 bg-white"
+                  @focus="isCollabDropdownOpen = true"
+                  @input="handleCollabSearchInput"
+                />
+                <button
+                  v-if="searchCollabQuery"
+                  type="button"
+                  @click="searchCollabQuery = ''; isCollabDropdownOpen = false"
+                  class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                >
+                  <X :size="13" />
+                </button>
+              </div>
+
+              <!-- Hasil Pencarian Teks (Dropdown Popover) -->
+              <div
+                v-if="isCollabDropdownOpen"
+                class="absolute left-0 right-0 mt-1 max-h-52 overflow-y-auto bg-white border border-slate-200 rounded-2xl shadow-xl z-50 p-1 space-y-0.5"
+              >
+                <div v-if="filteredUsersToTag.length === 0" class="p-3 text-center text-xs text-slate-400 font-medium">
+                  Tidak ditemukan mitra dengan kata kunci "<span class="font-bold text-slate-600">{{ searchCollabQuery }}</span>".
+                  <div class="text-[10px] text-slate-400 mt-1">Anda tetap dapat mengetik nama & peran mitra secara bebas di kolom bawah.</div>
+                </div>
+                <button
+                  v-for="u in filteredUsersToTag"
+                  :key="u.id"
+                  type="button"
+                  @click="selectUserToTag(u)"
+                  class="w-full p-2 rounded-xl hover:bg-emerald-50 text-left flex items-center justify-between transition-all group cursor-pointer"
+                >
+                  <div class="flex items-center gap-2">
+                    <span class="text-lg group-hover:scale-110 transition-transform">{{ u.avatar || '👨‍🌾' }}</span>
+                    <div>
+                      <div class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <span>{{ u.name || u.full_name }}</span>
+                        <span class="text-[10px] text-emerald-700 font-bold bg-emerald-100/70 px-1 py-0.2 rounded">
+                          @{{ u.username }}
+                        </span>
+                      </div>
+                      <div class="text-[10px] text-slate-500 line-clamp-1">
+                        {{ u.badge || u.category_badge || u.role_label }} • {{ u.location || u.village }}
+                      </div>
+                    </div>
+                  </div>
+                  <span class="text-[10px] font-bold text-emerald-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Pilih &rarr;
+                  </span>
+                </button>
+              </div>
+            </div>
           </div>
 
           <div>
@@ -1535,7 +1617,7 @@ import {
   Users2, MessageSquare, Clock, Phone, Loader2, MapPin,
   Layers, UserPlus, PlusCircle, Receipt, Trash2, Check,
   Scale, CheckSquare, Navigation, FolderKanban, Bookmark,
-  Play, Pencil
+  Play, Pencil, Search, X
 } from 'lucide-vue-next';
 
 const route = useRoute();
@@ -2099,20 +2181,81 @@ const ownerSharePercentage = computed(() => {
   return Math.max(0, 100 - totalCollabsShare);
 });
 
-const availableUsersToTag = computed(() => {
-  return Object.values(PERSONAS).filter(p => p.id !== currentUserId.value);
+// Collaborator Typeahead / Select-by-typing State
+const searchCollabQuery = ref('');
+const isCollabDropdownOpen = ref(false);
+const selectedUserToTag = ref<any | null>(null);
+const dynamicUsersList = ref<any[]>([]);
+
+const fetchSearchableUsers = async (query = '') => {
+  try {
+    const list = await api.searchUsers(query);
+    dynamicUsersList.value = list || [];
+  } catch {
+    dynamicUsersList.value = [];
+  }
+};
+
+const filteredUsersToTag = computed(() => {
+  const query = searchCollabQuery.value.trim().toLowerCase().replace(/^@/, '');
+  
+  // Gabungkan static PERSONAS dan dynamic users dari API secara unik
+  const map = new Map<string, any>();
+  for (const p of Object.values(PERSONAS)) {
+    if (p.id !== currentUserId.value) {
+      map.set(p.id, p);
+    }
+  }
+  for (const u of dynamicUsersList.value) {
+    if (u.id !== currentUserId.value) {
+      map.set(u.id, u);
+    }
+  }
+
+  const all = Array.from(map.values());
+  if (!query) return all;
+
+  return all.filter(u => {
+    const name = (u.name || u.full_name || '').toLowerCase();
+    const uname = (u.username || '').toLowerCase();
+    const badge = (u.badge || u.category_badge || u.role_label || '').toLowerCase();
+    const loc = (u.location || u.village || '').toLowerCase();
+    return name.includes(query) || uname.includes(query) || badge.includes(query) || loc.includes(query);
+  });
 });
 
-const onUserTagSelected = () => {
-  const selectedPersona = availableUsersToTag.value.find(p => p.id === newCollabForm.value.user_id);
-  if (selectedPersona) {
-    newCollabForm.value.name = selectedPersona.name;
-    newCollabForm.value.role = selectedPersona.serviceCategory || selectedPersona.badge;
+const handleCollabSearchInput = () => {
+  isCollabDropdownOpen.value = true;
+  if (searchCollabQuery.value.length >= 2) {
+    fetchSearchableUsers(searchCollabQuery.value);
   }
+};
+
+const selectUserToTag = (user: any) => {
+  selectedUserToTag.value = user;
+  newCollabForm.value.user_id = user.id;
+  newCollabForm.value.name = user.name || user.full_name;
+  newCollabForm.value.role = user.badge || user.category_badge || user.serviceCategory || user.role_label || 'Penggarap & Perawatan Lahan';
+  if (user.whatsapp_number || user.phone_number) {
+    newCollabForm.value.phone = user.whatsapp_number || user.phone_number;
+  }
+  isCollabDropdownOpen.value = false;
+};
+
+const clearSelectedUser = () => {
+  selectedUserToTag.value = null;
+  newCollabForm.value.user_id = '';
+  newCollabForm.value.name = '';
+  searchCollabQuery.value = '';
+  isCollabDropdownOpen.value = false;
 };
 
 const openManageCollabModal = () => {
   const maxAvailable = ownerSharePercentage.value;
+  selectedUserToTag.value = null;
+  searchCollabQuery.value = '';
+  isCollabDropdownOpen.value = false;
+  fetchSearchableUsers();
   newCollabForm.value = {
     user_id: '',
     name: '',
@@ -2148,6 +2291,9 @@ const handleAddCollaborator = async () => {
     const fIdx = farmlands.value.findIndex(f => f.id === activeFarm.value?.id);
     if (fIdx !== -1) farmlands.value[fIdx] = updated;
 
+    selectedUserToTag.value = null;
+    searchCollabQuery.value = '';
+    isCollabDropdownOpen.value = false;
     newCollabForm.value = {
       user_id: '',
       name: '',

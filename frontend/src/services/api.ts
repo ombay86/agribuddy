@@ -1242,6 +1242,12 @@ export const api = {
       throw new Error(err.detail || 'Gagal masuk. Periksa nomor HP/Username dan PIN Anda.');
     }
     return res.json();
+  },
+
+  async searchUsers(query: string = ''): Promise<any[]> {
+    const res = await fetch(`${BASE_URL}/auth/users-search?q=${encodeURIComponent(query)}`);
+    if (!res.ok) return [];
+    return res.json();
   }
 };
 
