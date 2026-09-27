@@ -67,6 +67,7 @@ export interface UserProfile {
   whatsapp_number: string;
   bio: string;
   avatar_url?: string;
+  gemini_api_key?: string;
 }
 
 export interface WeatherData {

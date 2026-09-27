@@ -647,18 +647,47 @@ const openKeyModal = () => {
   isKeyModalOpen.value = true;
 };
 
-const handleSaveKey = () => {
-  setCustomGeminiApiKey(tempApiKey.value, currentPersona.value.id);
+const handleSaveKey = async () => {
+  const trimmed = tempApiKey.value.trim();
+  setCustomGeminiApiKey(trimmed, currentPersona.value.id);
   isKeyModalOpen.value = false;
-  alert(tempApiKey.value.trim() 
-    ? `✅ API Key Gemini pribadi berhasil disimpan khusus untuk akun ${currentPersona.value.name}!` 
+
+  // Sinkronkan ke cloud database (PostgreSQL) agar tersimpan di profil akun secara lintas perangkat
+  try {
+    await api.updateProfile({ gemini_api_key: trimmed });
+    const savedUserJson = localStorage.getItem('agribuddy_registered_user');
+    if (savedUserJson) {
+      const parsed = JSON.parse(savedUserJson);
+      parsed.gemini_api_key = trimmed;
+      localStorage.setItem('agribuddy_registered_user', JSON.stringify(parsed));
+    }
+  } catch (err) {
+    console.warn('Gagal sinkronisasi API Key ke profil server:', err);
+  }
+
+  alert(trimmed 
+    ? `✅ API Key Gemini berhasil disimpan dan disinkronkan ke akun ${currentPersona.value.name}! Kunci ini akan otomatis aktif meskipun Anda login dari perangkat lain.` 
     : 'ℹ️ Menggunakan default API Key server.');
 };
 
-const handleClearKey = () => {
+const handleClearKey = async () => {
   clearCustomGeminiApiKey(currentPersona.value.id);
   tempApiKey.value = '';
   isKeyModalOpen.value = false;
+
+  // Hapus dari cloud database (PostgreSQL)
+  try {
+    await api.updateProfile({ gemini_api_key: '' });
+    const savedUserJson = localStorage.getItem('agribuddy_registered_user');
+    if (savedUserJson) {
+      const parsed = JSON.parse(savedUserJson);
+      delete parsed.gemini_api_key;
+      localStorage.setItem('agribuddy_registered_user', JSON.stringify(parsed));
+    }
+  } catch (err) {
+    console.warn('Gagal menghapus API Key dari profil server:', err);
+  }
+
   alert(`🗑️ API Key pribadi akun ${currentPersona.value.name} telah dihapus. Sistem akan menggunakan default server.`);
 };
 

@@ -200,6 +200,10 @@ export const useUserState = () => {
     if (userData.username) {
       setCustomUsername(userData.username);
     }
+    // Jika akun memiliki gemini_api_key dari PostgreSQL server, otomatis sinkronkan ke perangkat ini
+    if (userData.gemini_api_key) {
+      localStorage.setItem(`agribuddy_gemini_key_${userData.id}`, userData.gemini_api_key);
+    }
   };
 
   const loginWithCredentials = (phoneNumber: string, pin: string) => {
