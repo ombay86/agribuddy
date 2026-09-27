@@ -82,21 +82,21 @@
       </div>
     </div>
 
-    <!-- Quick Call to Action: Dokter Tani AI -->
+    <!-- Quick Call to Action: AgriAI -->
     <div class="bg-gradient-to-r from-teal-700 to-emerald-800 text-white p-5 rounded-3xl shadow-md relative overflow-hidden">
       <div class="relative z-10">
         <div class="inline-flex items-center gap-1.5 bg-emerald-400/20 text-emerald-200 text-xs font-bold px-2.5 py-0.5 rounded-full mb-2">
-          <Sparkles :size="13" /> Fitur AI Dokter
+          <Sparkles :size="13" /> AgriAI Assistant
         </div>
         <h3 class="text-lg font-extrabold leading-tight">Daun Tanaman Sakit / Menguning?</h3>
         <p class="text-xs text-emerald-100 mt-1 mb-4 leading-relaxed">
-          Ambil foto daun tanaman Anda sekarang. AI Dokter Tani akan mendiagnosis penyakit dan memberikan dosis obat yang tepat.
+          Konsultasi langsung atau kirim foto daun ke AgriAI. Asisten cerdas akan mendiagnosis penyakit dan merekomendasikan solusi terpadu.
         </p>
         <router-link
           to="/dokter"
           class="btn-farmer bg-white text-emerald-800 hover:bg-emerald-50 active:scale-95 shadow font-extrabold text-sm w-full"
         >
-          <Camera :size="18" /> Periksa Tanaman Sekarang
+          <Sparkles :size="18" /> Chat dengan AgriAI Sekarang
         </router-link>
       </div>
     </div>

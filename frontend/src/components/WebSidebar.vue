@@ -143,7 +143,7 @@
           </div>
         </div>
 
-        <!-- 3. Dokter Tani AI -->
+        <!-- 3. AgriAI -->
         <router-link
           to="/dokter"
           class="rounded-xl font-bold transition-all group flex items-center"
@@ -151,10 +151,10 @@
             $route.path === '/dokter' ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white',
             isCollapsed ? 'justify-center p-2.5 relative' : 'gap-3 px-3 py-2.5'
           ]"
-          title="Dokter Tani AI (Gemini Vision)"
+          title="AgriAI (Asisten Cerdas & Fitopatologi)"
         >
           <Sparkles :size="18" class="text-amber-400 shrink-0" />
-          <span v-if="!isCollapsed" class="truncate">Dokter Tani AI</span>
+          <span v-if="!isCollapsed" class="truncate">AgriAI</span>
         </router-link>
 
         <!-- 4. Buku Tani (Stok & Lumbung) -->

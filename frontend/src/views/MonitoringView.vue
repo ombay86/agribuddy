@@ -306,15 +306,15 @@
       <!-- ==================== KOLOM KANAN (5 COLS): Kesehatan AI, Modal, & Gudang ==================== -->
       <div class="lg:col-span-5 space-y-6">
 
-        <!-- WIDGET 3: Dokter Tani AI (Kesehatan Daun Real-Time) -->
+        <!-- WIDGET 3: AgriAI (Asisten Cerdas & Fitopatologi) -->
         <div class="bg-gradient-to-br from-emerald-900 to-teal-950 text-white border border-emerald-800 rounded-3xl p-5 md:p-6 shadow-xs space-y-4 relative overflow-hidden">
           <div class="flex items-center justify-between pb-2 border-b border-emerald-800/80">
             <div class="flex items-center gap-2">
-              <img src="/logo/logo-color-icon.svg" class="w-5 h-5 object-contain" alt="Icon" />
-              <h4 class="text-sm font-black text-white">Dokter Tani AI Vision</h4>
+              <Sparkles :size="18" class="text-amber-400" />
+              <h4 class="text-sm font-black text-white">AgriAI Assistant</h4>
             </div>
             <span class="text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-2 py-0.5 rounded-full uppercase">
-              Google Gemini
+              Gemini Vision
             </span>
           </div>
 
@@ -340,13 +340,13 @@
             </p>
           </div>
 
-          <!-- Tombol CTA Scan Daun -->
+          <!-- Tombol CTA Scan Daun / Chat -->
           <router-link
             to="/dokter"
             class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs py-3 px-4 rounded-2xl shadow-sm active:scale-95 transition-all flex items-center justify-center gap-2 text-center"
           >
-            <Camera :size="16" />
-            <span>Foto & Periksa Daun Sekarang</span>
+            <Sparkles :size="16" />
+            <span>Chat & Periksa Tanaman via AgriAI</span>
           </router-link>
         </div>
 
@@ -570,8 +570,8 @@
           <Sparkles :size="20" />
         </div>
         <div>
-          <h5 class="text-xs font-black text-slate-800">Dokter Tani</h5>
-          <p class="text-[10px] text-slate-400">Diagnosa Citra Daun</p>
+          <h5 class="text-xs font-black text-slate-800">AgriAI</h5>
+          <p class="text-[10px] text-slate-400">Asisten Cerdas & Daun</p>
         </div>
       </router-link>
 

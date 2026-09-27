@@ -180,7 +180,7 @@ export class GeminiService {
       const candidates = await this.getCandidateModels();
       console.log(`📡 Auto-detecting active Gemini model (candidates: ${candidates.slice(0, 3).join(', ')})...`);
 
-      const prompt = `Anda adalah pakar agronomi dan fitopatologi tanaman padi (Dokter Tani AI).
+      const prompt = `Anda adalah pakar agronomi dan fitopatologi tanaman padi (AgriAI).
 Analisis gambar daun padi ini secara cermat. Tentukan apakah tanaman terserang penyakit atau sehat.
 Penyakit utama tanaman padi meliputi:
 1. Hawar Daun Bakteri (Kresek / Xanthomonas oryzae)
@@ -298,6 +298,134 @@ Kembalikan jawaban HANYA dalam format JSON valid (tanpa markdown backtick ataupu
       detected_at: detectedAt,
       ai_provider: "AgriBuddy Local Agronomy Engine (Offline Fallback)"
     };
+  }
+
+  /**
+   * Percakapan interaktif cerdas dengan asisten AgriAI (Conversational LLM).
+   * Mendukung multimodal: teks tanya jawab + lampiran citra daun tanaman padi.
+   */
+  public async chatAgriAI(
+    history: { role: 'user' | 'model', content: string }[],
+    newMessage: string,
+    imageBase64?: string,
+    mimeType: string = 'image/jpeg'
+  ): Promise<{ reply: string, detectedDiagnosis?: DiagnosisResult }> {
+    const detectedAt = formatCurrentTimestamp();
+    let detectedDiagnosis: DiagnosisResult | undefined = undefined;
+
+    // Jika ada gambar daun padi yang dikirim bersama pesan, periksa diagnosisnya
+    if (imageBase64) {
+      try {
+        const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, '');
+        const buf = Buffer.from(cleanBase64, 'base64');
+        detectedDiagnosis = await this.diagnoseLeafImage(buf, mimeType, 'daun_chat.jpg');
+      } catch (e) {
+        console.warn('Gagal analisis gambar:', e);
+      }
+    }
+
+    if (this.ai && config.geminiApiKey) {
+      const candidates = await this.getCandidateModels();
+      const systemInstruction = `Anda adalah AgriAI, asisten kecerdasan buatan cerdas untuk petani usahatani di platform AgriBuddy Indonesia.
+Peran Anda:
+1. Memberikan konsultasi budidaya tanaman padi dan palawija, pengendalian hama & penyakit, pemupukan berimbang, irigasi, serta analisa cuaca.
+2. Gaya bahasa ramah, praktis, edukatif, dan mudah dipahami oleh petani lokal ("Halo Pak/Bu Tani!").
+3. Berikan jawaban terstruktur dengan poin-poin jelas dan takaran yang tepat.
+${detectedDiagnosis ? `Info tambahan dari foto daun yang diunggah pengguna: Terdeteksi penyakit "${detectedDiagnosis.disease_name}" (${detectedDiagnosis.english_name}) dengan tingkat risiko ${detectedDiagnosis.severity}. Gejala: ${detectedDiagnosis.symptoms.join(', ')}. Langkah: ${detectedDiagnosis.actions.join(', ')}.` : ''}`;
+
+      for (const selectedModel of candidates) {
+        try {
+          const contents: any[] = [];
+          for (const msg of history) {
+            contents.push({
+              role: msg.role === 'model' ? 'model' : 'user',
+              parts: [{ text: msg.content }]
+            });
+          }
+
+          const currentParts: any[] = [{ text: newMessage || "Halo AgriAI, mohon bantuannya seputar tanaman ini." }];
+          if (imageBase64) {
+            const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, '');
+            currentParts.push({
+              inlineData: {
+                data: cleanBase64,
+                mimeType: mimeType || 'image/jpeg'
+              }
+            });
+          }
+
+          contents.push({
+            role: 'user',
+            parts: currentParts
+          });
+
+          const response = await this.ai.models.generateContent({
+            model: selectedModel,
+            contents,
+            config: {
+              systemInstruction
+            }
+          });
+
+          if (response.text) {
+            this.cachedModel = selectedModel;
+            return {
+              reply: response.text,
+              detectedDiagnosis
+            };
+          }
+        } catch (err) {
+          console.warn(`Model ${selectedModel} failed in chat, trying next:`, err);
+        }
+      }
+    }
+
+    // Fallback response cerdas jika offline / tanpa API Key
+    return {
+      reply: this.generateSmartFallbackReply(newMessage, detectedDiagnosis),
+      detectedDiagnosis
+    };
+  }
+
+  private generateSmartFallbackReply(msg: string, diagnosis?: DiagnosisResult): string {
+    const q = (msg || '').toLowerCase();
+    
+    if (diagnosis) {
+      return `Halo Pak Tani! Berdasarkan analisis citra daun yang Anda kirimkan, terindikasi adanya gejala **${diagnosis.disease_name}** (${diagnosis.english_name}) dengan tingkat risiko **${diagnosis.severity}**.\n\n` +
+        `🔍 **Gejala Terdeteksi:**\n` + diagnosis.symptoms.map(s => `• ${s}`).join('\n') + `\n\n` +
+        `💡 **Anjuran Solusi & Penanganan:**\n` + diagnosis.actions.map(a => `• ${a}`).join('\n') + `\n\n` +
+        `Apakah Anda ingin informasi takaran obat atau fungisida khusus untuk kondisi ini?`;
+    }
+
+    if (q.includes('wereng')) {
+      return `Halo Pak Tani! Hama **Wereng Batang Coklat (WBC)** dapat menyebabkan tanaman padi hangus terbakar (*hopperburn*). Langkah pengendalian yang dianjurkan:\n\n` +
+        `1. **Keringkan Sawah Berkala:** Lakukan pengairan berselang (*intermittent*), jangan digenang terus-menerus.\n` +
+        `2. **Monitoring Rumpun Bawah:** Periksa pangkal batang padi secara rutin.\n` +
+        `3. **Pengendalian Kimiawi:** Semprotkan insektisida berbahan aktif *Pimetrozin* atau *Imidakloprid* tepat ke pangkal rumpun padi.\n\n` +
+        `Berapa perkiraan umur tanaman padi Anda saat ini?`;
+    }
+
+    if (q.includes('pupuk') || q.includes('urea') || q.includes('npk')) {
+      return `Halo Pak Tani! Pemupukan padi optimal memerlukan pola pemupukan berimbang:\n\n` +
+        `🌱 **Fase Vegetatif Awal (7-14 HST):** Berikan Urea (75-100 kg/ha) + NPK Phonska (150 kg/ha) untuk memacu anakan aktif.\n` +
+        `🌿 **Fase Primordia / Bunting (35-45 HST):** Berikan susulan Urea (50 kg/ha) + NPK (100 kg/ha) + KCl (50 kg/ha) agar batang kokoh dan bulir terisi padat.\n` +
+        `💧 **Tips:** Pastikan kondisi air sawah macak-macak saat menabur pupuk agar cepat diserap akar.`;
+    }
+
+    if (q.includes('kuning') || q.includes('kering') || q.includes('bercak')) {
+      return `Daun padi yang menguning atau bercak umumnya dipicu oleh:\n\n` +
+        `1. **Kekurangan Nitrogen:** Daun tua menguning dari ujung membentuk huruf 'V'. Solusi: tambahkan Urea berimbang.\n` +
+        `2. **Hawar Daun Bakteri (Kresek):** Ujung daun mengering keputihan bergelombang. Solusi: semprot bakterisida tembaga.\n` +
+        `3. **Jamur Blas Daun:** Bercak belah ketupat abu-abu kecoklatan. Solusi: fungisida trisiklazol.\n\n` +
+        `Anda juga dapat mengambil foto daunnya sekarang dan lampirkan di chat ini agar saya analisiskan!`;
+    }
+
+    return `Halo Pak Tani! Saya **AgriAI**, asisten pertanian cerdas Anda di AgriBuddy. 🌾\n\n` +
+      `Saya siap membantu menjawab seputar:\n` +
+      `• Deteksi dan solusi penyakit daun padi & hama tanaman\n` +
+      `• Rekomendasi dosis pemupukan berimbang & jadwal aplikasi\n` +
+      `• Pengelolaan air sawah, bibit unggul, serta pasca panen\n\n` +
+      `Silakan ketik pertanyaan Anda atau lampirkan foto tanaman/daun melalui tombol kamera di bawah!`;
   }
 }
 

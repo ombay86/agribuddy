@@ -88,6 +88,24 @@ export interface DiagnosisResult {
   detected_at: string;
 }
 
+export interface AIChatMessage {
+  id: string;
+  role: 'user' | 'model';
+  content: string;
+  image?: string | null;
+  detected_diagnosis?: DiagnosisResult | null;
+  timestamp: string;
+}
+
+export interface AIChatSession {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  message_count?: number;
+  messages?: AIChatMessage[];
+}
+
 export interface Partner {
   id: string;
   name: string;
@@ -577,7 +595,7 @@ export const api = {
     return res.json();
   },
 
-  // Dokter Tani AI
+  // AgriAI (Fitopatologi & Chat)
   async getSampleDiagnoses(): Promise<{ key: string; title: string; hint: string }[]> {
     const res = await fetch(`${BASE_URL}/ai/samples`);
     if (!res.ok) throw new Error('Gagal memuat sampel');
@@ -595,6 +613,50 @@ export const api = {
     });
     if (!res.ok) throw new Error('Gagal memproses diagnosis');
     return res.json();
+  },
+
+  // --- AgriAI Conversational Chat ---
+  async chatWithAgriAI(payload: {
+    session_id?: string;
+    message: string;
+    image_base64?: string;
+    history?: { role: 'user' | 'model'; content: string }[];
+  }): Promise<{
+    session_id: string;
+    reply: string;
+    detected_diagnosis?: DiagnosisResult | null;
+    session: AIChatSession;
+  }> {
+    const res = await fetch(`${BASE_URL}/ai/chat`, {
+      method: 'POST',
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error('Gagal berkomunikasi dengan AgriAI');
+    return res.json();
+  },
+
+  async getChatSessions(): Promise<AIChatSession[]> {
+    const res = await fetch(`${BASE_URL}/ai/chat-sessions`, {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Gagal memuat riwayat obrolan');
+    return res.json();
+  },
+
+  async getChatSession(sessionId: string): Promise<AIChatSession> {
+    const res = await fetch(`${BASE_URL}/ai/chat-sessions/${sessionId}`, {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Gagal memuat sesi obrolan');
+    return res.json();
+  },
+
+  async deleteChatSession(sessionId: string): Promise<void> {
+    await fetch(`${BASE_URL}/ai/chat-sessions/${sessionId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
   },
 
   // Mitra & Kontak WA

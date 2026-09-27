@@ -74,4 +74,117 @@ router.get('/history', (req: Request, res: Response) => {
   res.json(diagnoses);
 });
 
+// ==================== AGRI-AI CONVERSATIONAL CHAT ====================
+
+// POST /chat
+router.post('/chat', async (req: Request, res: Response) => {
+  try {
+    const { session_id, message, image_base64, history = [] } = req.body;
+    const sessions = db.getCollection("ai_chat_sessions");
+
+    const now = new Date();
+    const timeStr = now.toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit'
+    }) + ' WIB';
+
+    let currentSessionId = session_id;
+    let session = sessions.find((s: any) => s.id === currentSessionId);
+
+    const titleCandidate = (message || 'Konsultasi Tanaman')
+      .replace(/\n+/g, ' ')
+      .trim()
+      .substring(0, 36);
+
+    if (!session) {
+      currentSessionId = `session_${Date.now()}`;
+      session = db.insert("ai_chat_sessions", {
+        id: currentSessionId,
+        title: titleCandidate + (titleCandidate.length >= 36 ? '...' : ''),
+        created_at: timeStr,
+        updated_at: timeStr,
+        messages: []
+      });
+    }
+
+    // Panggil engine percakapan AgriAI (Gemini / Agronomy Fallback)
+    const result = await geminiService.chatAgriAI(
+      history,
+      message,
+      image_base64
+    );
+
+    // Simpan pesan User ke sesi
+    const userMsg = {
+      id: `msg_${Date.now()}_u`,
+      role: 'user',
+      content: message,
+      image: image_base64 || null,
+      timestamp: timeStr
+    };
+
+    // Simpan balasan AgriAI ke sesi
+    const modelMsg = {
+      id: `msg_${Date.now()}_m`,
+      role: 'model',
+      content: result.reply,
+      detected_diagnosis: result.detectedDiagnosis || null,
+      timestamp: timeStr
+    };
+
+    const updatedMessages = [...(session.messages || []), userMsg, modelMsg];
+    const updatedSession = db.update("ai_chat_sessions", currentSessionId, {
+      messages: updatedMessages,
+      updated_at: timeStr
+    });
+
+    res.json({
+      session_id: currentSessionId,
+      reply: result.reply,
+      detected_diagnosis: result.detectedDiagnosis || null,
+      session: updatedSession
+    });
+  } catch (err: any) {
+    console.error('Error in /ai/chat:', err);
+    res.status(500).json({ detail: "Gagal memproses percakapan AgriAI: " + (err.message || err) });
+  }
+});
+
+// GET /chat-sessions
+router.get('/chat-sessions', (req: Request, res: Response) => {
+  const sessions = db.getCollection("ai_chat_sessions");
+  // Urutkan dari sesi terbaru
+  const sorted = [...sessions].reverse().map((s: any) => ({
+    id: s.id,
+    title: s.title || "Konsultasi Pertanian",
+    created_at: s.created_at,
+    updated_at: s.updated_at,
+    message_count: (s.messages || []).length
+  }));
+  res.json(sorted);
+});
+
+// GET /chat-sessions/:id
+router.get('/chat-sessions/:id', (req: Request, res: Response) => {
+  const { id } = req.params;
+  const sessions = db.getCollection("ai_chat_sessions");
+  const session = sessions.find((s: any) => s.id === id);
+  if (!session) {
+    return res.status(404).json({ detail: "Sesi percakapan tidak ditemukan" });
+  }
+  res.json(session);
+});
+
+// DELETE /chat-sessions/:id
+router.delete('/chat-sessions/:id', (req: Request, res: Response) => {
+  const { id } = req.params;
+  const success = db.delete("ai_chat_sessions", id);
+  if (!success) {
+    return res.status(404).json({ detail: "Sesi percakapan tidak ditemukan" });
+  }
+  res.json({ message: "Sesi percakapan berhasil dihapus" });
+});
+
 export default router;

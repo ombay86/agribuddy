@@ -1,230 +1,613 @@
 <template>
-  <div class="p-4 space-y-4 pb-24">
-    <!-- Header Modul -->
-    <div class="flex items-center justify-between">
-      <div>
-        <h2 class="text-xl font-extrabold text-slate-800 tracking-tight flex items-center gap-2">
-          <img src="/logo/logo-color-icon.svg" alt="Dokter Tani" class="w-6 h-6 object-contain" />
-          <span>Dokter Tani AI</span>
-        </h2>
-        <p class="text-xs text-slate-500 mt-0.5">Deteksi dini penyakit daun padi & solusi takaran obat</p>
-      </div>
-      <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-full border border-emerald-200">
-        AI Vision Active
-      </span>
-    </div>
+  <div class="flex h-[calc(100vh-4rem)] overflow-hidden bg-slate-50 relative">
+    <!-- BACKDROP DRAWER RIWAYAT DI MOBILE -->
+    <div
+      v-if="isHistoryOpen"
+      @click="isHistoryOpen = false"
+      class="fixed inset-0 z-30 bg-slate-900/60 backdrop-blur-xs md:hidden"
+    ></div>
 
-    <!-- Area Unggah / Ambil Foto -->
-    <div class="bg-white border-2 border-dashed border-emerald-300 rounded-3xl p-6 text-center shadow-sm relative overflow-hidden">
-      <!-- Input File Tersembunyi -->
-      <input
-        type="file"
-        ref="fileInput"
-        accept="image/*"
-        class="hidden"
-        @change="handleFileUpload"
-      />
-
-      <div v-if="!selectedImagePreview" class="space-y-4">
-        <div class="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner border border-emerald-200">
-          <Camera :size="36" />
-        </div>
-        <div>
-          <h3 class="font-extrabold text-base text-slate-800">Foto Daun Tanaman Padi</h3>
-          <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
-            Arahkan kamera dekat pada daun yang memiliki bercak atau menguning.
-          </p>
+    <!-- PANEL KIRI: RIWAYAT PERCAKAPAN (COLLAPSIBLE SIDEBAR / DRAWER) -->
+    <aside
+      class="fixed md:static inset-y-0 left-0 z-40 bg-white border-r border-slate-200/90 flex flex-col transition-all duration-300 shadow-xl md:shadow-none"
+      :class="isHistoryOpen ? 'w-72 sm:w-80 translate-x-0' : '-translate-x-full md:translate-x-0 md:w-0 md:overflow-hidden md:border-none'"
+    >
+      <!-- Header Riwayat -->
+      <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+            <History :size="16" />
+          </div>
+          <div>
+            <h3 class="text-xs font-black text-slate-800">Riwayat Obrolan</h3>
+            <p class="text-[10px] text-slate-400 font-medium">Sesi konsultasi tersimpan</p>
+          </div>
         </div>
         <button
-          @click="triggerFileInput"
-          class="btn-farmer bg-emerald-600 text-white hover:bg-emerald-700 mx-auto w-full max-w-xs shadow-md"
+          @click="isHistoryOpen = false"
+          class="w-7 h-7 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-all cursor-pointer"
+          title="Tutup Riwayat"
         >
-          <Upload :size="18" /> Pilih Foto dari Perangkat
+          <X :size="14" />
         </button>
       </div>
 
-      <!-- Pratinjau Foto yang Dipilih -->
-      <div v-else class="space-y-4">
-        <div class="relative w-full max-w-xs mx-auto h-52 rounded-2xl overflow-hidden shadow-md border border-slate-200">
-          <img :src="selectedImagePreview" class="w-full h-full object-cover" alt="Pratinjau Daun" />
+      <!-- Tombol Buat Obrolan Baru -->
+      <div class="p-3">
+        <button
+          @click="startNewChat"
+          class="w-full py-2.5 px-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 cursor-pointer"
+        >
+          <Plus :size="15" />
+          <span>Obrolan Baru</span>
+        </button>
+      </div>
+
+      <!-- Daftar Sesi Chat -->
+      <div class="flex-1 overflow-y-auto px-2 space-y-1 py-1 no-scrollbar">
+        <div
+          v-if="chatSessions.length === 0"
+          class="p-6 text-center text-xs text-slate-400 font-medium space-y-1"
+        >
+          <span class="text-2xl">💬</span>
+          <p>Belum ada riwayat obrolan</p>
+          <p class="text-[10px]">Mulai tanya untuk menyimpan sesi</p>
+        </div>
+
+        <div
+          v-for="s in chatSessions"
+          :key="s.id"
+          @click="switchSession(s.id)"
+          class="group relative p-2.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-2"
+          :class="activeSessionId === s.id
+            ? 'bg-emerald-50/80 border-emerald-300 shadow-2xs'
+            : 'bg-white hover:bg-slate-50 border-transparent hover:border-slate-200'"
+        >
+          <div class="truncate flex-1 pr-1">
+            <h4
+              class="text-xs font-bold truncate leading-snug"
+              :class="activeSessionId === s.id ? 'text-emerald-950 font-black' : 'text-slate-700'"
+            >
+              {{ s.title }}
+            </h4>
+            <span class="text-[10px] text-slate-400 block mt-0.5">{{ s.updated_at }}</span>
+          </div>
+
           <button
-            @click="resetSelection"
-            class="absolute top-2 right-2 bg-slate-900/70 text-white p-2 rounded-full hover:bg-slate-900 transition-all"
-            title="Hapus / Ganti Foto"
+            @click.stop="deleteSession(s.id)"
+            class="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all cursor-pointer shrink-0"
+            title="Hapus Sesi"
           >
-            <X :size="16" />
+            <Trash2 :size="12" />
           </button>
         </div>
-
-        <button
-          v-if="!isAnalyzing"
-          @click="runDiagnosis(currentFile)"
-          class="btn-farmer bg-emerald-600 text-white hover:bg-emerald-700 mx-auto w-full max-w-xs shadow-md"
-        >
-          <Sparkles :size="18" /> Mulai Analisis AI Sekarang
-        </button>
       </div>
 
-      <!-- Loading State saat AI Berpikir -->
-      <div v-if="isAnalyzing" class="mt-4 p-4 bg-emerald-50/90 rounded-2xl border border-emerald-200 text-center">
-        <div class="inline-block animate-spin text-emerald-600 mb-2">
-          <Loader2 :size="28" />
-        </div>
-        <p class="text-xs font-bold text-emerald-800">Sedang Menganalisis Citra Daun...</p>
-        <p class="text-[11px] text-emerald-600 mt-0.5">Mengekstraksi pola warna & lesi penyakit</p>
+      <!-- Info Footer -->
+      <div class="p-3 border-t border-slate-100 bg-slate-50 text-[10px] text-slate-400 flex items-center justify-between">
+        <span>Powered by Gemini Vision</span>
+        <span class="font-bold text-emerald-700">AgriAI v2.0</span>
       </div>
-    </div>
+    </aside>
 
-    <!-- Opsi Uji Coba Cepat (Preset Sampel Penyakit) -->
-    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
-      <div class="flex items-center justify-between mb-2">
-        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-          <CheckCircle :size="14" class="text-emerald-600" /> Uji Coba Cepat (Demo Sampel)
-        </h4>
-        <span class="text-[11px] text-slate-500 font-medium">Klik untuk simulasi</span>
-      </div>
-      <div class="grid grid-cols-2 gap-2">
-        <button
-          v-for="sample in samples"
-          :key="sample.key"
-          @click="selectSample(sample.key)"
-          class="p-2.5 bg-white border border-slate-200 hover:border-emerald-500 rounded-xl text-left transition-all active:scale-95 shadow-sm"
-        >
-          <div class="text-xs font-extrabold text-slate-800 truncate">{{ sample.title }}</div>
-          <div class="text-[10px] text-slate-500 mt-0.5 truncate">{{ sample.hint }}</div>
-        </button>
-      </div>
-    </div>
-
-    <!-- Hasil Diagnosis AI Card -->
-    <div v-if="diagnosisResult" class="bg-white border-2 border-emerald-500 rounded-3xl p-5 shadow-lg space-y-4 animate-in fade-in duration-300">
-      <div class="flex items-start justify-between">
-        <div>
-          <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full"
-            :class="diagnosisResult.severity === 'Aman' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'"
+    <!-- PANEL UTAMA: CHAT LLM AREA -->
+    <main class="flex-1 flex flex-col h-full bg-slate-50 relative overflow-hidden">
+      <!-- Top Navigation Bar Chat -->
+      <header class="bg-white border-b border-slate-200/80 px-4 py-3 flex items-center justify-between shrink-0 shadow-2xs z-10">
+        <div class="flex items-center gap-3">
+          <!-- Tombol Toggle Riwayat Sidebar -->
+          <button
+            @click="isHistoryOpen = !isHistoryOpen"
+            class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 transition-all cursor-pointer text-xs font-bold"
+            title="Buka / Tutup Riwayat Obrolan"
           >
-            Tingkat Risiko: {{ diagnosisResult.severity }}
-          </span>
-          <h3 class="text-lg font-black text-slate-800 mt-1.5 leading-snug">
-            {{ diagnosisResult.disease_name }}
-          </h3>
-          <p class="text-xs italic text-slate-500 font-medium">
-            {{ diagnosisResult.english_name }}
+            <PanelLeft :size="16" />
+            <span class="hidden sm:inline text-xs">Riwayat</span>
+            <span
+              v-if="chatSessions.length > 0"
+              class="bg-emerald-600 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center"
+            >
+              {{ chatSessions.length }}
+            </span>
+          </button>
+
+          <!-- Identitas Asisten AI -->
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-600 to-tani-900 text-white flex items-center justify-center shadow-xs">
+              <Sparkles :size="16" />
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <h2 class="text-sm font-black text-slate-800 tracking-tight leading-none">AgriAI</h2>
+                <span class="text-[9px] font-black uppercase bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded-md">
+                  Sahabat Petani
+                </span>
+              </div>
+              <p class="text-[10px] text-slate-400 font-medium flex items-center gap-1 mt-0.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Asisten Cerdas Agronomi & Fitopatologi</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tombol Aksi Cepat: Obrolan Baru -->
+        <button
+          @click="startNewChat"
+          class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-2xs"
+          title="Mulai Percakapan Baru"
+        >
+          <Plus :size="14" />
+          <span class="hidden sm:inline">Obrolan Baru</span>
+        </button>
+      </header>
+
+      <!-- Area Percakapan (Scrollable Message List) -->
+      <div
+        ref="chatContainerRef"
+        class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6"
+      >
+        <!-- State 1: Percakapan Masih Kosong (Welcome Screen & Suggestion Prompts) -->
+        <div
+          v-if="messages.length === 0"
+          class="max-w-xl mx-auto py-8 sm:py-12 text-center space-y-6 animate-in fade-in duration-300"
+        >
+          <div class="w-16 h-16 rounded-3xl bg-gradient-to-br from-emerald-500 to-tani-900 text-white flex items-center justify-center mx-auto shadow-lg shadow-emerald-900/20">
+            <Sparkles :size="32" />
+          </div>
+
+          <div class="space-y-1.5">
+            <h3 class="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">
+              Halo {{ currentPersona.name }}! Ada yang bisa AgriAI bantu?
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
+              Konsultasikan penyakit daun padi, rekomendasi dosis pupuk berimbang, hama wereng, atau kirim foto daun untuk dianalisis langsung.
+            </p>
+          </div>
+
+          <!-- Prompt Suggestions Chips -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-left pt-2">
+            <button
+              v-for="(p, idx) in promptSuggestions"
+              :key="idx"
+              @click="applyPromptSuggestion(p)"
+              class="p-3.5 bg-white border border-slate-200/90 hover:border-emerald-500 rounded-2xl shadow-2xs hover:shadow-sm transition-all active:scale-98 cursor-pointer group flex items-start gap-2.5"
+            >
+              <span class="text-lg shrink-0 mt-0.5">{{ p.icon }}</span>
+              <div>
+                <h5 class="text-xs font-bold text-slate-800 group-hover:text-emerald-700 leading-snug">
+                  {{ p.title }}
+                </h5>
+                <p class="text-[10px] text-slate-400 mt-0.5 line-clamp-1">
+                  {{ p.subtitle }}
+                </p>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- State 2: Riwayat Pesan Aktif -->
+        <template v-else>
+          <div
+            v-for="msg in messages"
+            :key="msg.id"
+            class="flex gap-3 max-w-2xl"
+            :class="msg.role === 'user' ? 'ml-auto flex-row-reverse' : 'mr-auto'"
+          >
+            <!-- Avatar -->
+            <div class="shrink-0 mt-1">
+              <div
+                v-if="msg.role === 'user'"
+                class="w-8 h-8 rounded-full overflow-hidden border border-emerald-400 shadow-2xs flex items-center justify-center bg-emerald-600 text-white text-xs font-black"
+              >
+                <img
+                  v-if="customAvatar"
+                  :src="customAvatar"
+                  alt="User"
+                  class="w-full h-full object-cover"
+                />
+                <span v-else>{{ currentPersona.avatar || '👨‍🌾' }}</span>
+              </div>
+              <div
+                v-else
+                class="w-8 h-8 rounded-full bg-emerald-700 text-white flex items-center justify-center shadow-xs text-xs font-bold"
+              >
+                <Sparkles :size="15" />
+              </div>
+            </div>
+
+            <!-- Bubble Pesan -->
+            <div
+              class="rounded-3xl p-4 text-xs space-y-2 shadow-xs leading-relaxed"
+              :class="msg.role === 'user'
+                ? 'bg-emerald-700 text-white rounded-tr-xs'
+                : 'bg-white border border-slate-200 text-slate-800 rounded-tl-xs'"
+            >
+              <!-- Lampiran Foto jika dikirim oleh User -->
+              <div
+                v-if="msg.image"
+                class="rounded-2xl overflow-hidden border border-white/20 max-w-xs shadow-inner"
+              >
+                <img :src="msg.image" alt="Lampiran Foto" class="w-full h-auto max-h-56 object-cover" />
+              </div>
+
+              <!-- Kartu Diagnosis jika Dihasilkan oleh AgriAI -->
+              <div
+                v-if="msg.detected_diagnosis"
+                class="p-3.5 bg-emerald-50 border border-emerald-300 rounded-2xl space-y-2.5 text-slate-800"
+              >
+                <div class="flex items-start justify-between gap-2 border-b border-emerald-200/80 pb-2">
+                  <div>
+                    <span
+                      class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full inline-block"
+                      :class="msg.detected_diagnosis.severity === 'Aman' ? 'bg-emerald-200 text-emerald-900' : 'bg-rose-100 text-rose-800 border border-rose-200'"
+                    >
+                      Tingkat Risiko: {{ msg.detected_diagnosis.severity }}
+                    </span>
+                    <h4 class="text-sm font-black text-emerald-950 mt-1 leading-snug">
+                      {{ msg.detected_diagnosis.disease_name }}
+                    </h4>
+                    <p class="text-[10px] italic text-slate-500 font-semibold">
+                      {{ msg.detected_diagnosis.english_name }}
+                    </p>
+                  </div>
+                  <div class="text-right shrink-0">
+                    <span class="text-base font-black text-emerald-700">
+                      {{ Math.round(msg.detected_diagnosis.confidence * 100) }}%
+                    </span>
+                    <span class="text-[8px] font-bold text-slate-400 block">Akurasi</span>
+                  </div>
+                </div>
+
+                <!-- Gejala -->
+                <div class="space-y-1">
+                  <span class="text-[10px] font-black text-slate-600 uppercase flex items-center gap-1">
+                    <AlertTriangle :size="12" class="text-amber-500" /> Gejala Visual:
+                  </span>
+                  <ul class="text-[11px] text-slate-600 space-y-0.5 pl-3 list-disc">
+                    <li v-for="(sym, sIdx) in msg.detected_diagnosis.symptoms" :key="sIdx">
+                      {{ sym }}
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Rekomendasi Solusi -->
+                <div class="space-y-1 pt-1 border-t border-emerald-200/60">
+                  <span class="text-[10px] font-black text-emerald-900 uppercase flex items-center gap-1">
+                    <CheckCircle2 :size="12" class="text-emerald-600" /> Langkah Pengendalian:
+                  </span>
+                  <ul class="text-[11px] text-slate-700 space-y-1 pl-1">
+                    <li
+                      v-for="(act, aIdx) in msg.detected_diagnosis.actions"
+                      :key="aIdx"
+                      class="flex items-start gap-1.5"
+                    >
+                      <span class="w-3.5 h-3.5 rounded-full bg-emerald-600 text-white text-[9px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                        {{ aIdx + 1 }}
+                      </span>
+                      <span>{{ act }}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Teks Pesan -->
+              <div class="whitespace-pre-line leading-relaxed text-xs">
+                {{ msg.content }}
+              </div>
+
+              <span
+                class="text-[9px] block text-right font-medium"
+                :class="msg.role === 'user' ? 'text-emerald-200' : 'text-slate-400'"
+              >
+                {{ msg.timestamp }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Loading Indicator saat AI Berpikir -->
+          <div v-if="isLoading" class="flex gap-3 max-w-lg mr-auto animate-in fade-in">
+            <div class="w-8 h-8 rounded-full bg-emerald-700 text-white flex items-center justify-center shadow-xs text-xs font-bold shrink-0 mt-1">
+              <Sparkles :size="15" />
+            </div>
+            <div class="bg-white border border-slate-200 rounded-3xl rounded-tl-xs p-4 shadow-xs flex items-center gap-2">
+              <Loader2 :size="16" class="animate-spin text-emerald-600" />
+              <span class="text-xs text-slate-500 font-medium">AgriAI sedang menganalisis & menyusun solusi...</span>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- STICKY BOTTOM CHAT INPUT BAR -->
+      <footer class="p-3 sm:p-4 bg-white border-t border-slate-200/90 shrink-0">
+        <div class="max-w-3xl mx-auto space-y-2">
+          <!-- Pratinjau Lampiran Gambar sebelum dikirim -->
+          <div
+            v-if="attachedImagePreview"
+            class="flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-2xl w-fit shadow-xs animate-in fade-in"
+          >
+            <div class="w-9 h-9 rounded-xl overflow-hidden border border-emerald-300 shrink-0">
+              <img :src="attachedImagePreview" alt="Lampiran" class="w-full h-full object-cover" />
+            </div>
+            <div class="text-[11px]">
+              <span class="font-bold text-slate-800 block leading-tight">Foto Daun Terlampir</span>
+              <span class="text-[9px] text-slate-500">Akan dianalisis oleh AI</span>
+            </div>
+            <button
+              @click="removeAttachedImage"
+              class="w-6 h-6 rounded-full bg-slate-200 hover:bg-rose-100 hover:text-rose-600 flex items-center justify-center text-slate-600 transition-all cursor-pointer ml-1"
+              title="Hapus Lampiran"
+            >
+              <X :size="12" />
+            </button>
+          </div>
+
+          <!-- Input Bar Container -->
+          <form
+            @submit.prevent="sendMessage"
+            class="relative flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200/60 focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-500/40 focus-within:border-emerald-500 border border-slate-300 rounded-3xl p-1.5 transition-all shadow-inner"
+          >
+            <!-- Hidden File Input -->
+            <input
+              ref="fileInputRef"
+              type="file"
+              accept="image/*"
+              class="hidden"
+              @change="handleImageSelected"
+            />
+
+            <!-- Tombol Lampirkan Foto / Kamera -->
+            <button
+              type="button"
+              @click="fileInputRef?.click()"
+              class="w-9 h-9 rounded-full bg-white hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 flex items-center justify-center transition-all shadow-2xs border border-slate-200 shrink-0 cursor-pointer"
+              title="Unggah Foto Daun / Tanaman"
+            >
+              <Camera :size="16" />
+            </button>
+
+            <!-- Input Teks Chat -->
+            <input
+              v-model="inputQuery"
+              type="text"
+              placeholder="Tanya seputar tanaman padi, pupuk, atau lampirkan foto daun..."
+              class="flex-1 bg-transparent px-2.5 py-1.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 font-medium focus:outline-none"
+              :disabled="isLoading"
+            />
+
+            <!-- Tombol Kirim -->
+            <button
+              type="submit"
+              :disabled="isLoading || (!inputQuery.trim() && !attachedImageBase64)"
+              class="w-9 h-9 rounded-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:hover:bg-emerald-600 text-white flex items-center justify-center shadow-sm transition-all active:scale-95 shrink-0 cursor-pointer"
+              title="Kirim Pesan"
+            >
+              <Send :size="15" />
+            </button>
+          </form>
+
+          <p class="text-[10px] text-slate-400 text-center font-medium">
+            AgriAI dapat memberikan saran agronomi dan fitopatologi presisi berbasis kecerdasan buatan.
           </p>
         </div>
-        <div class="text-right">
-          <div class="text-2xl font-black text-emerald-600">
-            {{ Math.round(diagnosisResult.confidence * 100) }}%
-          </div>
-          <span class="text-[10px] font-semibold text-slate-400">Tingkat Akurasi</span>
-        </div>
-      </div>
-
-      <!-- Gejala / Ciri-Ciri -->
-      <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
-        <h5 class="text-xs font-bold text-slate-700 mb-2 flex items-center gap-1.5">
-          <AlertTriangle :size="14" class="text-amber-500" /> Gejala yang Terdeteksi:
-        </h5>
-        <ul class="space-y-1.5">
-          <li
-            v-for="(symptom, idx) in diagnosisResult.symptoms"
-            :key="idx"
-            class="text-xs text-slate-600 flex items-start gap-2"
-          >
-            <span class="text-amber-500 font-bold">•</span>
-            <span>{{ symptom }}</span>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Solusi & Tindakan Petani -->
-      <div class="bg-emerald-50/60 p-4 rounded-2xl border border-emerald-200">
-        <h5 class="text-xs font-extrabold text-emerald-900 mb-2 flex items-center gap-1.5">
-          <CheckCircle2 :size="15" class="text-emerald-600" /> Anjuran Tindakan & Takaran Obat:
-        </h5>
-        <ul class="space-y-2">
-          <li
-            v-for="(action, idx) in diagnosisResult.actions"
-            :key="idx"
-            class="text-xs text-slate-700 flex items-start gap-2"
-          >
-            <span class="bg-emerald-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
-              {{ idx + 1 }}
-            </span>
-            <span class="font-medium leading-relaxed">{{ action }}</span>
-          </li>
-        </ul>
-      </div>
-
-      <p class="text-[10px] text-slate-400 text-right">
-        Waktu Deteksi: {{ diagnosisResult.detected_at }}
-      </p>
-    </div>
+      </footer>
+    </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { api, DiagnosisResult } from '@/services/api';
+import { ref, onMounted, nextTick } from 'vue';
+import { useUserState } from '@/services/userState';
+import { api, AIChatMessage, AIChatSession } from '@/services/api';
 import { 
-  Sparkles, Camera, Upload, X, Loader2, CheckCircle, 
-  CheckCircle2, AlertTriangle 
+  Sparkles, Camera, Send, X, Loader2, Plus, 
+  Trash2, History, PanelLeft, CheckCircle2, AlertTriangle
 } from 'lucide-vue-next';
 
-const fileInput = ref<HTMLInputElement | null>(null);
-const selectedImagePreview = ref<string | null>(null);
-const currentFile = ref<File | undefined>(undefined);
-const isAnalyzing = ref(false);
-const diagnosisResult = ref<DiagnosisResult | null>(null);
-const samples = ref<{ key: string; title: string; hint: string }[]>([]);
+const { currentPersona, customAvatar } = useUserState();
 
-const triggerFileInput = () => {
-  fileInput.value?.click();
+// State Riwayat Sesi Chat
+const isHistoryOpen = ref(false);
+const chatSessions = ref<AIChatSession[]>([]);
+const activeSessionId = ref<string | null>(null);
+
+// State Obrolan Aktif
+const messages = ref<AIChatMessage[]>([]);
+const inputQuery = ref('');
+const isLoading = ref(false);
+const chatContainerRef = ref<HTMLDivElement | null>(null);
+
+// Lampiran Gambar
+const fileInputRef = ref<HTMLInputElement | null>(null);
+const attachedImagePreview = ref<string | null>(null);
+const attachedImageBase64 = ref<string | null>(null);
+
+// Preset Contoh Pertanyaan Populer
+const promptSuggestions = [
+  {
+    icon: '🌾',
+    title: 'Daun Menguning & Kering di Ujung',
+    subtitle: 'Deteksi Hawar Daun Bakteri (Kresek)'
+  },
+  {
+    icon: '🐛',
+    title: 'Pengendalian Hama Wereng Coklat',
+    subtitle: 'Waktu semprot & bahan aktif insektisida'
+  },
+  {
+    icon: '🧪',
+    title: 'Takaran Pupuk Fase Bunting (40 HST)',
+    subtitle: 'Rekomendasi NPK, Urea, dan KCl'
+  },
+  {
+    icon: '🔍',
+    title: 'Bercak Belah Ketupat Abu-Abu',
+    subtitle: 'Ciri jamur blas daun Pyricularia'
+  }
+];
+
+const scrollToBottom = async () => {
+  await nextTick();
+  if (chatContainerRef.value) {
+    chatContainerRef.value.scrollTop = chatContainerRef.value.scrollHeight;
+  }
 };
 
-const handleFileUpload = (event: Event) => {
+const loadSessions = async () => {
+  try {
+    const list = await api.getChatSessions();
+    chatSessions.value = list;
+    if (!activeSessionId.value && list.length > 0) {
+      // Buka sesi terakhir jika ada
+      await switchSession(list[0].id);
+    }
+  } catch (err) {
+    console.error('Gagal memuat sesi chat:', err);
+  }
+};
+
+const switchSession = async (sessionId: string) => {
+  activeSessionId.value = sessionId;
+  try {
+    const fullSession = await api.getChatSession(sessionId);
+    messages.value = fullSession.messages || [];
+    scrollToBottom();
+    // Di mobile, otomatis tutup drawer saat sesi dipilih
+    if (window.innerWidth < 768) {
+      isHistoryOpen.value = false;
+    }
+  } catch (err) {
+    console.error('Gagal membuka sesi:', err);
+  }
+};
+
+const startNewChat = () => {
+  activeSessionId.value = null;
+  messages.value = [];
+  inputQuery.value = '';
+  attachedImagePreview.value = null;
+  attachedImageBase64.value = null;
+  if (window.innerWidth < 768) {
+    isHistoryOpen.value = false;
+  }
+};
+
+const deleteSession = async (sessionId: string) => {
+  if (!confirm('Hapus sesi obrolan ini dari riwayat?')) return;
+  try {
+    await api.deleteChatSession(sessionId);
+    chatSessions.value = chatSessions.value.filter(s => s.id !== sessionId);
+    if (activeSessionId.value === sessionId) {
+      startNewChat();
+    }
+  } catch (err) {
+    console.error('Gagal menghapus sesi:', err);
+  }
+};
+
+const applyPromptSuggestion = (p: { title: string }) => {
+  inputQuery.value = p.title;
+  sendMessage();
+};
+
+const handleImageSelected = (event: Event) => {
   const target = event.target as HTMLInputElement;
   if (target.files && target.files[0]) {
     const file = target.files[0];
-    currentFile.value = file;
-    selectedImagePreview.value = URL.createObjectURL(file);
-    diagnosisResult.value = null;
+    attachedImagePreview.value = URL.createObjectURL(file);
+
+    // Konversi ke Base64
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      attachedImageBase64.value = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
   }
 };
 
-const resetSelection = () => {
-  selectedImagePreview.value = null;
-  currentFile.value = undefined;
-  diagnosisResult.value = null;
-  if (fileInput.value) fileInput.value.value = '';
+const removeAttachedImage = () => {
+  attachedImagePreview.value = null;
+  attachedImageBase64.value = null;
+  if (fileInputRef.value) fileInputRef.value.value = '';
 };
 
-const runDiagnosis = async (file?: File, sampleKey?: string) => {
-  isAnalyzing.value = true;
-  diagnosisResult.value = null;
+const sendMessage = async () => {
+  const text = inputQuery.value.trim();
+  const image = attachedImageBase64.value;
+
+  if (!text && !image) return;
+
+  const now = new Date();
+  const timeStr = now.toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit'
+  }) + ' WIB';
+
+  // Tambah pesan pengguna ke tampilan seketika
+  const userMessage: AIChatMessage = {
+    id: `temp_${Date.now()}`,
+    role: 'user',
+    content: text || 'Analisis foto tanaman terlampir',
+    image: attachedImagePreview.value,
+    timestamp: timeStr
+  };
+  messages.value.push(userMessage);
+
+  // Reset form input
+  inputQuery.value = '';
+  const currentImageToSend = image;
+  removeAttachedImage();
+  scrollToBottom();
+
+  isLoading.value = true;
+
   try {
-    const result = await api.diagnoseLeaf(file, sampleKey);
-    diagnosisResult.value = result;
-    localStorage.setItem('agribuddy_last_diagnosis', JSON.stringify(result));
-  } catch (err) {
-    alert('Gagal mendiagnosis foto daun. Pastikan server backend menyala.');
-    console.error(err);
+    // Siapkan riwayat ringkas untuk konteks LLM
+    const historyPayload = messages.value
+      .slice(0, -1)
+      .slice(-6)
+      .map(m => ({
+        role: m.role,
+        content: m.content
+      }));
+
+    const response = await api.chatWithAgriAI({
+      session_id: activeSessionId.value || undefined,
+      message: userMessage.content,
+      image_base64: currentImageToSend || undefined,
+      history: historyPayload
+    });
+
+    activeSessionId.value = response.session_id;
+
+    // Tambahkan balasan model
+    const aiMessage: AIChatMessage = {
+      id: `ai_${Date.now()}`,
+      role: 'model',
+      content: response.reply,
+      detected_diagnosis: response.detected_diagnosis,
+      timestamp: timeStr
+    };
+    messages.value.push(aiMessage);
+
+    // Segarkan daftar sesi riwayat
+    await loadSessions();
+  } catch (err: any) {
+    messages.value.push({
+      id: `err_${Date.now()}`,
+      role: 'model',
+      content: 'Maaf Pak Tani, terjadi kendala saat menghubungkan ke server AgriAI. Pastikan koneksi dan server aktif.',
+      timestamp: timeStr
+    });
   } finally {
-    isAnalyzing.value = false;
+    isLoading.value = false;
+    scrollToBottom();
   }
 };
 
-const selectSample = async (sampleKey: string) => {
-  selectedImagePreview.value = null;
-  currentFile.value = undefined;
-  await runDiagnosis(undefined, sampleKey);
-};
-
-onMounted(async () => {
-  try {
-    samples.value = await api.getSampleDiagnoses();
-  } catch (e) {
-    console.error('Error fetching sample diagnoses:', e);
-  }
+onMounted(() => {
+  loadSessions();
 });
 </script>
