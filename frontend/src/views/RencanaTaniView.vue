@@ -760,8 +760,22 @@
     <div v-else-if="topTab === 'kontrol'" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       <!-- Left Column (8 cols): Cockpit Modal, 5 Fase Interaktif (Dual Control) -->
       <div class="lg:col-span-8 space-y-6">
-        
 
+        <!-- LOADING SKELETON: Tampil saat farmlands sedang dimuat -->
+        <div v-if="isFarmLoading" class="space-y-4 animate-pulse">
+          <div class="bg-emerald-900/30 rounded-3xl h-52 w-full"></div>
+          <div class="bg-slate-200 rounded-3xl h-32 w-full"></div>
+          <div class="bg-slate-100 rounded-3xl h-40 w-full"></div>
+          <div class="flex justify-center pt-2">
+            <div class="flex items-center gap-2 text-slate-400 text-sm font-semibold">
+              <Loader2 :size="16" class="animate-spin" />
+              <span>Memuat data lahan...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Konten utama muncul setelah loading selesai -->
+        <template v-else>
 
         <!-- Financial & Progress Cockpit (Neraca Kendali Modal & Siklus Budidaya) -->
         <div class="bg-gradient-to-br from-emerald-900 to-teal-950 text-white rounded-3xl p-6 shadow-sm space-y-4">
@@ -1136,6 +1150,7 @@
           </div>
         </div>
 
+        </template><!-- end v-else (bukan loading) -->
       </div>
 
       <!-- Right Column (4 cols) -->
@@ -2129,7 +2144,9 @@ const getPhasePartner = (stepNo: number) => {
 };
 
 // --- DATA FETCHING & ACTIONS ---
+const isFarmLoading = ref(false);
 const loadFarmlands = async () => {
+  isFarmLoading.value = true;
   try {
     const list = await api.getFarmlands(currentUserId.value);
     farmlands.value = list;
@@ -2146,6 +2163,8 @@ const loadFarmlands = async () => {
     }
   } catch (err) {
     console.error('Error loading farmlands:', err);
+  } finally {
+    isFarmLoading.value = false;
   }
 };
 
@@ -2492,8 +2511,8 @@ onMounted(async () => {
   // Listen ke event navigasi tab dari WebTopBar Row 2 (mobile)
   const onRencanaTabEvent = (e: Event) => {
     const tab = (e as CustomEvent).detail?.tab;
-    if (tab === 'kontrol' || tab === 'ceklis') topTab.value = 'kontrol';
-    else topTab.value = 'rencana';
+    if (tab === 'kontrol' || tab === 'ceklis') setTopTab('kontrol');
+    else setTopTab('rencana');
   };
   window.addEventListener('agribuddy:rencana-tab', onRencanaTabEvent);
   (window as any).__cleanupRencanaTabListener = () => window.removeEventListener('agribuddy:rencana-tab', onRencanaTabEvent);

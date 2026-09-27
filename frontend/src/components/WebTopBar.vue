@@ -218,7 +218,7 @@ const isKontrolTab = computed(() =>
 );
 
 const navigateRencanaTab = (tab: 'rencana' | 'kontrol') => {
-  router.replace({ path: '/rencana', query: { ...route.query, tab } });
+  // Hanya dispatch event — RencanaTaniView.setTopTab akan handle router.replace
   window.dispatchEvent(new CustomEvent('agribuddy:rencana-tab', { detail: { tab } }));
 };
 
