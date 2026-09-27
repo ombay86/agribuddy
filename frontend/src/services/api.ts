@@ -30,6 +30,7 @@ export interface WeatherData {
   status_color: 'green' | 'yellow' | 'red';
   advice_title: string;
   advice_detail: string;
+  provider?: string;
 }
 
 export interface InventoryItem {

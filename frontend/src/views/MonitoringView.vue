@@ -164,9 +164,14 @@
         <!-- WIDGET 1: Cuaca Mikro Real-Time & Anjuran Irigasi Cerdas -->
         <div class="bg-white border border-slate-200/90 rounded-3xl p-5 md:p-6 shadow-xs space-y-4">
           <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-            <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-100/70 px-2.5 py-1 rounded-full flex items-center gap-1.5">
-              <CloudSun :size="13" /> Agro-Klimat & Irigasi Sawah
-            </span>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-100/70 px-2.5 py-1 rounded-full flex items-center gap-1.5">
+                <CloudSun :size="13" /> Agro-Klimat & Irigasi Sawah
+              </span>
+              <span class="text-[10px] font-black bg-sky-100 text-sky-800 border border-sky-200 px-2 py-0.5 rounded-full uppercase hidden sm:inline-block">
+                Open-Meteo Live
+              </span>
+            </div>
             <button
               @click="detectGPSWeather"
               :disabled="isLocatingWeather"

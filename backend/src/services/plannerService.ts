@@ -1,4 +1,4 @@
-import { getWeatherAndRecommendation } from './weatherService.js';
+import { getWeatherAndRecommendationSync } from './weatherService.js';
 
 export interface BudgetItem {
   id: string;
@@ -87,7 +87,7 @@ export class FarmPlannerService {
     const coordinatesLabel = params.coordinates_label || `${latitude.toFixed(4)}, ${longitude.toFixed(4)} (${location})`;
     const userId = params.user_id || "usr_petani";
 
-    const weatherRec = getWeatherAndRecommendation(latitude, longitude, location);
+    const weatherRec = getWeatherAndRecommendationSync(latitude, longitude, location);
     const isWetSeason = weatherRec.rain_probability_percent >= 50;
 
     // Parameter Dasar (per Hektar)
