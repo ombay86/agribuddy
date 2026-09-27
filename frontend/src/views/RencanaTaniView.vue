@@ -1,80 +1,57 @@
 <template>
   <div class="space-y-6 pb-20 md:pb-8">
-    <!-- Header Banner -->
+    <!-- Header Banner Dinamis -->
     <div class="bg-gradient-to-r from-emerald-800 via-teal-900 to-slate-900 text-white p-6 md:p-8 rounded-3xl shadow-md relative overflow-hidden">
       <div class="relative z-10 space-y-2 max-w-3xl">
         <div class="inline-flex items-center gap-1.5 bg-emerald-400/20 text-emerald-200 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider border border-emerald-400/30">
-          <Sparkles :size="14" /> Modul Usahatani Cerdas
+          <Sparkles v-if="topTab === 'rencana'" :size="14" />
+          <Scale v-else :size="14" />
+          <span>{{ topTab === 'rencana' ? 'Modul Perencanaan Pra-Tanam' : 'Modul Kontrol Usahatani & Modal' }}</span>
         </div>
         <h2 class="text-2xl md:text-3xl font-black tracking-tight leading-tight">
-          Rencana Tanam & Kontrol Modal Usahatani
+          {{ topTab === 'rencana' ? 'Rencana Tanam & Estimasi Anggaran (RAB)' : 'Kontrol Tanam & Modal Usahatani' }}
         </h2>
         <p class="text-xs md:text-sm text-emerald-100/90 leading-relaxed font-medium">
-          Rancang estimasi anggaran biaya (RAB) pra-tanam secara presisi, lalu pantau eksekusi 5 fase budidaya dan kendalikan pengeluaran modal riil di lapangan.
+          {{ topTab === 'rencana' 
+            ? 'Rancang estimasi anggaran biaya (RAB) pra-tanam secara presisi, petakan kebutuhan saprotan dan mitra budidaya sebelum musim tanam.' 
+            : 'Pantau eksekusi 5 fase budidaya di lapangan dan kendalikan pengeluaran modal riil terhadap pagu anggaran yang direncanakan.' 
+          }}
         </p>
       </div>
       <!-- Background icon decoration -->
       <div class="absolute -right-4 -bottom-6 text-emerald-700/20 select-none pointer-events-none text-9xl md:text-[140px] font-black">
-        🌾
-      </div>
-    </div>
-
-    <!-- 2 TOP-LEVEL MAIN TABS: Rencana Tanam & Kontrol Tanam & Modal -->
-    <div class="flex justify-center">
-      <div class="inline-flex p-1 bg-slate-100 rounded-xl gap-1 font-bold text-xs border border-slate-200/80 shadow-2xs w-full sm:w-auto sm:min-w-[420px]">
-        <button
-          @click="setTopTab('rencana')"
-          type="button"
-          class="flex-1 py-1.5 px-4 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none text-xs"
-          :class="topTab === 'rencana' 
-            ? 'bg-white text-emerald-800 shadow-2xs border border-slate-200/80 font-black' 
-            : 'text-slate-500 hover:text-slate-800 font-semibold'"
-        >
-          <Calculator :size="14" />
-          <span>Rencana Tanam</span>
-        </button>
-        <button
-          @click="setTopTab('kontrol')"
-          type="button"
-          class="flex-1 py-1.5 px-4 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none text-xs"
-          :class="topTab === 'kontrol' 
-            ? 'bg-white text-emerald-800 shadow-2xs border border-slate-200/80 font-black' 
-            : 'text-slate-500 hover:text-slate-800 font-semibold'"
-        >
-          <Scale :size="14" />
-          <span>Kontrol Tanam & Modal</span>
-        </button>
+        {{ topTab === 'rencana' ? '🌾' : '⚖️' }}
       </div>
     </div>
 
     <!-- ==================== TAB 1: RENCANA TANAM (PERENCANAAN LAHAN BARU - WIZARD STEPPER) ==================== -->
     <div v-if="topTab === 'rencana'" class="space-y-6">
-      <!-- Sub-mode Switcher: Rancang Lahan Baru vs Daftar Rencana Tersimpan -->
+      <!-- Sub-mode Switcher: Rancang Lahan Baru vs Daftar Rencana Tersimpan (Strictly Single Line) -->
       <div class="flex justify-center">
-        <div class="inline-flex p-1 bg-slate-100/90 rounded-xl gap-1 border border-slate-200/80 shadow-2xs w-full sm:w-auto sm:min-w-[380px]">
+        <div class="inline-flex p-1 bg-slate-100/90 rounded-xl gap-1.5 border border-slate-200/80 shadow-2xs whitespace-nowrap">
           <button
             @click="rencanaSubMode = 'wizard'"
             type="button"
-            class="flex-1 py-1.5 px-3.5 rounded-lg text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none"
+            class="py-2 px-4 rounded-lg text-xs transition-all flex items-center justify-center gap-2 cursor-pointer select-none whitespace-nowrap shrink-0"
             :class="rencanaSubMode === 'wizard' 
               ? 'bg-white text-emerald-800 shadow-2xs font-black border border-slate-200/60' 
               : 'text-slate-500 hover:text-slate-800 font-semibold'"
           >
-            <PlusCircle :size="13" />
-            <span>+ Rancang Lahan Baru</span>
+            <PlusCircle :size="14" />
+            <span class="whitespace-nowrap leading-none">+ Rancang Lahan Baru</span>
           </button>
           <button
             @click="rencanaSubMode = 'saved'"
             type="button"
-            class="flex-1 py-1.5 px-3.5 rounded-lg text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none"
+            class="py-2 px-4 rounded-lg text-xs transition-all flex items-center justify-center gap-2 cursor-pointer select-none whitespace-nowrap shrink-0"
             :class="rencanaSubMode === 'saved' 
               ? 'bg-white text-emerald-800 shadow-2xs font-black border border-slate-200/60' 
               : 'text-slate-500 hover:text-slate-800 font-semibold'"
           >
-            <FolderKanban :size="13" />
-            <span>Daftar Rencana Tersimpan</span>
+            <FolderKanban :size="14" />
+            <span class="whitespace-nowrap leading-none">Daftar Rencana Tersimpan</span>
             <span 
-              class="text-[10px] font-black px-1.5 py-0.2 rounded-full"
+              class="text-[10px] font-black px-2 py-0.5 rounded-full leading-none"
               :class="rencanaSubMode === 'saved' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700'"
             >
               {{ draftFarmlands.length }}
@@ -1455,7 +1432,7 @@ const route = useRoute();
 const router = useRouter();
 const { currentUserId, currentPersona } = useUserState();
 
-// Top-Level Tab State
+// Top-Level Tab State (Synced with Sidebar Subgroup & Query Param)
 const topTab = ref<'rencana' | 'kontrol'>('rencana');
 const activePlanTab = ref<'rab' | 'mitra'>('rab');
 
@@ -1463,6 +1440,18 @@ const setTopTab = (tab: 'rencana' | 'kontrol') => {
   topTab.value = tab;
   router.replace({ query: { ...route.query, tab } });
 };
+
+watch(
+  () => route.query.tab,
+  (newTab) => {
+    if (newTab === 'kontrol' || newTab === 'ceklis') {
+      topTab.value = 'kontrol';
+    } else {
+      topTab.value = 'rencana';
+    }
+  },
+  { immediate: true }
+);
 
 // --- WIZARD STEPPER & SUB-MODE STATE (TAB 1: RENCANA TANAM) ---
 const rencanaSubMode = ref<'wizard' | 'saved'>('wizard');

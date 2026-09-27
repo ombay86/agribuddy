@@ -74,19 +74,74 @@
           <span v-if="!isCollapsed" class="truncate">Monitoring Sawah</span>
         </router-link>
 
-        <!-- 2. Rencana Tani AI -->
-        <router-link
-          to="/rencana"
-          class="rounded-xl font-bold transition-all group flex items-center"
-          :class="[
-            $route.path === '/rencana' ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white',
-            isCollapsed ? 'justify-center p-2.5 relative' : 'gap-3 px-3 py-2.5'
-          ]"
-          title="Rencana Tani AI & RAB"
-        >
-          <CalendarDays :size="18" class="shrink-0 text-emerald-400" />
-          <span v-if="!isCollapsed" class="truncate">Rencana Tanam</span>
-        </router-link>
+        <!-- 2. Subgroup: Rencana & Kontrol Tanam -->
+        <div class="space-y-1">
+          <!-- Minimized Mode Link -->
+          <router-link
+            v-if="isCollapsed"
+            to="/rencana"
+            class="rounded-xl font-bold transition-all group flex items-center justify-center p-2.5 relative"
+            :class="[
+              $route.path === '/rencana' ? 'bg-emerald-600 text-white font-black shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+            ]"
+            title="Rencana & Kontrol Tanam"
+          >
+            <CalendarDays :size="18" class="shrink-0 text-emerald-400" />
+          </router-link>
+
+          <!-- Expanded Mode: Collapsible Header Button -->
+          <button
+            v-else
+            @click="toggleRencanaSubmenu"
+            type="button"
+            class="w-full rounded-xl font-bold transition-all group flex items-center justify-between text-left cursor-pointer px-3 py-2.5"
+            :class="[
+              $route.path === '/rencana' 
+                ? 'text-emerald-400 font-extrabold bg-slate-800/80 border border-slate-700/60' 
+                : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+            ]"
+          >
+            <div class="flex items-center gap-3 truncate">
+              <CalendarDays :size="18" class="shrink-0 text-emerald-400" />
+              <span class="truncate text-xs font-bold">Rencana & Kontrol</span>
+            </div>
+            <div class="text-slate-400 group-hover:text-white transition-transform">
+              <ChevronDown v-if="isRencanaOpen" :size="14" />
+              <ChevronRight v-else :size="14" />
+            </div>
+          </button>
+
+          <!-- Submenu Items (Indented) -->
+          <div v-if="!isCollapsed && isRencanaOpen" class="pl-3 py-1 space-y-1 border-l border-slate-700/80 ml-5 animate-in fade-in duration-200">
+            <!-- Submenu 1: Rencana Tanam -->
+            <router-link
+              to="/rencana?tab=rencana"
+              class="rounded-lg text-xs font-bold transition-all flex items-center gap-2 px-2.5 py-1.5"
+              :class="[
+                $route.path === '/rencana' && $route.query.tab !== 'kontrol' && $route.query.tab !== 'ceklis'
+                  ? 'bg-emerald-600 text-white font-black shadow-xs'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+              ]"
+            >
+              <Calculator :size="14" class="shrink-0" />
+              <span class="truncate">Rencana Tanam</span>
+            </router-link>
+
+            <!-- Submenu 2: Kontrol Tanam & Modal -->
+            <router-link
+              to="/rencana?tab=kontrol"
+              class="rounded-lg text-xs font-bold transition-all flex items-center gap-2 px-2.5 py-1.5"
+              :class="[
+                $route.path === '/rencana' && ($route.query.tab === 'kontrol' || $route.query.tab === 'ceklis')
+                  ? 'bg-emerald-600 text-white font-black shadow-xs'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+              ]"
+            >
+              <Scale :size="14" class="shrink-0" />
+              <span class="truncate">Kontrol Tanam & Modal</span>
+            </router-link>
+          </div>
+        </div>
 
         <!-- 3. Dokter Tani AI -->
         <router-link
@@ -198,7 +253,8 @@ import { api, WeatherData } from '@/services/api';
 import { 
   Activity, CalendarDays, Sparkles, 
   Package, Store, User, LogOut, 
-  CloudSun, PanelLeftClose, PanelLeftOpen
+  CloudSun, PanelLeftClose, PanelLeftOpen,
+  ChevronDown, ChevronRight, Calculator, Scale
 } from 'lucide-vue-next';
 
 const router = useRouter();
@@ -210,10 +266,15 @@ const handleLogout = () => {
 };
 
 const isCollapsed = ref(localStorage.getItem('agribuddy_sidebar_collapsed') === 'true');
+const isRencanaOpen = ref(true);
 
 const toggleSidebar = () => {
   isCollapsed.value = !isCollapsed.value;
   localStorage.setItem('agribuddy_sidebar_collapsed', isCollapsed.value ? 'true' : 'false');
+};
+
+const toggleRencanaSubmenu = () => {
+  isRencanaOpen.value = !isRencanaOpen.value;
 };
 
 const weather = ref<WeatherData | null>(null);
