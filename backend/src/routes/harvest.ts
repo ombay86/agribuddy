@@ -34,21 +34,46 @@ const MARKET_PRICES = [
   }
 ];
 
+const isUserJoko = (uid: string) => uid === 'usr_petani' || uid === 'usr_001';
+
 // GET /
 router.get('/', (req: Request, res: Response) => {
+  const userId = (req.query.user_id as string) || (req.headers['x-user-id'] as string) || '';
   const harvests = db.getCollection("harvests");
-  res.json(harvests);
+
+  let userHarvests = harvests;
+  if (userId) {
+    if (isUserJoko(userId)) {
+      userHarvests = harvests.filter((item: any) => !item.user_id || isUserJoko(item.user_id));
+    } else {
+      userHarvests = harvests.filter((item: any) => item.user_id === userId);
+    }
+  }
+
+  res.json(userHarvests);
 });
 
 // POST /
 router.post('/', (req: Request, res: Response) => {
+  const userId = (req.query.user_id as string) || (req.headers['x-user-id'] as string) || 'usr_petani';
   const data = req.body;
   const newHarvest = {
     ...data,
+    user_id: userId,
     status: data.status || "TERSIMPAN"
   };
   const inserted = db.insert("harvests", newHarvest);
   res.json(inserted);
+});
+
+// DELETE /:id
+router.delete('/:id', (req: Request, res: Response) => {
+  const { id } = req.params;
+  const success = db.delete("harvests", id);
+  if (!success) {
+    return res.status(404).json({ detail: "Catatan panen tidak ditemukan" });
+  }
+  res.json({ message: "Catatan panen berhasil dihapus" });
 });
 
 // GET /market-prices

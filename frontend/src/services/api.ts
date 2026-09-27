@@ -639,6 +639,13 @@ export const api = {
     return res.json();
   },
 
+  async deleteHarvest(harvestId: string): Promise<void> {
+    await fetch(`${BASE_URL}/harvest/${harvestId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+  },
+
   async getMarketPrices(): Promise<MarketPrice[]> {
     const res = await fetch(`${BASE_URL}/harvest/market-prices`);
     if (!res.ok) throw new Error('Gagal memuat harga pasar');
@@ -1079,6 +1086,16 @@ export const api = {
       body: JSON.stringify({ status, actual_cost: actualCost }),
     });
     if (!res.ok) throw new Error('Gagal memperbarui status tahapan budidaya');
+    return res.json();
+  },
+
+  async setActiveFarmlandPhase(farmId: string, activeStepNo: number, plantingDate?: string): Promise<any> {
+    const res = await fetch(`${BASE_URL}/farmlands/${farmId}/set-active-phase`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ active_step_no: activeStepNo, planting_date: plantingDate }),
+    });
+    if (!res.ok) throw new Error('Gagal menyesuaikan fase lapangan');
     return res.json();
   },
 

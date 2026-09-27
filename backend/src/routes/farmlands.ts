@@ -17,13 +17,119 @@ function formatTimeIndo(): string {
   return `${now.toLocaleDateString('id-ID', options)} WIB`;
 }
 
-const getDefaultPhases = (landSizeHa: number = 0.8) => [
-  { step_no: 1, name: "Fase 1: Olah Tanah & Bajak Garu", day_range: "H-14 s/d H-1", duration_days: 14, status: "SELESAI", target_cost: Math.round(960000 * (landSizeHa / 0.8)), actual_cost: 0 },
-  { step_no: 2, name: "Fase 2: Tanam Padi & Persemaian", day_range: "HST 1 - 15", duration_days: 15, status: "SEDANG_BERJALAN", target_cost: Math.round(850000 * (landSizeHa / 0.8)), actual_cost: 0 },
-  { step_no: 3, name: "Fase 3: Pemupukan & Perawatan Vegetatif", day_range: "HST 16 - 45", duration_days: 30, status: "BELUM", target_cost: Math.round(1650000 * (landSizeHa / 0.8)), actual_cost: 0 },
-  { step_no: 4, name: "Fase 4: Proteksi Hama & Generatif", day_range: "HST 46 - 80", duration_days: 35, status: "BELUM", target_cost: Math.round(950000 * (landSizeHa / 0.8)), actual_cost: 0 },
-  { step_no: 5, name: "Fase 5: Pengeringan & Panen Raya", day_range: "HST 81 - 115", duration_days: 35, status: "BELUM", target_cost: Math.round(2005000 * (landSizeHa / 0.8)), actual_cost: 0 }
-];
+const isUserJoko = (uid: string) => uid === 'usr_petani' || uid === 'usr_001';
+
+const getDefaultPhases = (landSizeHa: number = 0.8) => {
+  const scale = landSizeHa / 0.8;
+  return [
+    {
+      step_no: 1,
+      name: "Fase 1: Olah Tanah & Bajak Garu",
+      day_range: "H-14 s/d H-1",
+      duration_days: 14,
+      status: "SELESAI",
+      target_cost: Math.round(960000 * scale),
+      allocated_budget: Math.round(960000 * scale),
+      actual_cost: 0,
+      tasks: [
+        "Pembersihan gulma & sisa jerami",
+        "Penggenangan air macak-macak",
+        "Bajak singkal I (kedalaman 20-25 cm)",
+        "Garu & perataan tanah (macak-macak)",
+        "Aplikasi pupuk kandang/organik 2 ton/ha"
+      ],
+      ai_tips: "Pastikan tanah terolah gembur sempurna dan kedalaman lumpur minimal 20 cm agar perakaran benih padi kokoh."
+    },
+    {
+      step_no: 2,
+      name: "Fase 2: Tanam Padi & Persemaian",
+      day_range: "HST 1 - 15",
+      duration_days: 15,
+      status: "SEDANG_BERJALAN",
+      target_cost: Math.round(850000 * scale),
+      allocated_budget: Math.round(850000 * scale),
+      actual_cost: 0,
+      tasks: [
+        "Persemaian benih bersertifikat (15-20 hari)",
+        "Pindah tanam sistem jajar legowo (2:1 / 4:1)",
+        "Jarak tanam 25x25 cm atau 20x20 cm",
+        "Penyulaman bibit mati (maksimal HST 7)",
+        "Pengaturan air macak-macak (1-2 cm)"
+      ],
+      ai_tips: "Gunakan bibit muda (umur 15-18 HSS) dengan 1-2 bibit per rumpun untuk memicu anakan produktif lebih banyak."
+    },
+    {
+      step_no: 3,
+      name: "Fase 3: Pemupukan & Perawatan Vegetatif",
+      day_range: "HST 16 - 45",
+      duration_days: 30,
+      status: "BELUM",
+      target_cost: Math.round(1650000 * scale),
+      allocated_budget: Math.round(1650000 * scale),
+      actual_cost: 0,
+      tasks: [
+        "Pemupukan susulan I (HST 7-10) Urea + NPK",
+        "Penyiangan gulma mekanis (gasrok / manual)",
+        "Pemupukan susulan II (HST 21-25) NPK Phonska",
+        "Pemantauan hama wereng coklat & penggerek batang",
+        "Pengeringan berkala (intermittent irrigation)"
+      ],
+      ai_tips: "Terapkan pemupukan berimbang 5:3:2 (Urea, NPK, Organik). Jangan biarkan sawah tergenang terus-menerus agar akar bernapas."
+    },
+    {
+      step_no: 4,
+      name: "Fase 4: Proteksi Hama & Generatif",
+      day_range: "HST 46 - 80",
+      duration_days: 35,
+      status: "BELUM",
+      target_cost: Math.round(950000 * scale),
+      allocated_budget: Math.round(950000 * scale),
+      actual_cost: 0,
+      tasks: [
+        "Aplikasi booster malai & kalium cair (HST 50)",
+        "Pengendalian walang sangit & kepik hijau",
+        "Pencegahan blas daun & hawar pelepah (fungisida)",
+        "Pengairan teratur setinggi 3-5 cm saat bunting",
+        "Pemasangan orang-orangan / jaring pengusir burung"
+      ],
+      ai_tips: "Waspadai serangan walang sangit pada fase matang susu. Semprot agen hayati Beauveria bassiana atau insektisida nabati pagi hari."
+    },
+    {
+      step_no: 5,
+      name: "Fase 5: Pengeringan & Panen Raya",
+      day_range: "HST 81 - 115",
+      duration_days: 35,
+      status: "BELUM",
+      target_cost: Math.round(2005000 * scale),
+      allocated_budget: Math.round(2005000 * scale),
+      actual_cost: 0,
+      tasks: [
+        "Pengeringan sawah total 10-14 hari sebelum panen",
+        "Pemeriksaan kematangan bulir (90-95% menguning)",
+        "Pemesanan mesin Combine Harvester / regu sabit",
+        "Pemanenan gabah & perontokan",
+        "Pengemasan karung & penimbangan GKP"
+      ],
+      ai_tips: "Keringkan petakan 10 hari sebelum panen untuk mempermudah operasional combine harvester dan menjaga mutu kadar air gabah."
+    }
+  ];
+};
+
+function enrichPhases(phases: any[], landHa: number = 0.8) {
+  const defaults = getDefaultPhases(landHa);
+  if (!phases || phases.length === 0) return defaults;
+  return defaults.map(def => {
+    const existing = phases.find((p: any) => p.step_no === def.step_no);
+    if (!existing) return def;
+    return {
+      ...def,
+      ...existing,
+      allocated_budget: existing.allocated_budget ?? existing.target_cost ?? def.allocated_budget,
+      tasks: (existing.tasks && existing.tasks.length > 0) ? existing.tasks : def.tasks,
+      ai_tips: existing.ai_tips || def.ai_tips
+    };
+  });
+}
 
 // GET /farmlands
 router.get('/', (req: Request, res: Response) => {
@@ -33,15 +139,16 @@ router.get('/', (req: Request, res: Response) => {
   if (userId) {
     let userFarms = farms.filter((f: any) => 
       f.user_id === userId || 
+      (isUserJoko(userId) && isUserJoko(f.user_id)) ||
       (f.collaborators && f.collaborators.some((c: any) => c.user_id === userId && c.status === 'ACTIVE'))
     );
 
-    // Auto-provision initial farmland if user doesn't have any
-    if (userFarms.length === 0) {
+    // Auto-provision initial farmland HANYA jika pengguna adalah Pak Joko dan belum ada lahan
+    if (userFarms.length === 0 && isUserJoko(userId)) {
       const users = db.getCollection("users");
-      const user = users.find((u: any) => u.id === userId);
+      const user = users.find((u: any) => isUserJoko(u.id));
       if (user) {
-        const ownerName = user.full_name || user.username || "Petani";
+        const ownerName = user.full_name || "Pak Joko";
         const landHa = Number(user.land_size_ha) || 0.8;
         const newFarm = {
           id: `farm_${crypto.randomBytes(3).toString('hex')}`,
@@ -81,7 +188,7 @@ router.get('/', (req: Request, res: Response) => {
 
     const enriched = userFarms.map((f: any) => ({
       ...f,
-      timeline_phases: (f.timeline_phases && f.timeline_phases.length > 0) ? f.timeline_phases : getDefaultPhases(f.land_size_ha || 0.8),
+      timeline_phases: enrichPhases(f.timeline_phases, f.land_size_ha || 0.8),
       total_budget: f.total_budget || Math.round((f.land_size_ha || 0.8) * 6400000)
     }));
     return res.json(enriched);
@@ -89,7 +196,7 @@ router.get('/', (req: Request, res: Response) => {
 
   const enrichedAll = farms.map((f: any) => ({
     ...f,
-    timeline_phases: (f.timeline_phases && f.timeline_phases.length > 0) ? f.timeline_phases : getDefaultPhases(f.land_size_ha || 0.8),
+    timeline_phases: enrichPhases(f.timeline_phases, f.land_size_ha || 0.8),
     total_budget: f.total_budget || Math.round((f.land_size_ha || 0.8) * 6400000)
   }));
   res.json(enrichedAll);
@@ -106,7 +213,7 @@ router.get('/:farmId', (req: Request, res: Response) => {
   }
   const enriched = {
     ...farm,
-    timeline_phases: (farm.timeline_phases && farm.timeline_phases.length > 0) ? farm.timeline_phases : getDefaultPhases(farm.land_size_ha || 0.8),
+    timeline_phases: enrichPhases(farm.timeline_phases, farm.land_size_ha || 0.8),
     total_budget: farm.total_budget || Math.round((farm.land_size_ha || 0.8) * 6400000)
   };
   res.json(enriched);
@@ -213,6 +320,48 @@ router.delete('/:farmId', (req: Request, res: Response) => {
     return res.status(404).json({ detail: "Lahan tidak ditemukan" });
   }
   res.json({ message: "Lahan sawah berhasil dihapus", farm_id: farmId });
+});
+
+// POST /farmlands/:farmId/set-active-phase
+// Fitur untuk Petani Konvensional yang ingin langsung memulai dari fase berjalan (misal Fase 2, 3, 4, atau 5)
+router.post('/:farmId/set-active-phase', (req: Request, res: Response) => {
+  const { farmId } = req.params;
+  const { active_step_no, planting_date } = req.body;
+  const farms = db.getCollection("farmlands");
+  const farm = farms.find((f: any) => f.id === farmId);
+
+  if (!farm) {
+    return res.status(404).json({ detail: "Lahan tidak ditemukan" });
+  }
+
+  const targetStep = Math.min(5, Math.max(1, Number(active_step_no) || 1));
+  const currentPhases = enrichPhases(farm.timeline_phases || [], farm.land_size_ha || 0.8);
+
+  const updatedPhases = currentPhases.map((phase: any) => {
+    if (phase.step_no < targetStep) {
+      return { ...phase, status: "SELESAI" };
+    } else if (phase.step_no === targetStep) {
+      return { ...phase, status: "SEDANG_BERJALAN" };
+    } else {
+      return { ...phase, status: "BELUM" };
+    }
+  });
+
+  const updates: Record<string, any> = {
+    timeline_phases: updatedPhases
+  };
+  if (planting_date) {
+    updates.planting_date = planting_date;
+  }
+
+  const updated = db.update("farmlands", farmId, updates);
+  res.json({
+    message: `Siklus budidaya berhasil disesuaikan! Memulai langsung dari Fase ${targetStep}.`,
+    farmland: {
+      ...updated,
+      timeline_phases: updatedPhases
+    }
+  });
 });
 
 // POST /farmlands/:farmId/collaborators

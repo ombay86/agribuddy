@@ -68,8 +68,23 @@
         </button>
       </div>
 
+      <!-- Empty State Stok Barang -->
+      <div v-if="filteredInventory.length === 0" class="text-center py-12 bg-white rounded-3xl border border-dashed border-slate-200 p-6 space-y-3">
+        <span class="text-4xl block">📦</span>
+        <h4 class="text-sm font-extrabold text-slate-800">Gudang Saprotan Kosong</h4>
+        <p class="text-xs text-slate-500 max-w-sm mx-auto">
+          Kamu belum memiliki catatan stok pupuk, bibit, atau obat di gudang usahatani milikmu. Data stok tersimpan terpisah dan aman per akun usahatani.
+        </p>
+        <button
+          @click="showAddInventoryModal = true"
+          class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-all active:scale-95 cursor-pointer"
+        >
+          <Plus :size="14" /> Tambah Saprotan Pertama
+        </button>
+      </div>
+
       <!-- Grid Daftar Stok Barang -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div
           v-for="item in filteredInventory"
           :key="item.id"
@@ -270,7 +285,21 @@
           Daftar Catatan Panen Sawah
         </h3>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div v-if="harvests.length === 0" class="text-center py-12 bg-white rounded-3xl border border-dashed border-slate-200 p-6 space-y-3">
+          <span class="text-4xl block">🌾</span>
+          <h4 class="text-sm font-extrabold text-slate-800">Lumbung Masih Kosong</h4>
+          <p class="text-xs text-slate-500 max-w-sm mx-auto">
+            Kamu belum mencatat hasil panen gabah di lumbung usahatani milikmu. Catatan panen tersimpan rapi dan terisolasi khusus akunmu.
+          </p>
+          <button
+            @click="showAddHarvestModal = true"
+            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-all active:scale-95 cursor-pointer"
+          >
+            <Plus :size="14" /> Catat Panen Pertama
+          </button>
+        </div>
+
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div
             v-for="harvest in harvests"
             :key="harvest.id"
@@ -591,7 +620,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { api, InventoryItem, HarvestItem, MarketPrice } from '@/services/api';
 import { useUserState } from '@/services/userState';
 import { 
@@ -600,7 +629,7 @@ import {
   MessageCircle, Check
 } from 'lucide-vue-next';
 
-const { currentPersona } = useUserState();
+const { currentPersona, currentUserId } = useUserState();
 const activeTab = ref<'stok' | 'lumbung'>('stok');
 
 // Daftar Kios / Toko Saprotan Mitra Ekosistem
@@ -847,6 +876,10 @@ const saveNewHarvest = async () => {
     console.error(err);
   }
 };
+
+watch(currentUserId, () => {
+  loadData();
+});
 
 onMounted(() => {
   loadData();

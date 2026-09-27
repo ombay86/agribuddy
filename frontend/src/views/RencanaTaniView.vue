@@ -757,25 +757,46 @@
     </div>
 
     <!-- ==================== TAB 2: KONTROL TANAM & MODAL (DUAL CONTROL: PROSES & KEUANGAN) ==================== -->
-    <div v-else-if="topTab === 'kontrol'" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      <!-- Left Column (8 cols): Cockpit Modal, 5 Fase Interaktif (Dual Control) -->
-      <div class="lg:col-span-8 space-y-6">
-
-        <!-- LOADING SKELETON: Tampil saat farmlands sedang dimuat -->
-        <div v-if="isFarmLoading" class="space-y-4 animate-pulse">
-          <div class="bg-emerald-900/30 rounded-3xl h-52 w-full"></div>
-          <div class="bg-slate-200 rounded-3xl h-32 w-full"></div>
-          <div class="bg-slate-100 rounded-3xl h-40 w-full"></div>
-          <div class="flex justify-center pt-2">
-            <div class="flex items-center gap-2 text-slate-400 text-sm font-semibold">
-              <Loader2 :size="16" class="animate-spin" />
-              <span>Memuat data lahan...</span>
-            </div>
+    <div v-else-if="topTab === 'kontrol'">
+      <!-- LOADING SKELETON: Tampil saat farmlands sedang dimuat -->
+      <div v-if="isFarmLoading" class="space-y-4 animate-pulse max-w-4xl mx-auto py-8">
+        <div class="bg-emerald-900/30 rounded-3xl h-52 w-full"></div>
+        <div class="bg-slate-200 rounded-3xl h-32 w-full"></div>
+        <div class="bg-slate-100 rounded-3xl h-40 w-full"></div>
+        <div class="flex justify-center pt-2">
+          <div class="flex items-center gap-2 text-slate-400 text-sm font-semibold">
+            <Loader2 :size="16" class="animate-spin" />
+            <span>Memuat data lahan...</span>
           </div>
         </div>
+      </div>
 
-        <!-- Konten utama muncul setelah loading selesai -->
-        <template v-else>
+      <!-- EMPTY STATE JIKA BELUM ADA LAHAN AKTIF -->
+      <div v-else-if="activeFarmlands.length === 0" class="bg-white border border-slate-200/90 rounded-3xl p-8 sm:p-12 text-center space-y-4 shadow-xs max-w-xl mx-auto my-6">
+        <div class="w-16 h-16 rounded-3xl bg-emerald-100 text-emerald-800 text-3xl flex items-center justify-center mx-auto shadow-inner">
+          🌾
+        </div>
+        <div class="space-y-1.5">
+          <h3 class="text-lg font-black text-slate-800">Kamu belum membuat lahan untuk diolah.</h3>
+          <p class="text-xs text-slate-500 leading-relaxed max-w-md mx-auto">
+            Rancang rencana tanam baru dengan panduan kecerdasan buatan (AI) atau aktifkan draf petak sawah tersimpan untuk mulai mengontrol proses dan modal usahatani.
+          </p>
+        </div>
+        <div class="pt-2">
+          <button
+            @click="setTopTab('rencana'); rencanaSubMode = 'wizard'"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md transition-all active:scale-95 cursor-pointer"
+          >
+            <PlusCircle :size="15" />
+            <span>Buat Sekarang</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Konten utama jika ada lahan aktif -->
+      <div v-else class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- Left Column (8 cols): Cockpit Modal, 5 Fase Interaktif (Dual Control) -->
+        <div class="lg:col-span-8 space-y-6">
 
         <!-- Financial & Progress Cockpit (Neraca Kendali Modal & Siklus Budidaya) -->
         <div class="bg-gradient-to-br from-emerald-900 to-teal-950 text-white rounded-3xl p-6 shadow-sm space-y-4">
@@ -950,12 +971,12 @@
                         🔒 Selesai & Terkunci
                       </span>
                       <span v-else class="text-[10px] font-bold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-full">
-                        {{ getPhaseDoneTasksCount(phase.step_no) }} / {{ phase.tasks.length }} Selesai
+                        {{ getPhaseDoneTasksCount(phase.step_no) }} / {{ getPhaseTasks(phase).length }} Selesai
                       </span>
                     </div>
                     <div class="space-y-2">
                       <div
-                        v-for="(task, tIdx) in phase.tasks"
+                        v-for="(task, tIdx) in getPhaseTasks(phase)"
                         :key="tIdx"
                         @click="phase.status !== 'SELESAI' && togglePhaseTask(phase.step_no, tIdx)"
                         class="p-2.5 rounded-xl border transition-all select-none flex items-start gap-2.5"
@@ -1010,7 +1031,7 @@
                     <div class="grid grid-cols-2 gap-2 text-xs">
                       <div class="p-2.5 rounded-xl bg-white border border-slate-200">
                         <span class="text-[9px] font-bold text-slate-400 uppercase block">Plafon RAB AI</span>
-                        <span class="font-black text-slate-800 text-sm">Rp {{ phase.allocated_budget.toLocaleString('id-ID') }}</span>
+                        <span class="font-black text-slate-800 text-sm">Rp {{ getPhaseAllocatedBudget(phase).toLocaleString('id-ID') }}</span>
                       </div>
                       <div class="p-2.5 rounded-xl bg-white border border-slate-200">
                         <span class="text-[9px] font-bold text-slate-400 uppercase block">Realisasi Aktual</span>
@@ -1087,11 +1108,11 @@
                 <div class="grid grid-cols-2 gap-2 text-xs">
                   <div>
                     <span class="text-[9px] text-slate-400 font-bold block">Plafon RAB</span>
-                    <span class="font-black text-slate-700">Rp {{ phase.allocated_budget.toLocaleString('id-ID') }}</span>
+                    <span class="font-black text-slate-700">Rp {{ getPhaseAllocatedBudget(phase).toLocaleString('id-ID') }}</span>
                   </div>
                   <div>
                     <span class="text-[9px] text-slate-400 font-bold block">Realisasi</span>
-                    <span class="font-black" :class="getActualCostForPhase(phase) > phase.allocated_budget ? 'text-rose-600' : 'text-emerald-700'">
+                    <span class="font-black" :class="getActualCostForPhase(phase) > getPhaseAllocatedBudget(phase) ? 'text-rose-600' : 'text-emerald-700'">
                       Rp {{ getActualCostForPhase(phase).toLocaleString('id-ID') }}
                     </span>
                   </div>
@@ -1099,8 +1120,8 @@
                 <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
                   <div
                     class="h-full rounded-full transition-all"
-                    :class="getActualCostForPhase(phase) > phase.allocated_budget ? 'bg-rose-400' : 'bg-emerald-400'"
-                    :style="{ width: `${Math.min(100, phase.allocated_budget > 0 ? (getActualCostForPhase(phase) / phase.allocated_budget) * 100 : 0)}%` }"
+                    :class="getActualCostForPhase(phase) > getPhaseAllocatedBudget(phase) ? 'bg-rose-400' : 'bg-emerald-400'"
+                    :style="{ width: `${Math.min(100, getPhaseAllocatedBudget(phase) > 0 ? (getActualCostForPhase(phase) / getPhaseAllocatedBudget(phase)) * 100 : 0)}%` }"
                   ></div>
                 </div>
               </div>
@@ -1149,24 +1170,92 @@
 
           </div>
         </div>
-
-        </template><!-- end v-else (bukan loading) -->
       </div>
 
       <!-- Right Column (4 cols) -->
       <div class="lg:col-span-4 space-y-6">
-        <!-- SELECTOR PETAK SAWAH (dropdown) -->
-        <div class="bg-white border border-slate-200/90 rounded-3xl p-4 shadow-xs">
-          <label class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1.5">Petak Sawah Aktif</label>
-          <select
-            v-model="activeFarmId"
-            @change="onActiveFarmChanged"
-            class="w-full text-sm font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2 focus:outline-none focus:border-emerald-400 cursor-pointer"
-          >
-            <option v-for="f in activeFarmlands" :key="f.id" :value="f.id">
-              {{ f.name }} — {{ f.land_size_ha }} Ha · {{ f.commodity }}
-            </option>
-          </select>
+        <!-- PANEL KELOLA LAHAN (Selector, Edit, Mulai dari Tengah, Hapus) -->
+        <div class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs space-y-3.5">
+          <div class="flex items-center justify-between pb-1 border-b border-slate-100">
+            <div>
+              <div class="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
+                <span>🌾</span> Kelola Lahan
+              </div>
+              <h3 class="text-xs font-black text-slate-800 mt-1">Petak Sawah Aktif</h3>
+            </div>
+            <button
+              @click="openAddFarmModal"
+              type="button"
+              class="text-xs font-black text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-xl border border-emerald-200 active:scale-95 transition-all flex items-center gap-1 cursor-pointer"
+              title="Tambah Petak Sawah Baru"
+            >
+              <PlusCircle :size="12" /> + Tambah
+            </button>
+          </div>
+
+          <!-- Dropdown Pilihan Sawah -->
+          <div>
+            <select
+              v-model="activeFarmId"
+              @change="onActiveFarmChanged"
+              class="w-full text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2.5 focus:outline-none focus:border-emerald-400 cursor-pointer shadow-2xs"
+            >
+              <option v-for="f in activeFarmlands" :key="f.id" :value="f.id">
+                {{ f.name }} — {{ f.land_size_ha }} Ha · {{ f.commodity }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Quick Specs & Action Buttons -->
+          <div v-if="activeFarm" class="space-y-2.5 pt-1">
+            <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100 space-y-1 text-xs">
+              <div class="flex items-center justify-between text-slate-600">
+                <span class="text-[10px] text-slate-400 font-bold uppercase">Luas & Komoditas</span>
+                <span class="font-black text-slate-800">{{ activeFarm.land_size_ha }} Ha • {{ activeFarm.commodity }}</span>
+              </div>
+              <div class="flex items-center justify-between text-slate-600">
+                <span class="text-[10px] text-slate-400 font-bold uppercase">Lokasi Petak</span>
+                <span class="font-semibold text-slate-700 truncate max-w-[180px]">{{ activeFarm.location }}</span>
+              </div>
+              <div class="flex items-center justify-between text-slate-600">
+                <span class="text-[10px] text-slate-400 font-bold uppercase">Tanggal Tanam</span>
+                <span class="font-semibold text-slate-700">{{ activeFarm.planting_date || '-' }}</span>
+              </div>
+            </div>
+
+            <!-- Tombol Kelola: Edit, Fast-Track (Mulai dari Tengah), Hapus -->
+            <div class="grid grid-cols-3 gap-1.5 pt-1">
+              <button
+                @click="openEditFarmModal"
+                type="button"
+                class="py-2 px-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold flex items-center justify-center gap-1 transition-all cursor-pointer active:scale-95"
+                title="Edit data petak sawah"
+              >
+                <Pencil :size="12" class="text-slate-500" />
+                <span>Edit</span>
+              </button>
+
+              <button
+                @click="openFastTrackModal"
+                type="button"
+                class="py-2 px-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 text-[11px] font-bold flex items-center justify-center gap-1 transition-all cursor-pointer active:scale-95"
+                title="Sesuaikan fase berjalan untuk lahan konvensional yang sudah mulai"
+              >
+                <Play :size="12" class="text-amber-600" />
+                <span>Set Fase</span>
+              </button>
+
+              <button
+                @click="handleDeleteFarm"
+                type="button"
+                class="py-2 px-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-[11px] font-bold flex items-center justify-center gap-1 transition-all cursor-pointer active:scale-95"
+                title="Hapus lahan ini"
+              >
+                <Trash2 :size="12" class="text-rose-500" />
+                <span>Hapus</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- PANEL KEMITRAAN -->
@@ -1231,6 +1320,203 @@
           </div>
         </div>
 
+      </div>
+    </div>
+  </div>
+
+    <!-- MODAL EDIT LAHAN -->
+    <div v-if="isEditFarmModalOpen && activeFarm" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in">
+      <div class="bg-white w-full max-w-md rounded-3xl p-5 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto relative">
+        <button
+          @click="isEditFarmModalOpen = false"
+          class="absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 text-slate-500 p-1.5 rounded-full transition-all cursor-pointer"
+        >
+          ✕
+        </button>
+
+        <div class="space-y-1">
+          <div class="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase">
+            ✏️ Kelola Petak Sawah
+          </div>
+          <h3 class="text-base font-black text-slate-800">
+            Edit Data Petak Lahan
+          </h3>
+          <p class="text-xs text-slate-500">
+            Perbarui nama, luas, komoditas, lokasi, dan tanggal mulai tanam petak lahan ini.
+          </p>
+        </div>
+
+        <form @submit.prevent="handleUpdateFarmland" class="space-y-3 pt-1">
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1">Nama / Identitas Petak Lahan</label>
+            <input
+              v-model="editFarmForm.name"
+              type="text"
+              required
+              class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1">Luas Lahan (Hektar)</label>
+            <input
+              v-model.number="editFarmForm.land_size_ha"
+              type="number"
+              step="0.05"
+              min="0.05"
+              required
+              class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1">Komoditas yang Ditanam</label>
+            <select
+              v-model="editFarmForm.commodity"
+              class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500 bg-white cursor-pointer"
+            >
+              <option value="Padi Sawah Inpari 32">Padi Sawah (Inpari 32 Bersertifikat)</option>
+              <option value="Padi Ciherang">Padi Ciherang Unggul</option>
+              <option value="Padi Mekongga">Padi Mekongga</option>
+              <option value="Jagung Hibrida Bisi-18">Jagung Hibrida Bisi-18</option>
+              <option value="Kedelai Anjasmoro">Kedelai Anjasmoro</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1">Lokasi Lahan</label>
+            <input
+              v-model="editFarmForm.location"
+              type="text"
+              required
+              class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1">Tanggal Mulai Tanam (Dasar Hitung HST)</label>
+            <input
+              v-model="editFarmForm.planting_date"
+              type="date"
+              class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500 bg-white"
+            />
+          </div>
+
+          <div class="pt-2 flex items-center gap-2">
+            <button
+              type="button"
+              @click="isEditFarmModalOpen = false"
+              class="flex-1 py-2 px-3 rounded-xl border border-slate-300 text-xs font-bold text-slate-600 hover:bg-slate-50 active:scale-95 transition-all cursor-pointer"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              :disabled="isSubmittingEditFarm"
+              class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-3 rounded-xl shadow-2xs active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-60 cursor-pointer"
+            >
+              <Loader2 v-if="isSubmittingEditFarm" :size="14" class="animate-spin" />
+              <Check v-else :size="14" />
+              <span>{{ isSubmittingEditFarm ? 'Menyimpan...' : 'Simpan Perubahan' }}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL FAST-TRACK: MULAI DARI TENGAH (SESUAIKAN FASE BERJALAN) -->
+    <div v-if="isFastTrackModalOpen && activeFarm" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in">
+      <div class="bg-white w-full max-w-md rounded-3xl p-5 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto relative">
+        <button
+          @click="isFastTrackModalOpen = false"
+          class="absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 text-slate-500 p-1.5 rounded-full transition-all cursor-pointer"
+        >
+          ✕
+        </button>
+
+        <div class="space-y-1">
+          <div class="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase">
+            ⚡ Fitur Petani Konvensional
+          </div>
+          <h3 class="text-base font-black text-slate-800">
+            Mulai dari Fase Lapangan Saat Ini
+          </h3>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            Jika padi di lahan Anda sudah berjalan dan ingin langsung memantau dari fase tertentu (misal Vegetatif / Pemupukan), pilih fase aktif di bawah. Fase sebelumnya akan otomatis ditandai <strong>Selesai (✓)</strong>.
+          </p>
+        </div>
+
+        <form @submit.prevent="handleFastTrackSubmit" class="space-y-3.5 pt-1">
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1.5">Pilih Fase yang Sedang Berjalan:</label>
+            <div class="space-y-2">
+              <label
+                v-for="st in [
+                  { no: 1, name: 'Fase 1: Olah Tanah & Bajak Garu', range: 'H-14 s/d H-1' },
+                  { no: 2, name: 'Fase 2: Tanam Padi & Persemaian', range: 'HST 1 - 15' },
+                  { no: 3, name: 'Fase 3: Pemupukan & Perawatan Vegetatif', range: 'HST 16 - 45' },
+                  { no: 4, name: 'Fase 4: Proteksi Hama & Generatif', range: 'HST 46 - 80' },
+                  { no: 5, name: 'Fase 5: Pengeringan & Panen Raya', range: 'HST 81 - 115' }
+                ]"
+                :key="st.no"
+                class="flex items-center justify-between p-3 rounded-2xl border cursor-pointer transition-all text-xs"
+                :class="fastTrackStepNo === st.no
+                  ? 'border-emerald-500 bg-emerald-50/80 ring-2 ring-emerald-200'
+                  : 'border-slate-200 hover:border-slate-300 bg-slate-50/50'"
+              >
+                <div class="flex items-center gap-2.5">
+                  <input
+                    type="radio"
+                    :value="st.no"
+                    v-model="fastTrackStepNo"
+                    @change="onFastTrackPhaseChanged"
+                    class="text-emerald-600 focus:ring-emerald-500"
+                  />
+                  <div>
+                    <p class="font-extrabold text-slate-800">{{ st.name }}</p>
+                    <p class="text-[10px] text-slate-500 font-semibold">{{ st.range }}</p>
+                  </div>
+                </div>
+                <span
+                  v-if="fastTrackStepNo === st.no"
+                  class="text-[9px] font-black uppercase bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full"
+                >
+                  Dipilih
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-slate-700 block mb-1">Estimasi Tanggal Tanam</label>
+            <input
+              v-model="fastTrackPlantingDate"
+              type="date"
+              required
+              class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-emerald-500 bg-white"
+            />
+            <p class="text-[10px] text-slate-400 mt-1">Tanggal tanam disesuaikan otomatis dengan estimasi umur tanaman (HST).</p>
+          </div>
+
+          <div class="pt-2 flex items-center gap-2">
+            <button
+              type="button"
+              @click="isFastTrackModalOpen = false"
+              class="flex-1 py-2 px-3 rounded-xl border border-slate-300 text-xs font-bold text-slate-600 hover:bg-slate-50 active:scale-95 transition-all cursor-pointer"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              :disabled="isSubmittingFastTrack"
+              class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-3 rounded-xl shadow-2xs active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-60 cursor-pointer"
+            >
+              <Loader2 v-if="isSubmittingFastTrack" :size="14" class="animate-spin" />
+              <Check v-else :size="14" />
+              <span>{{ isSubmittingFastTrack ? 'Menyesuaikan...' : 'Terapkan Fase' }}</span>
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -2116,6 +2402,19 @@ const getExpensesForPhase = (stepNo: number) => {
   }
 };
 
+const getPhaseAllocatedBudget = (phase: any) => {
+  return Number(phase?.allocated_budget ?? phase?.target_cost ?? 0);
+};
+
+const getPhaseTasks = (phase: any): string[] => {
+  if (Array.isArray(phase?.tasks) && phase.tasks.length > 0) return phase.tasks;
+  return [
+    'Pemeriksaan dan pencatatan kondisi tanaman di petak sawah',
+    'Pengaturan kecukupan air irigasi sesuai fase tumbuh',
+    'Pencegahan dan pemantauan organisme pengganggu tanaman (OPT)'
+  ];
+};
+
 const getActualCostForPhase = (phase: TimelinePhase) => {
   const exps = getExpensesForPhase(phase.step_no);
   const sum = exps.reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
@@ -2215,6 +2514,119 @@ const handleCreateFarmland = async () => {
     alert(err.message || 'Gagal menambahkan petak sawah');
   } finally {
     isSubmittingFarm.value = false;
+  }
+};
+
+// --- FITUR KELOLA LAHAN (EDIT, HAPUS, MULAI DARI TENGAH) ---
+const isEditFarmModalOpen = ref(false);
+const isSubmittingEditFarm = ref(false);
+const editFarmForm = ref({
+  name: '',
+  land_size_ha: 0.8,
+  commodity: 'Padi Sawah Inpari 32',
+  location: '',
+  planting_date: ''
+});
+
+const openEditFarmModal = () => {
+  if (!activeFarm.value) return;
+  editFarmForm.value = {
+    name: activeFarm.value.name,
+    land_size_ha: activeFarm.value.land_size_ha,
+    commodity: activeFarm.value.commodity,
+    location: activeFarm.value.location,
+    planting_date: activeFarm.value.planting_date || new Date().toISOString().split('T')[0]
+  };
+  isEditFarmModalOpen.value = true;
+};
+
+const handleUpdateFarmland = async () => {
+  if (!activeFarm.value) return;
+  try {
+    isSubmittingEditFarm.value = true;
+    const updated = await api.updateFarmland(activeFarm.value.id, {
+      name: editFarmForm.value.name,
+      land_size_ha: editFarmForm.value.land_size_ha,
+      commodity: editFarmForm.value.commodity,
+      location: editFarmForm.value.location,
+      planting_date: editFarmForm.value.planting_date,
+      total_budget: Math.round(editFarmForm.value.land_size_ha * 6400000)
+    });
+    isEditFarmModalOpen.value = false;
+    await loadFarmlands();
+    if (updated) {
+      selectFarmland(updated);
+    }
+    window.dispatchEvent(new CustomEvent('agribuddy:refresh-farmlands'));
+  } catch (err: any) {
+    alert(err.message || 'Gagal memperbarui data lahan');
+  } finally {
+    isSubmittingEditFarm.value = false;
+  }
+};
+
+const handleDeleteFarm = async () => {
+  if (!activeFarm.value) return;
+  const farmName = activeFarm.value.name;
+  const confirmed = confirm(
+    `Apakah Anda yakin ingin menghapus lahan "${farmName}"?\n\n` +
+    `Semua data tahapan siklus, pengelola kemitraan, dan pengeluaran modal lahan ini akan dihapus permanen.`
+  );
+  if (!confirmed) return;
+
+  try {
+    await api.deleteFarmland(activeFarm.value.id);
+    await loadFarmlands();
+    window.dispatchEvent(new CustomEvent('agribuddy:refresh-farmlands'));
+  } catch (err: any) {
+    alert(err.message || 'Gagal menghapus lahan');
+  }
+};
+
+// State Fast-Track (Mulai dari Tengah untuk Petani Konvensional)
+const isFastTrackModalOpen = ref(false);
+const isSubmittingFastTrack = ref(false);
+const fastTrackStepNo = ref(2);
+const fastTrackPlantingDate = ref('');
+
+const openFastTrackModal = () => {
+  if (!activeFarm.value) return;
+  const currentPhases = activeFarm.value.timeline_phases || [];
+  const running = currentPhases.find(p => p.status === 'SEDANG_BERJALAN');
+  fastTrackStepNo.value = running ? running.step_no : 2;
+  fastTrackPlantingDate.value = activeFarm.value.planting_date || new Date().toISOString().split('T')[0];
+  isFastTrackModalOpen.value = true;
+};
+
+const onFastTrackPhaseChanged = () => {
+  const now = new Date();
+  let daysAgo = 0;
+  if (fastTrackStepNo.value === 2) daysAgo = 5;
+  else if (fastTrackStepNo.value === 3) daysAgo = 25;
+  else if (fastTrackStepNo.value === 4) daysAgo = 55;
+  else if (fastTrackStepNo.value === 5) daysAgo = 90;
+
+  const estimatedDate = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
+  fastTrackPlantingDate.value = estimatedDate.toISOString().split('T')[0];
+};
+
+const handleFastTrackSubmit = async () => {
+  if (!activeFarm.value) return;
+  try {
+    isSubmittingFastTrack.value = true;
+    const res = await api.setActiveFarmlandPhase(
+      activeFarm.value.id,
+      fastTrackStepNo.value,
+      fastTrackPlantingDate.value
+    );
+    isFastTrackModalOpen.value = false;
+    await loadFarmlands();
+    window.dispatchEvent(new CustomEvent('agribuddy:refresh-farmlands'));
+    alert(res.message || 'Status siklus budidaya berhasil disesuaikan!');
+  } catch (err: any) {
+    alert(err.message || 'Gagal mengatur fase berjalan');
+  } finally {
+    isSubmittingFastTrack.value = false;
   }
 };
 

@@ -3,10 +3,23 @@ import { db } from '../database/db.js';
 
 const router = Router();
 
+const isUserJoko = (uid: string) => uid === 'usr_petani' || uid === 'usr_001';
+
 // GET /
 router.get('/', (req: Request, res: Response) => {
+  const userId = (req.query.user_id as string) || (req.headers['x-user-id'] as string) || '';
   const items = db.getCollection("inventory");
-  const processed = items.map((item: any) => ({
+
+  let userItems = items;
+  if (userId) {
+    if (isUserJoko(userId)) {
+      userItems = items.filter((item: any) => !item.user_id || isUserJoko(item.user_id));
+    } else {
+      userItems = items.filter((item: any) => item.user_id === userId);
+    }
+  }
+
+  const processed = userItems.map((item: any) => ({
     ...item,
     is_low_stock: (item.quantity || 0) <= (item.min_threshold || 2)
   }));
@@ -15,7 +28,11 @@ router.get('/', (req: Request, res: Response) => {
 
 // POST /
 router.post('/', (req: Request, res: Response) => {
-  const item = req.body;
+  const userId = (req.query.user_id as string) || (req.headers['x-user-id'] as string) || 'usr_petani';
+  const item = {
+    ...req.body,
+    user_id: userId
+  };
   const inserted = db.insert("inventory", item);
   res.json({
     ...inserted,
