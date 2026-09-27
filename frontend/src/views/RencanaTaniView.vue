@@ -731,37 +731,39 @@
       <!-- Left Column (8 cols): Cockpit Modal, 5 Fase Interaktif (Dual Control) -->
       <div class="lg:col-span-8 space-y-6">
         
-        <!-- Header Identitas Petak yang Sedang Dikontrol -->
-        <div class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center p-2.5 shrink-0 shadow-xs border border-emerald-400/30">
+        <!-- Header Identitas Petak yang Sedang Dikontrol: Unified Selector -->
+        <div class="bg-white border border-slate-200/90 rounded-3xl p-4 shadow-xs">
+          <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+            <!-- Icon -->
+            <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center p-2.5 shrink-0 shadow-xs border border-emerald-400/30">
               <img src="/logo/logo-white-icon.svg" class="w-full h-full object-contain" alt="Farmland" />
             </div>
-            <div>
-              <span class="text-[10px] font-extrabold uppercase text-slate-400 block tracking-wider">Petak Sawah yang Sedang Dikontrol:</span>
-              <div class="flex items-center gap-2 flex-wrap">
-                <h3 class="text-base font-black text-slate-800">{{ activeFarm?.name }}</h3>
+            <!-- Info + Selector (unified) -->
+            <div class="flex-1 min-w-0">
+              <span class="text-[9px] font-extrabold uppercase text-slate-400 block tracking-wider">Petak Aktif yang Sedang Dikontrol</span>
+              <!-- Name as dropdown trigger: styled as a bold title, tapi tetap fungsional -->
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <select
+                  v-model="activeFarmId"
+                  @change="onActiveFarmChanged"
+                  class="bg-transparent font-black text-slate-800 text-base leading-tight focus:outline-none cursor-pointer border-0 p-0 w-full"
+                >
+                  <option v-for="f in activeFarmlands" :key="f.id" :value="f.id">
+                    {{ f.name }}
+                  </option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2 flex-wrap mt-1">
                 <span class="text-[10px] font-black bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full uppercase border border-emerald-200">
                   {{ activeFarm?.commodity }}
                 </span>
+                <span class="text-[10px] text-slate-400 font-semibold">📍 {{ activeFarm?.location }} • 📐 {{ activeFarm?.land_size_ha }} Ha</span>
               </div>
-              <p class="text-xs text-slate-500 font-semibold mt-0.5">
-                📍 {{ activeFarm?.location }} • 📐 {{ activeFarm?.land_size_ha }} Ha • 💧 {{ activeFarm?.water_source }}
-              </p>
             </div>
-          </div>
-          <!-- Farmland Switcher Dropdown -->
-          <div class="shrink-0 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
-            <label class="text-[9px] font-black uppercase text-slate-400 block px-1">Ganti Petak Sawah:</label>
-            <select
-              v-model="activeFarmId"
-              @change="onActiveFarmChanged"
-              class="bg-transparent text-slate-800 text-xs font-black px-1 py-1 focus:outline-none cursor-pointer"
-            >
-              <option v-for="f in activeFarmlands" :key="f.id" :value="f.id">
-                {{ f.name }} ({{ f.land_size_ha }} Ha)
-              </option>
-            </select>
+            <!-- Badge status aktif -->
+            <span class="shrink-0 text-[10px] font-black bg-emerald-600 text-white px-3 py-1 rounded-full shadow-xs">
+              🟢 Aktif
+            </span>
           </div>
         </div>
 
@@ -835,15 +837,19 @@
           <div
             v-for="phase in (activeFarmPlan?.timeline_phases || plan?.timeline_phases || [])"
             :key="phase.step_no"
-            class="bg-white border rounded-3xl p-5 shadow-xs space-y-4 transition-all"
+            class="bg-white border rounded-3xl shadow-xs transition-all overflow-hidden"
             :class="phase.status === 'SELESAI' 
               ? 'border-emerald-300 bg-emerald-50/15' 
               : phase.status === 'SEDANG_BERJALAN' 
                 ? 'border-amber-300 ring-2 ring-amber-100 shadow-sm' 
                 : 'border-slate-200'"
           >
-            <!-- Phase Header -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+            <!-- Phase Header (always visible, acts as toggle) -->
+            <button
+              @click="togglePhaseExpand(phase.step_no)"
+              type="button"
+              class="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-5 text-left cursor-pointer hover:bg-slate-50/60 transition-colors"
+            >
               <div class="flex items-center gap-3">
                 <span
                   class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black shrink-0"
@@ -855,7 +861,7 @@
                 >
                   {{ phase.status === 'SELESAI' ? '✓' : phase.step_no }}
                 </span>
-                <div>
+                <div class="text-left">
                   <h4 class="text-sm font-black text-slate-800">{{ phase.name }}</h4>
                   <div class="text-[10px] font-bold text-slate-500 flex items-center gap-1.5 mt-0.5">
                     <Clock :size="11" /> {{ phase.day_range }} • Durasi {{ phase.duration_days }} hari
@@ -863,136 +869,145 @@
                 </div>
               </div>
 
-              <!-- Status Dropdown Selector -->
-              <div class="flex items-center gap-2">
-                <span class="text-[10px] font-bold text-slate-400">Status Fase:</span>
-                <select
-                  v-model="phase.status"
-                  @change="saveStepUpdate(phase)"
-                  class="text-xs font-black px-3 py-1.5 rounded-xl border focus:outline-none transition-all cursor-pointer"
-                  :class="phase.status === 'SELESAI' 
-                    ? 'bg-emerald-100 text-emerald-800 border-emerald-300' 
-                    : phase.status === 'SEDANG_BERJALAN' 
-                      ? 'bg-amber-100 text-amber-800 border-amber-300' 
-                      : 'bg-slate-100 text-slate-600 border-slate-200'"
-                >
-                  <option value="BELUM">Belum Mulai</option>
-                  <option value="SEDANG_BERJALAN">Sedang Berjalan</option>
-                  <option value="SELESAI">Selesai ✓</option>
-                </select>
-              </div>
-            </div>
+              <div class="flex items-center gap-2.5 shrink-0">
+                <!-- Status Dropdown Selector -->
+                <div class="flex items-center gap-1.5" @click.stop>
+                  <select
+                    v-model="phase.status"
+                    @change="saveStepUpdate(phase)"
+                    class="text-xs font-black px-3 py-1.5 rounded-xl border focus:outline-none transition-all cursor-pointer"
+                    :class="phase.status === 'SELESAI' 
+                      ? 'bg-emerald-100 text-emerald-800 border-emerald-300' 
+                      : phase.status === 'SEDANG_BERJALAN' 
+                        ? 'bg-amber-100 text-amber-800 border-amber-300' 
+                        : 'bg-slate-100 text-slate-600 border-slate-200'"
+                  >
+                    <option value="BELUM">Belum Mulai</option>
+                    <option value="SEDANG_BERJALAN">Sedang Berjalan</option>
+                    <option value="SELESAI">Selesai ✓</option>
+                  </select>
+                </div>
 
-            <!-- DUAL CONTROL GRID: PROSES (KIRI) vs MODAL (KANAN) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                <!-- Expand/Collapse Chevron -->
+                <div class="text-slate-400 transition-transform" :class="isPhaseExpanded(phase.step_no) ? 'rotate-180' : ''">
+                  <ChevronDown :size="16" />
+                </div>
+              </div>
+            </button>
+
+            <!-- Phase Body (collapsible) -->
+            <div v-if="isPhaseExpanded(phase.step_no)" class="px-5 pb-5 space-y-4 border-t border-slate-100">
+              <!-- DUAL CONTROL GRID: PROSES (KIRI) vs MODAL (KANAN) -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start pt-4">
               
-              <!-- KOLOM KIRI: KONTROL PROSES & CHECKLIST -->
-              <div class="space-y-3 bg-slate-50/80 p-4 rounded-2xl border border-slate-100">
-                <div class="flex items-center justify-between pb-1 border-b border-slate-200/60">
-                  <span class="text-xs font-black text-slate-700 flex items-center gap-1.5">
-                    <CheckSquare :size="14" class="text-emerald-600" /> Kontrol Proses Lapangan
-                  </span>
-                  <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-full">
-                    {{ getPhaseDoneTasksCount(phase.step_no) }} / {{ phase.tasks.length }} Selesai
-                  </span>
-                </div>
+                <!-- KOLOM KIRI: KONTROL PROSES & CHECKLIST -->
+                <div class="space-y-3 bg-slate-50/80 p-4 rounded-2xl border border-slate-100">
+                  <div class="flex items-center justify-between pb-1 border-b border-slate-200/60">
+                    <span class="text-xs font-black text-slate-700 flex items-center gap-1.5">
+                      <CheckSquare :size="14" class="text-emerald-600" /> Kontrol Proses Lapangan
+                    </span>
+                    <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-full">
+                      {{ getPhaseDoneTasksCount(phase.step_no) }} / {{ phase.tasks.length }} Selesai
+                    </span>
+                  </div>
 
-                <!-- Checklist Items -->
-                <div class="space-y-2">
-                  <div
-                    v-for="(task, tIdx) in phase.tasks"
-                    :key="tIdx"
-                    @click="togglePhaseTask(phase.step_no, tIdx)"
-                    class="p-2.5 rounded-xl border transition-all cursor-pointer flex items-start gap-2.5 select-none"
-                    :class="isPhaseTaskDone(phase.step_no, tIdx) 
-                      ? 'bg-emerald-50/80 border-emerald-200 text-slate-500 line-through' 
-                      : 'bg-white hover:border-emerald-300 border-slate-200 text-slate-800 shadow-2xs'"
-                  >
+                  <!-- Checklist Items -->
+                  <div class="space-y-2">
                     <div
-                      class="w-4 h-4 rounded-md border mt-0.5 flex items-center justify-center shrink-0 transition-colors"
-                      :class="isPhaseTaskDone(phase.step_no, tIdx) ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 bg-white'"
+                      v-for="(task, tIdx) in phase.tasks"
+                      :key="tIdx"
+                      @click="togglePhaseTask(phase.step_no, tIdx)"
+                      class="p-2.5 rounded-xl border transition-all cursor-pointer flex items-start gap-2.5 select-none"
+                      :class="isPhaseTaskDone(phase.step_no, tIdx) 
+                        ? 'bg-emerald-50/80 border-emerald-200 text-slate-500 line-through' 
+                        : 'bg-white hover:border-emerald-300 border-slate-200 text-slate-800 shadow-2xs'"
                     >
-                      <Check v-if="isPhaseTaskDone(phase.step_no, tIdx)" :size="10" />
-                    </div>
-                    <span class="text-xs font-semibold leading-tight flex-1">{{ task }}</span>
-                  </div>
-                </div>
-
-                <!-- Tips Cerdas AI Agronomis -->
-                <div class="bg-amber-50/80 border border-amber-200/70 rounded-xl p-2.5 text-[11px] text-amber-950 flex items-start gap-2 mt-2 leading-relaxed">
-                  <Sparkles :size="14" class="text-amber-600 shrink-0 mt-0.5" />
-                  <div>
-                    <strong class="font-extrabold text-amber-900">Tips AI: </strong>
-                    <span>{{ phase.ai_tips }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- KOLOM KANAN: KONTROL MODAL & REALISASI KEUANGAN -->
-              <div class="space-y-3 bg-slate-50/80 p-4 rounded-2xl border border-slate-100">
-                <div class="flex items-center justify-between pb-1 border-b border-slate-200/60">
-                  <span class="text-xs font-black text-slate-700 flex items-center gap-1.5">
-                    <Receipt :size="14" class="text-emerald-600" /> Kontrol Modal Fase Ini
-                  </span>
-                  <button
-                    @click="openAddExpenseModal(getPhaseCategory(phase.step_no), `Biaya ${phase.name}`)"
-                    class="text-[10px] font-black text-emerald-800 bg-emerald-100 hover:bg-emerald-200 px-2.5 py-0.5 rounded-full transition-all flex items-center gap-1 cursor-pointer"
-                  >
-                    <PlusCircle :size="11" /> Catat Biaya
-                  </button>
-                </div>
-
-                <!-- Plafon vs Realisasi Aktual -->
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                  <div class="p-2.5 rounded-xl bg-white border border-slate-200">
-                    <span class="text-[9px] font-bold text-slate-400 uppercase block">Plafon RAB AI</span>
-                    <span class="font-black text-slate-800 text-sm">Rp {{ phase.allocated_budget.toLocaleString('id-ID') }}</span>
-                  </div>
-                  <div class="p-2.5 rounded-xl bg-white border border-slate-200">
-                    <span class="text-[9px] font-bold text-slate-400 uppercase block">Realisasi Aktual</span>
-                    <span class="font-black text-emerald-700 text-sm">Rp {{ getActualCostForPhase(phase).toLocaleString('id-ID') }}</span>
-                  </div>
-                </div>
-
-                <!-- Transaksi Riil Tercatat untuk Fase Ini -->
-                <div class="space-y-1.5 pt-1">
-                  <span class="text-[10px] font-extrabold uppercase text-slate-400 block">Riwayat Transaksi Fase:</span>
-                  <div v-if="getExpensesForPhase(phase.step_no).length > 0" class="space-y-1 max-h-32 overflow-y-auto pr-1">
-                    <div
-                      v-for="exp in getExpensesForPhase(phase.step_no)"
-                      :key="exp.id"
-                      class="flex items-center justify-between text-[11px] p-2 rounded-xl bg-white border border-slate-100"
-                    >
-                      <div class="truncate pr-2">
-                        <p class="font-bold text-slate-800 truncate">{{ exp.item_name }}</p>
-                        <p class="text-[9px] text-slate-400">{{ exp.date }}</p>
+                      <div
+                        class="w-4 h-4 rounded-md border mt-0.5 flex items-center justify-center shrink-0 transition-colors"
+                        :class="isPhaseTaskDone(phase.step_no, tIdx) ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 bg-white'"
+                      >
+                        <Check v-if="isPhaseTaskDone(phase.step_no, tIdx)" :size="10" />
                       </div>
-                      <span class="font-black text-slate-800 shrink-0">Rp {{ (exp.amount || 0).toLocaleString('id-ID') }}</span>
+                      <span class="text-xs font-semibold leading-tight flex-1">{{ task }}</span>
                     </div>
                   </div>
-                  <div v-else class="text-center py-2.5 bg-white rounded-xl border border-dashed border-slate-200 text-[10px] text-slate-400">
-                    Belum ada transaksi khusus fase ini.
+
+                  <!-- Tips Cerdas AI Agronomis -->
+                  <div class="bg-amber-50/80 border border-amber-200/70 rounded-xl p-2.5 text-[11px] text-amber-950 flex items-start gap-2 mt-2 leading-relaxed">
+                    <Sparkles :size="14" class="text-amber-600 shrink-0 mt-0.5" />
+                    <div>
+                      <strong class="font-extrabold text-amber-900">Tips AI: </strong>
+                      <span>{{ phase.ai_tips }}</span>
+                    </div>
                   </div>
                 </div>
 
-                <!-- Rekomendasi Jasa Ekosistem untuk Fase ini -->
-                <div v-if="getPhasePartner(phase.step_no)" class="pt-1">
-                  <div class="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200/60 flex items-center justify-between text-xs">
-                    <div class="truncate pr-2">
-                      <span class="text-[9px] font-extrabold text-emerald-800 uppercase block">Mitra Terkait Fase:</span>
-                      <p class="font-black text-slate-800 text-[11px] truncate">{{ getPhasePartner(phase.step_no).name }}</p>
-                    </div>
+                <!-- KOLOM KANAN: KONTROL MODAL & REALISASI KEUANGAN -->
+                <div class="space-y-3 bg-slate-50/80 p-4 rounded-2xl border border-slate-100">
+                  <div class="flex items-center justify-between pb-1 border-b border-slate-200/60">
+                    <span class="text-xs font-black text-slate-700 flex items-center gap-1.5">
+                      <Receipt :size="14" class="text-emerald-600" /> Kontrol Modal Fase Ini
+                    </span>
                     <button
-                      @click="openWhatsApp(getPhasePartner(phase.step_no).phone, getPhasePartner(phase.step_no).name)"
-                      class="text-[10px] font-black bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg shrink-0 flex items-center gap-1 active:scale-95 transition-all cursor-pointer"
+                      @click="openAddExpenseModal(getPhaseCategory(phase.step_no), `Biaya ${phase.name}`)"
+                      class="text-[10px] font-black text-emerald-800 bg-emerald-100 hover:bg-emerald-200 px-2.5 py-0.5 rounded-full transition-all flex items-center gap-1 cursor-pointer"
                     >
-                      <Phone :size="11" /> Hubungi
+                      <PlusCircle :size="11" /> Catat Biaya
                     </button>
                   </div>
+
+                  <!-- Plafon vs Realisasi Aktual -->
+                  <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="p-2.5 rounded-xl bg-white border border-slate-200">
+                      <span class="text-[9px] font-bold text-slate-400 uppercase block">Plafon RAB AI</span>
+                      <span class="font-black text-slate-800 text-sm">Rp {{ phase.allocated_budget.toLocaleString('id-ID') }}</span>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-white border border-slate-200">
+                      <span class="text-[9px] font-bold text-slate-400 uppercase block">Realisasi Aktual</span>
+                      <span class="font-black text-emerald-700 text-sm">Rp {{ getActualCostForPhase(phase).toLocaleString('id-ID') }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Transaksi Riil Tercatat untuk Fase Ini -->
+                  <div class="space-y-1.5 pt-1">
+                    <span class="text-[10px] font-extrabold uppercase text-slate-400 block">Riwayat Transaksi Fase:</span>
+                    <div v-if="getExpensesForPhase(phase.step_no).length > 0" class="space-y-1 max-h-32 overflow-y-auto pr-1">
+                      <div
+                        v-for="exp in getExpensesForPhase(phase.step_no)"
+                        :key="exp.id"
+                        class="flex items-center justify-between text-[11px] p-2 rounded-xl bg-white border border-slate-100"
+                      >
+                        <div class="truncate pr-2">
+                          <p class="font-bold text-slate-800 truncate">{{ exp.item_name }}</p>
+                          <p class="text-[9px] text-slate-400">{{ exp.date }}</p>
+                        </div>
+                        <span class="font-black text-slate-800 shrink-0">Rp {{ (exp.amount || 0).toLocaleString('id-ID') }}</span>
+                      </div>
+                    </div>
+                    <div v-else class="text-center py-2.5 bg-white rounded-xl border border-dashed border-slate-200 text-[10px] text-slate-400">
+                      Belum ada transaksi khusus fase ini.
+                    </div>
+                  </div>
+
+                  <!-- Rekomendasi Jasa Ekosistem untuk Fase ini -->
+                  <div v-if="getPhasePartner(phase.step_no)" class="pt-1">
+                    <div class="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200/60 flex items-center justify-between text-xs">
+                      <div class="truncate pr-2">
+                        <span class="text-[9px] font-extrabold text-emerald-800 uppercase block">Mitra Terkait Fase:</span>
+                        <p class="font-black text-slate-800 text-[11px] truncate">{{ getPhasePartner(phase.step_no).name }}</p>
+                      </div>
+                      <button
+                        @click="openWhatsApp(getPhasePartner(phase.step_no).phone, getPhasePartner(phase.step_no).name)"
+                        class="text-[10px] font-black bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg shrink-0 flex items-center gap-1 active:scale-95 transition-all cursor-pointer"
+                      >
+                        <Phone :size="11" /> Hubungi
+                      </button>
+                    </div>
+                  </div>
+
                 </div>
 
               </div>
-
             </div>
           </div>
         </div>
@@ -1003,21 +1018,13 @@
       <div class="lg:col-span-4 space-y-6">
         <!-- KELOLA PETAK SAWAH SAYA -->
         <div class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs space-y-3.5">
-          <div class="flex items-center justify-between">
-            <div>
-              <span class="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
-                Multi-Lahan Usahatani
-              </span>
-              <h3 class="text-sm font-black text-slate-800 mt-1 flex items-center gap-1.5">
-                <Layers :size="16" class="text-emerald-600" /> Sawah yang Dikerjakan
-              </h3>
-            </div>
-            <button
-              @click="openAddFarmModal"
-              class="btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-1.5 px-3 rounded-xl shadow-xs active:scale-95 flex items-center gap-1 transition-all cursor-pointer"
-            >
-              <PlusCircle :size="13" /> Tambah Sawah
-            </button>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
+              Multi-Lahan Usahatani
+            </span>
+            <h3 class="text-sm font-black text-slate-800 flex items-center gap-1.5">
+              <Layers :size="16" class="text-emerald-600" /> Sawah yang Dikerjakan
+            </h3>
           </div>
 
           <!-- List Sawah Cards Vertikal -->
@@ -1047,21 +1054,13 @@
 
         <!-- BUKU MODAL LAHAN (RIWAYAT TRANSAKSI LENGKAP DARI DATABASE) -->
         <div class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs space-y-3.5">
-          <div class="flex items-center justify-between pb-1 border-b border-slate-100">
-            <div>
-              <div class="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
-                <Receipt :size="12" /> Buku Kas Lahan
-              </div>
-              <h3 class="text-xs font-black text-slate-800 mt-1">
-                Riwayat Modal: {{ activeFarm?.name }}
-              </h3>
+          <div class="pb-1 border-b border-slate-100">
+            <div class="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
+              <Receipt :size="12" /> Buku Kas Lahan
             </div>
-            <button
-              @click="openAddExpenseModal()"
-              class="text-xs font-black text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-xl border border-emerald-200 active:scale-95 transition-all flex items-center gap-1 cursor-pointer"
-            >
-              <PlusCircle :size="12" /> Catat
-            </button>
+            <h3 class="text-xs font-black text-slate-800 mt-1">
+              Riwayat Modal: {{ activeFarm?.name }}
+            </h3>
           </div>
 
           <div v-if="!activeFarm?.capital_expenses || activeFarm.capital_expenses.length === 0" class="text-center py-6 bg-slate-50 rounded-2xl border border-dashed border-slate-200 space-y-1">
@@ -1700,6 +1699,27 @@ const activeFarm = computed(() => {
   return activeFarmlands.value.find(f => f.id === activeFarmId.value) || activeFarmlands.value[0] || null;
 });
 
+// --- EXPAND/COLLAPSE PER FASE CARD (default: SELESAI → collapsed, lainnya → expanded) ---
+const expandedPhases = ref<Set<number>>(new Set());
+
+const initPhaseExpansion = (phases: { step_no: number; status: string }[]) => {
+  expandedPhases.value = new Set(
+    phases.filter(p => p.status !== 'SELESAI').map(p => p.step_no)
+  );
+};
+
+const togglePhaseExpand = (stepNo: number) => {
+  if (expandedPhases.value.has(stepNo)) {
+    expandedPhases.value.delete(stepNo);
+  } else {
+    expandedPhases.value.add(stepNo);
+  }
+  // Force reactivity on Set
+  expandedPhases.value = new Set(expandedPhases.value);
+};
+
+const isPhaseExpanded = (stepNo: number) => expandedPhases.value.has(stepNo);
+
 // Load Plan khusus untuk sawah aktif di Tab 2
 const loadActiveFarmPlan = async (farm: Farmland) => {
   try {
@@ -1714,6 +1734,10 @@ const loadActiveFarmPlan = async (farm: Farmland) => {
       coordinates_label: `${farm.latitude ? farm.latitude.toFixed(4) : '-7.2504'}, ${farm.longitude ? farm.longitude.toFixed(4) : '112.7512'} (${farm.location})`
     });
     activeFarmPlan.value = res;
+    // Init expand/collapse: SELESAI → collapsed, lainnya → expanded
+    if (res?.timeline_phases) {
+      initPhaseExpansion(res.timeline_phases);
+    }
   } catch (e) {
     console.error('Error loading active farm plan:', e);
   }
