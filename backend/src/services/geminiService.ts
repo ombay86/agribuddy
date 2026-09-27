@@ -180,7 +180,7 @@ export class GeminiService {
       const candidates = await this.getCandidateModels();
       console.log(`📡 Auto-detecting active Gemini model (candidates: ${candidates.slice(0, 3).join(', ')})...`);
 
-      const prompt = `Anda adalah pakar agronomi dan fitopatologi tanaman padi (AgriAI).
+      const prompt = `Anda adalah pakar agronomi dan fitopatologi tanaman padi (Agri AI).
 Analisis gambar daun padi ini secara cermat. Tentukan apakah tanaman terserang penyakit atau sehat.
 Penyakit utama tanaman padi meliputi:
 1. Hawar Daun Bakteri (Kresek / Xanthomonas oryzae)
@@ -326,7 +326,7 @@ Kembalikan jawaban HANYA dalam format JSON valid (tanpa markdown backtick ataupu
 
     if (this.ai && config.geminiApiKey) {
       const candidates = await this.getCandidateModels();
-      const systemInstruction = `Anda adalah AgriAI, asisten kecerdasan buatan cerdas untuk petani usahatani di platform AgriBuddy Indonesia.
+      const systemInstruction = `Anda adalah Agri AI, asisten kecerdasan buatan cerdas untuk petani usahatani di platform AgriBuddy Indonesia.
 Peran Anda:
 1. Memberikan konsultasi budidaya tanaman padi dan palawija, pengendalian hama & penyakit, pemupukan berimbang, irigasi, serta analisa cuaca.
 2. Gaya bahasa ramah, praktis, edukatif, dan mudah dipahami oleh petani lokal ("Halo Pak/Bu Tani!").
@@ -343,7 +343,7 @@ ${detectedDiagnosis ? `Info tambahan dari foto daun yang diunggah pengguna: Terd
             });
           }
 
-          const currentParts: any[] = [{ text: newMessage || "Halo AgriAI, mohon bantuannya seputar tanaman ini." }];
+          const currentParts: any[] = [{ text: newMessage || "Halo Agri AI, mohon bantuannya seputar tanaman ini." }];
           if (imageBase64) {
             const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, '');
             currentParts.push({
@@ -420,7 +420,7 @@ ${detectedDiagnosis ? `Info tambahan dari foto daun yang diunggah pengguna: Terd
         `Anda juga dapat mengambil foto daunnya sekarang dan lampirkan di chat ini agar saya analisiskan!`;
     }
 
-    return `Halo Pak Tani! Saya **AgriAI**, asisten pertanian cerdas Anda di AgriBuddy. 🌾\n\n` +
+    return `Halo Pak Tani! Saya **Agri AI**, asisten pertanian cerdas Anda di AgriBuddy. 🌾\n\n` +
       `Saya siap membantu menjawab seputar:\n` +
       `• Deteksi dan solusi penyakit daun padi & hama tanaman\n` +
       `• Rekomendasi dosis pemupukan berimbang & jadwal aplikasi\n` +

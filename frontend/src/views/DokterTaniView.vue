@@ -86,7 +86,7 @@
       <!-- Info Footer -->
       <div class="p-3 border-t border-slate-100 bg-slate-50 text-[10px] text-slate-400 flex items-center justify-between">
         <span>Powered by Gemini Vision</span>
-        <span class="font-bold text-emerald-700">AgriAI v2.0</span>
+        <span class="font-bold text-emerald-700">Agri AI v2.0</span>
       </div>
     </aside>
 
@@ -118,7 +118,7 @@
             </div>
             <div>
               <div class="flex items-center gap-1.5">
-                <h2 class="text-sm font-black text-slate-800 tracking-tight leading-none">AgriAI</h2>
+                <h2 class="text-sm font-black text-slate-800 tracking-tight leading-none">Agri AI</h2>
                 <span class="text-[9px] font-black uppercase bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded-md">
                   Sahabat Petani
                 </span>
@@ -158,7 +158,7 @@
 
           <div class="space-y-1.5">
             <h3 class="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">
-              Halo {{ currentPersona.name }}! Ada yang bisa AgriAI bantu?
+              Halo {{ currentPersona.name }}! Ada yang bisa Agri AI bantu?
             </h3>
             <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
               Konsultasikan penyakit daun padi, rekomendasi dosis pupuk berimbang, hama wereng, atau kirim foto daun untuk dianalisis langsung.
@@ -312,7 +312,7 @@
             </div>
             <div class="bg-white border border-slate-200 rounded-3xl rounded-tl-xs p-4 shadow-xs flex items-center gap-2">
               <Loader2 :size="16" class="animate-spin text-emerald-600" />
-              <span class="text-xs text-slate-500 font-medium">AgriAI sedang menganalisis & menyusun solusi...</span>
+              <span class="text-xs text-slate-500 font-medium">Agri AI sedang menganalisis & menyusun solusi...</span>
             </div>
           </div>
         </template>
@@ -387,7 +387,7 @@
           </form>
 
           <p class="text-[10px] text-slate-400 text-center font-medium">
-            AgriAI dapat memberikan saran agronomi dan fitopatologi presisi berbasis kecerdasan buatan.
+            Agri AI dapat memberikan saran agronomi dan fitopatologi presisi berbasis kecerdasan buatan.
           </p>
         </div>
       </footer>
@@ -598,7 +598,7 @@ const sendMessage = async () => {
     messages.value.push({
       id: `err_${Date.now()}`,
       role: 'model',
-      content: 'Maaf Pak Tani, terjadi kendala saat menghubungkan ke server AgriAI. Pastikan koneksi dan server aktif.',
+      content: 'Maaf Pak Tani, terjadi kendala saat menghubungkan ke server Agri AI. Pastikan koneksi dan server aktif.',
       timestamp: timeStr
     });
   } finally {

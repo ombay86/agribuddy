@@ -306,12 +306,12 @@
       <!-- ==================== KOLOM KANAN (5 COLS): Kesehatan AI, Modal, & Gudang ==================== -->
       <div class="lg:col-span-5 space-y-6">
 
-        <!-- WIDGET 3: AgriAI (Asisten Cerdas & Fitopatologi) -->
+        <!-- WIDGET 3: Agri AI (Asisten Cerdas & Fitopatologi) -->
         <div class="bg-gradient-to-br from-emerald-900 to-teal-950 text-white border border-emerald-800 rounded-3xl p-5 md:p-6 shadow-xs space-y-4 relative overflow-hidden">
           <div class="flex items-center justify-between pb-2 border-b border-emerald-800/80">
             <div class="flex items-center gap-2">
               <Sparkles :size="18" class="text-amber-400" />
-              <h4 class="text-sm font-black text-white">AgriAI Assistant</h4>
+              <h4 class="text-sm font-black text-white">Agri AI Assistant</h4>
             </div>
             <span class="text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-2 py-0.5 rounded-full uppercase">
               Gemini Vision
@@ -346,7 +346,7 @@
             class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs py-3 px-4 rounded-2xl shadow-sm active:scale-95 transition-all flex items-center justify-center gap-2 text-center"
           >
             <Sparkles :size="16" />
-            <span>Chat & Periksa Tanaman via AgriAI</span>
+            <span>Chat & Periksa Tanaman via Agri AI</span>
           </router-link>
         </div>
 
@@ -570,7 +570,7 @@
           <Sparkles :size="20" />
         </div>
         <div>
-          <h5 class="text-xs font-black text-slate-800">AgriAI</h5>
+          <h5 class="text-xs font-black text-slate-800">Agri AI</h5>
           <p class="text-[10px] text-slate-400">Asisten Cerdas & Daun</p>
         </div>
       </router-link>

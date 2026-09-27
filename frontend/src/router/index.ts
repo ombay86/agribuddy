@@ -18,7 +18,7 @@ const routes = [
   // 2. Rencana Tani AI (Smart Farm Planner & Biaya Modal)
   { path: '/rencana', name: 'RencanaTani', component: RencanaTaniView },
 
-  // 3. AgriAI (Asisten Cerdas & Fitopatologi via Gemini)
+  // 3. Agri AI (Asisten Cerdas & Fitopatologi via Gemini)
   { path: '/dokter', name: 'AgriAI', component: DokterTaniView },
 
   // 4. Buku Tani (Inventaris Saprotan & Lumbung Panen)

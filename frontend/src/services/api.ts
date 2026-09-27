@@ -632,7 +632,7 @@ export const api = {
       headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(payload),
     });
-    if (!res.ok) throw new Error('Gagal berkomunikasi dengan AgriAI');
+    if (!res.ok) throw new Error('Gagal berkomunikasi dengan Agri AI');
     return res.json();
   },
 

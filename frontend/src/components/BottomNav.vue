@@ -24,7 +24,7 @@
       <span class="text-[10px] tracking-tight">Rencana</span>
     </router-link>
 
-    <!-- 3. AgriAI -->
+    <!-- 3. Agri AI -->
     <router-link
       to="/dokter"
       class="flex flex-col items-center gap-0.5 py-1 px-2 rounded-2xl transition-all"
@@ -33,7 +33,7 @@
       <div :class="$route.path === '/dokter' ? 'bg-emerald-100 p-1.5 rounded-xl shadow-xs' : 'p-1.5'">
         <Sparkles :size="18" class="text-amber-500" />
       </div>
-      <span class="text-[10px] tracking-tight">AgriAI</span>
+      <span class="text-[10px] tracking-tight">Agri AI</span>
     </router-link>
 
     <!-- 4. Buku Tani (Stok & Lumbung) -->

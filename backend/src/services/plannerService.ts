@@ -329,7 +329,7 @@ export class FarmPlannerService {
           "Pemupukan dasar susulan I (HST 7-10): Urea + NPK Phonska",
           "Penyiangan rumput/gulma dengan alat gasrok/landak (HST 15-20)",
           "Pemupukan susulan II (HST 25-30): Tambahan NPK & sedikit Urea",
-          "Pemantauan gejala hama wereng dan kresek daun via AgriAI"
+          "Pemantauan gejala hama wereng dan kresek daun via Agri AI"
         ],
         ai_tips: "Kondisikan air sawah macak-macak (ketinggian 1-2 cm) saat penaburan pupuk agar nutrisi tidak larut terbawa aliran pembuangan."
       },

@@ -236,7 +236,7 @@ const currentSectionName = computed(() => {
       ? 'Kontrol Tanam & Modal'
       : 'Rencana Tanam';
   }
-  if (p === '/dokter') return 'AgriAI';
+  if (p === '/dokter') return 'Agri AI';
   if (p === '/buku-tani' || p === '/inventaris' || p === '/lumbung') return 'Buku Tani';
   if (p === '/layanan' || p === '/katalog') return 'Direktori Layanan';
   if (p === '/profil') return 'Profil Usahatani';
@@ -251,7 +251,7 @@ const currentPageTitle = computed(() => {
       ? 'Kontrol Tanam & Modal Usahatani'
       : 'Rencana Tanam & Estimasi Anggaran (RAB)';
   }
-  if (p === '/dokter') return 'AgriAI — Asisten Agronomi & Fitopatologi Cerdas';
+  if (p === '/dokter') return 'Agri AI — Asisten Agronomi & Fitopatologi Cerdas';
   if (p === '/buku-tani' || p === '/inventaris' || p === '/lumbung') return 'Buku Tani — Manajemen Stok & Lumbung Panen';
   if (p === '/layanan' || p === '/katalog') return 'Direktori Layanan Mekanisasi & Saprotan Tani';
   if (p === '/profil') return 'Identitas Petani & Pengaturan Usahatani';
