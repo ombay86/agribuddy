@@ -1223,8 +1223,8 @@
               </div>
             </div>
 
-            <!-- Tombol Kelola: Edit, Fast-Track (Mulai dari Tengah), Hapus -->
-            <div class="grid grid-cols-3 gap-1.5 pt-1">
+            <!-- Tombol Kelola: Edit, Fast-Track (Mulai dari Tengah), Hapus (Khusus Pemilik Lahan) -->
+            <div v-if="isCurrentUserOwner" class="grid grid-cols-3 gap-1.5 pt-1">
               <button
                 @click="openEditFarmModal"
                 type="button"
@@ -1255,6 +1255,10 @@
                 <span>Hapus</span>
               </button>
             </div>
+            <div v-else class="p-2 rounded-xl bg-emerald-50/80 border border-emerald-200 text-[11px] text-emerald-800 font-bold flex items-center gap-1.5">
+              <span>🤝</span>
+              <span>Anda mengelola lahan ini sebagai mitra kolaborator.</span>
+            </div>
           </div>
         </div>
 
@@ -1268,6 +1272,7 @@
               <h3 class="text-xs font-black text-slate-800 mt-1">Pengelola Lahan</h3>
             </div>
             <button
+              v-if="isCurrentUserOwner"
               @click="openManageCollabModal"
               class="text-xs font-black text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-xl border border-emerald-200 active:scale-95 transition-all flex items-center gap-1 cursor-pointer"
             >
@@ -1281,8 +1286,10 @@
               <div class="space-y-0.5">
                 <div class="flex items-center gap-1.5">
                   <span class="text-sm">👑</span>
-                  <h4 class="text-xs font-black text-slate-800">{{ currentPersona.name || 'Pemilik Lahan' }}</h4>
-                  <span class="text-[9px] font-black bg-emerald-200 text-emerald-900 px-1.5 py-0.2 rounded-md">Pemilik</span>
+                  <h4 class="text-xs font-black text-slate-800">{{ farmOwnerName }}</h4>
+                  <span class="text-[9px] font-black bg-emerald-200 text-emerald-900 px-1.5 py-0.2 rounded-md">
+                    {{ isCurrentUserOwner ? 'Anda (Pemilik)' : 'Pemilik' }}
+                  </span>
                 </div>
                 <p class="text-[10px] font-semibold text-slate-500">Pemegang Hak & Sisa Porsi Bagi Hasil</p>
               </div>
@@ -1302,7 +1309,12 @@
               <div class="space-y-0.5">
                 <div class="flex items-center gap-1.5">
                   <span class="w-2.5 h-2.5 rounded-full shrink-0" :class="getCollabColorDot(cIdx)"></span>
-                  <h4 class="text-xs font-black text-slate-800">{{ collab.name }}</h4>
+                  <h4 class="text-xs font-black text-slate-800">
+                    {{ collab.name }}
+                    <span v-if="collab.user_id === currentUserId || collab.name === currentPersona.name" class="text-emerald-700 font-bold text-[10px]">
+                      (Anda)
+                    </span>
+                  </h4>
                   <span
                     v-if="collab.status === 'PENDING'"
                     class="text-[8px] font-black bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded-md border border-amber-200"
@@ -1642,8 +1654,10 @@
               <span class="text-base">👑</span>
               <div>
                 <div class="flex items-center gap-1.5">
-                  <p class="font-black text-slate-800">{{ currentPersona.name || 'Pemilik Lahan' }}</p>
-                  <span class="text-[9px] font-black bg-emerald-200 text-emerald-900 px-1.5 py-0.2 rounded-md">Pemilik Lahan</span>
+                  <p class="font-black text-slate-800">{{ farmOwnerName }}</p>
+                  <span class="text-[9px] font-black bg-emerald-200 text-emerald-900 px-1.5 py-0.2 rounded-md">
+                    {{ isCurrentUserOwner ? 'Anda (Pemilik Lahan)' : 'Pemilik Lahan' }}
+                  </span>
                 </div>
                 <p class="text-[10px] text-slate-500 font-semibold">Sisa porsi otomatis setelah dibagi ke mitra</p>
               </div>
@@ -2658,6 +2672,35 @@ const handleFastTrackSubmit = async () => {
   }
 };
 
+const isUserJoko = (uid?: string) => {
+  if (!uid) return false;
+  const clean = String(uid).trim().toLowerCase();
+  return clean === 'usr_petani' || clean === 'usr_001' || clean === 'pak_joko';
+};
+
+const isCurrentUserOwner = computed(() => {
+  if (!activeFarm.value) return true;
+  const farmUid = activeFarm.value.user_id;
+  const curUid = currentUserId.value;
+  return farmUid === curUid || (isUserJoko(farmUid) && isUserJoko(curUid));
+});
+
+const farmOwnerName = computed(() => {
+  if (!activeFarm.value) return currentPersona.value.name || 'Pemilik Lahan';
+  if (isCurrentUserOwner.value) {
+    return currentPersona.value.name || activeFarm.value.owner_name || 'Pemilik Lahan';
+  }
+  if (activeFarm.value.owner_name) {
+    return activeFarm.value.owner_name;
+  }
+  if (isUserJoko(activeFarm.value.user_id)) {
+    return 'Pak Joko';
+  }
+  const matched = Object.values(PERSONAS).find(p => p.id === activeFarm.value?.user_id);
+  if (matched?.name) return matched.name;
+  return 'Pemilik Lahan';
+});
+
 const ownerSharePercentage = computed(() => {
   if (!activeFarm.value) return 100;
   const collabs = activeFarm.value.collaborators || [];
@@ -2684,16 +2727,42 @@ const fetchSearchableUsers = async (query = '') => {
 
 const filteredUsersToTag = computed(() => {
   const query = searchCollabQuery.value.trim().toLowerCase().replace(/^@/, '');
-  
+  const existingCollabIds = new Set(
+    (activeFarm.value?.collaborators || [])
+      .map(c => c.user_id)
+      .filter(Boolean)
+  );
+  const existingCollabNames = new Set(
+    (activeFarm.value?.collaborators || [])
+      .map(c => (c.name || '').toLowerCase().trim())
+      .filter(Boolean)
+  );
+  const ownerId = activeFarm.value?.user_id;
+  const ownerNameLower = (farmOwnerName.value || '').toLowerCase().trim();
+
   // Gabungkan static PERSONAS dan dynamic users dari API secara unik
   const map = new Map<string, any>();
   for (const p of Object.values(PERSONAS)) {
-    if (p.id !== currentUserId.value) {
+    const pName = (p.name || '').toLowerCase().trim();
+    if (
+      p.id !== currentUserId.value &&
+      p.id !== ownerId &&
+      pName !== ownerNameLower &&
+      !existingCollabIds.has(p.id) &&
+      !existingCollabNames.has(pName)
+    ) {
       map.set(p.id, p);
     }
   }
   for (const u of dynamicUsersList.value) {
-    if (u.id !== currentUserId.value) {
+    const uName = (u.name || u.full_name || '').toLowerCase().trim();
+    if (
+      u.id !== currentUserId.value &&
+      u.id !== ownerId &&
+      uName !== ownerNameLower &&
+      !existingCollabIds.has(u.id) &&
+      !existingCollabNames.has(uName)
+    ) {
       map.set(u.id, u);
     }
   }
@@ -2756,6 +2825,25 @@ const handleAddCollaborator = async () => {
   if (!activeFarm.value) return;
   if (!newCollabForm.value.name || !newCollabForm.value.name.trim()) {
     showWarning('Pilih Pengguna Mitra', 'Silakan cari dan pilih pengguna mitra terlebih dahulu.');
+    return;
+  }
+  // Cek apakah mitra yang ditag adalah pemilik lahan itu sendiri
+  const targetName = newCollabForm.value.name.toLowerCase().trim();
+  const ownerNameLower = farmOwnerName.value.toLowerCase().trim();
+  if (
+    (newCollabForm.value.user_id && (newCollabForm.value.user_id === activeFarm.value.user_id || (isUserJoko(newCollabForm.value.user_id) && isUserJoko(activeFarm.value.user_id)))) ||
+    targetName === ownerNameLower
+  ) {
+    showWarning('Pemilik Lahan', 'Pemilik lahan sudah otomatis menjadi pemegang porsi utama dan tidak dapat ditambahkan sebagai mitra.');
+    return;
+  }
+  // Cek duplikasi mitra
+  const isDuplicate = (activeFarm.value.collaborators || []).some(c => 
+    (newCollabForm.value.user_id && c.user_id === newCollabForm.value.user_id) ||
+    ((c.name || '').toLowerCase().trim() === targetName)
+  );
+  if (isDuplicate) {
+    showWarning('Mitra Sudah Ada', 'Pengguna/mitra ini sudah terdaftar dalam kolaborasi lahan. Setiap mitra hanya dapat ditambahkan satu kali.');
     return;
   }
   if (newCollabForm.value.share_percentage > ownerSharePercentage.value) {

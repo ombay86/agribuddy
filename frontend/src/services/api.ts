@@ -398,6 +398,7 @@ export interface CapitalExpense {
 export interface Farmland {
   id: string;
   user_id: string;
+  owner_name?: string;
   name: string;
   status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED';
   land_size_ha: number;

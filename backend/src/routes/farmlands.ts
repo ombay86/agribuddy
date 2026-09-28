@@ -17,7 +17,16 @@ function formatTimeIndo(): string {
   return `${now.toLocaleDateString('id-ID', options)} WIB`;
 }
 
-const isUserJoko = (uid: string) => uid === 'usr_petani' || uid === 'usr_001';
+const isUserJoko = (uid: string) => uid === 'usr_petani' || uid === 'usr_001' || uid === 'pak_joko';
+
+function getOwnerName(userId: string): string {
+  if (isUserJoko(userId)) return "Pak Joko";
+  const users = db.getCollection("users");
+  const user = users.find((u: any) => u.id === userId);
+  if (user?.full_name) return user.full_name;
+  if (user?.name) return user.name;
+  return "Pemilik Lahan";
+}
 
 const getDefaultPhases = (landSizeHa: number = 0.8) => {
   const scale = landSizeHa / 0.8;
@@ -145,6 +154,7 @@ router.get('/', (req: Request, res: Response) => {
 
     const enriched = userFarms.map((f: any) => ({
       ...f,
+      owner_name: f.owner_name || getOwnerName(f.user_id),
       timeline_phases: enrichPhases(f.timeline_phases, f.land_size_ha || 0.8),
       total_budget: f.total_budget || Math.round((f.land_size_ha || 0.8) * 6400000)
     }));
@@ -166,6 +176,7 @@ router.get('/:farmId', (req: Request, res: Response) => {
   }
   const enriched = {
     ...farm,
+    owner_name: farm.owner_name || getOwnerName(farm.user_id),
     timeline_phases: enrichPhases(farm.timeline_phases, farm.land_size_ha || 0.8),
     total_budget: farm.total_budget || Math.round((farm.land_size_ha || 0.8) * 6400000)
   };
@@ -181,25 +192,14 @@ router.post('/', (req: Request, res: Response) => {
     return res.status(400).json({ detail: "Luas lahan harus lebih besar dari 0 Ha." });
   }
 
-  const users = db.getCollection("users");
-  const user = users.find((u: any) => u.id === userId);
-  const ownerName = user?.full_name || "Petani";
+  const ownerName = payload.owner_name || getOwnerName(userId);
   const landHa = Number(payload.land_size_ha);
 
-  let collaborators = [];
+  let collaborators: any[] = [];
   if (payload.collaborators && Array.isArray(payload.collaborators) && payload.collaborators.length > 0) {
-    collaborators = payload.collaborators;
-  } else {
-    collaborators = [
-      {
-        id: `collab_${crypto.randomBytes(3).toString('hex')}`,
-        user_id: userId,
-        name: ownerName,
-        role: "Pemilik Lahan & Pengelola Utama",
-        share_percentage: 100.0,
-        phone: user?.phone_number || ""
-      }
-    ];
+    collaborators = payload.collaborators.filter((c: any) => 
+      c.user_id !== userId && c.name?.toLowerCase().trim() !== ownerName.toLowerCase().trim()
+    );
   }
 
   const newFarm = {
@@ -334,20 +334,47 @@ router.post('/:farmId/collaborators', (req: Request, res: Response) => {
     newC.id = `collab_${crypto.randomBytes(3).toString('hex')}`;
   }
 
+  const ownerName = farm.owner_name || getOwnerName(farm.user_id);
+
+  // 1. Cek apakah pemilik lahan berusaha men-tag dirinya sendiri
+  if (
+    (newC.user_id && (newC.user_id === farm.user_id || (isUserJoko(newC.user_id) && isUserJoko(farm.user_id)))) ||
+    (newC.name && newC.name.toLowerCase().trim() === ownerName.toLowerCase().trim())
+  ) {
+    return res.status(400).json({ detail: "Pemilik lahan sudah otomatis menjadi pemegang porsi utama dan tidak dapat ditambahkan sebagai mitra kolaborator." });
+  }
+
+  // 2. Cek apakah pengguna/mitra ini sudah pernah ditag di lahan ini
+  const isDuplicate = collabs.some((c: any) => 
+    (newC.user_id && c.user_id === newC.user_id) || 
+    (newC.name && c.name && c.name.toLowerCase().trim() === newC.name.toLowerCase().trim())
+  );
+  if (isDuplicate) {
+    return res.status(400).json({ detail: "Mitra ini sudah terdaftar dalam kolaborasi lahan. Setiap mitra hanya dapat ditambahkan satu kali." });
+  }
+
+  // 3. Cek kapasitas porsi bagi hasil
+  const currentTotal = collabs
+    .filter((c: any) => c.status !== 'REJECTED')
+    .reduce((acc: number, curr: any) => acc + (Number(curr.share_percentage) || 0), 0);
+  const remaining = Math.max(0, 100 - currentTotal);
+  if (Number(newC.share_percentage) > remaining) {
+    return res.status(400).json({ detail: `Sisa porsi bagi hasil hanya ${remaining}%. Porsi yang diminta (${newC.share_percentage}%) melebihi kapasitas.` });
+  }
+
   // Jika ada user_id yang ditag, default status adalah PENDING
   if (!newC.status) {
     newC.status = newC.user_id ? 'PENDING' : 'ACTIVE';
   }
 
   collabs.push(newC);
-  const updated = db.update("farmlands", farmId, { collaborators: collabs });
+  const updated = db.update("farmlands", farmId, { 
+    collaborators: collabs,
+    owner_name: ownerName
+  });
 
   // Buat notifikasi jika kolaborator ditag dari akun pengguna yang ada
   if (newC.user_id && newC.status === 'PENDING') {
-    const users = db.getCollection("users");
-    const owner = users.find((u: any) => u.id === farm.user_id);
-    const ownerName = owner?.full_name || "Pemilik Lahan";
-
     db.insert("notifications", {
       user_id: newC.user_id, // Penerima notifikasi
       type: 'COLLAB_INVITE',
