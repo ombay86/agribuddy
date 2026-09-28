@@ -573,10 +573,10 @@ const loadProfile = async () => {
     }
 
     // Sinkronisasi avatar jika tersedia
-    if (customAvatar.value && !profile.value.avatar_url) {
-      profile.value.avatar_url = customAvatar.value;
-    } else if (profile.value.avatar_url && !customAvatar.value) {
+    if (profile.value.avatar_url) {
       setCustomAvatar(profile.value.avatar_url);
+    } else if (customAvatar.value) {
+      profile.value.avatar_url = customAvatar.value;
     }
   } catch (err) {
     console.error(err);

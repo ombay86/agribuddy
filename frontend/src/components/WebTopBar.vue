@@ -148,13 +148,15 @@
         class="flex items-center gap-2 p-1.5 pr-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200/80 transition-all"
         title="Lihat Profil Usahatani"
       >
-        <img
-          v-if="currentPersona.customAvatar"
-          :src="currentPersona.customAvatar"
-          alt="Avatar"
-          class="w-7 h-7 rounded-full object-cover border border-emerald-500 shadow-2xs"
-        />
-        <span v-else class="text-lg">{{ currentPersona.avatar || '👨‍🌾' }}</span>
+        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden border border-emerald-500 shadow-2xs bg-emerald-50 flex items-center justify-center shrink-0">
+          <img
+            v-if="currentPersona.customAvatar"
+            :src="currentPersona.customAvatar"
+            alt="Foto Profil"
+            class="w-full h-full object-cover"
+          />
+          <span v-else class="text-sm sm:text-base leading-none">{{ currentPersona.avatar || '👨‍🌾' }}</span>
+        </div>
         <div class="text-left hidden sm:block">
           <p class="text-xs font-black text-slate-800 leading-tight">{{ currentPersona.name }}</p>
           <p class="text-[10px] font-semibold text-emerald-700">@{{ currentPersona.username }} • {{ currentPersona.badge }}</p>
@@ -198,7 +200,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useUserState } from '@/services/userState';
+import { useUserState, syncUserProfile } from '@/services/userState';
 import { useFarmlandState } from '@/composables/useFarmlandState';
 import { api, CollabNotification } from '@/services/api';
 import { Bell, Loader2 } from 'lucide-vue-next';
@@ -257,6 +259,7 @@ const handleRespondInvite = async (notifId: string, action: 'ACCEPT' | 'REJECT')
 let pollInterval: any = null;
 
 onMounted(() => {
+  syncUserProfile();
   loadNotifications();
   loadGlobalFarmlands(currentUserId.value);
   // Poll notifikasi setiap 8 detik
@@ -266,6 +269,7 @@ onMounted(() => {
 
 watch(currentUserId, (newId) => {
   if (newId) {
+    syncUserProfile(newId);
     loadGlobalFarmlands(newId);
   }
 });

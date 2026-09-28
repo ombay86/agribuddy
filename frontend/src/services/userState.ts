@@ -129,6 +129,10 @@ const activeRole = ref<UserRole>(savedRole);
 const registeredUser = ref<any>(initialRegisteredUser);
 const isAuthenticated = ref<boolean>(initialAuth);
 
+// State Reaktif Global untuk Avatar & Username pengguna
+const userAvatars = ref<Record<string, string | null>>({});
+const userUsernames = ref<Record<string, string | null>>({});
+
 export const getActiveUserId = (): string => {
   if (registeredUser.value && registeredUser.value.id) {
     return registeredUser.value.id;
@@ -136,12 +140,56 @@ export const getActiveUserId = (): string => {
   return PERSONAS[activeRole.value]?.id || 'usr_petani';
 };
 
+// Sinkronisasi data profil dari server backend secara otomatis
+export const syncUserProfile = async (userId?: string) => {
+  try {
+    const activeUid = userId || getActiveUserId();
+    const apiUrl = (import.meta as any).env?.VITE_API_URL || 'http://127.0.0.1:8000/api/v1';
+    const res = await fetch(`${apiUrl}/auth/profile`, {
+      headers: {
+        'X-User-Id': activeUid
+      }
+    });
+    if (res.ok) {
+      const prof = await res.json();
+      if (prof) {
+        if (prof.avatar_url) {
+          userAvatars.value = {
+            ...userAvatars.value,
+            [activeUid]: prof.avatar_url
+          };
+          localStorage.setItem(`agribuddy_avatar_${activeUid}`, prof.avatar_url);
+        }
+        if (prof.username) {
+          userUsernames.value = {
+            ...userUsernames.value,
+            [activeUid]: prof.username
+          };
+          localStorage.setItem(`agribuddy_username_${activeUid}`, prof.username);
+        }
+        return prof;
+      }
+    }
+  } catch (err) {
+    console.warn('Gagal menyinkronkan profil pengguna dari server:', err);
+  }
+};
+
+// Panggil sinkronisasi awal saat script dimuat di browser
+if (typeof window !== 'undefined') {
+  syncUserProfile();
+}
+
 export const useUserState = () => {
   const currentPersona = computed(() => {
     if (registeredUser.value) {
       const u = registeredUser.value;
-      const userCustomAvatar = localStorage.getItem(`agribuddy_avatar_${u.id}`) || u.avatar_url || null;
-      const userCustomUsername = localStorage.getItem(`agribuddy_username_${u.id}`) || u.username || (u.full_name ? u.full_name.toLowerCase().replace(/\s+/g, '_') : 'petani');
+      const userCustomAvatar = userAvatars.value[u.id] !== undefined 
+        ? userAvatars.value[u.id] 
+        : (localStorage.getItem(`agribuddy_avatar_${u.id}`) || u.avatar_url || null);
+      const userCustomUsername = userUsernames.value[u.id] !== undefined
+        ? userUsernames.value[u.id]
+        : (localStorage.getItem(`agribuddy_username_${u.id}`) || u.username || (u.full_name ? u.full_name.toLowerCase().replace(/\s+/g, '_') : 'petani'));
       return {
         id: u.id,
         role: (u.role || 'PETANI_MANDIRI') as UserRole,
@@ -157,8 +205,12 @@ export const useUserState = () => {
       };
     }
     const base = PERSONAS[activeRole.value] || PERSONAS['PETANI_MANDIRI'];
-    const personaAvatar = localStorage.getItem(`agribuddy_avatar_${base.id}`) || null;
-    const personaUsername = localStorage.getItem(`agribuddy_username_${base.id}`) || base.username;
+    const personaAvatar = userAvatars.value[base.id] !== undefined
+      ? userAvatars.value[base.id]
+      : (localStorage.getItem(`agribuddy_avatar_${base.id}`) || null);
+    const personaUsername = userUsernames.value[base.id] !== undefined
+      ? userUsernames.value[base.id]
+      : (localStorage.getItem(`agribuddy_username_${base.id}`) || base.username);
     return {
       ...base,
       username: personaUsername,
@@ -172,6 +224,10 @@ export const useUserState = () => {
   
   const setCustomAvatar = (avatarDataUrl: string | null) => {
     const uid = currentUserId.value;
+    userAvatars.value = {
+      ...userAvatars.value,
+      [uid]: avatarDataUrl
+    };
     if (avatarDataUrl) {
       localStorage.setItem(`agribuddy_avatar_${uid}`, avatarDataUrl);
       if (registeredUser.value) {
@@ -185,11 +241,16 @@ export const useUserState = () => {
         localStorage.setItem('agribuddy_registered_user', JSON.stringify(registeredUser.value));
       }
     }
+    window.dispatchEvent(new CustomEvent('agribuddy:avatar-updated', { detail: { userId: uid, avatar: avatarDataUrl } }));
   };
 
   const setCustomUsername = (username: string | null) => {
     const uid = currentUserId.value;
     const clean = username ? username.trim().replace(/^@/, '').toLowerCase() : null;
+    userUsernames.value = {
+      ...userUsernames.value,
+      [uid]: clean
+    };
     if (clean) {
       localStorage.setItem(`agribuddy_username_${uid}`, clean);
       if (registeredUser.value) {
@@ -208,6 +269,7 @@ export const useUserState = () => {
     isAuthenticated.value = true;
     localStorage.setItem('agribuddy_active_role', role);
     localStorage.setItem('agribuddy_auth', 'true');
+    syncUserProfile();
   };
 
   const loginWithPersona = (role: UserRole) => {
@@ -217,6 +279,7 @@ export const useUserState = () => {
     isAuthenticated.value = true;
     localStorage.setItem('agribuddy_active_role', role);
     localStorage.setItem('agribuddy_auth', 'true');
+    syncUserProfile();
   };
 
   const loginWithCustomUser = (userData: any) => {
@@ -227,9 +290,11 @@ export const useUserState = () => {
     localStorage.setItem('agribuddy_active_role', activeRole.value);
     localStorage.setItem('agribuddy_auth', 'true');
     if (userData.username) {
+      userUsernames.value = { ...userUsernames.value, [userData.id]: userData.username };
       localStorage.setItem(`agribuddy_username_${userData.id}`, userData.username);
     }
     if (userData.avatar_url) {
+      userAvatars.value = { ...userAvatars.value, [userData.id]: userData.avatar_url };
       localStorage.setItem(`agribuddy_avatar_${userData.id}`, userData.avatar_url);
     }
     // Jika akun memiliki gemini_api_key dari PostgreSQL server, otomatis sinkronkan ke perangkat ini
@@ -258,6 +323,7 @@ export const useUserState = () => {
     isAuthenticated.value = true;
     localStorage.setItem('agribuddy_active_role', activeRole.value);
     localStorage.setItem('agribuddy_auth', 'true');
+    syncUserProfile();
     return true;
   };
 

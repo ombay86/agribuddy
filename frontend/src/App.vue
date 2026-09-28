@@ -29,8 +29,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import { syncUserProfile } from '@/services/userState';
 import WebSidebar from '@/components/WebSidebar.vue';
 import WebTopBar from '@/components/WebTopBar.vue';
 import BottomNav from '@/components/BottomNav.vue';
@@ -38,4 +39,8 @@ import BottomNav from '@/components/BottomNav.vue';
 const route = useRoute();
 const isAuthPage = computed(() => route.path === '/login');
 const isDokterPage = computed(() => route.path === '/dokter');
+
+onMounted(() => {
+  syncUserProfile();
+});
 </script>

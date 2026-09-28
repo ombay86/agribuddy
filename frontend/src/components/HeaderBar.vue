@@ -123,7 +123,10 @@
             @click="showUserMenu = !showUserMenu; showNotifMenu = false"
             class="flex items-center gap-2 bg-emerald-950/50 hover:bg-emerald-950/70 border border-emerald-500/40 text-xs px-3 py-1.5 rounded-full font-bold text-emerald-100 transition-all active:scale-95 shadow-sm"
           >
-            <span class="text-base">{{ currentPersona.avatar }}</span>
+            <div class="w-5 h-5 rounded-full overflow-hidden flex items-center justify-center bg-white/10 shrink-0">
+              <img v-if="currentPersona.customAvatar" :src="currentPersona.customAvatar" alt="Avatar" class="w-full h-full object-cover" />
+              <span v-else class="text-xs">{{ currentPersona.avatar || '👨‍🌾' }}</span>
+            </div>
             <span class="max-w-[100px] truncate">{{ currentPersona.name }}</span>
             <ChevronDown :size="14" class="transition-transform" :class="{ 'rotate-180': showUserMenu }" />
           </button>
@@ -136,7 +139,10 @@
             <!-- Info Ringkas Akun yang Login -->
             <div class="px-3.5 py-2 border-b border-slate-100">
               <div class="flex items-center gap-2">
-                <span class="text-xl">{{ currentPersona.avatar }}</span>
+                <div class="w-8 h-8 rounded-full overflow-hidden border border-emerald-500 shadow-2xs flex items-center justify-center bg-emerald-50 shrink-0">
+                  <img v-if="currentPersona.customAvatar" :src="currentPersona.customAvatar" alt="Avatar" class="w-full h-full object-cover" />
+                  <span v-else class="text-lg">{{ currentPersona.avatar || '👨‍🌾' }}</span>
+                </div>
                 <div>
                   <div class="font-black text-xs text-slate-800">{{ currentPersona.name }}</div>
                   <div class="text-[10px] font-extrabold text-emerald-700">{{ currentPersona.badge }}</div>
