@@ -12,6 +12,7 @@
     "@types/leaflet": "^1.9.22",
     "leaflet": "^1.9.4",
     "lucide-vue-next": "^0.359.0",
+    "marked": "^18.0.14",
     "sweetalert2": "^11.26.25",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"

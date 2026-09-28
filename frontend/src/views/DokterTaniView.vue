@@ -390,8 +390,18 @@
                 </div>
               </div>
 
-              <!-- Teks Pesan -->
-              <div class="whitespace-pre-line leading-relaxed text-xs">
+              <!-- Teks Pesan AI (Formatted Markdown) -->
+              <div
+                v-if="msg.role === 'model'"
+                class="chat-markdown text-xs text-slate-800 leading-relaxed"
+                v-html="renderMarkdown(msg.content)"
+              ></div>
+
+              <!-- Teks Pesan Pengguna -->
+              <div
+                v-else
+                class="whitespace-pre-line leading-relaxed text-xs text-white"
+              >
                 {{ msg.content }}
               </div>
 
@@ -632,6 +642,18 @@ import {
   Trash2, History, PanelLeft, CheckCircle2, AlertTriangle,
   Key, Eye, EyeOff, ExternalLink
 } from 'lucide-vue-next';
+import { marked } from 'marked';
+
+// Konfigurasi parser Markdown untuk render respons AI
+marked.setOptions({
+  gfm: true,
+  breaks: true,
+});
+
+const renderMarkdown = (content: string): string => {
+  if (!content) return '';
+  return marked.parse(content) as string;
+};
 
 const { currentPersona } = useUserState();
 
@@ -918,3 +940,140 @@ onMounted(async () => {
   await loadSessions(false);
 });
 </script>
+
+<style scoped>
+:deep(.chat-markdown) {
+  line-height: 1.65;
+  font-size: 0.8125rem;
+  color: #1e293b;
+}
+
+:deep(.chat-markdown p) {
+  margin-bottom: 0.65rem;
+}
+
+:deep(.chat-markdown p:last-child) {
+  margin-bottom: 0;
+}
+
+:deep(.chat-markdown strong) {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+:deep(.chat-markdown em) {
+  font-style: italic;
+  color: #334155;
+}
+
+:deep(.chat-markdown ul) {
+  list-style-type: disc;
+  padding-left: 1.25rem;
+  margin-top: 0.35rem;
+  margin-bottom: 0.65rem;
+}
+
+:deep(.chat-markdown ol) {
+  list-style-type: decimal;
+  padding-left: 1.25rem;
+  margin-top: 0.35rem;
+  margin-bottom: 0.65rem;
+}
+
+:deep(.chat-markdown li) {
+  margin-bottom: 0.35rem;
+  padding-left: 0.15rem;
+}
+
+:deep(.chat-markdown li:last-child) {
+  margin-bottom: 0;
+}
+
+:deep(.chat-markdown h1),
+:deep(.chat-markdown h2),
+:deep(.chat-markdown h3),
+:deep(.chat-markdown h4) {
+  font-weight: 800;
+  color: #064e3b;
+  margin-top: 0.85rem;
+  margin-bottom: 0.35rem;
+  line-height: 1.3;
+}
+
+:deep(.chat-markdown h1) { font-size: 1.05rem; }
+:deep(.chat-markdown h2) { font-size: 0.95rem; }
+:deep(.chat-markdown h3) { font-size: 0.875rem; }
+:deep(.chat-markdown h4) { font-size: 0.8125rem; }
+
+:deep(.chat-markdown a) {
+  color: #059669;
+  text-decoration: underline;
+  font-weight: 600;
+  transition: color 0.15s;
+}
+
+:deep(.chat-markdown a:hover) {
+  color: #047857;
+}
+
+:deep(.chat-markdown code) {
+  background-color: #f1f5f9;
+  color: #047857;
+  padding: 0.15rem 0.35rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-family: monospace;
+  border: 1px solid #e2e8f0;
+}
+
+:deep(.chat-markdown pre) {
+  background-color: #0f172a;
+  color: #f8fafc;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  overflow-x: auto;
+  margin: 0.5rem 0;
+}
+
+:deep(.chat-markdown pre code) {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  border: none;
+}
+
+:deep(.chat-markdown blockquote) {
+  border-left: 3px solid #10b981;
+  padding-left: 0.75rem;
+  margin: 0.5rem 0;
+  font-style: italic;
+  color: #475569;
+  background: #f0fdf4;
+  border-radius: 0 0.375rem 0.375rem 0;
+}
+
+:deep(.chat-markdown hr) {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  margin: 0.75rem 0;
+}
+
+:deep(.chat-markdown table) {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5rem 0;
+  font-size: 0.75rem;
+}
+
+:deep(.chat-markdown th),
+:deep(.chat-markdown td) {
+  border: 1px solid #cbd5e1;
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+}
+
+:deep(.chat-markdown th) {
+  background-color: #f8fafc;
+  font-weight: 700;
+}
+</style>
