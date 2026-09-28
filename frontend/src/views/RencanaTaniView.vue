@@ -1301,7 +1301,7 @@
 
             <!-- List Kolaborator -->
             <div
-              v-for="(collab, cIdx) in (activeFarm.collaborators || [])"
+              v-for="(collab, cIdx) in sanitizedCollaborators"
               :key="collab.id"
               class="p-2.5 rounded-2xl border flex items-start justify-between gap-2"
               :class="getCollabCardClass(cIdx)"
@@ -1670,7 +1670,7 @@
 
           <!-- Kolaborator Lainnya -->
           <div
-            v-for="collab in (activeFarm?.collaborators || [])"
+            v-for="collab in sanitizedCollaborators"
             :key="collab.id"
             class="p-2.5 rounded-2xl border border-slate-200 bg-slate-50 flex items-center justify-between text-xs"
           >
@@ -2701,9 +2701,32 @@ const farmOwnerName = computed(() => {
   return 'Pemilik Lahan';
 });
 
+const sanitizedCollaborators = computed(() => {
+  if (!activeFarm.value || !Array.isArray(activeFarm.value.collaborators)) return [];
+  const farmOwner = (farmOwnerName.value || '').toLowerCase().trim();
+  const farmUserId = activeFarm.value.user_id;
+
+  return activeFarm.value.collaborators.filter((c: any) => {
+    if (!c) return false;
+    // 1. user_id matches farm owner
+    if (c.user_id && farmUserId && c.user_id === farmUserId) return false;
+    // 2. Both are Joko personas
+    if (c.user_id && isUserJoko(c.user_id) && isUserJoko(farmUserId)) return false;
+    // 3. Name matches owner name
+    const cName = (c.name || '').toLowerCase().trim();
+    if (cName && farmOwner && cName === farmOwner) return false;
+    if (isUserJoko(farmUserId) && cName.includes('joko')) return false;
+    // 4. Role indicates owner
+    const cRole = (c.role || '').toLowerCase();
+    if (cRole.includes('pemilik')) return false;
+
+    return true;
+  });
+});
+
 const ownerSharePercentage = computed(() => {
   if (!activeFarm.value) return 100;
-  const collabs = activeFarm.value.collaborators || [];
+  const collabs = sanitizedCollaborators.value;
   const totalCollabsShare = collabs
     .filter(c => c.status !== 'REJECTED')
     .reduce((sum, c) => sum + (Number(c.share_percentage) || 0), 0);
@@ -2728,12 +2751,12 @@ const fetchSearchableUsers = async (query = '') => {
 const filteredUsersToTag = computed(() => {
   const query = searchCollabQuery.value.trim().toLowerCase().replace(/^@/, '');
   const existingCollabIds = new Set(
-    (activeFarm.value?.collaborators || [])
+    sanitizedCollaborators.value
       .map(c => c.user_id)
       .filter(Boolean)
   );
   const existingCollabNames = new Set(
-    (activeFarm.value?.collaborators || [])
+    sanitizedCollaborators.value
       .map(c => (c.name || '').toLowerCase().trim())
       .filter(Boolean)
   );
@@ -2838,7 +2861,7 @@ const handleAddCollaborator = async () => {
     return;
   }
   // Cek duplikasi mitra
-  const isDuplicate = (activeFarm.value.collaborators || []).some(c => 
+  const isDuplicate = sanitizedCollaborators.value.some(c => 
     (newCollabForm.value.user_id && c.user_id === newCollabForm.value.user_id) ||
     ((c.name || '').toLowerCase().trim() === targetName)
   );

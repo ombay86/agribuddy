@@ -28,6 +28,27 @@ function getOwnerName(userId: string): string {
   return "Pemilik Lahan";
 }
 
+export function sanitizeFarmCollaborators(farm: any): any[] {
+  if (!farm || !farm.collaborators || !Array.isArray(farm.collaborators)) return [];
+  const farmUserId = farm.user_id;
+  const ownerName = (farm.owner_name || (isUserJoko(farmUserId) ? 'Pak Joko' : getOwnerName(farmUserId))).toLowerCase().trim();
+
+  return farm.collaborators.filter((c: any) => {
+    if (!c) return false;
+    // 1. Direct user_id match with farm owner
+    if (c.user_id && farmUserId && c.user_id === farmUserId) return false;
+    // 2. Both are Joko personas
+    if (c.user_id && farmUserId && isUserJoko(c.user_id) && isUserJoko(farmUserId)) return false;
+    // 3. Name matches owner name or contains 'joko' when owner is joko
+    const cName = (c.name || '').toLowerCase().trim();
+    if (cName && (cName === ownerName || (isUserJoko(farmUserId) && cName.includes('joko')))) return false;
+    // 4. Role indicates owner
+    const cRole = (c.role || '').toLowerCase();
+    if (cRole.includes('pemilik')) return false;
+    return true;
+  });
+}
+
 const getDefaultPhases = (landSizeHa: number = 0.8) => {
   const scale = landSizeHa / 0.8;
   return [
@@ -152,12 +173,19 @@ router.get('/', (req: Request, res: Response) => {
       (f.collaborators && f.collaborators.some((c: any) => c.user_id === userId && c.status === 'ACTIVE'))
     );
 
-    const enriched = userFarms.map((f: any) => ({
-      ...f,
-      owner_name: f.owner_name || getOwnerName(f.user_id),
-      timeline_phases: enrichPhases(f.timeline_phases, f.land_size_ha || 0.8),
-      total_budget: f.total_budget || Math.round((f.land_size_ha || 0.8) * 6400000)
-    }));
+    const enriched = userFarms.map((f: any) => {
+      const sanitizedCollabs = sanitizeFarmCollaborators(f);
+      if (f.collaborators && sanitizedCollabs.length !== f.collaborators.length) {
+        db.update("farmlands", f.id, { collaborators: sanitizedCollabs });
+      }
+      return {
+        ...f,
+        collaborators: sanitizedCollabs,
+        owner_name: f.owner_name || getOwnerName(f.user_id),
+        timeline_phases: enrichPhases(f.timeline_phases, f.land_size_ha || 0.8),
+        total_budget: f.total_budget || Math.round((f.land_size_ha || 0.8) * 6400000)
+      };
+    });
     return res.json(enriched);
   }
 
@@ -174,8 +202,13 @@ router.get('/:farmId', (req: Request, res: Response) => {
   if (!farm) {
     return res.status(404).json({ detail: "Data lahan sawah tidak ditemukan" });
   }
+  const sanitizedCollabs = sanitizeFarmCollaborators(farm);
+  if (farm.collaborators && sanitizedCollabs.length !== farm.collaborators.length) {
+    db.update("farmlands", farm.id, { collaborators: sanitizedCollabs });
+  }
   const enriched = {
     ...farm,
+    collaborators: sanitizedCollabs,
     owner_name: farm.owner_name || getOwnerName(farm.user_id),
     timeline_phases: enrichPhases(farm.timeline_phases, farm.land_size_ha || 0.8),
     total_budget: farm.total_budget || Math.round((farm.land_size_ha || 0.8) * 6400000)
@@ -328,7 +361,7 @@ router.post('/:farmId/collaborators', (req: Request, res: Response) => {
     return res.status(404).json({ detail: "Lahan tidak ditemukan" });
   }
 
-  const collabs = farm.collaborators || [];
+  const collabs = sanitizeFarmCollaborators(farm);
   const newC = { ...collaborator };
   if (!newC.id) {
     newC.id = `collab_${crypto.randomBytes(3).toString('hex')}`;
