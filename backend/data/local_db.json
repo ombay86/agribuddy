@@ -870,7 +870,7 @@
       "coordinates_label": "-7.2504, 112.7512 (Desa Sukamaju Krajan)"
     },
     {
-      "plan_id": "plan_mvb3krt0",
+      "plan_id": "plan_mvb5g1tj",
       "user_id": "usr_petani",
       "land_size_ha": 1,
       "commodity": "Padi Sawah Inpari 32",
@@ -1151,7 +1151,7 @@
       ],
       "id": "far_3d4b8a3b",
       "created_at": "2026-09-23T15:21:32.822Z",
-      "updated_at": "2026-10-16T15:03:18.468Z"
+      "updated_at": "2026-10-16T15:55:37.399Z"
     }
   ],
   "ecosystem_services": [
@@ -1701,16 +1701,7 @@
       "location": "Desa Sukamaju, Jawa Timur",
       "latitude": -7.2504,
       "longitude": 112.7512,
-      "collaborators": [
-        {
-          "id": "collab_45e965",
-          "user_id": "usr_cangkul",
-          "name": "Mang Udin",
-          "role": "Pemilik Lahan & Pengelola Utama",
-          "share_percentage": 100,
-          "phone": "087811223344"
-        }
-      ],
+      "collaborators": [],
       "capital_expenses": [],
       "timeline_phases": [
         {
@@ -1822,16 +1813,7 @@
       "location": "Desa Sukamaju, Jawa Timur",
       "latitude": -7.2504,
       "longitude": 112.7512,
-      "collaborators": [
-        {
-          "id": "collab_0b09c6",
-          "user_id": "usr_1791517561901",
-          "name": "admin",
-          "role": "Pemilik Lahan & Pengelola Utama",
-          "share_percentage": 100,
-          "phone": "081987654321"
-        }
-      ],
+      "collaborators": [],
       "capital_expenses": [],
       "timeline_phases": [
         {

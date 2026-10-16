@@ -76,7 +76,7 @@
 
           <!-- Service Title & Price -->
           <div>
-            <h3 class="text-base font-bold text-slate-800 leading-snug group-hover:text-[#324d1d] transition-colors">
+            <h3 class="text-base text-bold text-slate-800 leading-snug group-hover:text-[#324d1d] transition-colors">
               {{ service.title }}
             </h3>
             <div class="flex items-baseline gap-1 mt-1 text-[#324d1d]">
