@@ -533,7 +533,16 @@ export const api = {
       headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error('Gagal memperbarui profil');
+    if (!res.ok) {
+      const errorBody = await res.text();
+      let detail = errorBody;
+      try {
+        detail = JSON.parse(errorBody).detail || errorBody;
+      } catch {
+        detail = errorBody;
+      }
+      throw new Error(detail || `Gagal memperbarui profil (${res.status})`);
+    }
     return res.json();
   },
 
@@ -1303,5 +1312,3 @@ export const api = {
     return res.json();
   }
 };
-
-

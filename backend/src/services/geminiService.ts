@@ -104,12 +104,12 @@ export class GeminiService {
     if (config.geminiApiKey) {
       try {
         this.ai = new GoogleGenAI({ apiKey: config.geminiApiKey });
-        console.log('✅ Google Gemini API Client initialized successfully.');
+        console.log('Google Gemini API Client initialized successfully.');
       } catch (err) {
-        console.warn('⚠️ Failed to initialize Google Gen AI client:', err);
+        console.warn('Failed to initialize Google Gen AI client:', err);
       }
     } else {
-      console.log('ℹ️ GEMINI_API_KEY is not set. AI diagnosis will use intelligent agronomy knowledge base fallback.');
+      console.log('GEMINI_API_KEY is not set. AI diagnosis will use intelligent agronomy knowledge base fallback.');
     }
   }
 
@@ -190,7 +190,7 @@ export class GeminiService {
 
     if (client) {
       const candidates = await this.getCandidateModels(client);
-      console.log(`📡 Auto-detecting active Gemini model (candidates: ${candidates.slice(0, 3).join(', ')})...`);
+      console.log(`Auto-detecting active Gemini model (candidates: ${candidates.slice(0, 3).join(', ')})...`);
 
       const prompt = `Anda adalah pakar agronomi dan fitopatologi tanaman padi (Agri AI).
 Analisis gambar daun padi ini secara cermat. Tentukan apakah tanaman terserang penyakit atau sehat.
@@ -218,7 +218,7 @@ Kembalikan jawaban HANYA dalam format JSON valid (tanpa markdown backtick ataupu
 
       for (const selectedModel of candidates) {
         try {
-          console.log(`🤖 Invoking Google Gemini Vision using model: "${selectedModel}"...`);
+          console.log(`Invoking Google Gemini Vision using model: "${selectedModel}"...`);
           const response = await client.models.generateContent({
             model: selectedModel,
             contents: [
@@ -242,7 +242,7 @@ Kembalikan jawaban HANYA dalam format JSON valid (tanpa markdown backtick ataupu
           if (jsonMatch) {
             const parsed = JSON.parse(jsonMatch[0]);
             this.cachedModel = selectedModel; // Kunci model yang sukses untuk request berikutnya
-            console.log(`✅ Gemini diagnosis succeeded with model: "${selectedModel}"`);
+            console.log(`Gemini diagnosis succeeded with model: "${selectedModel}"`);
             return {
               disease_name: parsed.disease_name || "Penyakit Daun Padi",
               english_name: parsed.english_name || "Rice Leaf Condition",
@@ -255,7 +255,7 @@ Kembalikan jawaban HANYA dalam format JSON valid (tanpa markdown backtick ataupu
             };
           }
         } catch (err: any) {
-          console.warn(`⚠️ Model "${selectedModel}" returned error: ${err?.message || err}. Trying next available model...`);
+          console.warn(`Model "${selectedModel}" returned error: ${err?.message || err}. Trying next available model...`);
         }
       }
     }
@@ -407,8 +407,8 @@ ${detectedDiagnosis ? `Info tambahan dari foto daun yang diunggah pengguna: Terd
     
     if (diagnosis) {
       return `Halo Pak Tani! Berdasarkan analisis citra daun yang Anda kirimkan, terindikasi adanya gejala **${diagnosis.disease_name}** (${diagnosis.english_name}) dengan tingkat risiko **${diagnosis.severity}**.\n\n` +
-        `🔍 **Gejala Terdeteksi:**\n` + diagnosis.symptoms.map(s => `• ${s}`).join('\n') + `\n\n` +
-        `💡 **Anjuran Solusi & Penanganan:**\n` + diagnosis.actions.map(a => `• ${a}`).join('\n') + `\n\n` +
+        `**Gejala Terdeteksi:**\n` + diagnosis.symptoms.map(s => `• ${s}`).join('\n') + `\n\n` +
+        `**Anjuran Solusi & Penanganan:**\n` + diagnosis.actions.map(a => `• ${a}`).join('\n') + `\n\n` +
         `Apakah Anda ingin informasi takaran obat atau fungisida khusus untuk kondisi ini?`;
     }
 
@@ -422,9 +422,9 @@ ${detectedDiagnosis ? `Info tambahan dari foto daun yang diunggah pengguna: Terd
 
     if (q.includes('pupuk') || q.includes('urea') || q.includes('npk')) {
       return `Halo Pak Tani! Pemupukan padi optimal memerlukan pola pemupukan berimbang:\n\n` +
-        `🌱 **Fase Vegetatif Awal (7-14 HST):** Berikan Urea (75-100 kg/ha) + NPK Phonska (150 kg/ha) untuk memacu anakan aktif.\n` +
-        `🌿 **Fase Primordia / Bunting (35-45 HST):** Berikan susulan Urea (50 kg/ha) + NPK (100 kg/ha) + KCl (50 kg/ha) agar batang kokoh dan bulir terisi padat.\n` +
-        `💧 **Tips:** Pastikan kondisi air sawah macak-macak saat menabur pupuk agar cepat diserap akar.`;
+        `**Fase Vegetatif Awal (7-14 HST):** Berikan Urea (75-100 kg/ha) + NPK Phonska (150 kg/ha) untuk memacu anakan aktif.\n` +
+        `**Fase Primordia / Bunting (35-45 HST):** Berikan susulan Urea (50 kg/ha) + NPK (100 kg/ha) + KCl (50 kg/ha) agar batang kokoh dan bulir terisi padat.\n` +
+        `**Tips:** Pastikan kondisi air sawah macak-macak saat menabur pupuk agar cepat diserap akar.`;
     }
 
     if (q.includes('kuning') || q.includes('kering') || q.includes('bercak')) {
@@ -435,7 +435,7 @@ ${detectedDiagnosis ? `Info tambahan dari foto daun yang diunggah pengguna: Terd
         `Anda juga dapat mengambil foto daunnya sekarang dan lampirkan di chat ini agar saya analisiskan!`;
     }
 
-    return `Halo Pak Tani! Saya **Agri AI**, asisten pertanian cerdas Anda di AgriBuddy. 🌾\n\n` +
+    return `Halo Pak Tani! Saya **Agri AI**, asisten pertanian cerdas Anda di AgriBuddy.\n\n` +
       `Saya siap membantu menjawab seputar:\n` +
       `• Deteksi dan solusi penyakit daun padi & hama tanaman\n` +
       `• Rekomendasi dosis pemupukan berimbang & jadwal aplikasi\n` +

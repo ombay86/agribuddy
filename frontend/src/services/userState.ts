@@ -1,4 +1,8 @@
 import { ref, computed } from 'vue';
+import petani from '@/assets/icons/download.jpg';
+
+const isLegacyFarmerAvatar = (avatar?: string | null) =>
+  avatar === '👨‍🌾' || avatar?.endsWith('/icons/petani.svg') === true;
 
 export type UserRole = 
   | 'PETANI_MANDIRI' 
@@ -34,7 +38,7 @@ export const PERSONAS: Record<string, Persona> = {
     serviceCategory: 'Budidaya Padi',
     entityName: 'Kelompok Tani Makmur',
     location: 'Desa Sukamaju',
-    avatar: '👨‍🌾',
+    avatar: petani,
     specialties: ['Padi Inpari 32', 'Sistem Jajar Legowo', 'Petak Lahan 1.2 Ha']
   },
   JASA_TRAKTOR: {
@@ -46,7 +50,7 @@ export const PERSONAS: Record<string, Persona> = {
     serviceCategory: 'Jasa Olah Tanah',
     entityName: 'Bengkel & Traktor Quick Kubota',
     location: 'Desa Sukamaju Krajan',
-    avatar: '🚜',
+    avatar: petani,
     specialties: ['Bajak Singkal', 'Rotavator Lahan Kering & Basah', 'Operator Handal']
   },
   JASA_PENGAIRAN: {
@@ -58,7 +62,7 @@ export const PERSONAS: Record<string, Persona> = {
     serviceCategory: 'Pompanisasi & Irigasi',
     entityName: 'Jasa Pompa Air Alkon 3 Inci',
     location: 'Desa Sukamaju Blok Saluran',
-    avatar: '💧',
+    avatar: petani,
     specialties: ['Pompa Alkon 3 Inci', 'Sedot Saluran Sungai', 'Pengeboran Pantek']
   },
   JASA_CANGKUL: {
@@ -70,7 +74,7 @@ export const PERSONAS: Record<string, Persona> = {
     serviceCategory: 'Tenaga Kerja Tani',
     entityName: 'Regu Tanam & Cangkul Galengan',
     location: 'Desa Sukamaju Girang',
-    avatar: '🌾',
+    avatar: petani,
     specialties: ['Cangkul Pematang', 'Regu Tanam Borongan', 'Penyiangan Rumput']
   },
   KIOS_SAPROTAN: {
@@ -82,7 +86,7 @@ export const PERSONAS: Record<string, Persona> = {
     serviceCategory: 'Penyedia Pupuk & Benih',
     entityName: 'Kios Tani Subur Makmur (KPL Resmi)',
     location: 'Pasar Tradisional Sukamaju',
-    avatar: '🏪',
+    avatar: petani,
     specialties: ['Pupuk Subsidi & Non-Subsidi', 'Benih Bersertifikat', 'Bakterisida Hayati']
   },
   PENGGILINGAN_PADI: {
@@ -94,7 +98,7 @@ export const PERSONAS: Record<string, Persona> = {
     serviceCategory: 'Penyerapan Gabah & Logistik',
     entityName: 'Penggilingan Padi Sri Jaya',
     location: 'Sentra Penggilingan Km 3',
-    avatar: '🚚',
+    avatar: petani,
     specialties: ['Timbangan Digital Terkalibrasi', 'Armada Pick-Up Jemput Lumbung', 'Beli Tunai']
   }
 };
@@ -132,6 +136,7 @@ const isAuthenticated = ref<boolean>(initialAuth);
 // State Reaktif Global untuk Avatar & Username pengguna
 const userAvatars = ref<Record<string, string | null>>({});
 const userUsernames = ref<Record<string, string | null>>({});
+const userNames = ref<Record<string, string | null>>({});
 
 export const getActiveUserId = (): string => {
   if (registeredUser.value && registeredUser.value.id) {
@@ -153,6 +158,15 @@ export const syncUserProfile = async (userId?: string) => {
     if (res.ok) {
       const prof = await res.json();
       if (prof) {
+        if (prof.full_name || prof.name) {
+          const name = prof.full_name || prof.name;
+          userNames.value = { ...userNames.value, [activeUid]: name };
+          localStorage.setItem(`agribuddy_name_${activeUid}`, name);
+          if (registeredUser.value?.id === activeUid) {
+            registeredUser.value = { ...registeredUser.value, full_name: name };
+            localStorage.setItem('agribuddy_registered_user', JSON.stringify(registeredUser.value));
+          }
+        }
         if (prof.avatar_url) {
           userAvatars.value = {
             ...userAvatars.value,
@@ -184,6 +198,10 @@ export const useUserState = () => {
   const currentPersona = computed(() => {
     if (registeredUser.value) {
       const u = registeredUser.value;
+      const userName = userNames.value[u.id]
+        || localStorage.getItem(`agribuddy_name_${u.id}`)
+        || u.full_name
+        || u.name;
       const userCustomAvatar = userAvatars.value[u.id] !== undefined 
         ? userAvatars.value[u.id] 
         : (localStorage.getItem(`agribuddy_avatar_${u.id}`) || u.avatar_url || null);
@@ -193,13 +211,13 @@ export const useUserState = () => {
       return {
         id: u.id,
         role: (u.role || 'PETANI_MANDIRI') as UserRole,
-        name: u.full_name || u.name,
+        name: userName,
         username: userCustomUsername,
         badge: u.category_badge || u.role_label || 'Petani Mandiri',
         serviceCategory: u.commodity || 'Budidaya Pertanian',
         entityName: u.village || 'Desa Sukamaju',
         location: u.village || 'Desa Sukamaju',
-        avatar: u.avatar || '👨‍🌾',
+        avatar: !u.avatar || isLegacyFarmerAvatar(u.avatar) ? petani : u.avatar,
         specialties: [u.commodity || 'Padi Inpari 32', `${u.land_size_ha || 1} Ha`],
         customAvatar: userCustomAvatar
       };
@@ -211,8 +229,12 @@ export const useUserState = () => {
     const personaUsername = userUsernames.value[base.id] !== undefined
       ? userUsernames.value[base.id]
       : (localStorage.getItem(`agribuddy_username_${base.id}`) || base.username);
+    const personaName = userNames.value[base.id]
+      || localStorage.getItem(`agribuddy_name_${base.id}`)
+      || base.name;
     return {
       ...base,
+      name: personaName,
       username: personaUsername,
       customAvatar: personaAvatar
     };
@@ -259,6 +281,19 @@ export const useUserState = () => {
       }
     } else {
       localStorage.removeItem(`agribuddy_username_${uid}`);
+    }
+  };
+
+  const setCustomName = (name: string) => {
+    const clean = name.trim();
+    if (!clean) return;
+
+    const uid = currentUserId.value;
+    userNames.value = { ...userNames.value, [uid]: clean };
+    localStorage.setItem(`agribuddy_name_${uid}`, clean);
+    if (registeredUser.value) {
+      registeredUser.value = { ...registeredUser.value, full_name: clean };
+      localStorage.setItem('agribuddy_registered_user', JSON.stringify(registeredUser.value));
     }
   };
 
@@ -345,6 +380,7 @@ export const useUserState = () => {
     setCustomAvatar,
     customUsername,
     setCustomUsername,
+    setCustomName,
     setRole,
     loginWithPersona,
     loginWithCustomUser,

@@ -1,5 +1,5 @@
 <template>
-  <header class="bg-gradient-to-r from-tani-700 to-tani-800 text-white px-4 pt-4 pb-5 rounded-b-3xl shadow-md space-y-3">
+  <header class="bg-gradient-to-r from-[#324d1d] to-[#324d1d] text-white px-4 pt-4 pb-5 rounded-b-3xl shadow-md space-y-3">
     <!-- Baris Atas: Logo Aplikasi & Menu Pengguna (Akun yang Sedang Login) -->
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2.5">
@@ -7,38 +7,38 @@
           <img src="/logo/logo-color-icon.svg" alt="AgriBuddy Logo" class="w-full h-full object-contain" />
         </div>
         <h1 class="text-xl font-extrabold tracking-tight">AgriBuddy</h1>
-        <span class="bg-emerald-500/30 text-emerald-200 text-[10px] px-2 py-0.5 rounded-full font-bold border border-emerald-400/30">
+        <span class="bg-[#99c30c]/30 text-[#fff2d9] text-[10px] px-2 py-0.5 rounded-full font-bold border border-[#99c30c]/30">
           v2.0
         </span>
       </div>
 
       <!-- Desktop Navigation Bar (Hanya tampil di layar md ke atas) -->
-      <nav class="hidden md:flex items-center gap-1 bg-emerald-950/40 border border-emerald-500/30 p-1.5 rounded-2xl">
+      <nav class="hidden md:flex items-center gap-1 bg-[#324d1d]/40 border border-[#99c30c]/30 p-1.5 rounded-2xl">
         <router-link
           to="/"
           class="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
-          :class="$route.path === '/' || $route.path === '/jejaring' ? 'bg-emerald-600 text-white shadow-sm font-black' : 'text-emerald-200 hover:text-white hover:bg-white/10'"
+          :class="$route.path === '/' || $route.path === '/jejaring' ? 'bg-[#324d1d]/90 text-white shadow-sm ' : 'text-[#fff2d9] hover:text-white hover:bg-white/10'"
         >
           <Users :size="15" /> Jejaring
         </router-link>
         <router-link
           to="/monitoring"
           class="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
-          :class="$route.path.startsWith('/monitoring') || $route.path === '/rencana' || $route.path === '/inventaris' || $route.path === '/lumbung' ? 'bg-emerald-600 text-white shadow-sm font-black' : 'text-emerald-200 hover:text-white hover:bg-white/10'"
+          :class="$route.path.startsWith('/monitoring') || $route.path === '/rencana' || $route.path === '/inventaris' || $route.path === '/lumbung' ? 'bg-[#324d1d]/90 text-white shadow-sm ' : 'text-[#fff2d9] hover:text-white hover:bg-white/10'"
         >
           <Activity :size="15" /> Monitoring (Sawah & AI)
         </router-link>
         <router-link
           to="/katalog"
           class="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
-          :class="$route.path === '/katalog' ? 'bg-emerald-600 text-white shadow-sm font-black' : 'text-emerald-200 hover:text-white hover:bg-white/10'"
+          :class="$route.path === '/katalog' ? 'bg-[#324d1d]/90 text-white shadow-sm ' : 'text-[#fff2d9] hover:text-white hover:bg-white/10'"
         >
           <Store :size="15" /> Katalog Layanan
         </router-link>
         <router-link
           to="/profil"
           class="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
-          :class="$route.path === '/profil' ? 'bg-emerald-600 text-white shadow-sm font-black' : 'text-emerald-200 hover:text-white hover:bg-white/10'"
+          :class="$route.path === '/profil' ? 'bg-[#324d1d]/90 text-white shadow-sm ' : 'text-[#fff2d9] hover:text-white hover:bg-white/10'"
         >
           <User :size="15" /> Profil Saya
         </router-link>
@@ -50,13 +50,13 @@
         <div class="relative">
           <button
             @click="toggleNotificationMenu"
-            class="relative p-2 rounded-full bg-emerald-950/50 hover:bg-emerald-950/70 border border-emerald-500/40 text-emerald-100 transition-all active:scale-95 shadow-sm"
+            class="relative p-2 rounded-full bg-[#324d1d]/50 hover:bg-[#324d1d]/70 border border-[#99c30c]/40 text-[#fff2d9] transition-all active:scale-95 shadow-sm"
             title="Pemberitahuan & Interaksi"
           >
             <Bell :size="17" />
             <span
               v-if="unreadCount > 0"
-              class="absolute -top-1 -right-1 bg-rose-500 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-emerald-900 shadow-sm animate-pulse"
+              class="absolute -top-1 -right-1 bg-rose-500 text-white text-[9px]  w-4 h-4 rounded-full flex items-center justify-center border-2 border-[#324d1d] shadow-sm animate-pulse"
             >
               {{ unreadCount > 9 ? '9+' : unreadCount }}
             </span>
@@ -69,13 +69,13 @@
           >
             <div class="px-4 pb-2 border-b border-slate-100 flex items-center justify-between">
               <div class="flex items-center gap-1.5">
-                <Bell :size="15" class="text-emerald-600" />
-                <h4 class="text-xs font-black text-slate-800">Notifikasi & Aktivitas</h4>
+                <Bell :size="15" class="text-[#324d1d]" />
+                <h4 class="text-xs  text-slate-800">Notifikasi & Aktivitas</h4>
               </div>
               <button
                 v-if="unreadCount > 0"
                 @click="markAllAsRead"
-                class="text-[10px] font-bold text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded-lg transition-all"
+                class="text-[10px] font-bold text-[#324d1d] hover:text-[#324d1d] bg-[#99c30c]/10 hover:bg-[#99c30c]/20 px-2 py-0.5 rounded-lg transition-all"
               >
                 Tandai semua dibaca
               </button>
@@ -84,14 +84,14 @@
             <!-- List Notifikasi -->
             <div class="overflow-y-auto divide-y divide-slate-100 flex-1 max-h-72">
               <div v-if="notifications.length === 0" class="py-8 text-center text-xs text-slate-400 font-semibold">
-                🔔 Belum ada notifikasi baru
+                Belum ada notifikasi baru
               </div>
               <div
                 v-for="notif in notifications"
                 :key="notif.id"
                 @click="handleNotificationClick(notif)"
-                class="p-3 hover:bg-slate-50 transition-all cursor-pointer flex items-start gap-2.5"
-                :class="{ 'bg-emerald-50/40': !notif.is_read }"
+                class="p-3 hover:bg-[#fff2d9] transition-all cursor-pointer flex items-start gap-2.5"
+                :class="{ 'bg-[#99c30c]/40': !notif.is_read }"
               >
                 <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm shrink-0 mt-0.5"
                   :class="getNotifBg(notif.type)"
@@ -100,10 +100,10 @@
                 </div>
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center justify-between gap-1">
-                    <h5 class="text-xs font-black text-slate-800 truncate" :class="{ 'font-black': !notif.is_read }">
+                    <h5 class="text-xs  text-slate-800 truncate" :class="{ '': !notif.is_read }">
                       {{ notif.title }}
                     </h5>
-                    <span v-if="!notif.is_read" class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+                    <span v-if="!notif.is_read" class="w-2 h-2 rounded-full bg-[#99c30c] shrink-0"></span>
                   </div>
                   <p class="text-[11px] text-slate-600 mt-0.5 leading-snug line-clamp-2">
                     {{ notif.message }}
@@ -121,11 +121,10 @@
         <div class="relative">
           <button
             @click="showUserMenu = !showUserMenu; showNotifMenu = false"
-            class="flex items-center gap-2 bg-emerald-950/50 hover:bg-emerald-950/70 border border-emerald-500/40 text-xs px-3 py-1.5 rounded-full font-bold text-emerald-100 transition-all active:scale-95 shadow-sm"
+            class="flex items-center gap-2 bg-[#324d1d]/50 hover:bg-[#324d1d]/70 border border-[#99c30c]/40 text-xs px-3 py-1.5 rounded-full font-bold text-[#fff2d9] transition-all active:scale-95 shadow-sm"
           >
             <div class="w-5 h-5 rounded-full overflow-hidden flex items-center justify-center bg-white/10 shrink-0">
-              <img v-if="currentPersona.customAvatar" :src="currentPersona.customAvatar" alt="Avatar" class="w-full h-full object-cover" />
-              <span v-else class="text-xs">{{ currentPersona.avatar || '👨‍🌾' }}</span>
+              <img :src="petani" alt="Avatar petani" class="w-full h-full object-cover" />
             </div>
             <span class="max-w-[100px] truncate">{{ currentPersona.name }}</span>
             <ChevronDown :size="14" class="transition-transform" :class="{ 'rotate-180': showUserMenu }" />
@@ -139,13 +138,12 @@
             <!-- Info Ringkas Akun yang Login -->
             <div class="px-3.5 py-2 border-b border-slate-100">
               <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-full overflow-hidden border border-emerald-500 shadow-2xs flex items-center justify-center bg-emerald-50 shrink-0">
-                  <img v-if="currentPersona.customAvatar" :src="currentPersona.customAvatar" alt="Avatar" class="w-full h-full object-cover" />
-                  <span v-else class="text-lg">{{ currentPersona.avatar || '👨‍🌾' }}</span>
+                <div class="w-8 h-8 rounded-full overflow-hidden border border-[#99c30c] shadow-2xs flex items-center justify-center bg-[#99c30c]/10 shrink-0">
+                  <img :src="petani" alt="Avatar petani" class="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <div class="font-black text-xs text-slate-800">{{ currentPersona.name }}</div>
-                  <div class="text-[10px] font-extrabold text-emerald-700">{{ currentPersona.badge }}</div>
+                  <div class=" text-xs text-slate-800">{{ currentPersona.name }}</div>
+                  <div class="text-[10px] font-extrabold text-[#324d1d]">{{ currentPersona.badge }}</div>
                 </div>
               </div>
               <p class="text-[10px] text-slate-500 mt-1 truncate">{{ currentPersona.entityName }}</p>
@@ -156,9 +154,9 @@
               <router-link
                 to="/profil"
                 @click="showUserMenu = false"
-                class="w-full text-left px-3.5 py-2 text-xs flex items-center gap-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 font-bold transition-all"
+                class="w-full text-left px-3.5 py-2 text-xs flex items-center gap-2 text-slate-700 hover:bg-[#99c30c]/10 hover:text-[#324d1d] font-bold transition-all"
               >
-                <User :size="15" class="text-emerald-600" /> Buka Profil Usahatani
+                <User :size="15" class="text-[#324d1d]" /> Buka Profil Usahatani
               </router-link>
 
               <button
@@ -176,15 +174,15 @@
     <!-- Baris Bawah: Kartu Status Akun yang Sedang Aktif -->
     <div class="flex items-center justify-between bg-white/10 backdrop-blur-sm p-2.5 rounded-2xl border border-white/15">
       <router-link to="/profil" class="flex items-center gap-2.5 hover:opacity-95 transition-all text-left">
-        <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-xl border border-white/20 shadow-inner">
-          {{ currentPersona.avatar }}
+        <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center border border-white/20 shadow-inner overflow-hidden">
+          <img :src="petani" alt="Avatar petani" class="w-full h-full object-cover" />
         </div>
         <div>
           <div class="text-sm font-extrabold text-white flex items-center gap-1.5">
             {{ currentPersona.name }}
-            <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="inline-block w-2 h-2 rounded-full bg-[#99c30c] animate-pulse"></span>
           </div>
-          <p class="text-[11px] text-emerald-200 font-medium">
+          <p class="text-[11px] text-[#fff2d9] font-medium">
             {{ currentPersona.badge }} • {{ currentPersona.location }}
           </p>
         </div>
@@ -273,13 +271,13 @@ const getNotifIcon = (type: string) => {
 const getNotifBg = (type: string) => {
   switch (type) {
     case 'ORDER_RECEIVED':
-      return 'bg-amber-100 text-amber-800';
+      return 'bg-[#fed701]/20 text-[#324d1d]';
     case 'NEW_FOLLOWER':
-      return 'bg-sky-100 text-sky-800';
+      return 'bg-[#99c30c]/20 text-[#324d1d]';
     case 'NEW_COMMENT':
-      return 'bg-teal-100 text-teal-800';
+      return 'bg-[#99c30c]/20 text-[#324d1d]';
     case 'ORDER_STATUS':
-      return 'bg-emerald-100 text-emerald-800';
+      return 'bg-[#99c30c]/20 text-[#324d1d]';
     default:
       return 'bg-slate-100 text-slate-800';
   }
@@ -299,5 +297,6 @@ const handleLogout = () => {
   logout();
   router.push('/login');
 };
-</script>
 
+import petani from '@/assets/icons/download.jpg';
+</script>

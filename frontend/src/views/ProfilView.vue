@@ -1,32 +1,27 @@
 <template>
-  <div class="p-4 space-y-4 pb-28">
+  <PageLayout variant="compact">
     <!-- Header Modul Profil -->
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2">
-        <router-link to="/jejaring" class="p-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200">
-          <ArrowLeft :size="18" />
-        </router-link>
         <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">
           Profil Usahatani
         </h2>
       </div>
-      <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-full flex items-center gap-1">
+      <span class="text-xs bg-[#99c30c]/20 text-[#324d1d] font-bold px-3 py-1 rounded-full flex items-center gap-1">
         <CheckCircle2 :size="12" /> Petani Terdaftar
       </span>
     </div>
 
     <!-- Kartu Identitas Petani / Pengguna -->
-    <div class="bg-gradient-to-br from-emerald-800 to-tani-900 text-white p-5 rounded-3xl shadow-md text-center relative overflow-hidden">
+    <div class="bg-gradient-to-br from-[#324d1d] to-[#324d1d] text-white p-5 rounded-3xl shadow-md text-center relative overflow-hidden">
       <!-- Avatar Section with Camera & File Upload -->
       <div class="relative w-24 h-24 mx-auto mb-3">
         <div class="w-24 h-24 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-4xl mx-auto border-2 border-white/40 shadow-inner overflow-hidden">
           <img
-            v-if="customAvatar || profile.avatar_url"
-            :src="customAvatar || profile.avatar_url"
-            alt="Foto Profil"
+            :src="customAvatar || profile.avatar_url || farmer"
+            alt="Avatar petani"
             class="w-full h-full object-cover"
           />
-          <span v-else>{{ currentPersona.avatar || '👨‍🌾' }}</span>
         </div>
 
         <!-- Floating Action Buttons -->
@@ -34,7 +29,7 @@
           <button
             type="button"
             @click="openCamera"
-            class="pointer-events-auto w-[26px] h-[26px] min-w-[26px] min-h-[26px] max-w-[26px] max-h-[26px] rounded-full aspect-square shrink-0 p-0 flex items-center justify-center bg-emerald-600 hover:bg-emerald-500 text-white shadow-md border-[1.5px] border-white transition-all active:scale-90 cursor-pointer"
+            class="pointer-events-auto w-[26px] h-[26px] min-w-[26px] min-h-[26px] max-w-[26px] max-h-[26px] rounded-full aspect-square shrink-0 p-0 flex items-center justify-center bg-[#99c30c] hover:bg-[#99c30c]/80 text-[#324d1d] shadow-md border-[1.5px] border-white transition-all active:scale-90 cursor-pointer"
             title="Ambil Foto Kamera Langsung"
           >
             <Camera :size="12" />
@@ -42,7 +37,7 @@
           <button
             type="button"
             @click="fileInputRef?.click()"
-            class="pointer-events-auto w-[26px] h-[26px] min-w-[26px] min-h-[26px] max-w-[26px] max-h-[26px] rounded-full aspect-square shrink-0 p-0 flex items-center justify-center bg-white hover:bg-slate-100 text-emerald-800 shadow-md border-[1.5px] border-white transition-all active:scale-90 cursor-pointer"
+            class="pointer-events-auto w-[26px] h-[26px] min-w-[26px] min-h-[26px] max-w-[26px] max-h-[26px] rounded-full aspect-square shrink-0 p-0 flex items-center justify-center bg-white hover:bg-slate-100 text-[#324d1d] shadow-md border-[1.5px] border-white transition-all active:scale-90 cursor-pointer"
             title="Unggah Foto dari File / Galeri"
           >
             <Upload :size="12" />
@@ -75,34 +70,34 @@
           @change="handleFileChange"
         />
       </div>
-      <h3 class="text-lg font-black mt-3">{{ profile.full_name }}</h3>
+      <h3 class="text-lg font-bold mt-3">{{ profile.full_name }}</h3>
       <div class="flex items-center justify-center gap-1.5 mt-1">
-        <span class="text-xs font-black text-emerald-200 bg-white/15 px-2.5 py-0.5 rounded-full border border-white/20">
+        <span class="text-xs text-[#fff2d9] bg-white/15 px-2.5 py-0.5 rounded-full border border-white/20">
           @{{ profile.username || currentPersona.username || 'petani' }}
         </span>
-        <span class="inline-block text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-700/60 text-emerald-200 border border-emerald-500/30">
+        <span class="inline-block text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#324d1d]/60 text-[#fff2d9] border border-[#99c30c]/30">
           {{ currentPersona.badge }}
         </span>
       </div>
-      <p class="text-xs text-emerald-200 mt-1.5 flex items-center justify-center gap-1">
-        <span>📍</span> {{ profile.village }}
+      <p class="text-xs text-[#fff2d9] mt-1.5 flex items-center justify-center gap-1">
+        {{ profile.village }}
       </p>
     </div>
 
     <!-- Form Pengaturan Profil Usahatani -->
     <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-4">
       <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
-        <UserCheck :size="15" class="text-emerald-600" /> Kelola Informasi Petani
+        <UserCheck :size="15" class="text-[#324d1d] font-bold" /> Kelola Informasi Petani
       </h4>
 
       <div class="space-y-3">
         <div>
-          <label class="text-xs font-bold text-slate-700 block mb-1">Nama Lengkap Petani</label>
+          <FormLabel>Nama Lengkap Petani</FormLabel>
           <input
             v-model="profile.full_name"
             type="text"
             placeholder="Nama lengkap petani..."
-            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-emerald-500 font-medium"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-[#99c30c] font-medium"
           />
         </div>
 
@@ -110,49 +105,49 @@
           <div>
             <label class="text-xs font-bold text-slate-700 block mb-1 flex items-center justify-between">
               <span>Username (@)</span>
-              <span class="text-[10px] text-emerald-600 font-semibold">Unik & Pencarian</span>
+              <span class="text-[10px] text-[#324d1d] font-semibold">Unik & Pencarian</span>
             </label>
             <div class="relative flex items-center">
-              <span class="absolute left-3.5 text-slate-400 font-black text-sm select-none">@</span>
+              <span class="absolute left-3.5 text-slate-400 text-sm select-none">@</span>
               <input
                 v-model="profile.username"
                 @input="handleUsernameInput"
                 type="text"
                 placeholder="username_petani"
-                class="w-full pl-8 pr-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-800 focus:outline-none focus:border-emerald-500"
+                class="w-full pl-8 pr-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-800 focus:outline-none focus:border-[#99c30c]"
               />
             </div>
             <p class="text-[10px] text-slate-400 mt-1">Digunakan untuk tag @kolaborator & pencarian profil</p>
           </div>
 
           <div>
-            <label class="text-xs font-bold text-slate-700 block mb-1">No. WhatsApp</label>
+            <FormLabel>No. WhatsApp</FormLabel>
             <input
               v-model="profile.whatsapp_number"
               type="text"
               placeholder="08123456789"
-              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-emerald-500 font-medium"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-[#99c30c] font-medium"
             />
           </div>
         </div>
 
         <div>
-          <label class="text-xs font-bold text-slate-700 block mb-1">Desa & Kecamatan Domisili</label>
+          <FormLabel>Desa & Kecamatan Domisili</FormLabel>
           <input
             v-model="profile.village"
             type="text"
             placeholder="Desa & Kecamatan..."
-            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-emerald-500 font-medium"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-[#99c30c] font-medium"
           />
         </div>
 
         <div>
-          <label class="text-xs font-bold text-slate-700 block mb-1">Keterangan / Kelompok Tani</label>
+          <FormLabel>Keterangan / Kelompok Tani</FormLabel>
           <textarea
             v-model="profile.bio"
             rows="2"
             placeholder="Keterangan atau kelompok tani..."
-            class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:border-emerald-500"
+            class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:border-[#99c30c]"
           ></textarea>
         </div>
       </div>
@@ -160,7 +155,7 @@
       <button
         @click="saveProfile"
         :disabled="isSaving"
-        class="w-full btn-farmer bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-md"
+        class="w-full btn-farmer bg-[#324d1d]/90 hover:bg-[#324d1d] text-white font-extrabold text-sm shadow-md"
       >
         <Save :size="16" /> {{ isSaving ? 'Menyimpan...' : 'Simpan Perubahan Profil' }}
       </button>
@@ -169,22 +164,22 @@
     <!-- Section: Layanan & Produk yang Saya Tawarkan -->
     <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-3">
       <div class="flex items-center justify-between">
-        <h4 class="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-          <Store :size="15" class="text-emerald-600" /> Layanan Saya di Ekosistem
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+          Layanan Saya di Ekosistem
         </h4>
         <router-link
           to="/katalog"
-          class="text-[11px] font-extrabold text-emerald-700 hover:text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-xl flex items-center gap-1"
+          class="text-[11px] font-extrabold text-[#324d1d] hover:text-[#324d1d] bg-[#99c30c]/10 px-2.5 py-1 rounded-xl flex items-center gap-1"
         >
           <PlusCircle :size="13" /> Pasang Baru
         </router-link>
       </div>
 
       <p class="text-xs text-slate-500">
-        Kelola daftar layanan usahatani, sewa alat, atau produk yang Anda tawarkan ke warga ekosistem.
+        Kelola daftar layanan usahatani, sewa alat, atau produk yang Anda tawarkan.
       </p>
 
-      <div v-if="myServices.length === 0" class="p-4 bg-slate-50 rounded-2xl text-center text-xs text-slate-400 font-semibold border border-dashed border-slate-200">
+      <div v-if="myServices.length === 0" class="p-4 bg-[#fff2d9] rounded-2xl text-center text-xs text-slate-400 font-semibold border border-dashed border-slate-200">
         Anda belum memasang layanan atau produk di katalog.
       </div>
 
@@ -192,17 +187,17 @@
         <div
           v-for="serv in myServices"
           :key="serv.id"
-          class="p-3 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between gap-2"
+          class="p-3 bg-[#fff2d9] border border-slate-200 rounded-2xl flex items-center justify-between gap-2"
         >
           <div class="truncate">
-            <h5 class="text-xs font-black text-slate-800">{{ serv.title }}</h5>
-            <span class="text-[10px] font-bold text-emerald-700">Rp {{ serv.price.toLocaleString('id-ID') }} {{ serv.price_unit }}</span>
+            <h5 class="text-xs text-slate-800">{{ serv.title }}</h5>
+            <span class="text-[10px] font-bold text-[#324d1d]">Rp {{ serv.price.toLocaleString('id-ID') }} {{ serv.price_unit }}</span>
           </div>
           <router-link
             to="/katalog"
-            class="text-[10px] font-bold text-slate-600 bg-white border border-slate-200 px-2.5 py-1 rounded-lg shrink-0 hover:bg-slate-100"
+            class="text-[10px] underline font-bold text-slate-600 bg-white border border-slate-200 px-2.5 py-1 rounded-lg shrink-0 hover:bg-slate-100"
           >
-            Kelola di Katalog →
+            Kelola di Katalog
           </router-link>
         </div>
       </div>
@@ -212,37 +207,26 @@
     <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-xs flex flex-col items-center text-center space-y-2.5">
       <img src="/logo/logo-color-rect.svg" alt="AgriBuddy - Sahabat Petani" class="h-12 w-auto object-contain" />
       <p class="text-xs text-slate-500 font-medium max-w-sm leading-relaxed">
-        Platform Smart Farming Decision Support System (DSS) untuk pendampingan usahatani mandiri, AI fitopatologi, dan ketertelusuran lumbung desa.
+        Platform cerdas untuk membantu petani mengelola usaha tani, mengenali penyakit tanaman dengan AI, dan memantau hasil panen.
       </p>
       <div class="flex items-center gap-2 pt-1 text-[11px] font-bold text-slate-400">
         <span>STSI4440 Capstone Project</span>
         <span>•</span>
-        <span class="text-emerald-700 font-extrabold">v2.0.4</span>
+        <span class="text-[#324d1d] font-extrabold">Kelompok B</span>
       </div>
     </div>
 
-    <!-- Tombol Keluar / Ganti Akun -->
-    <button
-      @click="handleLogout"
-      class="w-full btn-farmer bg-slate-100 hover:bg-rose-50 text-rose-600 border border-slate-200 font-bold text-xs py-3 rounded-2xl transition-all flex items-center justify-center gap-1.5 shadow-sm"
-    >
-      <LogOut :size="15" /> Keluar / Ganti Akun (Layar Masuk)
-    </button>
-
     <!-- Modal Live Kamera Web / Desktop -->
-    <div
-      v-if="isCameraModalOpen"
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in"
-    >
+    <BaseModal v-if="isCameraModalOpen" backdrop="80-sm" animate>
       <div class="bg-white rounded-3xl max-w-sm sm:max-w-md w-full overflow-hidden shadow-2xl border border-slate-100 flex flex-col">
         <!-- Modal Header -->
         <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+            <div class="w-8 h-8 rounded-xl bg-[#99c30c]/20 text-[#324d1d] flex items-center justify-center font-bold">
               <Camera :size="16" />
             </div>
             <div>
-              <h3 class="text-sm font-black text-slate-800">Ambil Foto Profil Langsung</h3>
+              <h3 class="text-sm text-slate-800">Ambil Foto Profil Langsung</h3>
               <p class="text-[10px] text-slate-400 font-medium">Kamera Web / Perangkat Aktif</p>
             </div>
           </div>
@@ -257,7 +241,7 @@
 
         <!-- Video Viewport / Preview -->
         <div class="p-5 flex flex-col items-center">
-          <div class="relative w-56 h-56 sm:w-64 sm:h-64 rounded-full overflow-hidden border-4 border-emerald-500 shadow-inner bg-slate-950 flex items-center justify-center">
+          <div class="relative w-56 h-56 sm:w-64 sm:h-64 rounded-full overflow-hidden border-4 border-[#99c30c] shadow-inner bg-black flex items-center justify-center">
             <!-- Video Live Stream -->
             <video
               v-show="!capturedSnapshot"
@@ -279,9 +263,8 @@
             <!-- Error Message State -->
             <div
               v-if="cameraError"
-              class="absolute inset-0 bg-slate-900/95 text-white p-5 flex flex-col items-center justify-center text-center gap-2"
+              class="absolute inset-0 bg-black/95 text-white p-5 flex flex-col items-center justify-center text-center gap-2"
             >
-              <span class="text-2xl">📷⚠️</span>
               <p class="text-xs font-bold text-rose-300">{{ cameraError }}</p>
               <button
                 type="button"
@@ -300,7 +283,7 @@
         </div>
 
         <!-- Modal Footer Controls -->
-        <div class="px-5 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-center gap-3">
+        <div class="px-5 py-4 bg-[#fff2d9] border-t border-slate-100 flex items-center justify-center gap-3">
           <!-- State 1: Live Stream (Ambil Foto) -->
           <template v-if="!capturedSnapshot">
             <button
@@ -314,7 +297,7 @@
               type="button"
               @click="takeSnapshot"
               :disabled="!!cameraError || !isCameraReady"
-              class="flex-1 max-w-[200px] py-2.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 cursor-pointer disabled:opacity-50"
+              class="flex-1 max-w-[200px] py-2.5 px-4 rounded-2xl bg-[#324d1d]/90 hover:bg-[#324d1d] text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 cursor-pointer disabled:opacity-50"
             >
               <Camera :size="15" /> Jepret Foto
             </button>
@@ -332,15 +315,15 @@
             <button
               type="button"
               @click="applySnapshot"
-              class="flex-1 max-w-[200px] py-2.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 cursor-pointer"
+              class="flex-1 max-w-[200px] py-2.5 px-4 rounded-2xl bg-[#324d1d]/90 hover:bg-[#324d1d] text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 cursor-pointer"
             >
               <Check :size="15" /> Gunakan Foto Ini
             </button>
           </template>
         </div>
       </div>
-    </div>
-  </div>
+    </BaseModal>
+  </PageLayout>
 
 </template>
 
@@ -364,6 +347,10 @@ import {
   RefreshCw,
   Check
 } from 'lucide-vue-next';
+import BaseModal from '@/components/ui/BaseModal.vue';
+import FormLabel from '@/components/ui/FormLabel.vue';
+import PageLayout from '@/components/layout/PageLayout.vue';
+import farmer from '@/assets/icons/download.jpg';
 
 const router = useRouter();
 const {
@@ -372,8 +359,12 @@ const {
   customAvatar,
   setCustomAvatar,
   customUsername,
-  setCustomUsername
+  setCustomUsername,
+  setCustomName
 } = useUserState();
+
+const isLegacyFarmerAvatar = (avatar?: string | null) =>
+  avatar?.endsWith('/icons/petani.svg') ?? false;
 
 const cameraInputRef = ref<HTMLInputElement | null>(null);
 const fileInputRef = ref<HTMLInputElement | null>(null);
@@ -567,6 +558,13 @@ const loadProfile = async () => {
     profile.value = prof;
     myServices.value = serv;
 
+    if (isLegacyFarmerAvatar(profile.value.avatar_url)) {
+      profile.value.avatar_url = undefined;
+    }
+    if (isLegacyFarmerAvatar(customAvatar.value)) {
+      setCustomAvatar(null);
+    }
+
     // Pastikan username profil menampilkan username unik persona/user aktif
     if (!profile.value.username) {
       profile.value.username = currentPersona.value.username;
@@ -594,6 +592,9 @@ const saveProfile = async () => {
     if (updated.username) {
       setCustomUsername(updated.username);
     }
+    if (updated.full_name) {
+      setCustomName(updated.full_name);
+    }
     if (updated.avatar_url) {
       setCustomAvatar(updated.avatar_url);
     }
@@ -614,4 +615,3 @@ const handleLogout = () => {
 onMounted(loadProfile);
 onUnmounted(closeCameraModal);
 </script>
-

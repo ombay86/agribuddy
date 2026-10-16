@@ -5,7 +5,7 @@
     <!-- Left: Contextual Title & Breadcrumbs -->
     <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
       <!-- Mobile Logo Icon -->
-      <router-link to="/" class="md:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-50 text-white flex items-center justify-center p-1 shrink-0 border border-emerald-200 shadow-2xs" title="AgriBuddy">
+      <router-link to="/" class="md:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#99c30c]/10 text-white flex items-center justify-center p-1 shrink-0 border border-[#99c30c]/40 shadow-2xs" title="AgriBuddy">
         <img src="/logo/logo-color-icon.svg" alt="AgriBuddy Logo" class="w-full h-full object-contain" />
       </router-link>
 
@@ -14,9 +14,9 @@
         <div class="hidden sm:flex items-center gap-1 text-[11px] font-bold text-slate-400">
           <span>AgriBuddy</span>
           <span>/</span>
-          <span class="text-emerald-700 capitalize">{{ currentSectionName }}</span>
+          <span class="text-[#324d1d] capitalize">{{ currentSectionName }}</span>
         </div>
-        <h2 class="text-xs sm:text-sm md:text-base font-black text-slate-800 tracking-tight leading-tight truncate">
+        <h2 class="text-xs sm:text-sm md:text-base text-bold text-slate-800 tracking-tight leading-tight truncate">
           <span class="sm:hidden">{{ mobilePageTitle }}</span>
           <span class="hidden sm:inline">{{ currentPageTitle }}</span>
         </h2>
@@ -31,13 +31,12 @@
         class="flex items-center gap-1 sm:gap-1.5 bg-slate-100 hover:bg-slate-200/90 border border-slate-200/90 rounded-2xl px-2 sm:px-2.5 py-1 sm:py-1.5 transition-all shadow-2xs shrink-0"
         title="Pilih petak sawah yang sedang dipantau di dashboard"
       >
-        <span class="text-xs sm:text-sm shrink-0">🌾</span>
         <div class="flex flex-col text-left pr-0.5">
-          <span class="hidden sm:inline text-[9px] font-black uppercase text-emerald-800 leading-none">Petak Sawah:</span>
+          <span class="hidden sm:inline text-[9px] font-bold uppercase text-[#324d1d] leading-none">Petak Sawah:</span>
           <select
             v-model="activeFarmId"
             @change="setActiveFarmId(activeFarmId)"
-            class="bg-transparent text-[11px] sm:text-xs font-black text-slate-800 focus:outline-none cursor-pointer pr-1 py-0.5 truncate max-w-[85px] sm:max-w-[210px]"
+            class="bg-transparent text-[11px] sm:text-xs font-bold text-slate-800 focus:outline-none cursor-pointer pr-1 py-0.5 truncate max-w-[85px] sm:max-w-[210px]"
           >
             <option v-for="f in globalFarmlands" :key="f.id" :value="f.id">
               {{ f.name }} ({{ f.land_size_ha }} Ha)
@@ -57,7 +56,7 @@
           <Bell :size="16" />
           <span
             v-if="pendingInvitesCount > 0"
-            class="absolute -top-1 -right-1 min-w-3.5 h-3.5 sm:min-w-4 sm:h-4 px-1 rounded-full bg-rose-500 text-white text-[8px] sm:text-[9px] font-black flex items-center justify-center animate-pulse"
+            class="absolute -top-1 -right-1 min-w-3.5 h-3.5 sm:min-w-4 sm:h-4 px-1 rounded-full bg-rose-500 text-white text-[8px] sm:text-[9px]  flex items-center justify-center animate-pulse"
           >
             {{ pendingInvitesCount }}
           </span>
@@ -70,12 +69,11 @@
         >
           <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
             <div class="flex items-center gap-1.5">
-              <span class="text-sm">🔔</span>
-              <h4 class="text-xs font-black text-slate-800">Notifikasi Kolaborasi</h4>
+              <h4 class="text-xs font-bold text-slate-800">Notifikasi</h4>
             </div>
             <button
               @click="loadNotifications"
-              class="text-[10px] font-bold text-emerald-700 hover:underline cursor-pointer"
+              class="text-[10px] font-bold text-[#324d1d] hover:underline cursor-pointer"
             >
               Segarkan
             </button>
@@ -83,9 +81,7 @@
 
           <!-- List Notifikasi -->
           <div v-if="notifications.length === 0" class="text-center py-6 space-y-1">
-            <span class="text-2xl">📭</span>
             <p class="text-xs font-bold text-slate-700">Belum Ada Notifikasi</p>
-            <p class="text-[10px] text-slate-400">Undangan kolaborasi lahan akan muncul di sini.</p>
           </div>
 
           <div v-else class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
@@ -94,29 +90,29 @@
               :key="notif.id"
               class="p-3 rounded-2xl border text-xs space-y-2 transition-all"
               :class="notif.status === 'PENDING' 
-                ? 'bg-amber-50/70 border-amber-300 ring-1 ring-amber-200' 
-                : 'bg-slate-50 border-slate-200'"
+                ? 'bg-[#fed701]/70 border-[#fed701]/60 ring-1 ring-[#fed701]/30' 
+                : 'bg-[#fff2d9] border-slate-200'"
             >
               <div class="flex items-start justify-between gap-2">
                 <div>
                   <div class="flex items-center gap-1.5">
-                    <span class="text-[10px] font-black uppercase px-1.5 py-0.2 rounded-md"
-                      :class="notif.type === 'COLLAB_INVITE' ? 'bg-amber-200 text-amber-900' : 'bg-emerald-100 text-emerald-800'"
+                    <span class="text-[10px] font-bold uppercase px-1.5 py-0.2 rounded-md"
+                      :class="notif.type === 'COLLAB_INVITE' ? 'bg-[#fed701]/30 text-[#324d1d]' : 'bg-[#99c30c]/20 text-[#324d1d]'"
                     >
                       {{ notif.type === 'COLLAB_INVITE' ? 'Undangan' : 'Info' }}
                     </span>
-                    <h5 class="text-xs font-black text-slate-800">{{ notif.title }}</h5>
+                    <h5 class="text-xs font-bold text-slate-800">{{ notif.title }}</h5>
                   </div>
                   <p class="text-[11px] text-slate-600 mt-1 leading-snug">{{ notif.message }}</p>
                 </div>
               </div>
 
               <!-- Tombol Respon jika Status PENDING -->
-              <div v-if="notif.status === 'PENDING'" class="flex items-center gap-2 pt-1 border-t border-amber-200/60">
+              <div v-if="notif.status === 'PENDING'" class="flex items-center gap-2 pt-1 border-t border-[#fed701]/60">
                 <button
                   @click="handleRespondInvite(notif.id, 'ACCEPT')"
                   :disabled="isResponding === notif.id"
-                  class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[11px] py-1.5 px-2 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-1 cursor-pointer disabled:opacity-60"
+                  class="flex-1 bg-[#324d1d]/90 hover:bg-[#324d1d] text-white  text-[11px] py-1.5 px-2 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-1 cursor-pointer disabled:opacity-60"
                 >
                   <Loader2 v-if="isResponding === notif.id" :size="12" class="animate-spin" />
                   <span v-else>✓ Terima ({{ notif.share_percentage }}%)</span>
@@ -131,8 +127,8 @@
               </div>
 
               <!-- Status Info jika sudah resolved -->
-              <div v-else-if="notif.status === 'RESOLVED_ACCEPTED'" class="text-[10px] font-bold text-emerald-700 flex items-center gap-1">
-                <span>✓ Anda telah menerima undangan ini</span>
+              <div v-else-if="notif.status === 'RESOLVED_ACCEPTED'" class="text-[10px] font-bold text-[#324d1d] flex items-center gap-1">
+                <span>Anda telah menerima undangan ini</span>
               </div>
               <div v-else-if="notif.status === 'RESOLVED_REJECTED'" class="text-[10px] font-bold text-slate-400 flex items-center gap-1">
                 <span>✕ Undangan ini telah ditolak</span>
@@ -148,18 +144,16 @@
         class="flex items-center gap-2 p-1.5 pr-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200/80 transition-all"
         title="Lihat Profil Usahatani"
       >
-        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden border border-emerald-500 shadow-2xs bg-emerald-50 flex items-center justify-center shrink-0">
+        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden border border-[#99c30c] shadow-2xs bg-[#99c30c]/10 flex items-center justify-center shrink-0">
           <img
-            v-if="currentPersona.customAvatar"
-            :src="currentPersona.customAvatar"
-            alt="Foto Profil"
+            :src="currentPersona.customAvatar || currentPersona.avatar"
+            alt="Avatar petani"
             class="w-full h-full object-cover"
           />
-          <span v-else class="text-sm sm:text-base leading-none">{{ currentPersona.avatar || '👨‍🌾' }}</span>
         </div>
         <div class="text-left hidden sm:block">
-          <p class="text-xs font-black text-slate-800 leading-tight">{{ currentPersona.name }}</p>
-          <p class="text-[10px] font-semibold text-emerald-700">@{{ currentPersona.username }} • {{ currentPersona.badge }}</p>
+          <p class="text-xs font-bold text-slate-800 leading-tight">{{ currentPersona.name }}</p>
+          <p class="text-[10px] font-semibold text-[#324d1d]">@{{ currentPersona.username }} • {{ currentPersona.badge }}</p>
         </div>
       </router-link>
     </div>
@@ -170,29 +164,19 @@
       v-if="isRencanaPage"
       class="sm:hidden border-t border-slate-100 bg-white grid grid-cols-2"
     >
-      <button
+      <SubTabButton
         type="button"
         @click="navigateRencanaTab('rencana')"
-        class="flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold transition-all border-b-2"
-        :class="!isKontrolTab
-          ? 'text-emerald-700 border-emerald-600 font-black bg-emerald-50/60'
-          : 'text-slate-500 border-transparent hover:text-slate-700'"
-      >
-        <span>🌾</span>
-        <span>Rencana Tanam</span>
-      </button>
+        :active="!isKontrolTab"
+        label="Rencana Tanam"
+      />
 
-      <button
+      <SubTabButton
         type="button"
         @click="navigateRencanaTab('kontrol')"
-        class="flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold transition-all border-b-2"
-        :class="isKontrolTab
-          ? 'text-emerald-700 border-emerald-600 font-black bg-emerald-50/60'
-          : 'text-slate-500 border-transparent hover:text-slate-700'"
-      >
-        <span>⚖️</span>
-        <span>Kontrol Tanam</span>
-      </button>
+        :active="isKontrolTab"
+        label="Kontrol Tanam"
+      />
     </div><!-- end Row 2 -->
   </header>
 </template>
@@ -204,6 +188,7 @@ import { useUserState, syncUserProfile } from '@/services/userState';
 import { useFarmlandState } from '@/composables/useFarmlandState';
 import { api, CollabNotification } from '@/services/api';
 import { Bell, Loader2 } from 'lucide-vue-next';
+import SubTabButton from '@/components/nav/SubTabButton.vue';
 
 const route = useRoute();
 const router = useRouter();

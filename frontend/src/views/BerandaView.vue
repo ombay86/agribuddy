@@ -1,9 +1,9 @@
 <template>
-  <div class="p-4 space-y-4 pb-24">
+  <PageLayout variant="compact">
     <!-- Kartu Cuaca & Rekomendasi Utama -->
-    <div v-if="weather" class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200/80 rounded-3xl p-5 shadow-sm">
+    <div v-if="weather" class="bg-gradient-to-br from-[#99c30c]/10 to-[#99c30c]/10 border border-[#99c30c]/80 rounded-3xl p-5 shadow-sm">
       <div class="flex items-center justify-between">
-        <span class="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100/70 px-2.5 py-1 rounded-full">
+        <span class="text-xs font-bold uppercase tracking-wider text-[#324d1d] bg-[#99c30c]/70 px-2.5 py-1 rounded-full">
           Cuaca & Lahan Hari Ini
         </span>
         <div class="flex items-center gap-2">
@@ -11,7 +11,7 @@
             @click="detectGPSWeather"
             :disabled="isLocatingWeather"
             type="button"
-            class="text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-0.5 rounded-lg active:scale-95 transition-all flex items-center gap-1 shadow-xs"
+            class="text-[10px] font-bold bg-[#324d1d]/90 hover:bg-[#324d1d] text-white px-2 py-0.5 rounded-lg active:scale-95 transition-all flex items-center gap-1 shadow-xs"
             title="Deteksi lokasi GPS otomatis"
           >
             <Navigation :size="11" class="animate-pulse" />
@@ -33,11 +33,11 @@
         </div>
         <div class="text-right space-y-1 text-xs text-slate-600 font-medium">
           <div class="flex items-center justify-end gap-1.5">
-            <Droplets :size="15" class="text-sky-500" />
+            <Droplets :size="15" class="text-[#99c30c]" />
             <span>Lembab: <strong>{{ weather.humidity_percent }}%</strong></span>
           </div>
           <div class="flex items-center justify-end gap-1.5">
-            <CloudRain :size="15" class="text-indigo-500" />
+            <CloudRain :size="15" class="text-[#fe8b02]" />
             <span>Peluang Hujan: <strong>{{ weather.rain_probability_percent }}%</strong></span>
           </div>
         </div>
@@ -47,8 +47,8 @@
       <div
         class="mt-4 p-4 rounded-2xl border flex items-start gap-3 transition-all"
         :class="weather.irrigation_needed 
-          ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm' 
-          : 'bg-amber-500 text-white border-amber-600 shadow-sm'"
+          ? 'bg-[#324d1d]/90 text-white border-[#324d1d] shadow-sm' 
+          : 'bg-[#fed701] text-[#324d1d] border-[#fe8b02] shadow-sm'"
       >
         <div class="p-2 bg-white/20 rounded-xl mt-0.5">
           <CheckCircle2 v-if="weather.irrigation_needed" :size="24" />
@@ -64,56 +64,47 @@
     </div>
 
     <!-- Call to Action: Rencana Tani AI & Modal -->
-    <div class="bg-gradient-to-r from-emerald-700 via-teal-800 to-emerald-900 text-white p-5 rounded-3xl shadow-md relative overflow-hidden">
-      <div class="relative z-10">
-        <div class="inline-flex items-center gap-1.5 bg-emerald-400/20 text-emerald-200 text-xs font-bold px-2.5 py-0.5 rounded-full mb-2">
-          <Sparkles :size="13" /> Rencana Tani AI
-        </div>
-        <h3 class="text-lg font-extrabold leading-tight">Perencanaan Tanam & Modal Produksi</h3>
-        <p class="text-xs text-emerald-100 mt-1 mb-4 leading-relaxed">
-          Cukup masukkan luas lahan, AI menghitung RAB operasional, pupuk, traktor, upah buruh, serta monitoring hingga panen.
-        </p>
-        <router-link
-          to="/rencana"
-          class="btn-farmer bg-white text-emerald-800 hover:bg-emerald-50 active:scale-95 shadow font-extrabold text-sm w-full flex items-center justify-center gap-1.5"
-        >
-          <CalendarCheck :size="18" /> Buka Rencana Tani AI <ArrowRight :size="16" />
-        </router-link>
-      </div>
-    </div>
+    <PromoCard
+      badge="Rencana Tani AI"
+      title="Perencanaan Tanam & Modal Produksi"
+      description="Cukup masukkan luas lahan, AI menghitung RAB operasional, pupuk, traktor, upah buruh, serta monitoring hingga panen."
+    >
+      <router-link
+        to="/rencana"
+        class="btn-farmer bg-white text-[#324d1d] hover:bg-[#99c30c]/10 active:scale-95 shadow font-extrabold text-sm w-full flex items-center justify-center gap-1.5"
+      >
+        <CalendarCheck :size="18" /> Buka Rencana Tani AI <ArrowRight :size="16" />
+      </router-link>
+    </PromoCard>
 
     <!-- Quick Call to Action: Agri AI -->
-    <div class="bg-gradient-to-r from-teal-700 to-emerald-800 text-white p-5 rounded-3xl shadow-md relative overflow-hidden">
-      <div class="relative z-10">
-        <div class="inline-flex items-center gap-1.5 bg-emerald-400/20 text-emerald-200 text-xs font-bold px-2.5 py-0.5 rounded-full mb-2">
-          <Sparkles :size="13" /> Agri AI Assistant
-        </div>
-        <h3 class="text-lg font-extrabold leading-tight">Daun Tanaman Sakit / Menguning?</h3>
-        <p class="text-xs text-emerald-100 mt-1 mb-4 leading-relaxed">
-          Konsultasi langsung atau kirim foto daun ke Agri AI. Asisten cerdas akan mendiagnosis penyakit dan merekomendasikan solusi terpadu.
-        </p>
-        <router-link
-          to="/dokter"
-          class="btn-farmer bg-white text-emerald-800 hover:bg-emerald-50 active:scale-95 shadow font-extrabold text-sm w-full"
-        >
-          <Sparkles :size="18" /> Chat dengan Agri AI Sekarang
-        </router-link>
-      </div>
-    </div>
+    <PromoCard
+      badge="Agri AI Assistant"
+      title="Daun Tanaman Sakit / Menguning?"
+      description="Konsultasi langsung atau kirim foto daun ke Agri AI. Asisten cerdas akan mendiagnosis penyakit dan merekomendasikan solusi terpadu."
+      gradient="secondary"
+    >
+      <router-link
+        to="/dokter"
+        class="btn-farmer bg-white text-[#324d1d] hover:bg-[#99c30c]/10 active:scale-95 shadow font-extrabold text-sm w-full"
+      >
+        <Sparkles :size="18" /> Chat dengan Agri AI Sekarang
+      </router-link>
+    </PromoCard>
 
 
     <!-- Ringkasan Cepat Buku Tani & Lumbung -->
     <div class="grid grid-cols-2 gap-3">
       <!-- Card Ringkasan Stok -->
-      <router-link to="/inventaris" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:border-emerald-300 transition-all block">
+      <router-link to="/inventaris" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:border-[#99c30c]/60 transition-all block">
         <div class="flex items-center justify-between text-slate-500 mb-2">
           <span class="text-xs font-bold uppercase tracking-wider text-slate-600">Stok Saprotan</span>
-          <Package :size="18" class="text-emerald-600" />
+          <Package :size="18" class="text-[#324d1d]" />
         </div>
         <div class="text-2xl font-black text-slate-800">
           {{ inventoryCount }} <span class="text-xs font-semibold text-slate-500">Item</span>
         </div>
-        <div class="mt-2 text-[11px] font-semibold flex items-center gap-1" :class="lowStockCount > 0 ? 'text-amber-600' : 'text-emerald-600'">
+        <div class="mt-2 text-[11px] font-semibold flex items-center gap-1" :class="lowStockCount > 0 ? 'text-[#fe8b02]' : 'text-[#324d1d]'">
           <AlertCircle v-if="lowStockCount > 0" :size="13" />
           <Check v-else :size="13" />
           <span>{{ lowStockCount > 0 ? `${lowStockCount} stok menipis` : 'Semua stok aman' }}</span>
@@ -121,15 +112,15 @@
       </router-link>
 
       <!-- Card Ringkasan Lumbung -->
-      <router-link to="/lumbung" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:border-emerald-300 transition-all block">
+      <router-link to="/lumbung" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:border-[#99c30c]/60 transition-all block">
         <div class="flex items-center justify-between text-slate-500 mb-2">
           <span class="text-xs font-bold uppercase tracking-wider text-slate-600">Lumbung Panen</span>
-          <Warehouse :size="18" class="text-amber-600" />
+          <Warehouse :size="18" class="text-[#fe8b02]" />
         </div>
         <div class="text-2xl font-black text-slate-800">
           {{ totalHarvestWeight }} <span class="text-xs font-semibold text-slate-500">Kg</span>
         </div>
-        <div class="mt-2 text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+        <div class="mt-2 text-[11px] font-semibold text-[#324d1d] flex items-center gap-1">
           <TrendingUp :size="13" />
           <span>Harga gabah naik</span>
         </div>
@@ -137,15 +128,15 @@
     </div>
 
     <!-- Tips Singkat Perawatan Padi -->
-    <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
+    <div class="bg-[#fff2d9] border border-slate-200/80 rounded-2xl p-4">
       <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600 mb-2 flex items-center gap-1.5">
-        <Info :size="14" class="text-emerald-600" /> Tips Perawatan Hari Ini
+        <Info :size="14" class="text-[#324d1d]" /> Tips Perawatan Hari Ini
       </h4>
       <p class="text-xs text-slate-600 leading-relaxed">
         Pada fase pembentukan malai, pastikan kedalaman air sawah dipertahankan setinggi 3-5 cm. Hindari kekeringan agar pengisian bulir padi maksimal.
       </p>
     </div>
-  </div>
+  </PageLayout>
 </template>
 
 <script setup lang="ts">
@@ -157,6 +148,8 @@ import {
   Sparkles, Camera, Package, Warehouse, AlertCircle, Check, 
   TrendingUp, Info, CalendarCheck, ArrowRight, Navigation 
 } from 'lucide-vue-next';
+import PageLayout from '@/components/layout/PageLayout.vue';
+import PromoCard from '@/components/ui/PromoCard.vue';
 
 const { currentUserId } = useUserState();
 const weather = ref<WeatherData | null>(null);

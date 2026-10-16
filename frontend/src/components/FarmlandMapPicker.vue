@@ -4,8 +4,8 @@
     <div v-if="showHeader && !embedded" class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
       <div>
         <div class="flex items-center gap-1.5">
-          <MapPin :size="16" class="text-emerald-600" />
-          <h4 class="text-xs font-black text-slate-800">Koordinat & Peta Lokasi Lahan</h4>
+          <MapPin :size="16" class="text-[#324d1d]" />
+          <h4 class="text-xs  text-slate-800">Koordinat & Peta Lokasi Lahan</h4>
         </div>
         <p class="text-[11px] text-slate-500 mt-0.5">
           Tentukan titik petak sawah yang akan diolah untuk akurasi cuaca & logistik
@@ -17,11 +17,11 @@
         @click="detectGPSLocation"
         :disabled="isLocating"
         type="button"
-        class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-1.5 px-3 rounded-xl active:scale-95 transition-all flex items-center justify-center gap-1.5 shadow-2xs disabled:opacity-60 cursor-pointer"
+        class="bg-[#324d1d]/90 hover:bg-[#324d1d] text-white text-xs font-bold py-1.5 px-3 rounded-xl active:scale-95 transition-all flex items-center justify-center gap-1.5 shadow-2xs disabled:opacity-60 cursor-pointer"
       >
         <Navigation v-if="!isLocating" :size="13" class="animate-pulse" />
         <Loader2 v-else :size="13" class="animate-spin" />
-        <span>{{ isLocating ? 'Mencari...' : '📍 Deteksi GPS Saya' }}</span>
+        <span>{{ isLocating ? 'Mencari...' : 'Deteksi GPS Saya' }}</span>
       </button>
     </div>
 
@@ -30,17 +30,16 @@
       v-if="gpsStatusMessage"
       class="p-2.5 rounded-2xl text-xs flex items-center justify-between transition-all"
       :class="isGpsSuccess 
-        ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' 
-        : 'bg-amber-50 text-amber-800 border border-amber-200'"
+        ? 'bg-[#99c30c]/10 text-[#324d1d] border border-[#99c30c]/40' 
+        : 'bg-[#fed701]/10 text-[#324d1d] border border-[#fed701]/40'"
     >
       <div class="flex items-center gap-2">
-        <span class="text-sm">{{ isGpsSuccess ? '🛰️' : '⚠️' }}</span>
         <span class="font-bold text-[11px]">{{ gpsStatusMessage }}</span>
       </div>
       <button
         v-if="!isGpsSuccess"
         @click="setDefaultCoordinates"
-        class="text-[10px] font-black underline hover:text-amber-900"
+        class="text-[10px]  underline hover:text-[#324d1d]"
       >
         Gunakan Default
       </button>
@@ -55,18 +54,18 @@
         <button
           type="button"
           @click="setMapType('street')"
-          :class="mapType === 'street' ? 'bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 hover:bg-slate-100'"
+          :class="mapType === 'street' ? 'bg-[#324d1d]/90 text-white shadow-2xs' : 'text-slate-600 hover:bg-slate-100'"
           class="px-2 py-0.5 rounded-lg transition-all cursor-pointer"
         >
-          🗺️ Peta
+          Peta
         </button>
         <button
           type="button"
           @click="setMapType('satellite')"
-          :class="mapType === 'satellite' ? 'bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 hover:bg-slate-100'"
+          :class="mapType === 'satellite' ? 'bg-[#324d1d]/90 text-white shadow-2xs' : 'text-slate-600 hover:bg-slate-100'"
           class="px-2 py-0.5 rounded-lg transition-all cursor-pointer"
         >
-          🛰️ Satelit
+          Satelit
         </button>
       </div>
 
@@ -74,22 +73,22 @@
       <div class="absolute bottom-2 left-2 right-2 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-200/80 shadow-md flex items-center justify-between text-[11px] z-[400]">
         <div class="truncate pr-2">
           <span class="font-extrabold text-slate-800">Koordinat Lahan:</span>
-          <span class="font-mono text-emerald-700 font-bold ml-1">{{ currentLat.toFixed(5) }}, {{ currentLon.toFixed(5) }}</span>
+          <span class="font-mono text-[#324d1d] font-bold ml-1">{{ currentLat.toFixed(5) }}, {{ currentLon.toFixed(5) }}</span>
         </div>
-        <span class="text-[9px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded-md shrink-0">
+        <span class="text-[9px]  uppercase tracking-wider bg-[#99c30c]/20 text-[#324d1d] px-1.5 py-0.5 rounded-md shrink-0">
           Pin Aktif
         </span>
       </div>
     </div>
 
     <!-- Info Alamat / Nama Petak Lahan -->
-    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3 space-y-1.5 text-xs">
+    <div class="bg-[#fff2d9] border border-slate-100 rounded-2xl p-3 space-y-1.5 text-xs">
       <div class="flex items-center justify-between">
         <span class="text-[10px] font-extrabold uppercase text-slate-400">Deskripsi / Alamat Lahan:</span>
-        <span class="text-[10px] text-emerald-700 font-bold">Klik atau geser pin di peta untuk memindahkan</span>
+        <span class="text-[10px] text-[#324d1d] font-bold">Klik atau geser pin di peta untuk memindahkan</span>
       </div>
       <div class="font-bold text-slate-700 flex items-start gap-1.5">
-        <Locate :size="14" class="text-emerald-600 mt-0.5 shrink-0" />
+        <Locate :size="14" class="text-[#324d1d] mt-0.5 shrink-0" />
         <span>{{ addressLabel || 'Memuat alamat lokasi...' }}</span>
       </div>
     </div>
@@ -104,7 +103,7 @@
         type="button"
         class="text-[10px] font-bold px-2 py-1 rounded-xl border transition-all active:scale-95"
         :class="Math.abs(currentLat - p.lat) < 0.001 && Math.abs(currentLon - p.lon) < 0.001
-          ? 'bg-emerald-100 text-emerald-800 border-emerald-300 font-black'
+          ? 'bg-[#99c30c]/20 text-[#324d1d] border-[#99c30c]/60 '
           : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'"
       >
         {{ p.name }}
@@ -166,10 +165,12 @@ const presets = [
 const pinIcon = L.divIcon({
   html: `
     <div class="relative flex items-center justify-center">
-      <div class="w-9 h-9 bg-emerald-600 rounded-full flex items-center justify-center text-white text-lg shadow-lg border-2 border-white transform hover:scale-110 transition-transform">
-        🌾
+      <div class="w-9 h-9 bg-[#fe8b02] rounded-full flex items-center justify-center text-white text-lg shadow-lg border-2 border-white transform hover:scale-110 transition-transform">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+          <path fill-rule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd" />
+        </svg>
       </div>
-      <div class="w-2 h-2 bg-emerald-900 rounded-full absolute -bottom-1"></div>
+      <div class="w-2 h-2 bg-[#324d1d] rounded-full absolute -bottom-1"></div>
     </div>
   `,
   className: 'custom-farm-pin',

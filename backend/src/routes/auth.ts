@@ -2,6 +2,10 @@ import { Router, Request, Response } from 'express';
 import { db } from '../database/db.js';
 
 const router = Router();
+const FARMER_AVATAR = '/icons/petani.svg';
+
+const normalizeAvatar = (avatar?: string) =>
+  !avatar || avatar === '👨‍🌾' ? FARMER_AVATAR : avatar;
 
 const PUBLIC_PROFILES_DATA: Record<string, any> = {
   "Pak Joko": {
@@ -11,7 +15,7 @@ const PUBLIC_PROFILES_DATA: Record<string, any> = {
     role_label: "Petani Mandiri (Sukamaju)",
     category_badge: "Petani Mandiri",
     service_specialties: ["Budidaya Padi Inpari 32", "Sistem Jajar Legowo", "Petak Lahan 1.2 Ha"],
-    avatar: "👨‍🌾",
+    avatar: FARMER_AVATAR,
     village: "Desa Sukamaju, Jawa Timur",
     commodity: "Padi Inpari 32",
     land_size_ha: 1.2,
@@ -171,7 +175,7 @@ router.post('/register', (req: Request, res: Response) => {
     }
 
     const roleBadges: Record<string, { label: string; badge: string; avatar: string }> = {
-      PETANI_MANDIRI: { label: "Petani Mandiri", badge: "Petani Mandiri", avatar: "👨‍🌾" },
+      PETANI_MANDIRI: { label: "Petani Mandiri", badge: "Petani Mandiri", avatar: FARMER_AVATAR },
       JASA_TRAKTOR: { label: "Jasa Olah Tanah & Traktor", badge: "Sewa Traktor", avatar: "🚜" },
       JASA_PENGAIRAN: { label: "Jasa Pompa Irigasi", badge: "Jasa Pengairan", avatar: "💧" },
       JASA_CANGKUL: { label: "Regu Buruh Tanam", badge: "Jasa Cangkul", avatar: "🌾" },
@@ -230,7 +234,7 @@ router.post('/login', (req: Request, res: Response) => {
     // Jika nomor telepon adalah demo default, buat user default
     if (cleanPhone === '08123456789') {
       user = users.find((u: any) => u.id === 'usr_petani') || users[0];
-      return res.json(user);
+      return res.json({ ...user, avatar: normalizeAvatar(user?.avatar) });
     }
     return res.status(404).json({ 
       detail: "Nomor HP atau Username belum terdaftar. Silakan buat akun baru terlebih dahulu." 
@@ -242,7 +246,7 @@ router.post('/login', (req: Request, res: Response) => {
     return res.status(401).json({ detail: "Kode PIN yang Anda masukkan tidak sesuai." });
   }
 
-  res.json(user);
+  res.json({ ...user, avatar: normalizeAvatar(user.avatar) });
 });
 
 // GET /profile
@@ -254,7 +258,7 @@ router.get('/profile', (req: Request, res: Response) => {
   if (!user) {
     const staticProf = Object.values(PUBLIC_PROFILES_DATA).find((p: any) => p.id === userId);
     if (staticProf) {
-      return res.json(staticProf);
+      return res.json({ ...staticProf, avatar: normalizeAvatar(staticProf.avatar) });
     }
     user = users[0];
   }
@@ -271,7 +275,7 @@ router.get('/profile', (req: Request, res: Response) => {
     }
   }
 
-  res.json(user);
+  res.json({ ...user, avatar: normalizeAvatar(user.avatar) });
 });
 
 // PUT /profile
@@ -312,7 +316,7 @@ router.get('/users-search', (req: Request, res: Response) => {
       name: p.name,
       role_label: p.role_label,
       category_badge: p.category_badge,
-      avatar: p.avatar || '👨‍🌾',
+      avatar: normalizeAvatar(p.avatar),
       village: p.village || 'Desa Sukamaju',
       commodity: p.commodity || 'Padi Inpari 32',
       whatsapp_number: p.whatsapp_number
@@ -325,7 +329,7 @@ router.get('/users-search', (req: Request, res: Response) => {
       name: u.full_name || u.name,
       role_label: u.role_label || u.role,
       category_badge: u.category_badge || u.role,
-      avatar: u.avatar || '👨‍🌾',
+      avatar: normalizeAvatar(u.avatar),
       village: u.village || 'Desa Sukamaju',
       commodity: u.commodity || 'Padi Inpari 32',
       whatsapp_number: u.phone_number || u.whatsapp_number
@@ -370,7 +374,7 @@ router.get('/users/:authorName', (req: Request, res: Response) => {
       role_label: "Warga Komunitas Tani Sukamaju",
       category_badge: "Warga Komunitas",
       service_specialties: ["Pertanian Umum", "Gotong Royong Desa"],
-      avatar: "👨‍🌾",
+      avatar: FARMER_AVATAR,
       village: "Desa Sukamaju, Jawa Timur",
       commodity: "Padi & Palawija",
       land_size_ha: 1.0,

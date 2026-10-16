@@ -5,7 +5,7 @@
   </div>
 
   <!-- Dashboard Shell Utama (Hanya Tampil Saat Pengguna Berada di Dashboard) -->
-  <div v-else class="bg-slate-50 flex" :class="isDokterPage ? 'h-screen overflow-hidden' : 'min-h-screen'">
+  <div v-else class="bg-[#fff2d9] flex" :class="isDokterPage ? 'h-screen overflow-hidden' : 'min-h-screen'">
     <!-- 1. Left Desktop Sidebar Navigation -->
     <WebSidebar />
 
