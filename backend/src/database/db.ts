@@ -21,6 +21,7 @@ export class DatabaseManager {
     this.dbFile = DB_FILE;
     this.ensureInitialized();
     this.cache = this.readFromDisk();
+    this.sanitizeFarmlandsInDb();
   }
 
   private ensureInitialized() {
@@ -143,9 +144,49 @@ export class DatabaseManager {
 
       client.release();
       this.isPostgresActive = true;
+      this.sanitizeFarmlandsInDb();
     } catch (err: any) {
       console.error('⚠️ Gagal inisialisasi PostgreSQL:', err.message || err);
       console.log('🔄 Beroperasi menggunakan file lokal local_db.json.');
+    }
+  }
+
+  private sanitizeFarmlandsInDb(): void {
+    const farmlands = this.cache['farmlands'] || [];
+    let updatedCount = 0;
+    const isJoko = (uid: string) => uid === 'usr_petani' || uid === 'usr_001' || uid === 'pak_joko';
+
+    for (const farm of farmlands) {
+      if (!farm || !farm.collaborators || !Array.isArray(farm.collaborators)) continue;
+      const farmUserId = farm.user_id;
+      const ownerName = (farm.owner_name || (isJoko(farmUserId) ? 'Pak Joko' : '')).toLowerCase().trim();
+
+      const filtered = farm.collaborators.filter((c: any) => {
+        if (!c) return false;
+        if (c.user_id && farmUserId && c.user_id === farmUserId) return false;
+        if (c.user_id && farmUserId && isJoko(c.user_id) && isJoko(farmUserId)) return false;
+        const cName = (c.name || '').toLowerCase().trim();
+        if (cName && (cName === ownerName || (isJoko(farmUserId) && cName.includes('joko')))) return false;
+        const cRole = (c.role || '').toLowerCase();
+        if (cRole.includes('pemilik')) return false;
+        return true;
+      });
+
+      if (filtered.length !== farm.collaborators.length) {
+        farm.collaborators = filtered;
+        updatedCount++;
+        if (this.isPostgresActive && this.pool) {
+          this.pool.query(
+            `UPDATE agribuddy_records SET data = $1, updated_at = CURRENT_TIMESTAMP WHERE collection = 'farmlands' AND id = $2`,
+            [JSON.stringify(farm), farm.id]
+          ).catch(e => console.error(`Error updating farm ${farm.id} in PG:`, e));
+        }
+      }
+    }
+
+    if (updatedCount > 0) {
+      this.saveToDisk(this.cache);
+      console.log(`🧹 Sanitasi otomatis database: ${updatedCount} lahan berhasil dibersihkan dari duplikasi pemilik di kolaborator.`);
     }
   }
 

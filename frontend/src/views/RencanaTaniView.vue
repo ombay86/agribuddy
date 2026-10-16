@@ -3459,9 +3459,61 @@ const handleFastTrackSubmit = async () => {
   }
 };
 
+const isUserJoko = (uid?: string) => {
+  if (!uid) return false;
+  const clean = String(uid).trim().toLowerCase();
+  return clean === 'usr_petani' || clean === 'usr_001' || clean === 'pak_joko';
+};
+
+const isCurrentUserOwner = computed(() => {
+  if (!activeFarm.value) return true;
+  const farmUid = activeFarm.value.user_id;
+  const curUid = currentUserId.value;
+  return farmUid === curUid || (isUserJoko(farmUid) && isUserJoko(curUid));
+});
+
+const farmOwnerName = computed(() => {
+  if (!activeFarm.value) return currentPersona.value.name || 'Pemilik Lahan';
+  if (isCurrentUserOwner.value) {
+    return currentPersona.value.name || activeFarm.value.owner_name || 'Pemilik Lahan';
+  }
+  if (activeFarm.value.owner_name) {
+    return activeFarm.value.owner_name;
+  }
+  if (isUserJoko(activeFarm.value.user_id)) {
+    return 'Pak Joko';
+  }
+  const matched = Object.values(PERSONAS).find(p => p.id === activeFarm.value?.user_id);
+  if (matched?.name) return matched.name;
+  return 'Pemilik Lahan';
+});
+
+const sanitizedCollaborators = computed(() => {
+  if (!activeFarm.value || !Array.isArray(activeFarm.value.collaborators)) return [];
+  const farmOwner = (farmOwnerName.value || '').toLowerCase().trim();
+  const farmUserId = activeFarm.value.user_id;
+
+  return activeFarm.value.collaborators.filter((c: any) => {
+    if (!c) return false;
+    // 1. user_id matches farm owner
+    if (c.user_id && farmUserId && c.user_id === farmUserId) return false;
+    // 2. Both are Joko personas
+    if (c.user_id && isUserJoko(c.user_id) && isUserJoko(farmUserId)) return false;
+    // 3. Name matches owner name
+    const cName = (c.name || '').toLowerCase().trim();
+    if (cName && farmOwner && cName === farmOwner) return false;
+    if (isUserJoko(farmUserId) && cName.includes('joko')) return false;
+    // 4. Role indicates owner
+    const cRole = (c.role || '').toLowerCase();
+    if (cRole.includes('pemilik')) return false;
+
+    return true;
+  });
+});
+
 const ownerSharePercentage = computed(() => {
   if (!activeFarm.value) return 100;
-  const collabs = activeFarm.value.collaborators || [];
+  const collabs = sanitizedCollaborators.value;
   const totalCollabsShare = collabs
     .filter((c) => c.status !== "REJECTED")
     .reduce((sum, c) => sum + (Number(c.share_percentage) || 0), 0);
@@ -3485,16 +3537,42 @@ const fetchSearchableUsers = async (query = "") => {
 
 const filteredUsersToTag = computed(() => {
   const query = searchCollabQuery.value.trim().toLowerCase().replace(/^@/, "");
+  const existingCollabIds = new Set(
+    sanitizedCollaborators.value
+      .map(c => c.user_id)
+      .filter(Boolean)
+  );
+  const existingCollabNames = new Set(
+    sanitizedCollaborators.value
+      .map(c => (c.name || '').toLowerCase().trim())
+      .filter(Boolean)
+  );
+  const ownerId = activeFarm.value?.user_id;
+  const ownerNameLower = (farmOwnerName.value || '').toLowerCase().trim();
 
   // Gabungkan static PERSONAS dan dynamic users dari API secara unik
   const map = new Map<string, any>();
   for (const p of Object.values(PERSONAS)) {
-    if (p.id !== currentUserId.value) {
+    const pName = (p.name || '').toLowerCase().trim();
+    if (
+      p.id !== currentUserId.value &&
+      p.id !== ownerId &&
+      pName !== ownerNameLower &&
+      !existingCollabIds.has(p.id) &&
+      !existingCollabNames.has(pName)
+    ) {
       map.set(p.id, p);
     }
   }
   for (const u of dynamicUsersList.value) {
-    if (u.id !== currentUserId.value) {
+    const uName = (u.name || u.full_name || '').toLowerCase().trim();
+    if (
+      u.id !== currentUserId.value &&
+      u.id !== ownerId &&
+      uName !== ownerNameLower &&
+      !existingCollabIds.has(u.id) &&
+      !existingCollabNames.has(uName)
+    ) {
       map.set(u.id, u);
     }
   }
@@ -3579,6 +3657,25 @@ const handleAddCollaborator = async () => {
       "Pilih Pengguna Mitra",
       "Silakan cari dan pilih pengguna mitra terlebih dahulu.",
     );
+    return;
+  }
+  // Cek apakah mitra yang ditag adalah pemilik lahan itu sendiri
+  const targetName = newCollabForm.value.name.toLowerCase().trim();
+  const ownerNameLower = farmOwnerName.value.toLowerCase().trim();
+  if (
+    (newCollabForm.value.user_id && (newCollabForm.value.user_id === activeFarm.value.user_id || (isUserJoko(newCollabForm.value.user_id) && isUserJoko(activeFarm.value.user_id)))) ||
+    targetName === ownerNameLower
+  ) {
+    showWarning('Pemilik Lahan', 'Pemilik lahan sudah otomatis menjadi pemegang porsi utama dan tidak dapat ditambahkan sebagai mitra.');
+    return;
+  }
+  // Cek duplikasi mitra
+  const isDuplicate = sanitizedCollaborators.value.some(c => 
+    (newCollabForm.value.user_id && c.user_id === newCollabForm.value.user_id) ||
+    ((c.name || '').toLowerCase().trim() === targetName)
+  );
+  if (isDuplicate) {
+    showWarning('Mitra Sudah Ada', 'Pengguna/mitra ini sudah terdaftar dalam kolaborasi lahan. Setiap mitra hanya dapat ditambahkan satu kali.');
     return;
   }
   if (newCollabForm.value.share_percentage > ownerSharePercentage.value) {
