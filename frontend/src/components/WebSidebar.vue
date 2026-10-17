@@ -176,12 +176,12 @@
     <!-- Sidebar Footer: Cuaca & Tombol Keluar (Expanded View) -->
     <div v-if="!isCollapsed" class="p-4 border-t border-[#99c30c]/20 bg-black/60 space-y-3 shrink-0">
       <div class="flex items-center justify-between text-[11px]">
-        <div class="flex items-center gap-1.5 font-bold text-slate-300">
+        <div class="flex text-[12px] items-center gap-1.5 font-bold text-slate-300">
           <span>Cuaca Sukamaju</span>
         </div>
         <span class="text-[#99c30c] font-extrabold">{{ weather?.temp_celsius || 28 }}°C</span>
       </div>
-      <p class="text-[10px] text-slate-400 leading-snug line-clamp-2">
+      <p class="text-[11px] text-slate-400 leading-snug line-clamp-2">
         {{ weather?.advice_title || 'Kondisi sawah optimal untuk budidaya terencana.' }}
       </p>
 
