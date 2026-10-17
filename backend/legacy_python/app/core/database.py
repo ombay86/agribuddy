@@ -209,7 +209,7 @@ INITIAL_DATA = {
             "stock_available": 45,
             "is_subsidi": True,
             "description": "Pupuk nitrogen murni untuk memacu pertumbuhan vegetatif daun dan anakan padi.",
-            "image_emoji": "🌱"
+            "image_emoji": ""
         },
         {
             "id": "prod_002",
@@ -222,7 +222,7 @@ INITIAL_DATA = {
             "stock_available": 30,
             "is_subsidi": False,
             "description": "NPK majemuk diperkaya Seng (Zn) dan Sulfur untuk malai padi berisi penuh dan bobot berat.",
-            "image_emoji": "🌾"
+            "image_emoji": ""
         },
         {
             "id": "prod_003",
@@ -235,7 +235,7 @@ INITIAL_DATA = {
             "stock_available": 20,
             "is_subsidi": False,
             "description": "Benih label ungu resmi Balitbangtan, potensi hasil 10,5 ton/ha, tahan rebah & wereng coklat.",
-            "image_emoji": "🌾"
+            "image_emoji": ""
         },
         {
             "id": "prod_004",
@@ -248,7 +248,7 @@ INITIAL_DATA = {
             "stock_available": 15,
             "is_subsidi": False,
             "description": "Solusi ampuh mengendalikan Hawar Daun Bakteri (Kresek) rekomendasi Dokter Tani AI.",
-            "image_emoji": "🧪"
+            "image_emoji": ""
         }
     ],
     "saprotan_orders": [
@@ -355,7 +355,7 @@ INITIAL_DATA = {
             "provider_id": "usr_traktor",
             "provider_name": "Mas Bambang",
             "provider_badge": "Sewa Traktor",
-            "provider_avatar": "🚜",
+            "provider_avatar": "/icons/petani.svg",
             "title": "Sewa Traktor Quick Kubota (Bajak & Garu)",
             "category": "JASA_TRAKTOR",
             "category_label": "Jasa Olah Tanah",
@@ -373,7 +373,7 @@ INITIAL_DATA = {
             "provider_id": "usr_traktor",
             "provider_name": "Mas Bambang",
             "provider_badge": "Sewa Traktor",
-            "provider_avatar": "🚜",
+            "provider_avatar": "/icons/petani.svg",
             "title": "Olah Tanah Rotavator Cepat",
             "category": "JASA_TRAKTOR",
             "category_label": "Jasa Olah Tanah",
@@ -391,7 +391,7 @@ INITIAL_DATA = {
             "provider_id": "usr_pengairan",
             "provider_name": "Pak Slamet",
             "provider_badge": "Jasa Pengairan",
-            "provider_avatar": "💧",
+            "provider_avatar": "/icons/petani.svg",
             "title": "Sewa Mesin Pompa Alkon 3 Inci + Selang Spiral 50m",
             "category": "JASA_PENGAIRAN",
             "category_label": "Jasa Pengairan",
@@ -409,7 +409,7 @@ INITIAL_DATA = {
             "provider_id": "usr_pengairan",
             "provider_name": "Pak Slamet",
             "provider_badge": "Jasa Pengairan",
-            "provider_avatar": "💧",
+            "provider_avatar": "/icons/petani.svg",
             "title": "Jasa Sedot Air Sungai / Embung ke Petak Sawah",
             "category": "JASA_PENGAIRAN",
             "category_label": "Jasa Pengairan",
@@ -427,7 +427,7 @@ INITIAL_DATA = {
             "provider_id": "usr_cangkul",
             "provider_name": "Mang Udin",
             "provider_badge": "Jasa Cangkul",
-            "provider_avatar": "🌾",
+            "provider_avatar": "/icons/petani.svg",
             "title": "Regu Tanam Padi Borongan (Sistem Jajar Legowo 2:1)",
             "category": "JASA_TENAGA_KERJA",
             "category_label": "Tenaga Kerja Tani",
@@ -445,7 +445,7 @@ INITIAL_DATA = {
             "provider_id": "usr_cangkul",
             "provider_name": "Mang Udin",
             "provider_badge": "Jasa Cangkul",
-            "provider_avatar": "🌾",
+            "provider_avatar": "/icons/petani.svg",
             "title": "Jasa Cangkul & Perbaikan Galengan Pematang Sawah",
             "category": "JASA_TENAGA_KERJA",
             "category_label": "Tenaga Kerja Tani",
@@ -463,7 +463,7 @@ INITIAL_DATA = {
             "provider_id": "usr_distributor",
             "provider_name": "Ibu Ratna",
             "provider_badge": "Kios Saprotan",
-            "provider_avatar": "🏪",
+            "provider_avatar": "/icons/petani.svg",
             "title": "Pupuk Urea N-46 Petrokimia (Subsidi)",
             "category": "SAPROTAN",
             "category_label": "Pupuk & Benih",
@@ -481,7 +481,7 @@ INITIAL_DATA = {
             "provider_id": "usr_distributor",
             "provider_name": "Ibu Ratna",
             "provider_badge": "Kios Saprotan",
-            "provider_avatar": "🏪",
+            "provider_avatar": "/icons/petani.svg",
             "title": "Benih Padi Inpari 32 Bersertifikat Balitbangtan",
             "category": "SAPROTAN",
             "category_label": "Pupuk & Benih",
@@ -499,7 +499,7 @@ INITIAL_DATA = {
             "provider_id": "usr_agen",
             "provider_name": "Bpk. Hendra Jaya",
             "provider_badge": "Penggilingan Padi",
-            "provider_avatar": "🚚",
+            "provider_avatar": "/icons/petani.svg",
             "title": "Penyerapan Beli Gabah Kering Panen (GKP) Jemput Lumbung",
             "category": "HASIL_PANEN",
             "category_label": "Penyerapan Panen",
@@ -517,7 +517,7 @@ INITIAL_DATA = {
             "provider_id": "usr_agen",
             "provider_name": "Bpk. Hendra Jaya",
             "provider_badge": "Penggilingan Padi",
-            "provider_avatar": "🚚",
+            "provider_avatar": "/icons/petani.svg",
             "title": "Jasa Giling Gabah Jadi Beras Putih Super + Poles",
             "category": "PASCA_PANEN",
             "category_label": "Jasa Pasca Panen",
@@ -535,7 +535,7 @@ INITIAL_DATA = {
             "provider_id": "usr_petani",
             "provider_name": "Pak Joko",
             "provider_badge": "Petani Mandiri",
-            "provider_avatar": "👨‍🌾",
+            "provider_avatar": "/icons/petani.svg",
             "title": "Bibit Padi Inpari 32 Siap Tanam Umur 16 Hari (Dapog)",
             "category": "SAPROTAN",
             "category_label": "Bibit Siap Tanam",
@@ -659,7 +659,7 @@ INITIAL_DATA = {
         {
             "id": "notif_001",
             "user_id": "usr_traktor",
-            "title": "Pesanan Jasa Baru Masuk! 🚜",
+            "title": "Pesanan Jasa Baru Masuk!",
             "message": "Pak Joko memesan Jasa Sewa Traktor Quick 0.8 Ha (Rp 960.000) di Blok Krajan.",
             "type": "ORDER_RECEIVED",
             "reference_id": "ord_trk_01",
@@ -669,7 +669,7 @@ INITIAL_DATA = {
         {
             "id": "notif_002",
             "user_id": "usr_petani",
-            "title": "Pengikut Baru! 👤",
+            "title": "Pengikut Baru!",
             "message": "Mang Udin mulai mengikuti profil usahatani Anda.",
             "type": "NEW_FOLLOWER",
             "reference_id": "usr_cangkul",
@@ -679,7 +679,7 @@ INITIAL_DATA = {
         {
             "id": "notif_003",
             "user_id": "usr_petani",
-            "title": "Komentar Baru di Postingan! 💬",
+            "title": "Komentar Baru di Postingan!",
             "message": "Ibu Ratna mengomentari: 'Pak Joko, stok bakterisida tembaga di kios sudah ready ya...'",
             "type": "NEW_COMMENT",
             "reference_id": "post_002",
@@ -689,7 +689,7 @@ INITIAL_DATA = {
         {
             "id": "notif_004",
             "user_id": "usr_pengairan",
-            "title": "Pengikut Baru! 👤",
+            "title": "Pengikut Baru!",
             "message": "Pak Joko mulai mengikuti profil jasa pengairan Anda.",
             "type": "NEW_FOLLOWER",
             "reference_id": "usr_petani",

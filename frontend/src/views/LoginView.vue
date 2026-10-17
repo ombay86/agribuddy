@@ -130,7 +130,7 @@
             </div>
             <div>
               <div class="flex items-center gap-1.5">
-                <span class="text-base text-slate-800">AgriBuddy</span>
+                <span class="text-xl font-bold text-slate-800">AgriBuddy</span>
               </div>
               <p class="text-[10px] text-emerald-700 font-semibold">
                 Sahabat Petani Cerdas
@@ -163,9 +163,9 @@
                   : 'text-slate-500 hover:text-slate-800'
               "
             >
-              <span class="font-bold">Demo</span>
+              <span class="text-[12px] font-bold">Demo</span>
               <span
-                class="text-[9px] bg-amber-500 text-slate-900 px-1.5 py-0.2 rounded-full uppercase"
+                class="text-[10px] font-bold bg-amber-500 text-slate-900 px-1.5 py-0.2 rounded-full uppercase"
                 >Cepat</span
               >
             </button>
@@ -178,7 +178,7 @@
                   : 'text-slate-500 hover:text-slate-800'
               "
             >
-              <span class="font-bold">Masuk</span>
+              <span class="text-[12px] font-bold">Masuk</span>
             </button>
             <button
               @click="authTab = 'register'"
@@ -189,7 +189,7 @@
                   : 'text-slate-500 hover:text-slate-800'
               "
             >
-              <span class="font-bold">Buat Akun</span>
+              <span class="text-[12px] font-bold">Buat Akun</span>
             </button>
           </div>
 
@@ -238,7 +238,7 @@
                     </div>
 
                     <div
-                      class="text-[10px] text-slate-800 mt-1 leading-tight truncate"
+                      class="text-[11px] font-bold text-slate-800 mt-1 leading-tight truncate"
                     >
                       Padi Inpari 32
                     </div>
@@ -285,7 +285,7 @@
                     </div>
 
                     <div
-                      class="text-[10px] text-slate-800 mt-1 leading-tight truncate"
+                      class="text-[11px] font-bold text-slate-800 mt-1 leading-tight truncate"
                     >
                       Jasa Bajak & Rotavator
                     </div>
@@ -332,7 +332,7 @@
                     </div>
 
                     <div
-                      class="text-[10px] text-slate-800 mt-1 leading-tight truncate"
+                      class="text-[11px] font-bold text-slate-800 mt-1 leading-tight truncate"
                     >
                       Alkon 3 Inci & Sedot Sungai
                     </div>
@@ -379,7 +379,7 @@
                     </div>
 
                     <div
-                      class="text-[10px] text-slate-800 mt-1 leading-tight truncate"
+                      class="text-[11px] font-bold text-slate-800 mt-1 leading-tight truncate"
                     >
                       Cangkul Galengan & Matun
                     </div>
@@ -426,7 +426,7 @@
                     </div>
 
                     <div
-                      class="text-[10px] text-slate-800 mt-1 leading-tight truncate"
+                      class="text-[11px] font-bold text-slate-800 mt-1 leading-tight truncate"
                     >
                       Pupuk Subsidi & Obat Hama
                     </div>
@@ -473,7 +473,7 @@
                     </div>
 
                     <div
-                      class="text-[10px] text-slate-800 mt-1 leading-tight truncate"
+                      class="text-[11px] font-bold text-slate-800 mt-1 leading-tight truncate"
                     >
                       Bursa Lelang & Pembeli Gabah
                     </div>
@@ -544,7 +544,7 @@
               class="w-full bg-[#324d1d]/90 hover:bg-[#324d1d] disabled:opacity-60 text-white text-xs py-3 rounded-2xl shadow-sm hover:shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <Loader2 v-if="isLoading" :size="16" class="animate-spin" />
-              <span>Masuk</span>
+              <span class="text-[13px] font-bold">Masuk</span>
             </button>
 
             <div class="text-center pt-1">
@@ -683,7 +683,7 @@
               class="w-full mt-2 bg-[#324d1d]/90 hover:bg-[#324d1d] disabled:opacity-60 text-white text-xs py-3 rounded-2xl shadow-sm hover:shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <Loader2 v-if="isLoading" :size="16" class="animate-spin" />
-              <span v-else>Daftar</span>
+              <span v-else class="text-[13px] font-bold">Daftar</span>
             </button>
 
             <div class="text-center pt-1">

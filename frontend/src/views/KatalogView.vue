@@ -130,7 +130,7 @@
       <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto border border-slate-100">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
           <div>
-            <h3 class="text-base  text-slate-800">Pasang Layanan Mandiri</h3>
+            <h3 class="text-base font-bold text-slate-800">Pasang Layanan Mandiri</h3>
             <p class="text-xs text-slate-500">Tawarkan jasa atau sarana tani Anda ke ekosistem desa</p>
           </div>
           <button @click="showCreateModal = false" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-xl hover:bg-slate-100">

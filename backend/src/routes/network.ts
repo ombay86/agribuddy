@@ -50,10 +50,10 @@ router.post('/offer-harvest', (req: Request, res: Response) => {
     : "Sesuai harga pasar terbaik";
 
   const message = `Halo ${partner.pic_name}, saya dari AgriBuddy ingin menawarkan hasil panen:\n` +
-    `🌾 Komoditas: ${payload.commodity}\n` +
-    `⚖️ Estimasi Volume: ${payload.weight_kg} kg\n` +
-    `💰 Harapan Harga: ${priceText}\n` +
-    (payload.notes ? `📝 Catatan: ${payload.notes}\n` : '') +
+    `Komoditas: ${payload.commodity}\n` +
+    `Estimasi Volume: ${payload.weight_kg} kg\n` +
+    `Harapan Harga: ${priceText}\n` +
+    (payload.notes ? `Catatan: ${payload.notes}\n` : '') +
     `Apakah KUD/Penggilingan siap menyerap panen kami? Terima kasih.`;
 
   const phone = partner.phone_whatsapp.replace(/\D/g, '');

@@ -24,7 +24,7 @@
           <div class="w-20 h-20 bg-gradient-to-br from-[#99c30c]/20 to-[#99c30c]/10 rounded-full flex items-center justify-center text-4xl mx-auto border-2 border-[#99c30c]/60 shadow-inner overflow-hidden">
             <img
               v-if="profile.avatar.startsWith('/')"
-              :src="profile.avatar"
+              :src="profile.avatar.endsWith('/icons/petani.svg') ? farmer : profile.avatar"
               :alt="`Avatar ${profile.name}`"
               class="w-full h-full object-cover"
             />
@@ -101,7 +101,7 @@
           >
             <UserCheck v-if="profile.is_followed" :size="15" />
             <UserPlus v-else :size="15" />
-            <span>{{ profile.is_followed ? '✓ Mengikuti' : '+ Ikuti Profil' }}</span>
+            <span>{{ profile.is_followed ? 'Mengikuti' : '+ Ikuti Profil' }}</span>
           </button>
 
           <!-- Tombol Kontak WhatsApp Langsung -->
@@ -128,6 +128,7 @@ import {
   UserCheck, MessageCircle 
 } from 'lucide-vue-next';
 import BaseModal from '@/components/ui/BaseModal.vue';
+import farmer from '@/assets/icons/download.jpg';
 
 const props = defineProps<{
   isOpen: boolean;

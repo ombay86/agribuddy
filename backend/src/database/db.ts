@@ -77,19 +77,19 @@ export class DatabaseManager {
   public async initPostgres(): Promise<void> {
     const dbUrl = config.databaseUrl;
     if (!dbUrl) {
-      console.log('ℹ️ DATABASE_URL belum diatur. Menggunakan database file lokal (data/local_db.json).');
+      console.log('DATABASE_URL belum diatur. Menggunakan database file lokal (data/local_db.json).');
       return;
     }
 
     try {
-      console.log('🔌 Menghubungkan ke database PostgreSQL...');
+      console.log('Menghubungkan ke database PostgreSQL...');
       this.pool = new Pool({
         connectionString: dbUrl,
         ssl: dbUrl.includes('localhost') || dbUrl.includes('127.0.0.1') ? false : { rejectUnauthorized: false }
       });
 
       const client = await this.pool.connect();
-      console.log('✅ Berhasil terhubung ke PostgreSQL!');
+      console.log('Berhasil terhubung ke PostgreSQL!');
 
       // Buat tabel penyimpanan permanen jika belum ada
       await client.query(`
@@ -109,7 +109,7 @@ export class DatabaseManager {
       const count = parseInt(countRes.rows[0].count, 10);
 
       if (count === 0) {
-        console.log('🌱 Database PostgreSQL masih kosong. Melakukan seeding data awal dari local_db.json...');
+        console.log('Database PostgreSQL masih kosong. Melakukan seeding data awal dari local_db.json...');
         const diskData = this.readFromDisk();
         let insertedCount = 0;
 
@@ -128,9 +128,9 @@ export class DatabaseManager {
             }
           }
         }
-        console.log(`🎉 Berhasil men-seed ${insertedCount} record akun, sawah, dan inventaris ke PostgreSQL!`);
+        console.log(`Berhasil men-seed ${insertedCount} record akun, sawah, dan inventaris ke PostgreSQL!`);
       } else {
-        console.log(`📦 Memuat ${count} record dari PostgreSQL ke server cache...`);
+        console.log(`Memuat ${count} record dari PostgreSQL ke server cache...`);
         const rowsRes = await client.query('SELECT collection, id, data FROM agribuddy_records');
         const loaded: Record<string, any[]> = {};
         for (const row of rowsRes.rows) {
@@ -139,15 +139,15 @@ export class DatabaseManager {
         }
         this.cache = loaded;
         this.saveToDisk(this.cache); // Sinkronkan ke disk lokal
-        console.log('✅ Sinkronisasi PostgreSQL ke cache selesai.');
+        console.log('Sinkronisasi PostgreSQL ke cache selesai.');
       }
 
       client.release();
       this.isPostgresActive = true;
       this.sanitizeFarmlandsInDb();
     } catch (err: any) {
-      console.error('⚠️ Gagal inisialisasi PostgreSQL:', err.message || err);
-      console.log('🔄 Beroperasi menggunakan file lokal local_db.json.');
+      console.error('Gagal inisialisasi PostgreSQL:', err.message || err);
+      console.log('Beroperasi menggunakan file lokal local_db.json.');
     }
   }
 
@@ -186,7 +186,7 @@ export class DatabaseManager {
 
     if (updatedCount > 0) {
       this.saveToDisk(this.cache);
-      console.log(`🧹 Sanitasi otomatis database: ${updatedCount} lahan berhasil dibersihkan dari duplikasi pemilik di kolaborator.`);
+      console.log(`Sanitasi otomatis database: ${updatedCount} lahan berhasil dibersihkan dari duplikasi pemilik di kolaborator.`);
     }
   }
 

@@ -1,11 +1,22 @@
 import { Router, Request, Response } from 'express';
+import { createHash } from 'node:crypto';
 import { db } from '../database/db.js';
 
 const router = Router();
 const FARMER_AVATAR = '/icons/petani.svg';
+const LEGACY_FARMER_AVATAR = '\u{1F468}\u200D\u{1F33E}';
+const LEGACY_DEFAULT_AVATAR_HASH = 'b92b8f3149b7c5ed20f2aa4b8b15f6b371c4afa5fda11ad18bcb817867cb4491';
 
 const normalizeAvatar = (avatar?: string) =>
-  !avatar || avatar === '👨‍🌾' ? FARMER_AVATAR : avatar;
+  !avatar || avatar === LEGACY_FARMER_AVATAR ? FARMER_AVATAR : avatar;
+
+const normalizeLegacyDefaultAvatar = <T extends { id?: string; avatar_url?: string | null }>(user: T): T => {
+  if (user.id !== 'usr_petani' || !user.avatar_url?.startsWith('data:image/')) return user;
+
+  const base64 = user.avatar_url.slice(user.avatar_url.indexOf(',') + 1);
+  const avatarHash = createHash('sha256').update(Buffer.from(base64, 'base64')).digest('hex');
+  return avatarHash === LEGACY_DEFAULT_AVATAR_HASH ? { ...user, avatar_url: null } : user;
+};
 
 const PUBLIC_PROFILES_DATA: Record<string, any> = {
   "Pak Joko": {
@@ -33,7 +44,7 @@ const PUBLIC_PROFILES_DATA: Record<string, any> = {
     role_label: "Jasa Olah Tanah & Traktor Quick",
     category_badge: "Sewa Traktor",
     service_specialties: ["Bajak Singkal", "Rotavator Lahan Kering & Basah", "Operator Handal"],
-    avatar: "🚜",
+    avatar: FARMER_AVATAR,
     village: "Desa Sukamaju Krajan",
     commodity: "Jasa Mekanisasi Olah Tanah",
     land_size_ha: 0.0,
@@ -51,7 +62,7 @@ const PUBLIC_PROFILES_DATA: Record<string, any> = {
     role_label: "Jasa Pompa Air & Irigasi",
     category_badge: "Jasa Pengairan",
     service_specialties: ["Pompa Alkon 3 Inci", "Sedot Air Sungai / Embung", "Pengeboran Sumur Pantek"],
-    avatar: "💧",
+    avatar: FARMER_AVATAR,
     village: "Desa Sukamaju Blok Saluran",
     commodity: "Jasa Pompanisasi & Pengairan",
     land_size_ha: 0.0,
@@ -69,7 +80,7 @@ const PUBLIC_PROFILES_DATA: Record<string, any> = {
     role_label: "Jasa Cangkul & Regu Tanam",
     category_badge: "Jasa Cangkul & Tanam",
     service_specialties: ["Cangkul Pematang Galengan", "Regu Tanam Borongan", "Penyiangan Gulma Landak"],
-    avatar: "🌾",
+    avatar: FARMER_AVATAR,
     village: "Desa Sukamaju Girang",
     commodity: "Jasa Tenaga Kerja Tani",
     land_size_ha: 0.0,
@@ -87,7 +98,7 @@ const PUBLIC_PROFILES_DATA: Record<string, any> = {
     role_label: "Kios Saprotan & Pupuk Resmi KPL",
     category_badge: "Kios Saprotan",
     service_specialties: ["Pupuk Subsidi & Non-Subsidi", "Benih Padi Bersertifikat", "Pestisida & Obat Hama"],
-    avatar: "🏪",
+    avatar: FARMER_AVATAR,
     village: "Pasar Tradisional Sukamaju Kios B-04",
     commodity: "Saprotan Pupuk & Benih",
     land_size_ha: 0.0,
@@ -105,7 +116,7 @@ const PUBLIC_PROFILES_DATA: Record<string, any> = {
     role_label: "Kios Saprotan & Pupuk Resmi KPL",
     category_badge: "Kios Saprotan",
     service_specialties: ["Pupuk Subsidi", "Benih Inpari 32", "Bakterisida Hayati"],
-    avatar: "🏪",
+    avatar: FARMER_AVATAR,
     village: "Pasar Tradisional Sukamaju Kios B-04",
     commodity: "Saprotan Pupuk & Benih",
     land_size_ha: 0.0,
@@ -123,7 +134,7 @@ const PUBLIC_PROFILES_DATA: Record<string, any> = {
     role_label: "Penggilingan Padi & Pengepul GKP",
     category_badge: "Penggilingan Padi",
     service_specialties: ["Timbangan Digital Terkalibrasi", "Armada Pick-Up Jemput Lumbung", "Beli Gabah Tunai"],
-    avatar: "🚚",
+    avatar: FARMER_AVATAR,
     village: "Kawasan Sentra Penggilingan Km 3",
     commodity: "Penampung Gabah Kering Panen",
     land_size_ha: 0.0,
@@ -176,11 +187,11 @@ router.post('/register', (req: Request, res: Response) => {
 
     const roleBadges: Record<string, { label: string; badge: string; avatar: string }> = {
       PETANI_MANDIRI: { label: "Petani Mandiri", badge: "Petani Mandiri", avatar: FARMER_AVATAR },
-      JASA_TRAKTOR: { label: "Jasa Olah Tanah & Traktor", badge: "Sewa Traktor", avatar: "🚜" },
-      JASA_PENGAIRAN: { label: "Jasa Pompa Irigasi", badge: "Jasa Pengairan", avatar: "💧" },
-      JASA_CANGKUL: { label: "Regu Buruh Tanam", badge: "Jasa Cangkul", avatar: "🌾" },
-      KIOS_SAPROTAN: { label: "Kios Saprotan KPL", badge: "Kios Saprotan", avatar: "🏪" },
-      PENGGILINGAN_PADI: { label: "Penggilingan & Pengepul", badge: "Penggilingan", avatar: "🚚" },
+      JASA_TRAKTOR: { label: "Jasa Olah Tanah & Traktor", badge: "Sewa Traktor", avatar: FARMER_AVATAR },
+      JASA_PENGAIRAN: { label: "Jasa Pompa Irigasi", badge: "Jasa Pengairan", avatar: FARMER_AVATAR },
+      JASA_CANGKUL: { label: "Regu Buruh Tanam", badge: "Jasa Cangkul", avatar: FARMER_AVATAR },
+      KIOS_SAPROTAN: { label: "Kios Saprotan KPL", badge: "Kios Saprotan", avatar: FARMER_AVATAR },
+      PENGGILINGAN_PADI: { label: "Penggilingan & Pengepul", badge: "Penggilingan", avatar: FARMER_AVATAR },
     };
 
     const roleInfo = roleBadges[role] || roleBadges.PETANI_MANDIRI;
@@ -234,7 +245,8 @@ router.post('/login', (req: Request, res: Response) => {
     // Jika nomor telepon adalah demo default, buat user default
     if (cleanPhone === '08123456789') {
       user = users.find((u: any) => u.id === 'usr_petani') || users[0];
-      return res.json({ ...user, avatar: normalizeAvatar(user?.avatar) });
+      const normalizedUser = user ? normalizeLegacyDefaultAvatar(user) : user;
+      return res.json({ ...normalizedUser, avatar: normalizeAvatar(user?.avatar) });
     }
     return res.status(404).json({ 
       detail: "Nomor HP atau Username belum terdaftar. Silakan buat akun baru terlebih dahulu." 
@@ -246,7 +258,7 @@ router.post('/login', (req: Request, res: Response) => {
     return res.status(401).json({ detail: "Kode PIN yang Anda masukkan tidak sesuai." });
   }
 
-  res.json({ ...user, avatar: normalizeAvatar(user.avatar) });
+  res.json({ ...normalizeLegacyDefaultAvatar(user), avatar: normalizeAvatar(user.avatar) });
 });
 
 // GET /profile
@@ -275,7 +287,7 @@ router.get('/profile', (req: Request, res: Response) => {
     }
   }
 
-  res.json({ ...user, avatar: normalizeAvatar(user.avatar) });
+  res.json({ ...normalizeLegacyDefaultAvatar(user), avatar: normalizeAvatar(user.avatar) });
 });
 
 // PUT /profile

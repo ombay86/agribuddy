@@ -82,7 +82,7 @@
                       : 'bg-white border-2 border-slate-300 text-slate-500'
                 "
               >
-                <span v-if="wizardStep > 1">✓</span>
+                <Check v-if="wizardStep > 1" :size="14" />
                 <MapPin v-else :size="14" />
               </div>
               <span
@@ -113,7 +113,7 @@
                       : 'bg-white border-2 border-slate-300 text-slate-500'
                 "
               >
-                <span v-if="wizardStep > 2">✓</span>
+                <Check v-if="wizardStep > 2" :size="14" />
                 <Coins v-else :size="14" />
               </div>
               <span
@@ -1191,7 +1191,8 @@
                             : 'bg-slate-200 text-slate-600'
                       "
                     >
-                      {{ phase.status === "SELESAI" ? "✓" : phase.step_no }}
+                      <Check v-if="phase.status === 'SELESAI'" :size="14" />
+                      <template v-else>{{ phase.step_no }}</template>
                     </span>
                     <div class="text-left">
                       <h4 class="text-sm text-slate-800">
@@ -1492,7 +1493,8 @@
                               : 'bg-slate-200 text-slate-600'
                         "
                       >
-                        {{ phase.status === "SELESAI" ? "✓" : phase.step_no }}
+                        <Check v-if="phase.status === 'SELESAI'" :size="12" />
+                        <template v-else>{{ phase.step_no }}</template>
                       </span>
                       <span class="text-xs text-slate-800">{{
                         phase.name

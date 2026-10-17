@@ -140,7 +140,7 @@ class ShopProduct(BaseModel):
     stock_available: int
     is_subsidi: bool = False
     description: str
-    image_emoji: str = "📦"
+    image_emoji: str = ""
 
 class SaprotanOrderCreate(BaseModel):
     product_id: str
@@ -210,7 +210,7 @@ class EcosystemServiceItem(BaseModel):
     provider_id: str
     provider_name: str
     provider_badge: str
-    provider_avatar: str = "🌾"
+    provider_avatar: str = "/icons/petani.svg"
     image_url: Optional[str] = None
     rating: Optional[float] = 4.9
     completed_orders_count: Optional[int] = 0
@@ -359,7 +359,7 @@ class ProductDiscussion(BaseModel):
     service_id: str
     user_id: str
     user_name: str
-    user_avatar: str = "🌾"
+    user_avatar: str = "/icons/petani.svg"
     question: str
     reply: Optional[str] = None
     replied_by: Optional[str] = None
@@ -369,13 +369,12 @@ class ProductDiscussion(BaseModel):
 class CreateProductDiscussion(BaseModel):
     user_id: str
     user_name: str
-    user_avatar: Optional[str] = "🌾"
+    user_avatar: Optional[str] = "/icons/petani.svg"
     question: str
 
 class ReplyProductDiscussion(BaseModel):
     reply: str
     replied_by: str
-
 
 
 

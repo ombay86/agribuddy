@@ -411,7 +411,7 @@ router.post('/:farmId/collaborators', (req: Request, res: Response) => {
     db.insert("notifications", {
       user_id: newC.user_id, // Penerima notifikasi
       type: 'COLLAB_INVITE',
-      title: 'Undangan Kolaborasi Baru 🤝',
+      title: 'Undangan Kolaborasi Baru',
       message: `${ownerName} mengundang Anda untuk mengelola lahan "${farm.name}" (${farm.land_size_ha} Ha) dengan peran "${newC.role}" dan bagi hasil ${newC.share_percentage}%.`,
       from_user_id: farm.user_id,
       from_user_name: ownerName,

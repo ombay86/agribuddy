@@ -151,62 +151,15 @@
       "updated_at": "2026-09-21T20:35:39.951789"
     },
     {
-      "name": "Pupuk",
-      "type": "PUPUK",
-      "quantity": 6,
-      "unit": "Karung",
-      "min_threshold": 2,
-      "notes": "",
-      "user_id": "usr_1791517561901",
-      "id": "inv_2911b87b",
-      "created_at": "2026-10-16T09:00:19.036Z",
-      "updated_at": "2026-10-16T09:04:38.920Z"
-    },
-    {
-      "name": "Pupuk Ayam",
-      "type": "PUPUK",
-      "quantity": 8,
-      "unit": "Karung",
-      "min_threshold": 2,
-      "notes": "",
-      "user_id": "usr_1791517561901",
-      "id": "inv_8f02a58e",
-      "created_at": "2026-10-16T09:01:48.498Z",
-      "pending_orders": [],
-      "updated_at": "2026-10-16T09:22:23.185Z"
-    },
-    {
-      "name": "Bibit Ayam",
-      "type": "BIBIT",
-      "quantity": 2,
-      "unit": "Karung",
-      "min_threshold": 2,
-      "notes": "",
-      "user_id": "usr_1791517561901",
-      "id": "inv_1eb94a04",
-      "created_at": "2026-10-16T09:02:13.146Z"
-    },
-    {
-      "name": "Obat Ayam",
-      "type": "OBAT",
-      "quantity": 2,
-      "unit": "Karung",
-      "min_threshold": 2,
-      "notes": "",
-      "user_id": "usr_1791517561901",
-      "id": "inv_e2094156",
-      "created_at": "2026-10-16T09:02:35.308Z"
-    },
-    {
-      "name": "Obat Sapi",
+      "name": "Pupuk SP",
       "type": "PUPUK",
       "quantity": 2,
-      "unit": "Kardus",
+      "unit": "Karung",
       "min_threshold": 2,
       "notes": "",
       "user_id": "usr_1791517561901",
-      "id": "inv_a3ad9c31",
-      "created_at": "2026-10-16T09:02:49.226Z"
+      "id": "inv_8de008bd",
+      "created_at": "2026-10-16T16:09:39.353Z"
     }
   ],
   "harvests": [
@@ -870,7 +823,7 @@
       "coordinates_label": "-7.2504, 112.7512 (Desa Sukamaju Krajan)"
     },
     {
-      "plan_id": "plan_mvb5g1tj",
+      "plan_id": "plan_mvb5wo3a",
       "user_id": "usr_petani",
       "land_size_ha": 1,
       "commodity": "Padi Sawah Inpari 32",
@@ -879,7 +832,7 @@
       "location": "Desa Sukamaju, Jawa Timur",
       "latitude": -7.2504,
       "longitude": 112.7512,
-      "coordinates_label": "-7.2504, 112.7512 (Desa Sukamaju)",
+      "coordinates_label": "-7.2504, 112.7512 (Desa Sukamaju, Jawa Timur)",
       "weather_condition": {
         "temp_celsius": 26,
         "rain_probability": 65,
@@ -1151,7 +1104,7 @@
       ],
       "id": "far_3d4b8a3b",
       "created_at": "2026-09-23T15:21:32.822Z",
-      "updated_at": "2026-10-16T15:55:37.399Z"
+      "updated_at": "2026-10-16T16:08:32.758Z"
     }
   ],
   "ecosystem_services": [
@@ -1468,7 +1421,7 @@
       "provider_id": "usr_1791517561901",
       "provider_name": "petaniyyy",
       "provider_badge": "Petani Mandiri",
-      "provider_avatar": "🚜",
+      "provider_avatar": "/icons/petani.svg",
       "rating": 5,
       "completed_orders_count": 0,
       "title": "Sewa Sapi",
@@ -2563,6 +2516,29 @@
           "content": "Halo Pak Tani! Saya **Agri AI**, asisten pertanian cerdas Anda di AgriBuddy.\n\nSaya siap membantu menjawab seputar:\n• Deteksi dan solusi penyakit daun padi & hama tanaman\n• Rekomendasi dosis pemupukan berimbang & jadwal aplikasi\n• Pengelolaan air sawah, bibit unggul, serta pasca panen\n\nSilakan ketik pertanyaan Anda atau lampirkan foto tanaman/daun melalui tombol kamera di bawah!",
           "detected_diagnosis": null,
           "timestamp": "16 Okt, 15.59 WIB"
+        }
+      ]
+    },
+    {
+      "id": "session_1792166941953",
+      "user_id": "usr_1791517561901",
+      "title": "Daun Menguning & Kering di Ujung",
+      "created_at": "16 Okt, 23.09 WIB",
+      "updated_at": "2026-10-16T16:09:01.963Z",
+      "messages": [
+        {
+          "id": "msg_1792166941963_u",
+          "role": "user",
+          "content": "Daun Menguning & Kering di Ujung",
+          "image": null,
+          "timestamp": "16 Okt, 23.09 WIB"
+        },
+        {
+          "id": "msg_1792166941963_m",
+          "role": "model",
+          "content": "Daun padi yang menguning atau bercak umumnya dipicu oleh:\n\n1. **Kekurangan Nitrogen:** Daun tua menguning dari ujung membentuk huruf 'V'. Solusi: tambahkan Urea berimbang.\n2. **Hawar Daun Bakteri (Kresek):** Ujung daun mengering keputihan bergelombang. Solusi: semprot bakterisida tembaga.\n3. **Jamur Blas Daun:** Bercak belah ketupat abu-abu kecoklatan. Solusi: fungisida trisiklazol.\n\nAnda juga dapat mengambil foto daunnya sekarang dan lampirkan di chat ini agar saya analisiskan!",
+          "detected_diagnosis": null,
+          "timestamp": "16 Okt, 23.09 WIB"
         }
       ]
     }

@@ -61,14 +61,14 @@ router.post('/services', (req: Request, res: Response) => {
   const providerPhone = payload.phone || user?.whatsapp_number || user?.phone_number || "08123456789";
 
   const avatarMap: Record<string, string> = {
-    "JASA_TRAKTOR": "🚜",
-    "JASA_PENGAIRAN": "💧",
-    "JASA_TENAGA_KERJA": "🌾",
-    "SAPROTAN": "🏪",
-    "HASIL_PANEN": "📦",
-    "PASCA_PANEN": "🚚"
+    "JASA_TRAKTOR": "/icons/petani.svg",
+    "JASA_PENGAIRAN": "/icons/petani.svg",
+    "JASA_TENAGA_KERJA": "/icons/petani.svg",
+    "SAPROTAN": "/icons/petani.svg",
+    "HASIL_PANEN": "/icons/petani.svg",
+    "PASCA_PANEN": "/icons/petani.svg"
   };
-  const avatar = avatarMap[payload.category] || "🌾";
+  const avatar = avatarMap[payload.category] || "/icons/petani.svg";
 
   const itemData = {
     id: `srv_${crypto.randomBytes(4).toString('hex')}`,

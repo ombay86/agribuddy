@@ -264,7 +264,7 @@ def add_post_comment(post_id: str, payload: CommunityCommentCreate):
         db.insert("notifications", {
             "id": f"notif_{uuid.uuid4().hex[:8]}",
             "user_id": author_id,
-            "title": "Komentar Baru di Diskusi! 💬",
+            "title": "Komentar Baru di Diskusi!",
             "message": f"{payload.author_name} mengomentari postingan Anda: \"{payload.comment[:50]}...\"",
             "type": "NEW_COMMENT",
             "reference_id": post_id,

@@ -115,7 +115,7 @@
                   class="flex-1 bg-[#324d1d]/90 hover:bg-[#324d1d] text-white  text-[11px] py-1.5 px-2 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-1 cursor-pointer disabled:opacity-60"
                 >
                   <Loader2 v-if="isResponding === notif.id" :size="12" class="animate-spin" />
-                  <span v-else>✓ Terima ({{ notif.share_percentage }}%)</span>
+                  <span v-else class="flex items-center gap-1"><Check :size="12" /> Terima ({{ notif.share_percentage }}%)</span>
                 </button>
                 <button
                   @click="handleRespondInvite(notif.id, 'REJECT')"
@@ -131,7 +131,7 @@
                 <span>Anda telah menerima undangan ini</span>
               </div>
               <div v-else-if="notif.status === 'RESOLVED_REJECTED'" class="text-[10px] font-bold text-slate-400 flex items-center gap-1">
-                <span>✕ Undangan ini telah ditolak</span>
+                <span>Undangan ini telah ditolak</span>
               </div>
             </div>
           </div>
@@ -146,7 +146,7 @@
       >
         <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden border border-[#99c30c] shadow-2xs bg-[#99c30c]/10 flex items-center justify-center shrink-0">
           <img
-            :src="currentPersona.customAvatar || currentPersona.avatar"
+            :src="currentPersona.customAvatar || (currentPersona.avatar.endsWith('/icons/petani.svg') ? farmer : currentPersona.avatar)"
             alt="Avatar petani"
             class="w-full h-full object-cover"
           />
@@ -187,8 +187,9 @@ import { useRoute, useRouter } from 'vue-router';
 import { useUserState, syncUserProfile } from '@/services/userState';
 import { useFarmlandState } from '@/composables/useFarmlandState';
 import { api, CollabNotification } from '@/services/api';
-import { Bell, Loader2 } from 'lucide-vue-next';
+import { Bell, Check, Loader2 } from 'lucide-vue-next';
 import SubTabButton from '@/components/nav/SubTabButton.vue';
+import farmer from '@/assets/icons/download.jpg';
 
 const route = useRoute();
 const router = useRouter();

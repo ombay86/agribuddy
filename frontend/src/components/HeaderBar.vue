@@ -96,7 +96,7 @@
                 <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm shrink-0 mt-0.5"
                   :class="getNotifBg(notif.type)"
                 >
-                  {{ getNotifIcon(notif.type) }}
+                  <component :is="getNotifIcon(notif.type)" :size="16" />
                 </div>
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center justify-between gap-1">
@@ -204,7 +204,7 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserState } from '@/services/userState';
 import { api, InAppNotification } from '@/services/api';
-import { ChevronDown, User, LogOut, Bell, Users, Activity, Store } from 'lucide-vue-next';
+import { ChevronDown, User, LogOut, Bell, Users, Activity, Store, ShoppingCart, UserRound, MessageCircle, CircleCheck } from 'lucide-vue-next';
 
 const router = useRouter();
 const { currentPersona, currentUserId, logout } = useUserState();
@@ -256,15 +256,15 @@ const markAllAsRead = async () => {
 const getNotifIcon = (type: string) => {
   switch (type) {
     case 'ORDER_RECEIVED':
-      return '🛒';
+      return ShoppingCart;
     case 'NEW_FOLLOWER':
-      return '👤';
+      return UserRound;
     case 'NEW_COMMENT':
-      return '💬';
+      return MessageCircle;
     case 'ORDER_STATUS':
-      return '✅';
+      return CircleCheck;
     default:
-      return '🔔';
+      return Bell;
   }
 };
 

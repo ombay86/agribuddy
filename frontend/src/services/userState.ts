@@ -2,7 +2,7 @@ import { ref, computed } from 'vue';
 import petani from '@/assets/icons/download.jpg';
 
 const isLegacyFarmerAvatar = (avatar?: string | null) =>
-  avatar === '👨‍🌾' || avatar?.endsWith('/icons/petani.svg') === true;
+  avatar === '\u{1F468}\u200D\u{1F33E}' || avatar?.endsWith('/icons/petani.svg') === true;
 
 export type UserRole = 
   | 'PETANI_MANDIRI' 
@@ -167,12 +167,21 @@ export const syncUserProfile = async (userId?: string) => {
             localStorage.setItem('agribuddy_registered_user', JSON.stringify(registeredUser.value));
           }
         }
-        if (prof.avatar_url) {
+        if (Object.prototype.hasOwnProperty.call(prof, 'avatar_url')) {
+          const avatarUrl = prof.avatar_url || null;
           userAvatars.value = {
             ...userAvatars.value,
-            [activeUid]: prof.avatar_url
+            [activeUid]: avatarUrl
           };
-          localStorage.setItem(`agribuddy_avatar_${activeUid}`, prof.avatar_url);
+          if (avatarUrl) {
+            localStorage.setItem(`agribuddy_avatar_${activeUid}`, avatarUrl);
+          } else {
+            localStorage.removeItem(`agribuddy_avatar_${activeUid}`);
+          }
+          if (registeredUser.value?.id === activeUid) {
+            registeredUser.value = { ...registeredUser.value, avatar_url: avatarUrl || undefined };
+            localStorage.setItem('agribuddy_registered_user', JSON.stringify(registeredUser.value));
+          }
         }
         if (prof.username) {
           userUsernames.value = {
@@ -328,9 +337,14 @@ export const useUserState = () => {
       userUsernames.value = { ...userUsernames.value, [userData.id]: userData.username };
       localStorage.setItem(`agribuddy_username_${userData.id}`, userData.username);
     }
-    if (userData.avatar_url) {
-      userAvatars.value = { ...userAvatars.value, [userData.id]: userData.avatar_url };
-      localStorage.setItem(`agribuddy_avatar_${userData.id}`, userData.avatar_url);
+    if (Object.prototype.hasOwnProperty.call(userData, 'avatar_url')) {
+      const avatarUrl = userData.avatar_url || null;
+      userAvatars.value = { ...userAvatars.value, [userData.id]: avatarUrl };
+      if (avatarUrl) {
+        localStorage.setItem(`agribuddy_avatar_${userData.id}`, avatarUrl);
+      } else {
+        localStorage.removeItem(`agribuddy_avatar_${userData.id}`);
+      }
     }
     // Jika akun memiliki gemini_api_key dari PostgreSQL server, otomatis sinkronkan ke perangkat ini
     if (userData.gemini_api_key) {

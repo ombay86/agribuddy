@@ -78,14 +78,14 @@ def create_service(
 
     # Icon avatar default sesuai kategori
     avatar_map = {
-        "JASA_TRAKTOR": "🚜",
-        "JASA_PENGAIRAN": "💧",
-        "JASA_TENAGA_KERJA": "🌾",
-        "SAPROTAN": "🏪",
-        "HASIL_PANEN": "📦",
-        "PASCA_PANEN": "🚚"
+        "JASA_TRAKTOR": "/icons/petani.svg",
+        "JASA_PENGAIRAN": "/icons/petani.svg",
+        "JASA_TENAGA_KERJA": "/icons/petani.svg",
+        "SAPROTAN": "/icons/petani.svg",
+        "HASIL_PANEN": "/icons/petani.svg",
+        "PASCA_PANEN": "/icons/petani.svg"
     }
-    avatar = avatar_map.get(payload.category, "🌾")
+    avatar = avatar_map.get(payload.category, "/icons/petani.svg")
 
     item_data = {
         "provider_id": active_user_id,
@@ -188,7 +188,7 @@ def checkout_service(payload: ServiceCheckoutRequest):
     seller_notif = {
         "id": f"notif_{uuid.uuid4().hex[:8]}",
         "user_id": service["provider_id"],
-        "title": "Pesanan Jasa Baru Masuk! 🛒",
+        "title": "Pesanan Jasa Baru Masuk!",
         "message": f"{payload.buyer_name} memesan {service['title']} ({payload.quantity} {payload.unit or service.get('price_unit', '')}) senilai Rp {total_price:,.0f}.",
         "type": "ORDER_RECEIVED",
         "reference_id": order_id,
@@ -201,7 +201,7 @@ def checkout_service(payload: ServiceCheckoutRequest):
     buyer_notif = {
         "id": f"notif_{uuid.uuid4().hex[:8]}",
         "user_id": payload.buyer_id,
-        "title": "Pesanan Terkirim ke Mitra ✅",
+        "title": "Pesanan Terkirim ke Mitra",
         "message": f"Pesanan {service['title']} telah diteruskan ke {service['provider_name']}. Menunggu konfirmasi pengerjaan.",
         "type": "ORDER_STATUS",
         "reference_id": order_id,
@@ -293,14 +293,14 @@ def update_order_status(order_id: str, payload: UpdateServiceOrderStatus):
 
     # Menentukan teks dan emoji notifikasi untuk Pembeli berdasarkan konfirmasi Seller
     notif_config = {
-        "DIPROSES": ("Pesanan Sedang Diproses 🚜", "Pesanan Anda sedang dipersiapkan dan dijadwalkan oleh penyedia."),
-        "SEDANG_DIKIRIM": ("Pesanan Mulai Dikirim / Berangkat 🚚", "Barang atau armada pengerjaan sedang menuju ke lokasi lahan Anda."),
-        "SELESAI": ("Pesanan Telah Tuntas & Selesai ✅", "Penyedia telah menyelesaikan layanan/pengiriman pesanan Anda."),
-        "STOK_HABIS": ("Pemberitahuan: Stok Habis / Jadwal Penuh ⚠️", "Penyedia mengabarkan bahwa stok barang atau slot jadwal pengerjaan sedang tidak tersedia."),
-        "DIBATALKAN": ("Pesanan Dibatalkan ❌", "Pesanan Anda tidak dapat diproses oleh penyedia.")
+        "DIPROSES": ("Pesanan Sedang Diproses", "Pesanan Anda sedang dipersiapkan dan dijadwalkan oleh penyedia."),
+        "SEDANG_DIKIRIM": ("Pesanan Mulai Dikirim / Berangkat", "Barang atau armada pengerjaan sedang menuju ke lokasi lahan Anda."),
+        "SELESAI": ("Pesanan Telah Tuntas & Selesai", "Penyedia telah menyelesaikan layanan/pengiriman pesanan Anda."),
+        "STOK_HABIS": ("Pemberitahuan: Stok Habis / Jadwal Penuh", "Penyedia mengabarkan bahwa stok barang atau slot jadwal pengerjaan sedang tidak tersedia."),
+        "DIBATALKAN": ("Pesanan Dibatalkan", "Pesanan Anda tidak dapat diproses oleh penyedia.")
     }
 
-    title, default_msg = notif_config.get(payload.status, ("Status Pesanan Diperbarui 📦", "Status pesanan Anda telah diperbarui oleh penjual."))
+    title, default_msg = notif_config.get(payload.status, ("Status Pesanan Diperbarui", "Status pesanan Anda telah diperbarui oleh penjual."))
     note_suffix = f" Catatan penjual: \"{payload.seller_notes}\"" if payload.seller_notes else f" {default_msg}"
     custom_msg = f"{order.get('seller_name', 'Penjual')} mengonfirmasi pesanan {order.get('service_title', '')}: [{payload.status}].{note_suffix}"
 
@@ -367,7 +367,7 @@ def send_order_message(order_id: str, payload: CreateOrderMessage):
         notif = {
             "id": f"notif_{uuid.uuid4().hex[:8]}",
             "user_id": recipient_id,
-            "title": "Pesan Diskusi Pesanan 💬",
+            "title": "Pesan Diskusi Pesanan",
             "message": f"{payload.sender_name}: \"{payload.message[:60]}...\"",
             "type": "ORDER_DISCUSSION",
             "reference_id": order_id,
@@ -403,7 +403,7 @@ def create_service_discussion(service_id: str, payload: CreateProductDiscussion)
         "service_id": service_id,
         "user_id": payload.user_id,
         "user_name": payload.user_name,
-        "user_avatar": payload.user_avatar or "🌾",
+        "user_avatar": payload.user_avatar or "/icons/petani.svg",
         "question": payload.question,
         "reply": None,
         "replied_by": None,
@@ -418,7 +418,7 @@ def create_service_discussion(service_id: str, payload: CreateProductDiscussion)
         notif = {
             "id": f"notif_{uuid.uuid4().hex[:8]}",
             "user_id": provider_id,
-            "title": "Pertanyaan Baru di Produk Anda! ❓",
+            "title": "Pertanyaan Baru di Produk Anda!",
             "message": f"{payload.user_name} bertanya di \"{service.get('title', '')}\": \"{payload.question[:60]}...\"",
             "type": "PRODUCT_DISCUSSION",
             "reference_id": service_id,
@@ -457,7 +457,7 @@ def reply_service_discussion(service_id: str, discussion_id: str, payload: Reply
         notif = {
             "id": f"notif_{uuid.uuid4().hex[:8]}",
             "user_id": asker_id,
-            "title": "Jawaban Diskusi Produk 💡",
+            "title": "Jawaban Diskusi Produk",
             "message": f"{payload.replied_by} menjawab pertanyaan Anda di \"{svc_title}\": \"{payload.reply[:60]}...\"",
             "type": "PRODUCT_DISCUSSION",
             "reference_id": service_id,
@@ -467,6 +467,5 @@ def reply_service_discussion(service_id: str, discussion_id: str, payload: Reply
         db.insert("notifications", notif)
 
     return updated
-
 
 

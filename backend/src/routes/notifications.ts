@@ -73,7 +73,7 @@ router.post('/:notifId/respond', (req: Request, res: Response) => {
     db.insert("notifications", {
       user_id: notif.from_user_id,
       type: 'COLLAB_RESPONSE',
-      title: 'Undangan Kolaborasi Disetujui! 🎉',
+      title: 'Undangan Kolaborasi Disetujui!',
       message: `${notif.to_user_name} telah MENERIMA undangan kolaborasi pada lahan "${farm.name}" (${notif.share_percentage}% bagi hasil).`,
       farm_id: farm.id,
       farm_name: farm.name,

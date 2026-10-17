@@ -7,7 +7,7 @@
         @click="emit('close')"
         class="absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 text-slate-500 p-1.5 rounded-full transition-all cursor-pointer"
       >
-        ✕
+        <X :size="16" />
       </button>
       <slot />
     </div>
@@ -16,12 +16,13 @@
 
 <script setup lang="ts">
 /**
- * Modal standar (kartu putih + tombol tutup ✕ di pojok kanan atas).
+ * Modal standar (kartu putih + tombol tutup di pojok kanan atas).
  * Dipakai oleh modal-modal di RencanaTaniView.
  *
  * Penggunaan: <ModalDialog v-if="isOpen" @close="isOpen = false"> ... </ModalDialog>
  */
 import BaseModal from "@/components/ui/BaseModal.vue";
+import { X } from "lucide-vue-next";
 
 const emit = defineEmits<{ (e: "close"): void }>();
 </script>

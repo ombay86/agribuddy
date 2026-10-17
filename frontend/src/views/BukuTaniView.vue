@@ -129,7 +129,7 @@
                   </div>
                 </div>
 
-                <!-- Tombol Ceklis (✓) & Silang (✕) -->
+                <!-- Tombol ceklis dan silang -->
                 <div class="flex items-center gap-1.5 shrink-0 pt-0.5">
                   <!-- Ceklis: Barang Sampai -->
                   <button

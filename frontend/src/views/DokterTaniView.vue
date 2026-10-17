@@ -447,8 +447,8 @@ const handleSaveKey = async () => {
   }
 
   alert(trimmed 
-    ? `✅ API Key Gemini berhasil disimpan dan disinkronkan ke akun ${currentPersona.value.name}! Kunci ini akan otomatis aktif meskipun Anda login dari perangkat lain.` 
-    : 'ℹ️ Menggunakan default API Key server.');
+    ? `API Key Gemini berhasil disimpan dan disinkronkan ke akun ${currentPersona.value.name}! Kunci ini akan otomatis aktif meskipun Anda login dari perangkat lain.` 
+    : 'Menggunakan default API Key server.');
 };
 
 const handleClearKey = async () => {
@@ -469,7 +469,7 @@ const handleClearKey = async () => {
     console.warn('Gagal menghapus API Key dari profil server:', err);
   }
 
-  alert(`🗑️ API Key pribadi akun ${currentPersona.value.name} telah dihapus. Sistem akan menggunakan default server.`);
+  alert(`API Key pribadi akun ${currentPersona.value.name} telah dihapus. Sistem akan menggunakan default server.`);
 };
 
 const route = useRoute();

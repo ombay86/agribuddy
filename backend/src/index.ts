@@ -65,9 +65,9 @@ async function bootstrap() {
 
   app.listen(config.port, '0.0.0.0', () => {
     console.log(`=======================================================`);
-    console.log(`🚀 AgriBuddy Backend (Node.js) is RUNNING on port ${config.port}`);
-    console.log(`📡 Base API URL: http://127.0.0.1:${config.port}${config.apiV1Str}`);
-    console.log(`🤖 AI Engine: Google Gemini API Multimodal Vision`);
+    console.log(`AgriBuddy Backend (Node.js) is RUNNING on port ${config.port}`);
+    console.log(`Base API URL: http://127.0.0.1:${config.port}${config.apiV1Str}`);
+    console.log(`AI Engine: Google Gemini API Multimodal Vision`);
     console.log(`=======================================================`);
   });
 }
