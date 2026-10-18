@@ -1,7 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://googleapis.com');
 
 * {
   /* font-family:  'Lato', sans-serif; */
