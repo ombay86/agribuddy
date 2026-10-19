@@ -30,24 +30,63 @@ function getOwnerName(userId: string): string {
 
 export function sanitizeFarmCollaborators(farm: any): any[] {
   if (!farm || !farm.collaborators || !Array.isArray(farm.collaborators)) return [];
-  const farmUserId = farm.user_id;
-  const ownerName = (farm.owner_name || (isUserJoko(farmUserId) ? 'Pak Joko' : getOwnerName(farmUserId))).toLowerCase().trim();
+  const farmUserId = farm.user_id ? String(farm.user_id).toLowerCase().trim() : '';
+  const ownerName = (farm.owner_name || (isUserJoko(farmUserId) ? 'Pak Joko' : getOwnerName(farm.user_id))).toLowerCase().trim();
 
-  return farm.collaborators.filter((c: any) => {
-    if (!c) return false;
-    // 1. Direct user_id match with farm owner
-    if (c.user_id && farmUserId && c.user_id === farmUserId) return false;
-    // 2. Both are Joko personas
-    if (c.user_id && farmUserId && isUserJoko(c.user_id) && isUserJoko(farmUserId)) return false;
-    // 3. Name matches owner name or contains owner name
+  const seenUserIds = new Set<string>();
+  const seenNames = new Set<string>();
+
+  if (farmUserId) {
+    seenUserIds.add(farmUserId);
+    if (isUserJoko(farmUserId)) {
+      seenUserIds.add('usr_petani');
+      seenUserIds.add('usr_001');
+      seenUserIds.add('pak_joko');
+    }
+  }
+  if (ownerName) {
+    seenNames.add(ownerName);
+  }
+
+  const result: any[] = [];
+  for (const c of farm.collaborators) {
+    if (!c) continue;
+    const cUserId = c.user_id ? String(c.user_id).toLowerCase().trim() : '';
     const cName = (c.name || '').toLowerCase().trim();
-    if (cName && ownerName && (cName === ownerName || cName.includes(ownerName) || ownerName.includes(cName))) return false;
-    if (isUserJoko(farmUserId) && cName.includes('joko')) return false;
-    // 4. Role indicates owner
     const cRole = (c.role || '').toLowerCase();
-    if (cRole.includes('pemilik') || cRole.includes('pengelola utama')) return false;
-    return true;
-  });
+    const cUsername = (c.username || '').toLowerCase().trim().replace(/^@/, '');
+
+    // 1. Role menandakan pemilik
+    if (cRole.includes('pemilik') || cRole.includes('pengelola utama')) continue;
+
+    // 2. User ID cocok dengan pemilik atau kolaborator lain yang sudah terdaftar
+    if (cUserId) {
+      if (seenUserIds.has(cUserId)) continue;
+      if (isUserJoko(farmUserId) && isUserJoko(cUserId)) continue;
+    }
+
+    // 3. Nama / Username cocok dengan pemilik atau kolaborator lain yang sudah terdaftar
+    if (cName) {
+      if (seenNames.has(cName)) continue;
+      if (ownerName && (cName === ownerName || cName.includes(ownerName) || ownerName.includes(cName))) continue;
+      if (isUserJoko(farmUserId) && cName.includes('joko')) continue;
+    }
+    if (cUsername) {
+      if (seenNames.has(cUsername) || seenUserIds.has(cUsername)) continue;
+    }
+
+    // Catat identitas agar akun ini hanya bisa tampil satu kali
+    if (cUserId) seenUserIds.add(cUserId);
+    if (cName) seenNames.add(cName);
+    if (cUsername) {
+      seenNames.add(cUsername);
+      seenUserIds.add(cUsername);
+    }
+
+    result.push(c);
+  }
+
+  return result;
 }
 
 const getDefaultPhases = (landSizeHa: number = 0.8) => {
@@ -372,23 +411,37 @@ router.post('/:farmId/collaborators', (req: Request, res: Response) => {
     newC.id = `collab_${crypto.randomBytes(3).toString('hex')}`;
   }
 
-  const ownerName = farm.owner_name || getOwnerName(farm.user_id);
+  const ownerName = (farm.owner_name || getOwnerName(farm.user_id)).toLowerCase().trim();
+  const farmUserId = (farm.user_id || '').toLowerCase().trim();
+  const targetUserId = (newC.user_id || '').toLowerCase().trim();
+  const targetName = (newC.name || '').toLowerCase().trim();
+  const cleanTargetName = targetName.replace(/^@/, '');
+  const targetUsername = (newC.username || '').toLowerCase().trim().replace(/^@/, '');
 
   // 1. Cek apakah pemilik lahan berusaha men-tag dirinya sendiri
   if (
-    (newC.user_id && (newC.user_id === farm.user_id || (isUserJoko(newC.user_id) && isUserJoko(farm.user_id)))) ||
-    (newC.name && newC.name.toLowerCase().trim() === ownerName.toLowerCase().trim())
+    (targetUserId && (targetUserId === farmUserId || (isUserJoko(targetUserId) && isUserJoko(farmUserId)))) ||
+    (targetName && (targetName === ownerName || cleanTargetName === ownerName || (isUserJoko(farmUserId) && targetName.includes('joko')))) ||
+    (targetUsername && targetUsername === ownerName)
   ) {
-    return res.status(400).json({ detail: "Pemilik lahan sudah otomatis menjadi pemegang porsi utama dan tidak dapat ditambahkan sebagai mitra kolaborator." });
+    return res.status(400).json({ detail: "Pemilik lahan sudah otomatis terdaftar sebagai pengelola lahan. Satu akun hanya bisa tampil satu kali." });
   }
 
-  // 2. Cek apakah pengguna/mitra ini sudah pernah ditag di lahan ini
-  const isDuplicate = collabs.some((c: any) => 
-    (newC.user_id && c.user_id === newC.user_id) || 
-    (newC.name && c.name && c.name.toLowerCase().trim() === newC.name.toLowerCase().trim())
-  );
+  // 2. Cek apakah pengguna/mitra ini sudah pernah ditag di lahan ini (satu akun hanya satu kali)
+  const isDuplicate = collabs.some((c: any) => {
+    const cUid = (c.user_id || '').toLowerCase().trim();
+    const cName = (c.name || '').toLowerCase().trim();
+    const cUname = (c.username || '').toLowerCase().trim().replace(/^@/, '');
+
+    if (targetUserId && cUid && cUid === targetUserId) return true;
+    if (cName && (cName === targetName || cName === cleanTargetName)) return true;
+    if (cUname && (cUname === cleanTargetName || cUname === targetUsername || (targetUserId && cUname === targetUserId))) return true;
+    if (targetUsername && (targetUsername === cName || targetUsername === cUname)) return true;
+    return false;
+  });
+
   if (isDuplicate) {
-    return res.status(400).json({ detail: "Mitra ini sudah terdaftar dalam kolaborasi lahan. Setiap mitra hanya dapat ditambahkan satu kali." });
+    return res.status(400).json({ detail: "Akun ini sudah terdaftar sebagai pengelola lahan. Satu akun hanya bisa tampil satu kali." });
   }
 
   // 3. Cek kapasitas porsi bagi hasil

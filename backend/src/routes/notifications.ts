@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import crypto from 'crypto';
 import { db } from '../database/db.js';
+import { sanitizeFarmCollaborators } from './farmlands.js';
 
 const router = Router();
 
@@ -61,7 +62,11 @@ router.post('/:notifId/respond', (req: Request, res: Response) => {
       });
     }
 
-    db.update("farmlands", farm.id, { collaborators: collabs });
+    const sanitized = sanitizeFarmCollaborators({
+      ...farm,
+      collaborators: collabs
+    });
+    db.update("farmlands", farm.id, { collaborators: sanitized });
 
     // Update notifikasi penerima
     db.update("notifications", notif.id, {

@@ -158,20 +158,60 @@ export class DatabaseManager {
 
     for (const farm of farmlands) {
       if (!farm || !farm.collaborators || !Array.isArray(farm.collaborators)) continue;
-      const farmUserId = farm.user_id;
+      const farmUserId = farm.user_id ? String(farm.user_id).toLowerCase().trim() : '';
       const ownerName = (farm.owner_name || (isJoko(farmUserId) ? 'Pak Joko' : '')).toLowerCase().trim();
 
-      const filtered = farm.collaborators.filter((c: any) => {
-        if (!c) return false;
-        if (c.user_id && farmUserId && c.user_id === farmUserId) return false;
-        if (c.user_id && farmUserId && isJoko(c.user_id) && isJoko(farmUserId)) return false;
+      const seenUserIds = new Set<string>();
+      const seenNames = new Set<string>();
+
+      if (farmUserId) {
+        seenUserIds.add(farmUserId);
+        if (isJoko(farmUserId)) {
+          seenUserIds.add('usr_petani');
+          seenUserIds.add('usr_001');
+          seenUserIds.add('pak_joko');
+        }
+      }
+      if (ownerName) {
+        seenNames.add(ownerName);
+      }
+
+      const filtered: any[] = [];
+      for (const c of farm.collaborators) {
+        if (!c) continue;
+        const cUserId = c.user_id ? String(c.user_id).toLowerCase().trim() : '';
         const cName = (c.name || '').toLowerCase().trim();
-        if (cName && ownerName && (cName === ownerName || cName.includes(ownerName) || ownerName.includes(cName))) return false;
-        if (isJoko(farmUserId) && cName.includes('joko')) return false;
         const cRole = (c.role || '').toLowerCase();
-        if (cRole.includes('pemilik') || cRole.includes('pengelola utama')) return false;
-        return true;
-      });
+        const cUsername = (c.username || '').toLowerCase().trim().replace(/^@/, '');
+
+        // 1. Role menandakan pemilik
+        if (cRole.includes('pemilik') || cRole.includes('pengelola utama')) continue;
+
+        // 2. User ID cocok dengan pemilik atau akun yang sudah muncul
+        if (cUserId) {
+          if (seenUserIds.has(cUserId)) continue;
+          if (isJoko(farmUserId) && isJoko(cUserId)) continue;
+        }
+
+        // 3. Nama / Username cocok dengan pemilik atau akun yang sudah muncul
+        if (cName) {
+          if (seenNames.has(cName)) continue;
+          if (ownerName && (cName === ownerName || cName.includes(ownerName) || ownerName.includes(cName))) continue;
+          if (isJoko(farmUserId) && cName.includes('joko')) continue;
+        }
+        if (cUsername) {
+          if (seenNames.has(cUsername) || seenUserIds.has(cUsername)) continue;
+        }
+
+        if (cUserId) seenUserIds.add(cUserId);
+        if (cName) seenNames.add(cName);
+        if (cUsername) {
+          seenNames.add(cUsername);
+          seenUserIds.add(cUsername);
+        }
+
+        filtered.push(c);
+      }
 
       if (filtered.length !== farm.collaborators.length) {
         farm.collaborators = filtered;
@@ -187,7 +227,7 @@ export class DatabaseManager {
 
     if (updatedCount > 0) {
       this.saveToDisk(this.cache);
-      console.log(`Sanitasi otomatis database: ${updatedCount} lahan berhasil dibersihkan dari duplikasi pemilik di kolaborator.`);
+      console.log(`Sanitasi otomatis database: ${updatedCount} lahan berhasil dibersihkan dari duplikasi pengelola lahan.`);
     }
   }
 

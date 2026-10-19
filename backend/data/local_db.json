@@ -823,7 +823,7 @@
       "coordinates_label": "-7.2504, 112.7512 (Desa Sukamaju Krajan)"
     },
     {
-      "plan_id": "plan_mvbs5nk4",
+      "plan_id": "plan_mvfjwc9i",
       "user_id": "usr_petani",
       "land_size_ha": 1,
       "commodity": "Padi Sawah Inpari 32",
@@ -835,18 +835,18 @@
       "coordinates_label": "-7.2504, 112.7512 (Desa Sukamaju)",
       "weather_condition": {
         "temp_celsius": 26,
-        "rain_probability": 20,
-        "season": "Musim Kemarau (Gadu)",
-        "note": "Kondisi cuaca cerah/normal (26°C). Dosis pemupukan NPK dan Urea standar berimbang dianjurkan."
+        "rain_probability": 65,
+        "season": "Musim Hujan (Rendeng)",
+        "note": "Curah hujan tinggi terdeteksi (65%). Dosis Urea diturunkan 15% untuk mencegah serangan Hawar Daun dan rebah batang."
       },
       "financial_summary": {
-        "total_budget": 8615000,
-        "hpp_per_kg": 1390,
+        "total_budget": 8624750,
+        "hpp_per_kg": 1391,
         "projected_yield_kg": 6200,
         "projected_selling_price_per_kg": 6800,
         "projected_revenue": 42160000,
-        "projected_net_profit": 33545000,
-        "roi_percentage": 389.4
+        "projected_net_profit": 33535250,
+        "roi_percentage": 388.8
       },
       "budget_items": [
         {
@@ -903,10 +903,10 @@
           "name": "Pupuk Urea N-46 (Subsidi)",
           "category": "PUPUK",
           "recommended_provider": "Kios Pupuk KPL Resmi",
-          "quantity": 200,
+          "quantity": 175,
           "unit": "kg",
           "unit_price": 2250,
-          "total_price": 450000,
+          "total_price": 393750,
           "notes": "Pemupukan dasar (1/3 dosis) dan susulan I & II"
         },
         {
@@ -915,10 +915,10 @@
           "name": "Pupuk Majemuk NPK Phonska 15-15-15",
           "category": "PUPUK",
           "recommended_provider": "Kios Pupuk KPL Resmi",
-          "quantity": 300,
+          "quantity": 320,
           "unit": "kg",
           "unit_price": 3300,
-          "total_price": 990000,
+          "total_price": 1056000,
           "notes": "Nutrisi N-P-K berimbang untuk anakan dan pembentukan malai"
         },
         {
@@ -1000,9 +1000,9 @@
           "name": "Olah Tanah & Persemaian",
           "day_range": "H-15 s/d H-1",
           "duration_days": 15,
-          "status": "SELESAI",
+          "status": "BELUM",
           "allocated_budget": 2075000,
-          "actual_cost": 2075000,
+          "actual_cost": 0,
           "tasks": [
             "Bajak singkal dan pembalikan tanah dengan traktor",
             "Perbaikan pematang dan galengan sawah penahan air",
@@ -1016,7 +1016,7 @@
           "name": "Penanaman Bibit",
           "day_range": "HST 1 s/d HST 5",
           "duration_days": 5,
-          "status": "SEDANG_BERJALAN",
+          "status": "BELUM",
           "allocated_budget": 1400000,
           "actual_cost": 0,
           "tasks": [
@@ -1032,7 +1032,7 @@
           "day_range": "HST 7 s/d HST 35",
           "duration_days": 28,
           "status": "BELUM",
-          "allocated_budget": 985000,
+          "allocated_budget": 978625,
           "actual_cost": 0,
           "tasks": [
             "Pemupukan dasar susulan I (HST 7-10): Urea + NPK Phonska",
@@ -1048,7 +1048,7 @@
           "day_range": "HST 40 s/d HST 75",
           "duration_days": 35,
           "status": "BELUM",
-          "allocated_budget": 1035000,
+          "allocated_budget": 1068000,
           "actual_cost": 0,
           "tasks": [
             "Pemupukan susulan III / booster malai (HST 45-50): Fokus unsur Kalium & Fosfat",
@@ -1104,7 +1104,7 @@
       ],
       "id": "far_3d4b8a3b",
       "created_at": "2026-09-23T15:21:32.822Z",
-      "updated_at": "2026-10-17T02:31:23.524Z"
+      "updated_at": "2026-10-19T17:51:16.758Z"
     }
   ],
   "ecosystem_services": [
