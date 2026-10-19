@@ -1,11 +1,11 @@
-# AgriBuddy — Smart Farming Decision Support System 🌾
+# AgriBuddy — Smart Farming Decision Support System
 **Capstone Project / Tugas Akhir STSI4440**
 
 AgriBuddy adalah platform *Smart Farming Decision Support System (DSS)* terpadu pendamping petani padi untuk manajemen petak lahan geospasial, perencanaan anggaran biaya dan jadwal tanam berbasis AI (Smart Farm Planner), deteksi dini penyakit tanaman padi berbasis Computer Vision (**Google Gemini Multimodal Vision (Auto-Discovery Latest)**), pencatatan inventaris sarana produksi dan hasil panen di lumbung (Buku Tani), serta direktori kemitraan layanan mekanisasi dan kios saprotan desa.
 
 ---
 
-## 🚀 Cara Menjalankan Aplikasi (Satu Klik)
+## Cara Menjalankan Aplikasi (Satu Klik)
 
 ### Opsi 1: Menggunakan Skrip Otomatis (Rekomendasi)
 Cukup klik dua kali file **`run_app.bat`** di direktori utama.
@@ -35,7 +35,7 @@ Buka aplikasi di browser: `http://localhost:5173`
 
 ---
 
-## 🌟 5 Modul Utama Platform AgriBuddy
+## 5 Modul Utama Platform AgriBuddy
 
 1. **Monitoring Sawah & Cuaca Lahan Real-Time (Beranda Utama)**:
    - Dashboard terpadu kondisi iklim (suhu, kelembaban, probabilitas hujan) via GPS sawah.
@@ -64,7 +64,7 @@ Buka aplikasi di browser: `http://localhost:5173`
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend:** Vue.js 3, Vite, Tailwind CSS, TypeScript, Lucide Icons, Leaflet Maps.
 - **Backend:** Node.js, Express.js, TypeScript, Multer, File-based Database Persistence (`local_db.json`).
