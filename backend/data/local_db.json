@@ -2541,6 +2541,29 @@
           "timestamp": "16 Okt, 23.09 WIB"
         }
       ]
+    },
+    {
+      "id": "session_1792420853884",
+      "user_id": "usr_petani",
+      "title": "Daun Menguning & Kering di Ujung",
+      "created_at": "19 Okt, 21.40 WIB",
+      "updated_at": "2026-10-19T14:40:54.571Z",
+      "messages": [
+        {
+          "id": "msg_1792420854571_u",
+          "role": "user",
+          "content": "Daun Menguning & Kering di Ujung",
+          "image": null,
+          "timestamp": "19 Okt, 21.40 WIB"
+        },
+        {
+          "id": "msg_1792420854571_m",
+          "role": "model",
+          "content": "Daun padi yang menguning atau bercak umumnya dipicu oleh:\n\n1. **Kekurangan Nitrogen:** Daun tua menguning dari ujung membentuk huruf 'V'. Solusi: tambahkan Urea berimbang.\n2. **Hawar Daun Bakteri (Kresek):** Ujung daun mengering keputihan bergelombang. Solusi: semprot bakterisida tembaga.\n3. **Jamur Blas Daun:** Bercak belah ketupat abu-abu kecoklatan. Solusi: fungisida trisiklazol.\n\nAnda juga dapat mengambil foto daunnya sekarang dan lampirkan di chat ini agar saya analisiskan!",
+          "detected_diagnosis": null,
+          "timestamp": "19 Okt, 21.40 WIB"
+        }
+      ]
     }
   ]
 }

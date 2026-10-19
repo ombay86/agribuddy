@@ -90,12 +90,6 @@
           >
             <PanelLeft :size="16" />
             <span class="hidden sm:inline text-xs">Riwayat</span>
-            <span
-              v-if="chatSessions.length > 0"
-              class="bg-[#324d1d]/90 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center"
-            >
-              {{ chatSessions.length }}
-            </span>
           </button>
         </div>
 
@@ -137,25 +131,6 @@
                 Tanya penyakit daun padi, dosis pupuk berimbang, hama wereng, atau kirim foto daun.
               </p>
             </div>
-          </div>
-
-          <!-- 2 Contoh Pertanyaan Populer (1 Baris Ringkas) -->
-          <div class="grid grid-cols-2 gap-2">
-            <button
-              v-for="(p, idx) in promptSuggestions.slice(0, 2)"
-              :key="idx"
-              @click="applyPromptSuggestion(p)"
-              class="p-2 sm:p-2.5 bg-white border border-slate-200/90 hover:border-[#99c30c] rounded-xl shadow-2xs hover:shadow-xs transition-all active:scale-98 cursor-pointer group flex items-center justify-center text-center"
-            >
-              <div class="min-w-0 w-full">
-                <h5 class="text-[11px] font-bold text-slate-800 group-hover:text-[#324d1d] leading-tight truncate">
-                  {{ p.title }}
-                </h5>
-                <p class="text-[9px] text-slate-400 truncate">
-                  {{ p.subtitle }}
-                </p>
-              </div>
-            </button>
           </div>
         </div>
 
@@ -368,10 +343,6 @@
               <Send :size="15" />
             </button>
           </form>
-
-          <p class="text-[10px] text-slate-400 text-center font-medium">
-            Agri AI dapat memberikan saran agronomi dan fitopatologi presisi berbasis kecerdasan buatan.
-          </p>
         </div>
       </footer>
     </main>

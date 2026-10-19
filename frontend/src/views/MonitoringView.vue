@@ -316,44 +316,6 @@
       <!-- ==================== KOLOM KANAN (5 COLS): Kesehatan AI, Modal, & Gudang ==================== -->
       <div class="lg:col-span-5 space-y-6">
 
-        <!-- WIDGET 3: Agri AI (Asisten Cerdas & Fitopatologi) -->
-        <div class="bg-gradient-to-br from-[#324d1d] to-[#324d1d] text-white border border-[#324d1d] rounded-3xl p-5 md:p-6 shadow-xs space-y-4 relative overflow-hidden">
-          <div class="flex items-center justify-between pb-2 border-b border-[#324d1d]/80">
-            <div class="flex items-center gap-2">
-              <Sparkles :size="18" class="text-[#fed701]" />
-              <h4 class="text-sm font-bold text-white">Agri AI Assistant</h4>
-            </div>
-          </div>
-
-          <!-- Status Daun Terakhir -->
-          <div class="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-4 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] font-bold text-[#fff2d9] uppercase">Diagnosa Terakhir:</span>
-              <span class="text-[10px] text-slate-300">{{ lastDiagnosis.detected_at }}</span>
-            </div>
-            <div class="flex items-center gap-2.5">
-              <div>
-                <h5 class="text-sm font-bold text-white leading-tight">
-                  {{ lastDiagnosis.disease_name }}
-                </h5>
-                <p class="text-[11px] text-[#fff2d9]/90 font-medium">
-                  Tingkat Keparahan: <strong class="text-white">{{ lastDiagnosis.severity }}</strong> (Keyakinan: {{ Math.round(lastDiagnosis.confidence * 100) }}%)
-                </p>
-              </div>
-            </div>
-            <p class="text-[11.5px] text-[#fff2d9]/80 leading-relaxed border-t border-white/10 pt-2 mt-1">
-              {{ lastDiagnosis.symptoms[0] || "Daun dalam kondisi hijau normal tanpa tanda nekrosis patogen." }}
-            </p>
-          </div>
-
-          <!-- Tombol CTA Scan Daun / Chat -->
-          <router-link
-            to="/dokter"
-            class="w-full font-bold bg-[#99c30c] hover:bg-[#99c30c]/80 text-black  text-xs py-3 px-4 rounded-2xl shadow-sm active:scale-95 transition-all flex items-center justify-center gap-2 text-center"
-          >
-            <span>Chat & Periksa Tanaman via Agri AI</span>
-          </router-link>
-        </div>
 
         <!-- WIDGET 4: Serapan Modal Sawah (Buku Kas Realisasi) -->
         <SectionCard>
