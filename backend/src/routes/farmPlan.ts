@@ -22,7 +22,9 @@ router.post('/calculate', (req: Request, res: Response) => {
     latitude: payload.latitude,
     longitude: payload.longitude,
     coordinates_label: payload.coordinates_label,
-    user_id: userId
+    user_id: userId,
+    ownership_type: payload.ownership_type,
+    rental_cost: payload.rental_cost
   });
 
   const dbPlans = db.getCollection("farm_plans");

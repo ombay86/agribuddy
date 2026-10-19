@@ -76,6 +76,8 @@ export class FarmPlannerService {
     longitude?: number;
     coordinates_label?: string;
     user_id?: string;
+    ownership_type?: string;
+    rental_cost?: number;
   }): FarmPlan {
     const ha = Math.max(Number(params.land_size_ha) || 1.0, 0.05);
     const commodity = params.commodity || "Padi Sawah Inpari 32";
@@ -127,7 +129,26 @@ export class FarmPlannerService {
     const harvestLaborPerHa = 1800000.0;
     const transportSacksPerHa = 350000.0;
 
-    const budgetItems: BudgetItem[] = [
+    const budgetItems: BudgetItem[] = [];
+
+    // Biaya Sewa Tanah / Lahan Pertanian (jika status sewa)
+    if (params.ownership_type === 'SEWA' || (params.rental_cost && Number(params.rental_cost) > 0)) {
+      const rentalCostPerHa = Number(params.rental_cost) > 0 ? Number(params.rental_cost) : 3500000.0;
+      budgetItems.push({
+        id: "bgt_sewa",
+        phase: "Persiapan & Sewa Lahan",
+        name: "Sewa Tanah Lahan Pertanian (1 Musim)",
+        category: "SEWA_LAHAN",
+        recommended_provider: "Pemilik Lahan / Kas Desa",
+        quantity: Math.round(ha * 100) / 100,
+        unit: "Hektar",
+        unit_price: Math.round(rentalCostPerHa),
+        total_price: Math.round(rentalCostPerHa * ha),
+        notes: "Biaya sewa hak kelola petak sawah untuk satu musim tanam (100-115 HST)"
+      });
+    }
+
+    budgetItems.push(
       {
         id: "bgt_1",
         phase: "Olah Tanah & Lahan",
@@ -272,7 +293,7 @@ export class FarmPlannerService {
         total_price: Math.round(transportSacksPerHa * ha),
         notes: "Pengangkutan gabah dari pematang sawah ke lumbung simpan"
       }
-    ];
+    );
 
     const totalBudget = budgetItems.reduce((acc, curr) => acc + curr.total_price, 0);
 
@@ -291,9 +312,9 @@ export class FarmPlannerService {
         name: "Olah Tanah & Persemaian",
         day_range: "H-15 s/d H-1",
         duration_days: 15,
-        status: "SELESAI",
+        status: "BELUM",
         allocated_budget: Math.round((tractorFeePerHa + cangkulLaborPerHa + (seedKgPerHa * seedPricePerKg)) * ha),
-        actual_cost: Math.round((tractorFeePerHa + cangkulLaborPerHa + (seedKgPerHa * seedPricePerKg)) * ha),
+        actual_cost: 0,
         tasks: [
           "Bajak singkal dan pembalikan tanah dengan traktor",
           "Perbaikan pematang dan galengan sawah penahan air",
@@ -307,7 +328,7 @@ export class FarmPlannerService {
         name: "Penanaman Bibit",
         day_range: "HST 1 s/d HST 5",
         duration_days: 5,
-        status: "SEDANG_BERJALAN",
+        status: "BELUM",
         allocated_budget: Math.round(transplantLaborPerHa * ha),
         actual_cost: 0,
         tasks: [

@@ -935,6 +935,8 @@ export const api = {
     latitude?: number;
     longitude?: number;
     coordinates_label?: string;
+    ownership_type?: string;
+    rental_cost?: number;
   }): Promise<FarmPlan> {
     const res = await fetch(`${BASE_URL}/farm-plan/calculate`, {
       method: 'POST',

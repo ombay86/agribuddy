@@ -299,7 +299,66 @@
             </div>
           </div>
 
-          <!-- 4. KOMODITAS, TANAH, AIR HASIL REKOMENDASI -->
+          <!-- 4. STATUS KEPEMILIKAN LAHAN & BIAYA SEWA -->
+          <div class="space-y-2 bg-[#fff2d9]/50 border border-slate-200/90 rounded-2xl p-3.5">
+            <label class="text-xs font-bold text-slate-700 flex justify-between items-center">
+              <span>Status Kepemilikan Lahan:</span>
+              <span class="text-[11px] font-semibold text-slate-500">Mempengaruhi komponen RAB Sewa Tanah</span>
+            </label>
+            <div class="grid grid-cols-2 gap-2.5">
+              <button
+                type="button"
+                @click="form.ownership_type = 'MILIK_SENDIRI'"
+                class="p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-0.5"
+                :class="form.ownership_type === 'MILIK_SENDIRI'
+                  ? 'bg-[#324d1d]/10 border-[#324d1d] text-[#324d1d] font-bold shadow-2xs'
+                  : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'"
+              >
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold">Milik Sendiri</span>
+                  <span v-if="form.ownership_type === 'MILIK_SENDIRI'" class="text-[10px] bg-[#324d1d] text-white px-1.5 py-0.2 rounded-md">Dipilih</span>
+                </div>
+                <span class="text-[10px] text-slate-500">Tanpa biaya sewa tanah pada anggaran</span>
+              </button>
+
+              <button
+                type="button"
+                @click="form.ownership_type = 'SEWA'"
+                class="p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-0.5"
+                :class="form.ownership_type === 'SEWA'
+                  ? 'bg-[#324d1d]/10 border-[#324d1d] text-[#324d1d] font-bold shadow-2xs'
+                  : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'"
+              >
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold">Sewa Lahan</span>
+                  <span v-if="form.ownership_type === 'SEWA'" class="text-[10px] bg-[#324d1d] text-white px-1.5 py-0.2 rounded-md">Dipilih</span>
+                </div>
+                <span class="text-[10px] text-slate-500">Hitung tarif sewa lahan per musim ke RAB</span>
+              </button>
+            </div>
+
+            <!-- Jika Sewa Lahan, tampilkan input tarif sewa per Hektar -->
+            <div v-if="form.ownership_type === 'SEWA'" class="pt-2 space-y-1">
+              <label class="text-[11px] font-bold text-slate-700 flex justify-between">
+                <span>Biaya Sewa Tanah per Hektar (per Musim Tanam):</span>
+                <span class="text-[#324d1d] font-bold">Total: Rp {{ ((form.rental_cost || 0) * form.land_size_ha).toLocaleString('id-ID') }}</span>
+              </label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-bold text-slate-400">Rp</span>
+                <input
+                  v-model.number="form.rental_cost"
+                  type="number"
+                  step="100000"
+                  min="0"
+                  placeholder="Contoh: 3500000"
+                  class="w-full pl-9 pr-14 py-2 rounded-xl border border-slate-300 font-bold text-xs text-slate-800 focus:outline-none focus:border-[#99c30c] bg-white"
+                />
+                <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-[11px] font-semibold text-slate-400">/ Ha</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. KOMODITAS, TANAH, AIR HASIL REKOMENDASI -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
             <!-- Komoditas -->
             <div>
@@ -1772,7 +1831,7 @@
                 <div class="space-y-0.5">
                   <div class="flex items-center gap-1.5">
                     <h4 class="text-xs text-slate-800 font-bold">
-                      {{ currentPersona.name || "Pemilik Lahan" }}
+                      {{ farmOwnerName }}
                     </h4>
                     <span
                       class="text-[9px] bg-[#99c30c]/30 text-[#324d1d] px-1.5 py-0.2 rounded-md font-bold"
@@ -1793,7 +1852,7 @@
 
               <!-- List Kolaborator -->
               <div
-                v-for="(collab, cIdx) in activeFarm.collaborators || []"
+                v-for="(collab, cIdx) in sanitizedCollaborators"
                 :key="collab.id"
                 class="p-2.5 rounded-2xl border flex items-start justify-between gap-2"
                 :class="getCollabCardClass(cIdx)"
@@ -2172,7 +2231,7 @@
             <div>
               <div class="flex items-center gap-1.5">
                 <p class="text-slate-800 font-bold">
-                  {{ currentPersona.name || "Pemilik Lahan" }}
+                  {{ farmOwnerName }}
                 </p>
               </div>
               <p class="text-[10px] text-slate-500 font-semibold">
@@ -2190,7 +2249,7 @@
 
         <!-- Kolaborator Lainnya -->
         <div
-          v-for="collab in activeFarm?.collaborators || []"
+          v-for="collab in sanitizedCollaborators"
           :key="collab.id"
           class="p-2.5 rounded-2xl border border-slate-200 bg-[#fff2d9] flex items-center justify-between text-xs"
         >
@@ -2632,8 +2691,10 @@ const isSavingDraft = ref(false);
 const plan = ref<FarmPlan | null>(null);
 
 const form = ref({
-  name: "Sawah Blok Cempaka 1",
+  name: "",
   land_size_ha: 1.0,
+  ownership_type: "MILIK_SENDIRI" as string,
+  rental_cost: 3500000,
   commodity: "Padi Sawah Inpari 32",
   soil_type: "Lempung Berliat (Subur)",
   water_source: "Irigasi Teknis Bendungan",
@@ -2737,6 +2798,8 @@ const runCalculation = async () => {
       latitude: form.value.latitude,
       longitude: form.value.longitude,
       coordinates_label: form.value.coordinates_label,
+      ownership_type: form.value.ownership_type,
+      rental_cost: form.value.ownership_type === 'SEWA' ? form.value.rental_cost : 0,
     });
     plan.value = res;
     wizardStep.value = 2; // Otomatis berpindah ke Step 2 (RAB)
@@ -2764,6 +2827,8 @@ const savePlanAsDraft = async () => {
         longitude: form.value.longitude,
         soil_type: form.value.soil_type,
         water_source: form.value.water_source,
+        ownership_type: form.value.ownership_type,
+        rental_cost: form.value.ownership_type === 'SEWA' ? form.value.rental_cost : 0,
       },
       currentUserId.value,
     );
@@ -2780,8 +2845,10 @@ const savePlanAsDraft = async () => {
 // Reset form dan buka rancangan baru
 const createNewPlanDraft = () => {
   form.value = {
-    name: "Sawah Blok Baru",
+    name: "",
     land_size_ha: 1.0,
+    ownership_type: "MILIK_SENDIRI",
+    rental_cost: 3500000,
     commodity: "Padi Sawah Inpari 32",
     soil_type: "Lempung Berliat (Subur)",
     water_source: "Irigasi Teknis Bendungan",
@@ -2800,6 +2867,8 @@ const editDraftFarm = async (draft: Farmland) => {
   form.value = {
     name: draft.name,
     land_size_ha: draft.land_size_ha,
+    ownership_type: (draft as any).ownership_type || "MILIK_SENDIRI",
+    rental_cost: (draft as any).rental_cost || 3500000,
     commodity: draft.commodity,
     soil_type: draft.soil_type || "Lempung Berliat (Subur)",
     water_source: draft.water_source || "Irigasi Teknis Bendungan",
@@ -2884,6 +2953,8 @@ const savePlanToActiveFarmland = async () => {
         longitude: form.value.longitude,
         soil_type: form.value.soil_type,
         water_source: form.value.water_source,
+        ownership_type: form.value.ownership_type,
+        rental_cost: form.value.ownership_type === 'SEWA' ? form.value.rental_cost : 0,
       },
       currentUserId.value,
     );
@@ -2978,6 +3049,8 @@ const loadActiveFarmPlan = async (farm: Farmland) => {
       latitude: farm.latitude,
       longitude: farm.longitude,
       coordinates_label: `${farm.latitude ? farm.latitude.toFixed(4) : "-7.2504"}, ${farm.longitude ? farm.longitude.toFixed(4) : "112.7512"} (${farm.location})`,
+      ownership_type: (farm as any).ownership_type,
+      rental_cost: (farm as any).rental_cost,
     });
     if (farm.timeline_phases && farm.timeline_phases.length > 0) {
       res.timeline_phases = farm.timeline_phases;
@@ -3291,7 +3364,7 @@ const onActiveFarmChanged = () => {
 
 const openAddFarmModal = () => {
   newFarmForm.value = {
-    name: `Sawah Petak Baru (${currentPersona.value.name})`,
+    name: "",
     land_size_ha: 0.75,
     commodity: "Padi Sawah Inpari 32",
     location: currentPersona.value.location || "Desa Sukamaju",
@@ -3507,7 +3580,7 @@ const sanitizedCollaborators = computed(() => {
     if (isUserJoko(farmUserId) && cName.includes('joko')) return false;
     // 4. Role indicates owner
     const cRole = (c.role || '').toLowerCase();
-    if (cRole.includes('pemilik')) return false;
+    if (cRole.includes('pemilik') || cRole.includes('pengelola utama')) return false;
 
     return true;
   });
@@ -3832,6 +3905,8 @@ const saveStepUpdate = async (phase: TimelinePhase) => {
 
 const getCategoryBadgeClass = (category: string) => {
   switch (category) {
+    case "SEWA_LAHAN":
+      return "bg-[#fe8b02]/20 text-[#324d1d]";
     case "JASA_TRAKTOR":
       return "bg-[#fed701]/20 text-[#324d1d]";
     case "JASA_PENGAIRAN":

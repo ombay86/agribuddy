@@ -39,12 +39,13 @@ export function sanitizeFarmCollaborators(farm: any): any[] {
     if (c.user_id && farmUserId && c.user_id === farmUserId) return false;
     // 2. Both are Joko personas
     if (c.user_id && farmUserId && isUserJoko(c.user_id) && isUserJoko(farmUserId)) return false;
-    // 3. Name matches owner name or contains 'joko' when owner is joko
+    // 3. Name matches owner name or contains owner name
     const cName = (c.name || '').toLowerCase().trim();
-    if (cName && (cName === ownerName || (isUserJoko(farmUserId) && cName.includes('joko')))) return false;
+    if (cName && ownerName && (cName === ownerName || cName.includes(ownerName) || ownerName.includes(cName))) return false;
+    if (isUserJoko(farmUserId) && cName.includes('joko')) return false;
     // 4. Role indicates owner
     const cRole = (c.role || '').toLowerCase();
-    if (cRole.includes('pemilik')) return false;
+    if (cRole.includes('pemilik') || cRole.includes('pengelola utama')) return false;
     return true;
   });
 }
@@ -57,7 +58,7 @@ const getDefaultPhases = (landSizeHa: number = 0.8) => {
       name: "Fase 1: Olah Tanah & Bajak Garu",
       day_range: "H-14 s/d H-1",
       duration_days: 14,
-      status: "SELESAI",
+      status: "BELUM",
       target_cost: Math.round(960000 * scale),
       allocated_budget: Math.round(960000 * scale),
       actual_cost: 0,
@@ -75,7 +76,7 @@ const getDefaultPhases = (landSizeHa: number = 0.8) => {
       name: "Fase 2: Tanam Padi & Persemaian",
       day_range: "HST 1 - 15",
       duration_days: 15,
-      status: "SEDANG_BERJALAN",
+      status: "BELUM",
       target_cost: Math.round(850000 * scale),
       allocated_budget: Math.round(850000 * scale),
       actual_cost: 0,
@@ -230,9 +231,11 @@ router.post('/', (req: Request, res: Response) => {
 
   let collaborators: any[] = [];
   if (payload.collaborators && Array.isArray(payload.collaborators) && payload.collaborators.length > 0) {
-    collaborators = payload.collaborators.filter((c: any) => 
-      c.user_id !== userId && c.name?.toLowerCase().trim() !== ownerName.toLowerCase().trim()
-    );
+    collaborators = sanitizeFarmCollaborators({
+      user_id: userId,
+      owner_name: ownerName,
+      collaborators: payload.collaborators
+    });
   }
 
   const newFarm = {
@@ -242,6 +245,8 @@ router.post('/', (req: Request, res: Response) => {
     name: payload.name,
     status: payload.status || "ACTIVE",
     land_size_ha: landHa,
+    ownership_type: payload.ownership_type || "MILIK_SENDIRI",
+    rental_cost: payload.rental_cost !== undefined ? Number(payload.rental_cost) : 0,
     commodity: payload.commodity || "Padi Sawah Inpari 32",
     soil_type: payload.soil_type || "Lempung Berliat (Subur)",
     water_source: payload.water_source || "Irigasi Teknis Bendungan",

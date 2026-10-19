@@ -45,6 +45,29 @@
       </button>
     </div>
 
+    <!-- Field Ketik Alamat / Cari Lokasi Peta Langsung -->
+    <div class="relative">
+      <div class="relative flex items-center">
+        <Search :size="14" class="absolute left-3 text-slate-400 pointer-events-none" />
+        <input
+          v-model="searchAddressQuery"
+          @keydown.enter.prevent="searchAddressAndGo"
+          type="text"
+          placeholder="Ketik alamat / desa / kota lalu tekan Enter untuk arahkan titik..."
+          class="w-full pl-9 pr-24 py-2 rounded-xl border border-slate-300 font-semibold text-xs text-slate-800 focus:outline-none focus:border-[#99c30c] bg-white shadow-2xs"
+        />
+        <button
+          @click="searchAddressAndGo"
+          :disabled="isSearchingAddress || !searchAddressQuery.trim()"
+          type="button"
+          class="absolute right-1 px-2.5 py-1 rounded-lg bg-[#324d1d] hover:bg-[#324d1d]/90 text-white text-[10px] font-bold active:scale-95 transition-all flex items-center gap-1 shadow-2xs cursor-pointer disabled:opacity-50"
+        >
+          <Loader2 v-if="isSearchingAddress" :size="11" class="animate-spin" />
+          <span v-else>Cari Alamat</span>
+        </button>
+      </div>
+    </div>
+
     <!-- Map Container -->
     <div class="relative w-full h-56 rounded-2xl overflow-hidden border border-slate-200 shadow-inner z-10">
       <div ref="mapContainer" class="w-full h-full"></div>
@@ -114,7 +137,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick } from 'vue';
-import { MapPin, Navigation, Loader2, Locate } from 'lucide-vue-next';
+import { MapPin, Navigation, Loader2, Locate, Search } from 'lucide-vue-next';
 import L from 'leaflet';
 
 const props = defineProps({
@@ -154,6 +177,9 @@ const addressLabel = ref(props.initialLabel);
 const isLocating = ref(false);
 const gpsStatusMessage = ref('');
 const isGpsSuccess = ref(true);
+
+const searchAddressQuery = ref('');
+const isSearchingAddress = ref(false);
 
 const presets = [
   { name: 'Petak Timur (Irigasi Dam)', lat: -7.2480, lon: 112.7535 },
@@ -278,6 +304,56 @@ const setDefaultCoordinates = () => {
   setNewPosition(-7.2504, 112.7512, 'Desa Sukamaju, Jawa Timur');
   gpsStatusMessage.value = 'Menggunakan koordinat default Desa Sukamaju';
   isGpsSuccess.value = true;
+};
+
+// Search Address & Pan/Zoom to Location
+const searchAddressAndGo = async () => {
+  const query = searchAddressQuery.value.trim();
+  if (!query) return;
+
+  isSearchingAddress.value = true;
+  gpsStatusMessage.value = `Mencari lokasi: "${query}"...`;
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`, {
+      headers: {
+        'Accept-Language': 'id'
+      }
+    });
+    if (res.ok) {
+      const results = await res.json();
+      if (results && results.length > 0) {
+        const item = results[0];
+        const lat = parseFloat(item.lat);
+        const lon = parseFloat(item.lon);
+        const shortName = item.display_name.split(',').slice(0, 3).join(',').trim();
+
+        currentLat.value = lat;
+        currentLon.value = lon;
+        addressLabel.value = shortName;
+
+        if (marker) {
+          marker.setLatLng([lat, lon]);
+        }
+        if (map) {
+          map.setView([lat, lon], 16);
+        }
+        emitCoordinates();
+        gpsStatusMessage.value = `Lokasi ditemukan: ${shortName}`;
+        isGpsSuccess.value = true;
+      } else {
+        gpsStatusMessage.value = `Lokasi "${query}" tidak ditemukan. Coba kata kunci lain.`;
+        isGpsSuccess.value = false;
+      }
+    } else {
+      gpsStatusMessage.value = 'Gagal menghubungi server pencarian alamat.';
+      isGpsSuccess.value = false;
+    }
+  } catch (err) {
+    gpsStatusMessage.value = 'Terjadi kesalahan saat mencari alamat.';
+    isGpsSuccess.value = false;
+  } finally {
+    isSearchingAddress.value = false;
+  }
 };
 
 // Auto Geolocation via HTML5 GPS

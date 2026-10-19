@@ -166,9 +166,10 @@ export class DatabaseManager {
         if (c.user_id && farmUserId && c.user_id === farmUserId) return false;
         if (c.user_id && farmUserId && isJoko(c.user_id) && isJoko(farmUserId)) return false;
         const cName = (c.name || '').toLowerCase().trim();
-        if (cName && (cName === ownerName || (isJoko(farmUserId) && cName.includes('joko')))) return false;
+        if (cName && ownerName && (cName === ownerName || cName.includes(ownerName) || ownerName.includes(cName))) return false;
+        if (isJoko(farmUserId) && cName.includes('joko')) return false;
         const cRole = (c.role || '').toLowerCase();
-        if (cRole.includes('pemilik')) return false;
+        if (cRole.includes('pemilik') || cRole.includes('pengelola utama')) return false;
         return true;
       });
 
