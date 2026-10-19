@@ -203,6 +203,18 @@
       </div>
     </div>
 
+    <!-- Tombol Logout / Keluar Akun (Sebelum Footer) -->
+    <div class="pt-1">
+      <button
+        @click="handleLogout"
+        type="button"
+        class="w-full py-3 px-4 rounded-2xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs active:scale-[0.99] transition-all cursor-pointer"
+      >
+        <LogOut :size="16" class="text-rose-600" />
+        <span>Keluar dari Akun</span>
+      </button>
+    </div>
+
     <!-- Kartu Branding Resmi AgriBuddy -->
     <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-xs flex flex-col items-center text-center space-y-2.5">
       <img src="/logo/logo-color-rect.svg" alt="AgriBuddy - Sahabat Petani" class="h-12 w-auto object-contain" />
@@ -350,6 +362,7 @@ import {
 import BaseModal from '@/components/ui/BaseModal.vue';
 import FormLabel from '@/components/ui/FormLabel.vue';
 import PageLayout from '@/components/layout/PageLayout.vue';
+import { showConfirm } from '@/utils/swal';
 import farmer from '@/assets/icons/download.jpg';
 
 const router = useRouter();
@@ -607,7 +620,16 @@ const saveProfile = async () => {
   }
 };
 
-const handleLogout = () => {
+const handleLogout = async () => {
+  const confirmed = await showConfirm({
+    title: 'Keluar dari Akun?',
+    text: 'Anda akan keluar dari sesi akun AgriBuddy saat ini.',
+    confirmButtonText: 'Ya, Keluar',
+    cancelButtonText: 'Batal',
+    isDanger: true,
+  });
+  if (!confirmed) return;
+
   logout();
   router.push('/login');
 };
