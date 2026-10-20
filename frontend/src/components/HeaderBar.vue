@@ -67,22 +67,19 @@
             v-if="showNotifMenu"
             class="absolute right-0 mt-2 w-80 sm:w-88 bg-white text-slate-800 rounded-3xl shadow-2xl border border-slate-200 py-3 z-50 animate-in fade-in zoom-in-95 duration-150 max-h-[80vh] flex flex-col"
           >
-            <div class="px-4 pb-2 border-b border-slate-100 flex items-center justify-between">
-              <div class="flex items-center gap-1.5">
-                <Bell :size="15" class="text-[#324d1d]" />
-                <h4 class="text-xs  text-slate-800">Notifikasi & Aktivitas</h4>
-              </div>
+            <div class="px-4 pb-2.5 border-b border-slate-100 flex items-center justify-between">
+              <h4 class="text-xs font-bold text-slate-800">Notifikasi</h4>
               <button
-                v-if="unreadCount > 0"
-                @click="markAllAsRead"
-                class="text-[10px] font-bold text-[#324d1d] hover:text-[#324d1d] bg-[#99c30c]/10 hover:bg-[#99c30c]/20 px-2 py-0.5 rounded-lg transition-all"
+                @click="fetchNotifications"
+                type="button"
+                class="text-[11px] font-semibold text-[#324d1d] hover:underline cursor-pointer"
               >
-                Tandai semua dibaca
+                Segarkan
               </button>
             </div>
 
             <!-- List Notifikasi -->
-            <div class="overflow-y-auto divide-y divide-slate-100 flex-1 max-h-72">
+            <div class="overflow-y-auto p-3 space-y-2.5 flex-1 max-h-80">
               <div v-if="notifications.length === 0" class="py-8 text-center text-xs text-slate-400 font-semibold">
                 Belum ada notifikasi baru
               </div>
@@ -90,27 +87,45 @@
                 v-for="notif in notifications"
                 :key="notif.id"
                 @click="handleNotificationClick(notif)"
-                class="p-3 hover:bg-[#fff2d9] transition-all cursor-pointer flex items-start gap-2.5"
-                :class="{ 'bg-[#99c30c]/40': !notif.is_read }"
+                class="p-3.5 rounded-2xl bg-[#fff2d9] border border-amber-200/50 shadow-2xs space-y-1.5 transition-all cursor-pointer hover:border-amber-300"
               >
-                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm shrink-0 mt-0.5"
-                  :class="getNotifBg(notif.type)"
-                >
-                  <component :is="getNotifIcon(notif.type)" :size="16" />
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-center justify-between gap-1">
-                    <h5 class="text-xs  text-slate-800 truncate" :class="{ '': !notif.is_read }">
-                      {{ notif.title }}
-                    </h5>
-                    <span v-if="!notif.is_read" class="w-2 h-2 rounded-full bg-[#99c30c] shrink-0"></span>
-                  </div>
-                  <p class="text-[11px] text-slate-600 mt-0.5 leading-snug line-clamp-2">
-                    {{ notif.message }}
-                  </p>
-                  <span class="text-[9px] text-slate-400 font-bold block mt-1">
-                    {{ notif.created_at }}
+                <div class="flex items-center gap-2">
+                  <span
+                    class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-[#99c30c]/25 text-[#324d1d] shrink-0"
+                  >
+                    {{ notif.type === 'COLLAB_INVITE' ? 'UNDANGAN' : 'INFO' }}
                   </span>
+                  <h5 class="text-xs sm:text-sm font-bold text-slate-800 truncate">
+                    {{ notif.title }}
+                  </h5>
+                </div>
+                <p class="text-xs text-slate-600 leading-snug">
+                  {{ notif.message }}
+                </p>
+
+                <!-- Tombol Respon jika Status PENDING (Collab Invite) -->
+                <div v-if="notif.status === 'PENDING'" class="flex items-center gap-2 pt-2 border-t border-amber-200/60 mt-1.5">
+                  <button
+                    @click.stop="handleRespondInvite(notif.id, 'ACCEPT')"
+                    :disabled="isResponding === notif.id"
+                    class="flex-1 bg-[#324d1d]/90 hover:bg-[#324d1d] text-white font-bold text-xs py-1.5 px-3 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-1 cursor-pointer disabled:opacity-60"
+                  >
+                    <Loader2 v-if="isResponding === notif.id" :size="12" class="animate-spin" />
+                    <span v-else class="flex items-center gap-1"><Check :size="12" /> Terima ({{ notif.share_percentage }}%)</span>
+                  </button>
+                  <button
+                    @click.stop="handleRespondInvite(notif.id, 'REJECT')"
+                    :disabled="isResponding === notif.id"
+                    class="py-1.5 px-3 rounded-xl border border-slate-300 text-slate-600 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 font-bold text-xs transition-all active:scale-95 cursor-pointer disabled:opacity-60"
+                  >
+                    Tolak
+                  </button>
+                </div>
+                <div v-else-if="notif.status === 'RESOLVED_ACCEPTED'" class="text-[10px] font-bold text-[#324d1d] flex items-center gap-1 pt-1">
+                  <span>Anda telah menerima undangan ini</span>
+                </div>
+                <div v-else-if="notif.status === 'RESOLVED_REJECTED'" class="text-[10px] font-bold text-slate-400 flex items-center gap-1 pt-1">
+                  <span>Undangan ini telah ditolak</span>
                 </div>
               </div>
             </div>
@@ -204,12 +219,27 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserState } from '@/services/userState';
 import { api, InAppNotification } from '@/services/api';
-import { ChevronDown, User, LogOut, Bell, Users, Activity, Store, ShoppingCart, UserRound, MessageCircle, CircleCheck } from 'lucide-vue-next';
+import { ChevronDown, User, LogOut, Bell, Check, Loader2 } from 'lucide-vue-next';
 
 const router = useRouter();
 const { currentPersona, currentUserId, logout } = useUserState();
 const showUserMenu = ref(false);
 const showNotifMenu = ref(false);
+const isResponding = ref<string | null>(null);
+
+const handleRespondInvite = async (notifId: string, action: 'ACCEPT' | 'REJECT') => {
+  try {
+    isResponding.value = notifId;
+    const res = await api.respondCollabNotification(notifId, action);
+    alert(res.message);
+    await fetchNotifications();
+    window.dispatchEvent(new CustomEvent('agribuddy:refresh-farmlands'));
+  } catch (err: any) {
+    alert(err.message || 'Gagal memproses respon kolaborasi');
+  } finally {
+    isResponding.value = null;
+  }
+};
 const notifications = ref<InAppNotification[]>([]);
 
 const unreadCount = computed(() => {
@@ -218,8 +248,31 @@ const unreadCount = computed(() => {
 
 const fetchNotifications = async () => {
   try {
-    const list = await api.getUserNotifications(currentUserId.value);
-    notifications.value = list;
+    const [userRes, collabRes] = await Promise.allSettled([
+      api.getUserNotifications(currentUserId.value),
+      api.getCollabNotifications(currentUserId.value)
+    ]);
+    const listA = userRes.status === 'fulfilled' ? userRes.value : [];
+    const listB = collabRes.status === 'fulfilled' ? collabRes.value : [];
+
+    const mappedCollab = listB.map((c: any) => ({
+      id: c.id,
+      title: c.title,
+      message: c.message,
+      type: c.type || 'COLLAB_INVITE',
+      status: c.status,
+      share_percentage: c.share_percentage,
+      is_read: c.is_read || false,
+      created_at: c.created_at || ''
+    }));
+
+    const map = new Map<string, any>();
+    for (const item of [...mappedCollab, ...listA]) {
+      if (!map.has(item.id)) {
+        map.set(item.id, item);
+      }
+    }
+    notifications.value = Array.from(map.values());
   } catch (err) {
     console.error('Error fetching notifications:', err);
   }
@@ -253,35 +306,6 @@ const markAllAsRead = async () => {
   }
 };
 
-const getNotifIcon = (type: string) => {
-  switch (type) {
-    case 'ORDER_RECEIVED':
-      return ShoppingCart;
-    case 'NEW_FOLLOWER':
-      return UserRound;
-    case 'NEW_COMMENT':
-      return MessageCircle;
-    case 'ORDER_STATUS':
-      return CircleCheck;
-    default:
-      return Bell;
-  }
-};
-
-const getNotifBg = (type: string) => {
-  switch (type) {
-    case 'ORDER_RECEIVED':
-      return 'bg-[#fed701]/20 text-[#324d1d]';
-    case 'NEW_FOLLOWER':
-      return 'bg-[#99c30c]/20 text-[#324d1d]';
-    case 'NEW_COMMENT':
-      return 'bg-[#99c30c]/20 text-[#324d1d]';
-    case 'ORDER_STATUS':
-      return 'bg-[#99c30c]/20 text-[#324d1d]';
-    default:
-      return 'bg-slate-100 text-slate-800';
-  }
-};
 
 watch(currentUserId, () => {
   fetchNotifications();

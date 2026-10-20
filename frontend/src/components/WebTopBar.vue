@@ -88,31 +88,28 @@
             <div
               v-for="notif in notifications"
               :key="notif.id"
-              class="p-3 rounded-2xl border text-xs space-y-2 transition-all"
-              :class="notif.status === 'PENDING' 
-                ? 'bg-[#fed701]/70 border-[#fed701]/60 ring-1 ring-[#fed701]/30' 
-                : 'bg-[#fff2d9] border-slate-200'"
+              class="p-3.5 rounded-2xl bg-[#fff2d9] border border-amber-200/50 shadow-2xs space-y-1.5 transition-all"
             >
-              <div class="flex items-start justify-between gap-2">
-                <div>
-                  <div class="flex items-center gap-1.5">
-                    <span class="text-[10px] font-bold uppercase px-1.5 py-0.2 rounded-md"
-                      :class="notif.type === 'COLLAB_INVITE' ? 'bg-[#fed701]/30 text-[#324d1d]' : 'bg-[#99c30c]/20 text-[#324d1d]'"
-                    >
-                      {{ notif.type === 'COLLAB_INVITE' ? 'Undangan' : 'Info' }}
-                    </span>
-                    <h5 class="text-xs font-bold text-slate-800">{{ notif.title }}</h5>
-                  </div>
-                  <p class="text-[11px] text-slate-600 mt-1 leading-snug">{{ notif.message }}</p>
-                </div>
+              <div class="flex items-center gap-2">
+                <span
+                  class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-[#99c30c]/25 text-[#324d1d] shrink-0"
+                >
+                  {{ notif.type === 'COLLAB_INVITE' ? 'UNDANGAN' : 'INFO' }}
+                </span>
+                <h5 class="text-xs sm:text-sm font-bold text-slate-800 truncate">
+                  {{ notif.title }}
+                </h5>
               </div>
+              <p class="text-xs text-slate-600 leading-snug">
+                {{ notif.message }}
+              </p>
 
               <!-- Tombol Respon jika Status PENDING -->
-              <div v-if="notif.status === 'PENDING'" class="flex items-center gap-2 pt-1 border-t border-[#fed701]/60">
+              <div v-if="notif.status === 'PENDING'" class="flex items-center gap-2 pt-2 border-t border-amber-200/60 mt-1.5">
                 <button
                   @click="handleRespondInvite(notif.id, 'ACCEPT')"
                   :disabled="isResponding === notif.id"
-                  class="flex-1 bg-[#324d1d]/90 hover:bg-[#324d1d] text-white  text-[11px] py-1.5 px-2 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-1 cursor-pointer disabled:opacity-60"
+                  class="flex-1 bg-[#324d1d]/90 hover:bg-[#324d1d] text-white font-bold text-xs py-1.5 px-3 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-1 cursor-pointer disabled:opacity-60"
                 >
                   <Loader2 v-if="isResponding === notif.id" :size="12" class="animate-spin" />
                   <span v-else class="flex items-center gap-1"><Check :size="12" /> Terima ({{ notif.share_percentage }}%)</span>
@@ -120,17 +117,17 @@
                 <button
                   @click="handleRespondInvite(notif.id, 'REJECT')"
                   :disabled="isResponding === notif.id"
-                  class="py-1.5 px-3 rounded-xl border border-slate-300 text-slate-600 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 font-bold text-[11px] transition-all active:scale-95 cursor-pointer disabled:opacity-60"
+                  class="py-1.5 px-3 rounded-xl border border-slate-300 text-slate-600 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 font-bold text-xs transition-all active:scale-95 cursor-pointer disabled:opacity-60"
                 >
                   Tolak
                 </button>
               </div>
 
               <!-- Status Info jika sudah resolved -->
-              <div v-else-if="notif.status === 'RESOLVED_ACCEPTED'" class="text-[10px] font-bold text-[#324d1d] flex items-center gap-1">
+              <div v-else-if="notif.status === 'RESOLVED_ACCEPTED'" class="text-[10px] font-bold text-[#324d1d] flex items-center gap-1 pt-1">
                 <span>Anda telah menerima undangan ini</span>
               </div>
-              <div v-else-if="notif.status === 'RESOLVED_REJECTED'" class="text-[10px] font-bold text-slate-400 flex items-center gap-1">
+              <div v-else-if="notif.status === 'RESOLVED_REJECTED'" class="text-[10px] font-bold text-slate-400 flex items-center gap-1 pt-1">
                 <span>Undangan ini telah ditolak</span>
               </div>
             </div>
@@ -220,8 +217,31 @@ const pendingInvitesCount = computed(() => {
 
 const loadNotifications = async () => {
   try {
-    const list = await api.getCollabNotifications(currentUserId.value);
-    notifications.value = list;
+    const [collabRes, userRes] = await Promise.allSettled([
+      api.getCollabNotifications(currentUserId.value),
+      api.getUserNotifications(currentUserId.value)
+    ]);
+    const listA = collabRes.status === 'fulfilled' ? collabRes.value : [];
+    const listB = userRes.status === 'fulfilled' ? userRes.value : [];
+
+    const mappedCollab = listA.map((c: any) => ({
+      id: c.id,
+      title: c.title,
+      message: c.message,
+      type: c.type || 'COLLAB_INVITE',
+      status: c.status,
+      share_percentage: c.share_percentage,
+      is_read: c.is_read || false,
+      created_at: c.created_at || ''
+    }));
+
+    const map = new Map<string, any>();
+    for (const item of [...mappedCollab, ...listB]) {
+      if (!map.has(item.id)) {
+        map.set(item.id, item);
+      }
+    }
+    notifications.value = Array.from(map.values()) as any;
   } catch (e) {
     console.error('Error loading notifications:', e);
   }
