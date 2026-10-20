@@ -97,7 +97,7 @@
                   {{ notif.type === 'COLLAB_INVITE' ? 'UNDANGAN' : 'INFO' }}
                 </span>
                 <h5 class="text-xs sm:text-sm font-bold text-slate-800 truncate">
-                  {{ notif.title }}
+                  {{ cleanNotificationTitle(notif.title) }}
                 </h5>
               </div>
               <p class="text-xs text-slate-600 leading-snug">
@@ -209,6 +209,14 @@ const navigateRencanaTab = (tab: 'rencana' | 'kontrol') => {
 
 const isNotifOpen = ref(false);
 const notifications = ref<CollabNotification[]>([]);
+
+const cleanNotificationTitle = (title: string = '') => {
+  return (title || '')
+    .replace(/\p{Extended_Pictographic}/gu, '')
+    .replace(/[👤🛒💬✅🔔🌾🚜💧🏪🚚]/gu, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+};
 const isResponding = ref<string | null>(null);
 
 const pendingInvitesCount = computed(() => {

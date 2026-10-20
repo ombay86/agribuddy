@@ -2359,7 +2359,7 @@
     {
       "id": "notif_001",
       "user_id": "usr_traktor",
-      "title": "Pesanan Jasa Baru Masuk! ",
+      "title": "Pesanan Jasa Baru Masuk!",
       "message": "Pak Joko memesan Jasa Sewa Traktor Quick 0.8 Ha (Rp 960.000) di Blok Krajan.",
       "type": "ORDER_RECEIVED",
       "reference_id": "ord_trk_01",
@@ -2369,7 +2369,7 @@
     {
       "id": "notif_002",
       "user_id": "usr_petani",
-      "title": "Pengikut Baru! ",
+      "title": "Pengikut Baru!",
       "message": "Mang Udin mulai mengikuti profil usahatani Anda.",
       "type": "NEW_FOLLOWER",
       "reference_id": "usr_cangkul",
@@ -2379,7 +2379,7 @@
     {
       "id": "notif_003",
       "user_id": "usr_petani",
-      "title": "Komentar Baru di Postingan! ",
+      "title": "Komentar Baru di Postingan!",
       "message": "Ibu Ratna mengomentari: 'Pak Joko, stok bakterisida tembaga di kios sudah ready ya...'",
       "type": "NEW_COMMENT",
       "reference_id": "post_002",
@@ -2389,7 +2389,7 @@
     {
       "id": "notif_004",
       "user_id": "usr_pengairan",
-      "title": "Pengikut Baru! ",
+      "title": "Pengikut Baru!",
       "message": "Pak Joko mulai mengikuti profil jasa pengairan Anda.",
       "type": "NEW_FOLLOWER",
       "reference_id": "usr_petani",
@@ -2399,7 +2399,7 @@
     {
       "id": "notif_af5551f7",
       "user_id": "usr_traktor",
-      "title": "Pesanan Jasa Baru Masuk! ",
+      "title": "Pesanan Jasa Baru Masuk!",
       "message": "Pak Joko memesan Sewa Traktor Quick Kubota (Bajak & Garu) (1.0 / Hektar) senilai Rp 1,200,000.",
       "type": "ORDER_RECEIVED",
       "reference_id": "ord_f3e9f006",
@@ -2409,7 +2409,7 @@
     {
       "id": "notif_bddb6a62",
       "user_id": "usr_petani",
-      "title": "Pesanan Terkirim ke Mitra ",
+      "title": "Pesanan Terkirim ke Mitra",
       "message": "Pesanan Sewa Traktor Quick Kubota (Bajak & Garu) telah diteruskan ke Mas Bambang. Menunggu konfirmasi pengerjaan.",
       "type": "ORDER_STATUS",
       "reference_id": "ord_f3e9f006",
@@ -2419,7 +2419,7 @@
     {
       "id": "notif_42719096",
       "user_id": "usr_traktor",
-      "title": "Pesanan Jasa Baru Masuk! ",
+      "title": "Pesanan Jasa Baru Masuk!",
       "message": "Pak Joko memesan Sewa Traktor Quick Kubota (Bajak & Garu) (0.65 / Hektar) senilai Rp 780,000.",
       "type": "ORDER_RECEIVED",
       "reference_id": "ord_459303ed",
@@ -2429,7 +2429,7 @@
     {
       "id": "notif_5c04ffd9",
       "user_id": "usr_petani",
-      "title": "Pesanan Terkirim ke Mitra ",
+      "title": "Pesanan Terkirim ke Mitra",
       "message": "Pesanan Sewa Traktor Quick Kubota (Bajak & Garu) telah diteruskan ke Mas Bambang. Menunggu konfirmasi pengerjaan.",
       "type": "ORDER_STATUS",
       "reference_id": "ord_459303ed",
@@ -2439,7 +2439,7 @@
     {
       "id": "notif_0ea7b032",
       "user_id": "usr_pengairan",
-      "title": "Pengikut Baru! ",
+      "title": "Pengikut Baru!",
       "message": "Seorang warga ekosistem mulai mengikuti profil usahatani Anda.",
       "type": "NEW_FOLLOWER",
       "reference_id": "usr_pengairan",
@@ -2449,7 +2449,7 @@
     {
       "id": "notif_bd4c8a11",
       "user_id": "usr_petani",
-      "title": "Komentar Baru di Diskusi! ",
+      "title": "Komentar Baru di Diskusi!",
       "message": "Mas Bambang mengomentari postingan Anda: \"Siap bantu olah tanah Pak, kabari saja jadwalnya....\"",
       "type": "NEW_COMMENT",
       "reference_id": "post_001",
@@ -2459,7 +2459,7 @@
     {
       "id": "notif_de50582b",
       "user_id": "usr_traktor",
-      "title": "Pesanan Jasa Baru Masuk! ",
+      "title": "Pesanan Jasa Baru Masuk!",
       "message": "Pak Joko (Petani Padi) memesan Sewa Traktor Quick Kubota (Bajak & Garu) (1.5 / Hektar) senilai Rp 1,800,000.",
       "type": "ORDER_RECEIVED",
       "reference_id": "ord_3f27f6e5",
@@ -2469,7 +2469,7 @@
     {
       "id": "notif_a25b3eec",
       "user_id": "usr_petani",
-      "title": "Pesanan Terkirim ke Mitra ",
+      "title": "Pesanan Terkirim ke Mitra",
       "message": "Pesanan Sewa Traktor Quick Kubota (Bajak & Garu) telah diteruskan ke Mas Bambang. Menunggu konfirmasi pengerjaan.",
       "type": "ORDER_STATUS",
       "reference_id": "ord_3f27f6e5",
@@ -2479,7 +2479,7 @@
     {
       "id": "notif_ae4bc366",
       "user_id": "usr_petani",
-      "title": "Pesanan Mulai Dikirim / Berangkat ",
+      "title": "Pesanan Mulai Dikirim / Berangkat",
       "message": "Mas Bambang mengonfirmasi pesanan Sewa Traktor Quick Kubota (Bajak & Garu): [SEDANG_DIKIRIM]. Catatan penjual: \"Traktor Quick G1000 sudah dimuat ke pikap, siap jalan Sabtu jam 06.30 WIB.\"",
       "type": "ORDER_STATUS",
       "reference_id": "ord_3f27f6e5",
@@ -2489,7 +2489,7 @@
     {
       "id": "notif_fc588a62",
       "user_id": "usr_traktor",
-      "title": "Pesanan Jasa Baru Masuk! ",
+      "title": "Pesanan Jasa Baru Masuk!",
       "message": "Pak Joko (Petani Padi) memesan Sewa Traktor Quick Kubota (Bajak & Garu) (1.5 / Hektar) senilai Rp 1,800,000.",
       "type": "ORDER_RECEIVED",
       "reference_id": "ord_20dfbddd",
@@ -2499,7 +2499,7 @@
     {
       "id": "notif_a00c16b4",
       "user_id": "usr_petani",
-      "title": "Pesanan Terkirim ke Mitra ",
+      "title": "Pesanan Terkirim ke Mitra",
       "message": "Pesanan Sewa Traktor Quick Kubota (Bajak & Garu) telah diteruskan ke Mas Bambang. Menunggu konfirmasi pengerjaan.",
       "type": "ORDER_STATUS",
       "reference_id": "ord_20dfbddd",
@@ -2509,7 +2509,7 @@
     {
       "id": "notif_1d851f6c",
       "user_id": "usr_petani",
-      "title": "Pesanan Mulai Dikirim / Berangkat ",
+      "title": "Pesanan Mulai Dikirim / Berangkat",
       "message": "Mas Bambang mengonfirmasi pesanan Sewa Traktor Quick Kubota (Bajak & Garu): [SEDANG_DIKIRIM]. Catatan penjual: \"Traktor Quick G1000 sudah dimuat ke pikap, siap jalan Sabtu jam 06.30 WIB.\"",
       "type": "ORDER_STATUS",
       "reference_id": "ord_20dfbddd",
@@ -2519,7 +2519,7 @@
     {
       "id": "notif_fc6cb285",
       "user_id": "usr_traktor",
-      "title": "Pesanan Jasa Baru Masuk! ",
+      "title": "Pesanan Jasa Baru Masuk!",
       "message": "Pak Joko (Petani Padi) memesan Sewa Traktor Quick Kubota (Bajak & Garu) (1.0 / Hektar) senilai Rp 1,200,000.",
       "type": "ORDER_RECEIVED",
       "reference_id": "ord_a09ba0b1",
@@ -2529,7 +2529,7 @@
     {
       "id": "notif_07b1694c",
       "user_id": "usr_petani",
-      "title": "Pesanan Terkirim ke Mitra ",
+      "title": "Pesanan Terkirim ke Mitra",
       "message": "Pesanan Sewa Traktor Quick Kubota (Bajak & Garu) telah diteruskan ke Mas Bambang. Menunggu konfirmasi pengerjaan.",
       "type": "ORDER_STATUS",
       "reference_id": "ord_a09ba0b1",
@@ -2539,7 +2539,7 @@
     {
       "id": "notif_72e0ff36",
       "user_id": "usr_petani",
-      "title": "Pesanan Mulai Dikirim / Berangkat ",
+      "title": "Pesanan Mulai Dikirim / Berangkat",
       "message": "Mas Bambang mengonfirmasi pesanan Sewa Traktor Quick Kubota (Bajak & Garu): [SEDANG_DIKIRIM]. Catatan penjual: \"Traktor sudah berangkat menuju sawah Pak Joko!\"",
       "type": "ORDER_STATUS",
       "reference_id": "ord_a09ba0b1",
@@ -2549,7 +2549,7 @@
     {
       "id": "notif_14c781a1",
       "user_id": "usr_traktor",
-      "title": "Pesanan Jasa Baru Masuk! ",
+      "title": "Pesanan Jasa Baru Masuk!",
       "message": "Pak Joko (Petani Padi) memesan Sewa Traktor Quick Kubota (Bajak & Garu) (1.0 / Hektar) senilai Rp 1,200,000.",
       "type": "ORDER_RECEIVED",
       "reference_id": "ord_1476372d",
@@ -2559,7 +2559,7 @@
     {
       "id": "notif_9ac1ec9a",
       "user_id": "usr_petani",
-      "title": "Pesanan Terkirim ke Mitra ",
+      "title": "Pesanan Terkirim ke Mitra",
       "message": "Pesanan Sewa Traktor Quick Kubota (Bajak & Garu) telah diteruskan ke Mas Bambang. Menunggu konfirmasi pengerjaan.",
       "type": "ORDER_STATUS",
       "reference_id": "ord_1476372d",
@@ -2569,7 +2569,7 @@
     {
       "id": "notif_4b1034c7",
       "user_id": "usr_traktor",
-      "title": "Pesan Diskusi Pesanan ",
+      "title": "Pesan Diskusi Pesanan",
       "message": "Pak Joko: \"Halo Mas Bambang, saya tunggu Sabtu jam 07.00 ya!...\"",
       "type": "ORDER_DISCUSSION",
       "reference_id": "ord_1476372d",
@@ -2579,7 +2579,7 @@
     {
       "id": "notif_6c891a2c",
       "user_id": "usr_petani",
-      "title": "Pesan Diskusi Pesanan ",
+      "title": "Pesan Diskusi Pesanan",
       "message": "Mas Bambang: \"Siap Pak Joko, solar dan bajak sudah kami siapkan!...\"",
       "type": "ORDER_DISCUSSION",
       "reference_id": "ord_1476372d",
@@ -2589,7 +2589,7 @@
     {
       "id": "notif_b83aea19",
       "user_id": "usr_traktor",
-      "title": "Pertanyaan Baru di Produk Anda! ",
+      "title": "Pertanyaan Baru di Produk Anda!",
       "message": "Pak Joko bertanya di \"Sewa Traktor Quick Kubota (Bajak & Garu)\": \"Apakah traktor bisa masuk galengan sempit 80cm?...\"",
       "type": "PRODUCT_DISCUSSION",
       "reference_id": "srv_001",
@@ -2599,7 +2599,7 @@
     {
       "id": "notif_eb351dea",
       "user_id": "usr_petani",
-      "title": "Jawaban Diskusi Produk ",
+      "title": "Jawaban Diskusi Produk",
       "message": "Mas Bambang (Penyedia Jasa) menjawab pertanyaan Anda di \"Sewa Traktor Quick Kubota (Bajak & Garu)\": \"Bisa Pak Joko, roda traktor quick kami bisa diatur sempit....\"",
       "type": "PRODUCT_DISCUSSION",
       "reference_id": "srv_001",
@@ -2609,7 +2609,7 @@
     {
       "id": "notif_c8d6fb6c",
       "user_id": "usr_cangkul",
-      "title": "Pesanan Jasa Baru Masuk! ",
+      "title": "Pesanan Jasa Baru Masuk!",
       "message": "Pak Joko memesan Jasa Cangkul & Perbaikan Galengan Pematang Sawah (1.0 / Orang / Hari) senilai Rp 120,000.",
       "type": "ORDER_RECEIVED",
       "reference_id": "ord_d7c7bf7e",
@@ -2619,7 +2619,7 @@
     {
       "id": "notif_b955a033",
       "user_id": "usr_petani",
-      "title": "Pesanan Terkirim ke Mitra ",
+      "title": "Pesanan Terkirim ke Mitra",
       "message": "Pesanan Jasa Cangkul & Perbaikan Galengan Pematang Sawah telah diteruskan ke Mang Udin. Menunggu konfirmasi pengerjaan.",
       "type": "ORDER_STATUS",
       "reference_id": "ord_d7c7bf7e",
@@ -2629,7 +2629,7 @@
     {
       "id": "notif_00470b17",
       "user_id": "usr_001",
-      "title": "Pengikut Baru! ",
+      "title": "Pengikut Baru!",
       "message": "Seorang warga ekosistem mulai mengikuti profil usahatani Anda.",
       "type": "NEW_FOLLOWER",
       "reference_id": "usr_001",
@@ -2639,7 +2639,7 @@
     {
       "id": "notif_85ce9681",
       "user_id": "usr_1923",
-      "title": "Pengikut Baru! ",
+      "title": "Pengikut Baru!",
       "message": "Seorang warga ekosistem mulai mengikuti profil usahatani Anda.",
       "type": "NEW_FOLLOWER",
       "reference_id": "usr_1923",
@@ -2649,7 +2649,7 @@
     {
       "user_id": "usr_petani",
       "type": "COLLAB_INVITE",
-      "title": "Undangan Kolaborasi Baru ",
+      "title": "Undangan Kolaborasi Baru",
       "message": "admin mengundang Anda untuk mengelola lahan \"Sawah Petak Baru (admin)\" (0.75 Ha) dengan peran \"PETANI\" dan bagi hasil 30%.",
       "from_user_id": "usr_1791517561901",
       "from_user_name": "admin",
@@ -2668,7 +2668,7 @@
     {
       "user_id": "usr_traktor",
       "type": "COLLAB_INVITE",
-      "title": "Undangan Kolaborasi Baru ",
+      "title": "Undangan Kolaborasi Baru",
       "message": "admin mengundang Anda untuk mengelola lahan \"Sawah Petak Baru (admin)\" (0.75 Ha) dengan peran \"Sewa Traktor\" dan bagi hasil 20%.",
       "from_user_id": "usr_1791517561901",
       "from_user_name": "admin",
@@ -2687,7 +2687,7 @@
     {
       "user_id": "usr_pengairan",
       "type": "COLLAB_INVITE",
-      "title": "Undangan Kolaborasi Baru ",
+      "title": "Undangan Kolaborasi Baru",
       "message": "admin mengundang Anda untuk mengelola lahan \"Sawah Blok Cempaka 1\" (1 Ha) dengan peran \"Jasa Pengairan\" dan bagi hasil 10%.",
       "from_user_id": "usr_1791517561901",
       "from_user_name": "admin",
@@ -2706,7 +2706,7 @@
     {
       "user_id": "usr_petani",
       "type": "COLLAB_INVITE",
-      "title": "Undangan Kolaborasi Baru ",
+      "title": "Undangan Kolaborasi Baru",
       "message": "admin mengundang Anda untuk mengelola lahan \"Sawah Blok Cempaka 1\" (1 Ha) dengan peran \"PETANI\" dan bagi hasil 20%.",
       "from_user_id": "usr_1791517561901",
       "from_user_name": "admin",

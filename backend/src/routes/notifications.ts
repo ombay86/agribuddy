@@ -5,19 +5,24 @@ import { sanitizeFarmCollaborators } from './farmlands.js';
 
 const router = Router();
 
+const sanitizeNotification = (n: any) => ({
+  ...n,
+  title: (n.title || '').replace(/\p{Extended_Pictographic}/gu, '').replace(/[👤🛒💬✅🔔🌾🚜💧🏪🚚]/gu, '').replace(/\s+/g, ' ').trim()
+});
+
 // GET /notifications?user_id=...
 router.get('/', (req: Request, res: Response) => {
   const userId = req.query.user_id as string;
   const allNotifs = db.getCollection("notifications");
 
   if (!userId) {
-    return res.json(allNotifs.reverse());
+    return res.json(allNotifs.map(sanitizeNotification).reverse());
   }
 
   const userNotifs = allNotifs.filter((n: any) => n.user_id === userId);
   // Sort descending by created_at
   userNotifs.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-  res.json(userNotifs);
+  res.json(userNotifs.map(sanitizeNotification));
 });
 
 // POST /notifications/:notifId/respond
