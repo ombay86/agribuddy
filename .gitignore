@@ -46,3 +46,9 @@ scratch/
 tmp/
 *.tmp
 ~*
+
+# Antigravity & Agent Files
+.antigravity/
+
+# Materi Kuliah & Laporan Akademik (Excluded to keep GitHub clean & lightweight)
+materi_kuliah/

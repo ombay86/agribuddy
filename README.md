@@ -69,3 +69,20 @@ Buka aplikasi di browser: `http://localhost:5173`
 - **Frontend:** Vue.js 3, Vite, Tailwind CSS, TypeScript, Lucide Icons, Leaflet Maps.
 - **Backend:** Node.js, Express.js, TypeScript, Multer, File-based Database Persistence (`local_db.json`).
 - **AI Engine:** Google Gemini API (`@google/genai` multimodal vision `gemini-flash-latest`) & Smart Agronomic Planner Engine.
+
+---
+
+## Struktur Direktori Repository
+
+```text
+├── backend/          # REST API & Server Node.js / Express / TypeScript
+├── frontend/         # Aplikasi Web Vue.js 3 / Vite / Tailwind CSS
+├── docs/             # Dokumentasi Teknis & Sistem
+│   ├── diagrams/     # Diagram UML (ERD, Flowchart, Use Case, Activity)
+│   ├── prd/          # Product Requirement Document (PRD)
+│   ├── manual/       # Buku Panduan Pengguna AgriBuddy (DOCX & PDF)
+│   └── scripts/      # Skrip utilitas dokumen & render diagram
+├── logo/             # Aset visual & logo aplikasi AgriBuddy
+├── run_app.bat       # Skrip peluncuran aplikasi satu klik
+└── README.md         # Dokumentasi utama proyek
+```
