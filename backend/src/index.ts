@@ -60,8 +60,26 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
+let isInitialized = false;
+async function ensureDbInit() {
+  if (!isInitialized) {
+    await db.initPostgres();
+    isInitialized = true;
+  }
+}
+
+// Middleware untuk memastikan koneksi database aktif di lingkungan serverless Vercel
+app.use(async (req, res, next) => {
+  try {
+    await ensureDbInit();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
 async function bootstrap() {
-  await db.initPostgres();
+  await ensureDbInit();
 
   app.listen(config.port, '0.0.0.0', () => {
     console.log(`=======================================================`);
@@ -72,6 +90,8 @@ async function bootstrap() {
   });
 }
 
-bootstrap();
+if (!process.env.VERCEL) {
+  bootstrap();
+}
 
 export default app;
