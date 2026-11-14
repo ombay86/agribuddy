@@ -27,6 +27,16 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routing API v1
 const api = express.Router();
+api.get('/health', (req: Request, res: Response) => {
+  res.json({
+    status: 'ok',
+    hasDatabaseUrl: !!process.env.DATABASE_URL,
+    isPostgresActive: (db as any).isPostgresActive,
+    farmlandsCount: db.getCollection("farmlands").length,
+    usersCount: db.getCollection("users").length,
+    inventoryCount: db.getCollection("inventory").length
+  });
+});
 api.use('/auth', authRouter);
 api.use('/weather', weatherRouter);
 api.use('/inventory', inventoryRouter);
@@ -37,6 +47,7 @@ api.use('/farm-plan', farmPlanRouter);
 api.use('/catalog', catalogRouter);
 api.use('/farmlands', farmlandsRouter);
 api.use('/notifications', notificationsRouter);
+api.use('/catalog/notifications', notificationsRouter);
 
 app.use(config.apiV1Str, api);
 

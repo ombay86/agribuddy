@@ -4,7 +4,7 @@ import os from 'os';
 import crypto from 'crypto';
 import pg from 'pg';
 import { config } from '../config/env.js';
-import defaultLocalDb from '../../data/local_db.json';
+import { initialSeedData } from './seedData.js';
 
 const { Pool } = pg;
 
@@ -17,7 +17,7 @@ export class DatabaseManager {
   private dbFile: string;
   private cache: Record<string, any[]> = {};
   private pool: pg.Pool | null = null;
-  private isPostgresActive: boolean = false;
+  public isPostgresActive: boolean = false;
 
   constructor() {
     this.dataDir = DATA_DIR;
@@ -69,17 +69,13 @@ export class DatabaseManager {
     try {
       if (fs.existsSync(this.dbFile)) {
         const content = fs.readFileSync(this.dbFile, 'utf-8');
-        return JSON.parse(content);
+        const parsed = JSON.parse(content);
+        if (parsed && Object.keys(parsed).length > 0) return parsed;
       }
-      const sourceFile = path.resolve(process.cwd(), 'data', 'local_db.json');
-      if (fs.existsSync(sourceFile)) {
-        const content = fs.readFileSync(sourceFile, 'utf-8');
-        return JSON.parse(content);
-      }
-      return JSON.parse(JSON.stringify(defaultLocalDb));
+      return JSON.parse(JSON.stringify(initialSeedData));
     } catch (err) {
-      console.error('Error reading local_db.json, using bundled seed data:', err);
-      return JSON.parse(JSON.stringify(defaultLocalDb));
+      console.warn('Menggunakan data benih in-memory terkompilasi.');
+      return JSON.parse(JSON.stringify(initialSeedData));
     }
   }
 
