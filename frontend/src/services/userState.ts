@@ -149,8 +149,16 @@ export const getActiveUserId = (): string => {
 export const syncUserProfile = async (userId?: string) => {
   try {
     const activeUid = userId || getActiveUserId();
-    const rawUrl = (import.meta as any).env?.VITE_API_URL || 'http://127.0.0.1:8000/api/v1';
-    const cleanUrl = rawUrl.trim().replace(/\/+$/, '');
+    let rawUrl = ((import.meta as any).env?.VITE_API_URL || '').trim();
+    if (rawUrl.includes('agribuddy-api.vercel.app')) {
+      rawUrl = rawUrl.replace('agribuddy-api.vercel.app', 'agribuddy-xc3j.vercel.app');
+    }
+    if (!rawUrl) {
+      rawUrl = typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
+        ? 'https://agribuddy-xc3j.vercel.app/api/v1'
+        : 'http://127.0.0.1:8000/api/v1';
+    }
+    const cleanUrl = rawUrl.replace(/\/+$/, '');
     const apiUrl = cleanUrl.endsWith('/api/v1') ? cleanUrl : (cleanUrl.endsWith('/api') ? `${cleanUrl}/v1` : `${cleanUrl}/api/v1`);
     const res = await fetch(`${apiUrl}/auth/profile`, {
       headers: {

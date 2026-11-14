@@ -1,7 +1,17 @@
 import { getActiveUserId } from './userState';
 
 function sanitizeApiUrl(rawUrl?: string): string {
-  const url = (rawUrl || 'http://127.0.0.1:8000/api/v1').trim().replace(/\/+$/, '');
+  let url = (rawUrl || '').trim();
+  // Auto-correct common typo or wrong vercel backend domain
+  if (url.includes('agribuddy-api.vercel.app')) {
+    url = url.replace('agribuddy-api.vercel.app', 'agribuddy-xc3j.vercel.app');
+  }
+  if (!url) {
+    url = typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
+      ? 'https://agribuddy-xc3j.vercel.app/api/v1'
+      : 'http://127.0.0.1:8000/api/v1';
+  }
+  url = url.replace(/\/+$/, '');
   if (url.endsWith('/api/v1')) return url;
   if (url.endsWith('/api')) return `${url}/v1`;
   return `${url}/api/v1`;
