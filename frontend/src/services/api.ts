@@ -1,6 +1,13 @@
 import { getActiveUserId } from './userState';
 
-const BASE_URL = (import.meta as any).env?.VITE_API_URL || 'http://127.0.0.1:8000/api/v1';
+function sanitizeApiUrl(rawUrl?: string): string {
+  const url = (rawUrl || 'http://127.0.0.1:8000/api/v1').trim().replace(/\/+$/, '');
+  if (url.endsWith('/api/v1')) return url;
+  if (url.endsWith('/api')) return `${url}/v1`;
+  return `${url}/api/v1`;
+}
+
+export const BASE_URL = sanitizeApiUrl((import.meta as any).env?.VITE_API_URL);
 
 export function getCustomGeminiApiKey(userId?: string): string {
   try {

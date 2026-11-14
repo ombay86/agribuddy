@@ -4,6 +4,7 @@ import os from 'os';
 import crypto from 'crypto';
 import pg from 'pg';
 import { config } from '../config/env.js';
+import defaultLocalDb from '../../data/local_db.json';
 
 const { Pool } = pg;
 
@@ -75,10 +76,10 @@ export class DatabaseManager {
         const content = fs.readFileSync(sourceFile, 'utf-8');
         return JSON.parse(content);
       }
-      return {};
+      return JSON.parse(JSON.stringify(defaultLocalDb));
     } catch (err) {
-      console.error('Error reading local_db.json:', err);
-      return {};
+      console.error('Error reading local_db.json, using bundled seed data:', err);
+      return JSON.parse(JSON.stringify(defaultLocalDb));
     }
   }
 

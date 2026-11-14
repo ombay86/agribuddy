@@ -149,7 +149,9 @@ export const getActiveUserId = (): string => {
 export const syncUserProfile = async (userId?: string) => {
   try {
     const activeUid = userId || getActiveUserId();
-    const apiUrl = (import.meta as any).env?.VITE_API_URL || 'http://127.0.0.1:8000/api/v1';
+    const rawUrl = (import.meta as any).env?.VITE_API_URL || 'http://127.0.0.1:8000/api/v1';
+    const cleanUrl = rawUrl.trim().replace(/\/+$/, '');
+    const apiUrl = cleanUrl.endsWith('/api/v1') ? cleanUrl : (cleanUrl.endsWith('/api') ? `${cleanUrl}/v1` : `${cleanUrl}/api/v1`);
     const res = await fetch(`${apiUrl}/auth/profile`, {
       headers: {
         'X-User-Id': activeUid
