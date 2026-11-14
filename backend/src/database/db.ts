@@ -1,12 +1,14 @@
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import crypto from 'crypto';
 import pg from 'pg';
 import { config } from '../config/env.js';
 
 const { Pool } = pg;
 
-const DATA_DIR = path.resolve(process.cwd(), 'data');
+const IS_VERCEL = !!process.env.VERCEL;
+const DATA_DIR = IS_VERCEL ? path.resolve(os.tmpdir(), 'agribuddy_data') : path.resolve(process.cwd(), 'data');
 const DB_FILE = path.resolve(DATA_DIR, 'local_db.json');
 
 export class DatabaseManager {
@@ -25,36 +27,55 @@ export class DatabaseManager {
   }
 
   private ensureInitialized() {
-    if (!fs.existsSync(this.dataDir)) {
-      fs.mkdirSync(this.dataDir, { recursive: true });
-    }
-    if (!fs.existsSync(this.dbFile)) {
-      fs.writeFileSync(this.dbFile, JSON.stringify({
-        users: [],
-        inventory: [],
-        harvests: [],
-        diagnoses: [],
-        partners: [],
-        offers: [],
-        shop_products: [],
-        saprotan_orders: [],
-        market_listings: [],
-        community_posts: [],
-        farm_plans: [],
-        ecosystem_services: [],
-        farmlands: [],
-        service_orders: [],
-        notifications: [],
-        order_messages: [],
-        product_discussions: []
-      }, null, 2), 'utf-8');
+    try {
+      if (!fs.existsSync(this.dataDir)) {
+        fs.mkdirSync(this.dataDir, { recursive: true });
+      }
+      if (!fs.existsSync(this.dbFile)) {
+        // Coba salin dari data/local_db.json jika ada di root proyek
+        const sourceFile = path.resolve(process.cwd(), 'data', 'local_db.json');
+        if (fs.existsSync(sourceFile)) {
+          fs.copyFileSync(sourceFile, this.dbFile);
+        } else {
+          fs.writeFileSync(this.dbFile, JSON.stringify({
+            users: [],
+            inventory: [],
+            harvests: [],
+            diagnoses: [],
+            partners: [],
+            offers: [],
+            shop_products: [],
+            saprotan_orders: [],
+            market_listings: [],
+            community_posts: [],
+            farm_plans: [],
+            ecosystem_services: [],
+            farmlands: [],
+            service_orders: [],
+            notifications: [],
+            order_messages: [],
+            product_discussions: []
+          }, null, 2), 'utf-8');
+        }
+      }
+    } catch (err: any) {
+      // Lingkungan serverless Vercel (read-only filesystem)
+      console.warn('Catatan filesystem lokal:', err?.message || err);
     }
   }
 
   private readFromDisk(): Record<string, any[]> {
     try {
-      const content = fs.readFileSync(this.dbFile, 'utf-8');
-      return JSON.parse(content);
+      if (fs.existsSync(this.dbFile)) {
+        const content = fs.readFileSync(this.dbFile, 'utf-8');
+        return JSON.parse(content);
+      }
+      const sourceFile = path.resolve(process.cwd(), 'data', 'local_db.json');
+      if (fs.existsSync(sourceFile)) {
+        const content = fs.readFileSync(sourceFile, 'utf-8');
+        return JSON.parse(content);
+      }
+      return {};
     } catch (err) {
       console.error('Error reading local_db.json:', err);
       return {};
@@ -65,7 +86,7 @@ export class DatabaseManager {
     try {
       fs.writeFileSync(this.dbFile, JSON.stringify(data, null, 2), 'utf-8');
     } catch (err) {
-      console.error('Error saving local_db.json:', err);
+      // Pada Vercel Serverless, kegagalan penulisan disk lokal diabaikan karena data tersimpan permanen di Neon PostgreSQL
     }
   }
 
