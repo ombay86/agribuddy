@@ -52,3 +52,4 @@ tmp/
 
 # Materi Kuliah & Laporan Akademik (Excluded to keep GitHub clean & lightweight)
 materi_kuliah/
+.neon
