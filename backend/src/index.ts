@@ -32,6 +32,7 @@ api.get('/health', (req: Request, res: Response) => {
     status: 'ok',
     hasDatabaseUrl: !!process.env.DATABASE_URL,
     isPostgresActive: (db as any).isPostgresActive,
+    lastPostgresError: (db as any).lastPostgresError || null,
     farmlandsCount: db.getCollection("farmlands").length,
     usersCount: db.getCollection("users").length,
     inventoryCount: db.getCollection("inventory").length

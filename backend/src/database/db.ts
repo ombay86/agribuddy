@@ -18,6 +18,7 @@ export class DatabaseManager {
   private cache: Record<string, any[]> = {};
   private pool: pg.Pool | null = null;
   public isPostgresActive: boolean = false;
+  public lastPostgresError: string = '';
 
   constructor() {
     this.dataDir = DATA_DIR;
@@ -38,25 +39,7 @@ export class DatabaseManager {
         if (fs.existsSync(sourceFile)) {
           fs.copyFileSync(sourceFile, this.dbFile);
         } else {
-          fs.writeFileSync(this.dbFile, JSON.stringify({
-            users: [],
-            inventory: [],
-            harvests: [],
-            diagnoses: [],
-            partners: [],
-            offers: [],
-            shop_products: [],
-            saprotan_orders: [],
-            market_listings: [],
-            community_posts: [],
-            farm_plans: [],
-            ecosystem_services: [],
-            farmlands: [],
-            service_orders: [],
-            notifications: [],
-            order_messages: [],
-            product_discussions: []
-          }, null, 2), 'utf-8');
+          fs.writeFileSync(this.dbFile, JSON.stringify(initialSeedData, null, 2), 'utf-8');
         }
       }
     } catch (err: any) {
@@ -70,7 +53,9 @@ export class DatabaseManager {
       if (fs.existsSync(this.dbFile)) {
         const content = fs.readFileSync(this.dbFile, 'utf-8');
         const parsed = JSON.parse(content);
-        if (parsed && Object.keys(parsed).length > 0) return parsed;
+        if (parsed && Array.isArray(parsed.farmlands) && parsed.farmlands.length > 0) {
+          return parsed;
+        }
       }
       return JSON.parse(JSON.stringify(initialSeedData));
     } catch (err) {
@@ -164,8 +149,9 @@ export class DatabaseManager {
       this.isPostgresActive = true;
       this.sanitizeFarmlandsInDb();
     } catch (err: any) {
-      console.error('Gagal inisialisasi PostgreSQL:', err.message || err);
-      console.log('Beroperasi menggunakan file lokal local_db.json.');
+      this.lastPostgresError = err?.message || String(err);
+      console.error('Gagal inisialisasi PostgreSQL:', this.lastPostgresError);
+      console.log('Beroperasi menggunakan file lokal / in-memory seed data.');
     }
   }
 
